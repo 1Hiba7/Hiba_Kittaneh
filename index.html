@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>موسوعة هبة كتانة للمحاكاة العلمية</title>
+  <link rel="icon" type="image/png" href="0.png">
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body { box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Almarai', sans-serif; }
+    ::selection { background-color: #daa520; color: #ffffff; }
+    ::-moz-selection { background-color: #daa520; color: #ffffff; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { background: #020508; color: #ffffff; overflow-x: hidden; }
+    
+    .main-wrapper { width: 100%; min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+    .particle { position: absolute; width: 4px; height: 4px; background: radial-gradient(circle, #daa520, transparent); border-radius: 50%; animation: float-particle 15s infinite; opacity: 0.4; bottom: -10px; }
+    @keyframes float-particle { 0% { bottom: -10px; opacity: 0; } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { bottom: 110%; opacity: 0; } }
+    
+    .content-container { flex: 1 0 auto; position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; padding: 40px 24px; width: 100%; }
+    .header { text-align: center; margin-bottom: 60px; padding: 40px 20px; }
+    .main-title { font-size: 56px; font-weight: 800; background: linear-gradient(135deg, #daa520 0%, #1e90ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 16px; line-height: 1.6; padding-top: 20px; }
+    .subtitle { font-size: 28px; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin-top: 12px; }
+    .divider { width: 120px; height: 4px; background: linear-gradient(90deg, #daa520, #1e90ff); margin: 24px auto; border-radius: 2px; box-shadow: 0 0 20px rgba(218, 165, 32, 0.6); }
+    
+    .search-container { max-width: 600px; margin: 40px auto 20px auto; position: relative; }
+    #search-input { width: 100%; padding: 18px 60px 18px 24px; font-size: 18px; font-family: 'Almarai', sans-serif; background: linear-gradient(145deg, rgba(15, 20, 30, 0.95), rgba(5, 10, 15, 0.98)); border: 2px solid rgba(218, 165, 32, 0.4); border-radius: 16px; color: #ffffff; outline: none; transition: all 0.3s; box-shadow: 0 4px 15px rgba(218, 165, 32, 0.2); }
+    #search-input:focus { border-color: #daa520; box-shadow: 0 6px 25px rgba(218, 165, 32, 0.4); }
+    .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 22px; pointer-events: none; }
+    
+    .tabs-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 30px; }
+    .tab-btn { padding: 12px 24px; font-size: 16px; font-weight: 700; font-family: 'Almarai', sans-serif; background: rgba(15, 20, 30, 0.8); color: #daa520; border: 2px solid rgba(218, 165, 32, 0.4); border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+    .tab-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(218, 165, 32, 0.4); border-color: #daa520; }
+    .tab-btn.active { background: linear-gradient(135deg, #daa520 0%, #1e90ff 100%); color: #020508; border: none; box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4); }
+    
+    .section { margin-bottom: 80px; transition: all 0.3s; }
+    .section-title { font-size: 36px; font-weight: 800; text-align: center; margin-bottom: 40px; background: linear-gradient(135deg, #daa520 0%, #1e90ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; position: relative; padding-bottom: 20px; }
+    .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, #daa520, #1e90ff); border-radius: 2px; }
+    
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; margin-bottom: 20px; }
+    .premium-card { background: linear-gradient(145deg, rgba(15, 20, 30, 0.95), rgba(5, 10, 15, 0.98)); border: 2px solid transparent; border-radius: 20px; padding: 32px; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; display: flex; flex-direction: column; }
+    .premium-card::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(135deg, #daa520, #1e90ff, #daa520); border-radius: 20px; opacity: 0; z-index: -1; transition: opacity 0.4s; background-size: 200% 200%; animation: gradient-shift 3s ease infinite; }
+    @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .premium-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(145deg, rgba(15, 20, 30, 0.95), rgba(5, 10, 15, 0.98)); border-radius: 18px; z-index: -1; }
+    .premium-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 20px 60px rgba(218, 165, 32, 0.4), 0 0 80px rgba(30, 144, 255, 0.3), inset 0 0 20px rgba(218, 165, 32, 0.1); }
+    .premium-card:hover::before { opacity: 1; }
+    
+    .card-icon { font-size: 56px; text-align: center; margin-bottom: 20px; display: block; filter: drop-shadow(0 0 10px rgba(218, 165, 32, 0.5)); animation: float-icon 3s ease-in-out infinite; }
+    @keyframes float-icon { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    
+    .card-title { font-size: 24px; font-weight: 700; color: #daa520; text-align: center; margin-bottom: 14px; text-shadow: 0 0 10px rgba(218, 165, 32, 0.3); }
+    .card-description { font-size: 17px; color: rgba(255, 255, 255, 0.8); text-align: center; line-height: 1.7; margin-bottom: 24px; flex-grow: 1; }
+    
+    .card-link { display: block; background: linear-gradient(135deg, #daa520 0%, #1e90ff 100%); color: #020508; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 18px; text-align: center; transition: all 0.3s; box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4); margin-top: auto; }
+    .card-link:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(218, 165, 32, 0.6); filter: brightness(1.1); }
+    
+    .footer { flex-shrink: 0; width: 100%; background: #050a0f; border-top: 2px solid rgba(218, 165, 32, 0.3); padding: 30px 20px; text-align: center; position: relative; z-index: 100; }
+    .footer-text { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #daa520 0%, #1e90ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    
+    @media (max-width: 768px) {
+      .main-title { font-size: 36px; }
+      .subtitle { font-size: 20px; }
+      .section-title { font-size: 28px; }
+      .cards-grid { grid-template-columns: 1fr; gap: 20px; }
+      .content-container { padding: 24px 16px 40px 16px; }
+      .tabs-container { gap: 8px; }
+      .tab-btn { padding: 10px 16px; font-size: 14px; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body>
+  <div class="particles" id="particles"></div>
+  <div class="main-wrapper">
+   <div class="content-container">
+    <header class="header">
+     <h1 id="main-title" class="main-title">بوابة هبة كتانة للابتكار العلمي</h1>
+     <div class="divider"></div>
+     <p id="subtitle" class="subtitle">موسوعة هبة كتانة للمحاكاة العلمية</p>
+     <div class="search-container"><input type="text" id="search-input" placeholder="ابحث عن تجربة أو محاكاة..." aria-label="البحث في التجارب"> <span class="search-icon" aria-hidden="true">🔍</span>
+     </div>
+     <div class="tabs-container"><button class="tab-btn active" data-category="all">الكل ✨</button> <button class="tab-btn" data-category="physics">🔬 الفيزياء</button> <button class="tab-btn" data-category="biology">🧬 الأحياء</button> <button class="tab-btn" data-category="chemistry">⚗️ الكيمياء</button> <button class="tab-btn" data-category="space">🚀 الفضاء</button> <button class="tab-btn" data-category="geography">🌍 الجغرافيا</button> <button class="tab-btn" data-category="math">📐 الرياضيات</button> <button class="tab-btn" data-category="islamic">🕌 الموارد الدينية</button> <button class="tab-btn" data-category="tools">📚 الأدوات</button>
+     </div>
+    </header>
+    <main>
+     <section class="section" data-section="physics">
+      <h2 class="section-title">🔬 مختبر الفيزياء</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="physics" data-title="مختبر قانون أوم"><span class="card-icon" aria-hidden="true">⚡</span>
+        <h3 class="card-title">مختبر قانون أوم</h3>
+        <p class="card-description">استكشف العلاقة بين الجهد والتيار والمقاومة الكهربائية</p><a href="hiba018.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="محاكاة المرايا المستوية"><span class="card-icon" aria-hidden="true">🪞</span>
+        <h3 class="card-title">محاكاة المرايا المستوية</h3>
+        <p class="card-description">محاكاة تفاعلية لخصائص الانعكاس وتساوي المسافات</p><a href="hiba012.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="محاكي الكثافة والطفو"><span class="card-icon" aria-hidden="true">⚖️</span>
+        <h3 class="card-title">محاكي الكثافة والطفو</h3>
+        <p class="card-description">تجربة افتراضية لقياس طفو الأجسام بناء على مادتها</p><a href="hiba014.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="محاكي انكسار الضوء"><span class="card-icon" aria-hidden="true">🌈</span>
+        <h3 class="card-title">محاكي انكسار الضوء</h3>
+        <p class="card-description">استكشاف تحلل الضوء عبر المنشور الزجاجي</p><a href="hiba010.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="محاكي فيزياء الصوت"><span class="card-icon" aria-hidden="true">🔊</span>
+        <h3 class="card-title">محاكي فيزياء الصوت</h3>
+        <p class="card-description">محاكاة انتقال الموجات الصوتية في الأوساط</p><a href="hiba008.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="فيزياء الأعاصير"><span class="card-icon" aria-hidden="true">🌪️</span>
+        <h3 class="card-title">فيزياء الأعاصير</h3>
+        <p class="card-description">محاكاة تفاعلية لتكوين الأعاصير وحركة الرياح</p><a href="hiba027.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="محاكي البرق التفاعلي"><span class="card-icon" aria-hidden="true">⚡</span>
+        <h3 class="card-title">محاكي البرق التفاعلي</h3>
+        <p class="card-description">استكشاف ظاهرة البرق والكهرباء الطبيعية</p><a href="hiba030.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="physics" data-title="محاكي البندول البسيط"><span class="card-icon" aria-hidden="true">⏳</span>
+        <h3 class="card-title">محاكي البندول البسيط</h3>
+        <p class="card-description">استكشف الحركة التوافقية البسيطة وتأثير الجاذبية</p><a href="hiba017.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="biology">
+      <h2 class="section-title">🧬 مختبر الأحياء وعلوم الحياة</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="biology" data-title="محاكي فصائل الدم التفاعلي"><span class="card-icon" aria-hidden="true">🩸</span>
+        <h3 class="card-title">محاكي فصائل الدم التفاعلي</h3>
+        <p class="card-description">تجربة طبية لفحص توافق فصائل الدم ونقلها</p><a href="hiba021.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="biology" data-title="لعبة محاكاة البناء الضوئي"><span class="card-icon" aria-hidden="true">🌱</span>
+        <h3 class="card-title">لعبة محاكاة البناء الضوئي</h3>
+        <p class="card-description">رحلة تفاعلية لفهم كيف يصنع النبات غذاءه</p><a href="hiba020.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="chemistry">
+      <h2 class="section-title">⚗️ مختبر الكيمياء والعلوم النووية</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="chemistry" data-title="الجدول الدوري التفاعلي"><span class="card-icon" aria-hidden="true">📊</span>
+        <h3 class="card-title">الجدول الدوري التفاعلي</h3>
+        <p class="card-description">استكشاف العناصر والنماذج الذرية</p><a href="hiba011.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="chemistry" data-title="محاكي التفاعلات النووية"><span class="card-icon" aria-hidden="true">⚛️</span>
+        <h3 class="card-title">محاكي التفاعلات النووية</h3>
+        <p class="card-description">محاكاة الانشطار والاندماج والطاقة الناتجة</p><a href="hiba016.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="chemistry" data-title="محاكي الروابط الكيميائية"><span class="card-icon" aria-hidden="true">🔗</span>
+        <h3 class="card-title">محاكي الروابط الكيميائية</h3>
+        <p class="card-description">تمثيل مرئي للروابط الأيونية والتساهمية</p><a href="hiba015.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="chemistry" data-title="محاكي اختبار الحموضة"><span class="card-icon" aria-hidden="true">🧪</span>
+        <h3 class="card-title">محاكي اختبار الحموضة</h3>
+        <p class="card-description">قياس الرقم الهيدروجيني للمحاليل المختلفة</p><a href="hiba009.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="chemistry" data-title="محاكي حالات المادة"><span class="card-icon" aria-hidden="true">💧</span>
+        <h3 class="card-title">محاكي حالات المادة</h3>
+        <p class="card-description">محاكاة حركة الجزيئات بالحرارة والبرودة</p><a href="hiba007.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="space">
+      <h2 class="section-title">🚀 مستكشف الفضاء والكون</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="space" data-title="محاكي دورة حياة النجوم"><span class="card-icon" aria-hidden="true">⭐</span>
+        <h3 class="card-title">محاكي دورة حياة النجوم</h3>
+        <p class="card-description">رحلة من السديم إلى الثقوب السوداء</p><a href="hiba013.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="space" data-title="محاكي المجموعات الشمسية"><span class="card-icon" aria-hidden="true">🌌</span>
+        <h3 class="card-title">محاكي المجموعات الشمسية</h3>
+        <p class="card-description">جولة في المجموعة الشمسية والمجرات</p><a href="hiba005.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="space" data-title="محاكي الخسوف والكسوف التفاعلي"><span class="card-icon" aria-hidden="true">🌑</span>
+        <h3 class="card-title">محاكي الخسوف والكسوف التفاعلي</h3>
+        <p class="card-description">محاكاة تفاعلية لظاهرتي كسوف الشمس وخسوف القمر</p><a href="hiba029.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="geography">
+      <h2 class="section-title">🌍 مختبر الجغرافيا وعلوم الأرض</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="geography" data-title="مختبر المواقيت والقبلة الجغرافي"><span class="card-icon" aria-hidden="true">🧭</span>
+        <h3 class="card-title">مختبر المواقيت والقبلة الجغرافي</h3>
+        <p class="card-description">تحديد اتجاه القبلة ومواقيت الصلاة بدقة علمية</p><a href="hiba022.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="geography" data-title="مختبر رحلة إلى باطن الأرض"><span class="card-icon" aria-hidden="true">🌋</span>
+        <h3 class="card-title">مختبر رحلة إلى باطن الأرض</h3>
+        <p class="card-description">استكشف طبقات الأرض من القشرة إلى اللب الداخلي</p><a href="hiba023.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="geography" data-title="محاكي الزلازل التفاعلي"><span class="card-icon" aria-hidden="true">🌊</span>
+        <h3 class="card-title">محاكي الزلازل التفاعلي</h3>
+        <p class="card-description">محاكاة الزلازل وحركة الصفائح التكتونية</p><a href="hiba024.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="math">
+      <h2 class="section-title">📐 الرياضيات والمنطق العلمي</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="math" data-title="مختبر نظرية فيثاغوروس"><span class="card-icon" aria-hidden="true">📐</span>
+        <h3 class="card-title">مختبر نظرية فيثاغوروس</h3>
+        <p class="card-description">استكشف واثبت نظرية فيثاغوروس بطريقة تفاعلية ومرئية</p><a href="hiba025.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="math" data-title="تحدي عبقري الرياضيات"><span class="card-icon" aria-hidden="true">🧮</span>
+        <h3 class="card-title">تحدي عبقري الرياضيات</h3>
+        <p class="card-description">لعبة تفاعلية لإتقان جدول الضرب بذكاء</p><a href="hiba019.html" target="_blank" class="card-link">ابدأ التحدي</a>
+       </article>
+       <article class="premium-card" data-category="math" data-title="مختبر المنطق الرقمي"><span class="card-icon" aria-hidden="true">💻</span>
+        <h3 class="card-title">مختبر المنطق الرقمي</h3>
+        <p class="card-description">استكشف أساسيات المنطق الرقمي والدوال البوليانية</p><a href="hiba028.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="islamic">
+      <h2 class="section-title">🕌 الموارد الدينية</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="islamic" data-title="مواقيت الصلاة في فلسطين"><span class="card-icon" aria-hidden="true">⏰</span>
+        <h3 class="card-title">مواقيت الصلاة في فلسطين</h3>
+        <p class="card-description">معرفة مواقيت الصلاة والحسابات الفلكية الدقيقة</p><a href="hiba026.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="islamic" data-title="أثرك يجملها"><span class="card-icon" aria-hidden="true">✨</span>
+        <h3 class="card-title">أثرك يجملها</h3>
+        <p class="card-description">كل خُلقٍ جميل تتعلمه هو أثر تتركه في الدنيا... اكتشف أخلاقك الجميلة</p><a href="hiba031.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+      </div>
+     </section>
+     <section class="section" data-section="tools">
+      <h2 class="section-title">📚 أدوات الطالب</h2>
+      <div class="cards-grid">
+       <article class="premium-card" data-category="tools" data-title="محاكي إمكانية الوصول إلى الألوان المتقدم"><span class="card-icon" aria-hidden="true">🎨</span>
+        <h3 class="card-title">محاكي إمكانية الوصول إلى الألوان المتقدم</h3>
+        <p class="card-description">أداة مساعدة لذوي الاحتياجات الخاصة</p><a href="hiba001.html" target="_blank" class="card-link">استخدم الآن</a>
+       </article>
+       <article class="premium-card" data-category="tools" data-title="منشئ قائمة المهام اليومية"><span class="card-icon" aria-hidden="true">✅</span>
+        <h3 class="card-title">منشئ قائمة المهام اليومية</h3>
+        <p class="card-description">نظم مهامك الدراسية بفعالية</p><a href="hiba002.html" target="_blank" class="card-link">استخدم الآن</a>
+       </article>
+       <article class="premium-card" data-category="tools" data-title="شهادة تقدير تفاعلية"><span class="card-icon" aria-hidden="true">🎓</span>
+        <h3 class="card-title">شهادة تقدير تفاعلية</h3>
+        <p class="card-description">صمم شهادات تقدير تفاعلية ومميزة بسهولة</p><a href="hiba003.html" target="_blank" class="card-link">استكشف الآن</a>
+       </article>
+       <article class="premium-card" data-category="tools" data-title="رحلة المعرفة"><span class="card-icon" aria-hidden="true">🎯</span>
+        <h3 class="card-title">رحلة المعرفة</h3>
+        <p class="card-description">مسابقات تعليمية تفاعلية</p><a href="hiba004.html" target="_blank" class="card-link">ابدأ الآن</a>
+       </article>
+       <article class="premium-card" data-category="tools" data-title="مساعد التركيز"><span class="card-icon" aria-hidden="true">⏱️</span>
+        <h3 class="card-title">مساعد التركيز</h3>
+        <p class="card-description">أدوات لتنظيم الوقت والدراسة</p><a href="hiba006.html" target="_blank" class="card-link">ابدأ الآن</a>
+       </article>
+      </div>
+     </section>
+    </main>
+   </div>
+   <footer class="footer">
+    <p id="footer-text" class="footer-text">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+   </footer>
+  </div>
+  <script>
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 15 + 's';
+      particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+      particlesContainer.appendChild(particle);
+    }
+
+    const searchInput = document.getElementById('search-input');
+    const allCards = document.querySelectorAll('.premium-card');
+    const allSections = document.querySelectorAll('.section');
+
+    searchInput.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      
+      allCards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        if (title.includes(searchTerm)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      allSections.forEach(section => {
+        const visibleCards = section.querySelectorAll('.premium-card[style*="display: flex"], .premium-card:not([style*="display: none"])');
+        if (searchTerm && visibleCards.length === 0) {
+          section.style.display = 'none';
+        } else {
+          section.style.display = 'block';
+        }
+      });
+    });
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const category = this.getAttribute('data-category');
+        
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        searchInput.value = '';
+        
+        if (category === 'all') {
+          allCards.forEach(card => card.style.display = 'flex');
+          allSections.forEach(section => section.style.display = 'block');
+        } else {
+          allCards.forEach(card => {
+            if (card.getAttribute('data-category') === category) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          
+          allSections.forEach(section => {
+            if (section.getAttribute('data-section') === category) {
+              section.style.display = 'block';
+            } else {
+              section.style.display = 'none';
+            }
+          });
+        }
+      });
+    });
+
+    const defaultConfig = {
+      main_title: "بوابة هبة كتانة للابتكار العلمي",
+      subtitle: "موسوعة هبة كتانة للمحاكاة العلمية",
+      footer_text: "جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين",
+      background_color: "#020508",
+      accent_gold: "#daa520",
+      accent_blue: "#1e90ff",
+      text_color: "#ffffff",
+      card_background: "#0f141e"
+    };
+
+    async function onConfigChange(config) {
+      const mainTitle = config.main_title || defaultConfig.main_title;
+      const subtitle = config.subtitle || defaultConfig.subtitle;
+      const footerText = config.footer_text || defaultConfig.footer_text;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+
+      document.getElementById('main-title').textContent = mainTitle;
+      document.getElementById('subtitle').textContent = subtitle;
+      document.getElementById('footer-text').textContent = footerText;
+
+      document.body.style.background = backgroundColor;
+      document.body.style.color = textColor;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a066f31d49d035eb',t:'MTc4MDU3NjIzNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حالات المادة | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="7.png">
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Almarai', sans-serif;
+            background: radial-gradient(ellipse at top, #0a1628 0%, #0f172a 50%, #000000 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .particle {
+            border-radius: 50%;
+            position: absolute;
+            transition: left 0.25s ease-out, top 0.25s ease-out, width 0.2s, height 0.2s;
+            will-change: transform;
+        }
+        
+        .flask-container {
+            position: relative;
+            width: 340px;
+            height: 450px;
+            margin: 0 auto;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        .state-transition-flask {
+            transform: scale(0.98);
+            opacity: 0.8;
+        }
+        
+        .flask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .particles-area {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(calc(-50% - 31px));
+            width: 260px;
+            height: 280px;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        
+        @keyframes heatGlow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 5px rgba(239, 68, 68, 0)); }
+            50% { filter: brightness(1.4) drop-shadow(0 0 20px rgba(239, 68, 68, 0.8)); }
+        }
+        
+        @keyframes coolGlow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 5px rgba(6, 182, 212, 0)); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 20px rgba(6, 182, 212, 0.8)); }
+        }
+        
+        .heating-effect { animation: heatGlow 1.2s ease-in-out infinite; }
+        .cooling-effect { animation: coolGlow 1.2s ease-in-out infinite; }
+        
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        .float-animation { animation: floatUp 4s ease-in-out infinite; }
+        
+        .state-button {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .state-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .state-button:hover::after { width: 300px; height: 300px; }
+        .state-button:hover { transform: translateY(-4px) scale(1.02); }
+        .state-button.active { transform: scale(1.05); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
+        
+        .control-button {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .control-button:hover { transform: scale(1.08); }
+        .control-button:active { transform: scale(0.95); }
+        .control-button.active { animation: pulse 0.6s ease-in-out infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .property-card {
+            transition: all 0.3s ease;
+        }
+        .property-card:hover { transform: translateX(-5px); }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .return-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.3px;
+        }
+        .return-button:hover {
+            background: #1e90ff;
+            border-color: #1e90ff;
+            transform: translateY(-3px);
+            box-shadow: 0 14px 32px rgba(30, 144, 255, 0.5);
+        }
+        .return-button:active { transform: translateY(0); }
+        .return-button-icon { font-size: 1.3rem; }
+        .return-button-text { white-space: nowrap; }
+        
+        .site-footer {
+            text-align: center;
+            padding: 20px 16px 24px;
+            border-top: 1px solid rgba(96, 165, 250, 0.4);
+            margin-top: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            color: #f1f5f9;
+            letter-spacing: 0.3px;
+        }
+        
+        .return-wrapper {
+            text-align: center;
+            padding: 20px 16px 40px;
+            background: transparent;
+        }
+        
+        @media (max-width: 768px) {
+            .return-button { padding: 10px 20px; gap: 8px; }
+            .return-button-text { font-size: 0.85rem; }
+            .return-button-icon { font-size: 1.1rem; }
+            .site-footer { font-size: 0.75rem; padding: 14px 12px; }
+        }
+        
+        /* transition helper */
+        .transitioning-particle {
+            transition: left 0.35s cubic-bezier(0.2, 0.9, 0.6, 1), top 0.35s cubic-bezier(0.2, 0.9, 0.6, 1);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+</head>
+<body>
+  <main class="flex-1 w-full overflow-auto">
+   <div class="max-w-7xl mx-auto px-6 py-8">
+    <header class="text-center mb-10 fade-in-up">
+     <h1 id="main-title" class="text-7xl font-black mb-3 gradient-text" style="text-shadow: 0 0 30px rgba(96, 165, 250, 0.5);">حالات المادة</h1>
+     <p id="subtitle" class="text-2xl font-bold" style="color: #cbd5e6;">محاكاة تفاعلية متقدمة</p>
+     <div class="h-1.5 w-64 mx-auto mt-5 rounded-full" style="background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 50%, #f59e0b 100%);"></div>
+    </header>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+     <div class="space-y-6 fade-in-up">
+      <div class="space-y-4">
+        <button id="solid-btn" class="state-button active w-full px-6 py-5 rounded-2xl font-bold text-xl shadow-2xl relative z-10" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: #ffffff;"> <span id="solid-text">🧊 صلب</span> </button>
+        <button id="liquid-btn" class="state-button w-full px-6 py-5 rounded-2xl font-bold text-xl shadow-2xl relative z-10" style="background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%); color: #ffffff;"> <span id="liquid-text">💧 سائل</span> </button>
+        <button id="gas-btn" class="state-button w-full px-6 py-5 rounded-2xl font-bold text-xl shadow-2xl relative z-10" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); color: #ffffff;"> <span id="gas-text">☁️ غاز</span> </button>
+      </div>
+      <div class="space-y-4">
+       <div class="p-6 rounded-2xl backdrop-blur-sm" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(59, 130, 246, 0.3);">
+        <div class="text-center"><span id="temp-label" class="text-base font-semibold block mb-2" style="color: #cbd5e6;">درجة الحرارة</span>
+         <div id="temperature" class="text-5xl font-black" style="color: #60a5fa; text-shadow: 0 0 20px rgba(96, 165, 250, 0.6);">0°C</div>
+        </div>
+       </div>
+       <div class="p-6 rounded-2xl backdrop-blur-sm" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(6, 182, 212, 0.3);">
+        <div class="text-center"><span id="particle-label" class="text-base font-semibold block mb-2" style="color: #cbd5e6;">عدد الجزيئات</span>
+         <div id="particle-count" class="text-5xl font-black" style="color: #06b6d4; text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);">30</div>
+        </div>
+       </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <button id="heat-btn" class="control-button px-6 py-6 rounded-2xl font-bold text-lg shadow-2xl" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: #ffffff;">
+            <div class="text-3xl mb-1">🔥</div><div id="heat-text">تسخين</div>
+        </button>
+        <button id="cool-btn" class="control-button px-6 py-6 rounded-2xl font-bold text-lg shadow-2xl" style="background: linear-gradient(135deg, #06b6d4 0%, #164e63 100%); color: #ffffff;">
+            <div class="text-3xl mb-1">❄️</div><div id="cool-text">تبريد</div>
+        </button>
+      </div>
+     </div>
+     
+     <div class="fade-in-up">
+      <div id="flask-wrapper" class="flask-container float-animation" style="background: rgba(15, 23, 42, 0.5); border-radius: 30px; padding: 20px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(59, 130, 246, 0.1);">
+       <svg class="flask" viewBox="0 0 340 450">
+        <defs>
+         <linearGradient id="flaskGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.4" />
+          <stop offset="100%" stop-color="#1e40af" stop-opacity="0.6" />
+         </linearGradient>
+         <filter id="glowEffect">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+          <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+         </filter>
+         <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.6" />
+          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.3" />
+         </linearGradient>
+        </defs>
+        <rect x="150" y="25" width="40" height="65" fill="url(#flaskGradient)" stroke="#3b82f6" stroke-width="3" rx="6" filter="url(#glowEffect)" />
+        <path d="M 110 90 L 150 90 L 150 25 M 190 25 L 190 90 L 230 90 Q 275 90 275 135 L 275 360 Q 275 405 230 405 L 110 405 Q 65 405 65 360 L 65 135 Q 65 90 110 90 Z" fill="url(#flaskGradient)" stroke="url(#glassGradient)" stroke-width="5" filter="url(#glowEffect)" />
+        <ellipse cx="170" cy="405" rx="105" ry="22" fill="rgba(30, 58, 138, 0.4)" stroke="#3b82f6" stroke-width="3" filter="url(#glowEffect)" />
+        <path d="M 100 120 Q 95 150 100 200" stroke="rgba(255, 255, 255, 0.3)" stroke-width="3" fill="none" stroke-linecap="round" />
+       </svg>
+       <div id="particles-container" class="particles-area"></div>
+      </div>
+     </div>
+     
+     <div class="space-y-6 fade-in-up">
+      <div class="p-6 rounded-2xl backdrop-blur-sm" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(139, 92, 246, 0.3);">
+       <h3 id="properties-title" class="text-2xl font-bold mb-5 text-center" style="color: #c4b5fd;">خصائص الحالة</h3>
+       <div class="space-y-4">
+        <div class="property-card p-4 rounded-xl" style="background: rgba(59, 130, 246, 0.15); border-right: 4px solid #3b82f6;"><div class="flex items-start gap-3"><div class="text-2xl">📐</div><div><div class="font-bold mb-1" style="color: #60a5fa;">الشكل</div><div id="shape-value" class="text-sm" style="color: #e2e8f0;">شكل محدد وثابت</div></div></div></div>
+        <div class="property-card p-4 rounded-xl" style="background: rgba(6, 182, 212, 0.15); border-right: 4px solid #06b6d4;"><div class="flex items-start gap-3"><div class="text-2xl">📦</div><div><div class="font-bold mb-1" style="color: #22d3ee;">الحجم</div><div id="volume-value" class="text-sm" style="color: #e2e8f0;">حجم محدد وثابت</div></div></div></div>
+        <div class="property-card p-4 rounded-xl" style="background: rgba(245, 158, 11, 0.15); border-right: 4px solid #f59e0b;"><div class="flex items-start gap-3"><div class="text-2xl">⚡</div><div><div class="font-bold mb-1" style="color: #fbbf24;">الطاقة الحركية</div><div id="energy-value" class="text-sm" style="color: #e2e8f0;">منخفضة جدا</div></div></div></div>
+        <div class="property-card p-4 rounded-xl" style="background: rgba(139, 92, 246, 0.15); border-right: 4px solid #8b5cf6;"><div class="flex items-start gap-3"><div class="text-2xl">🔗</div><div><div class="font-bold mb-1" style="color: #a78bfa;">الترابط بين الجزيئات</div><div id="bonding-value" class="text-sm" style="color: #e2e8f0;">قوي جدا</div></div></div></div>
+       </div>
+      </div>
+      <div class="p-6 rounded-2xl backdrop-blur-sm" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(245, 158, 11, 0.3);">
+       <div id="state-description" class="text-base leading-relaxed" style="color: #e2e8f0;">الجزيئات في الحالة الصلبة مرتبة في نمط منتظم ومتراص بإحكام. تهتز الجزيئات حول مواضع ثابتة ولا تتحرك بحرية.</div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </main>
+  
+  <footer class="site-footer">
+   <div class="container mx-auto px-4">
+    جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين
+   </div>
+  </footer>
+  
+  <div class="return-wrapper">
+   <a href="https://safa2.my.canva.site/hiba000" class="return-button" title="العودة للموسوعة الرئيسية">
+    <span class="return-button-icon">🏠</span>
+    <span class="return-button-text">العودة للموسوعة الرئيسية</span>
+   </a>
+  </div>
+
+  <script>
+        // ======================== CONFIG & GLOBALS ========================
+        const defaultConfig = {
+            main_title: "حالات المادة", subtitle: "محاكاة تفاعلية متقدمة", solid_button: "🧊 صلب",
+            liquid_button: "💧 سائل", gas_button: "☁️ غاز", heat_button: "تسخين", cool_button: "تبريد",
+            temperature_label: "درجة الحرارة", particle_count_label: "عدد الجزيئات", properties_title: "خصائص الحالة",
+            background_color: "#0a1628", surface_color: "#1e293b", text_color: "#60a5fa",
+            primary_action_color: "#3b82f6", secondary_action_color: "#06b6d4", font_family: "Almarai", font_size: 16
+        };
+        let config = {}, currentState = 'solid', temperature = 0, particles = [], animationFrame;
+        let heatInterval = null, coolInterval = null, isTransitioning = false;
+        const NUM_PARTICLES = 30;
+        
+        const stateProperties = {
+            solid: { shape: 'شكل محدد وثابت', volume: 'حجم محدد وثابت', energy: 'منخفضة جدا', bonding: 'قوي جدا',
+                description: 'الجزيئات في الحالة الصلبة مرتبة في نمط منتظم ومتراص بإحكام. تهتز الجزيئات حول مواضع ثابتة ولا تتحرك بحرية.' },
+            liquid: { shape: 'يأخذ شكل الوعاء', volume: 'حجم محدد', energy: 'متوسطة', bonding: 'متوسط',
+                description: 'الجزيئات في الحالة السائلة متقاربة لكنها تتحرك بحرية. تنزلق الجزيئات فوق بعضها البعض وتتأثر بالجاذبية.' },
+            gas: { shape: 'يملأ الوعاء بالكامل', volume: 'حجم غير محدد', energy: 'عالية جدا', bonding: 'ضعيف جدا',
+                description: 'الجزيئات في الحالة الغازية متباعدة جدا وتتحرك بسرعة عالية. تصطدم الجزيئات ببعضها وبجدران الوعاء باستمرار.' }
+        };
+        
+        function updateUI() { /* تكيف مع الإعدادات */ 
+            const fontFamily = config.font_family || defaultConfig.font_family;
+            document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+            document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+            document.getElementById('solid-text').textContent = config.solid_button || defaultConfig.solid_button;
+            document.getElementById('liquid-text').textContent = config.liquid_button || defaultConfig.liquid_button;
+            document.getElementById('gas-text').textContent = config.gas_button || defaultConfig.gas_button;
+            document.getElementById('heat-text').textContent = config.heat_button || defaultConfig.heat_button;
+            document.getElementById('cool-text').textContent = config.cool_button || defaultConfig.cool_button;
+            document.getElementById('temp-label').textContent = config.temperature_label || defaultConfig.temperature_label;
+            document.getElementById('particle-label').textContent = config.particle_count_label || defaultConfig.particle_count_label;
+            document.getElementById('properties-title').textContent = config.properties_title || defaultConfig.properties_title;
+            document.querySelector('main').style.background = `radial-gradient(ellipse at top, ${config.background_color || defaultConfig.background_color} 0%, ${config.surface_color || defaultConfig.surface_color} 50%, #000000 100%)`;
+        }
+        
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            container.innerHTML = '';
+            particles = [];
+            for (let i = 0; i < NUM_PARTICLES; i++) {
+                const el = document.createElement('div');
+                el.className = 'particle';
+                el.style.width = '14px'; el.style.height = '14px';
+                particles.push({ element: el, x: 0, y: 0, vx: 0, vy: 0, homeX: 0, homeY: 0, radius: 7 });
+                container.appendChild(el);
+            }
+            arrangeParticlesImmediate();
+        }
+        
+        function arrangeParticlesImmediate() {
+            const container = document.getElementById('particles-container');
+            const width = container.offsetWidth, height = container.offsetHeight;
+            if (width === 0) return;
+            const padding = 30;
+            const safeW = width - padding*2, safeH = height - padding*2;
+            if (currentState === 'solid') {
+                const cols = 5, rows = 6, spX = 38, spY = 38;
+                const offX = padding + (safeW - (cols-1)*spX)/2;
+                const offY = padding + (safeH - (rows-1)*spY)/2;
+                particles.forEach((p, idx) => {
+                    const col = idx % cols, row = Math.floor(idx/cols);
+                    const hex = row%2 ===1 ? spX/2 : 0;
+                    p.homeX = offX + col*spX + hex;
+                    p.homeY = offY + row*spY;
+                    p.x = p.homeX; p.y = p.homeY;
+                    p.vx = (Math.random()-0.5)*0.35; p.vy = (Math.random()-0.5)*0.35;
+                    p.element.style.background = 'radial-gradient(circle at 30% 30%, #60a5fa, #2563eb)';
+                });
+            } else if (currentState === 'liquid') {
+                particles.forEach(p => {
+                    p.x = padding + p.radius + Math.random() * (safeW - p.radius*2);
+                    p.y = height * 0.55 + Math.random() * (height * 0.4);
+                    p.x = Math.min(width - padding - p.radius, Math.max(padding + p.radius, p.x));
+                    p.y = Math.min(height - padding - p.radius, Math.max(padding + p.radius, p.y));
+                    p.vx = (Math.random()-0.5)*2.2; p.vy = (Math.random()-0.5)*1.5 + 0.8;
+                    p.element.style.background = 'radial-gradient(circle at 30% 30%, #22d3ee, #0891b2)';
+                });
+            } else { // gas
+                particles.forEach(p => {
+                    p.x = padding + p.radius + Math.random() * (safeW - p.radius*2);
+                    p.y = padding + p.radius + Math.random() * (safeH - p.radius*2);
+                    p.x = Math.min(width - padding - p.radius, Math.max(padding + p.radius, p.x));
+                    p.y = Math.min(height - padding - p.radius, Math.max(padding + p.radius, p.y));
+                    p.vx = (Math.random()-0.5)*5; p.vy = (Math.random()-0.5)*5;
+                    p.element.style.background = 'radial-gradient(circle at 30% 30%, #fbbf24, #d97706)';
+                });
+            }
+            updatePositions();
+        }
+        
+        function updatePositions() { particles.forEach(p => { p.element.style.left = `${p.x}px`; p.element.style.top = `${p.y}px`; }); }
+        
+        function resolveCollision(p1, p2) {
+            const dx = p2.x-p1.x, dy = p2.y-p1.y, dist = Math.hypot(dx,dy);
+            if(dist===0) return;
+            const overlap = (p1.radius+p2.radius)-dist, angle = Math.atan2(dy,dx);
+            const cos=Math.cos(angle), sin=Math.sin(angle);
+            let vx1=p1.vx*cos+p1.vy*sin, vy1=p1.vy*cos-p1.vx*sin;
+            let vx2=p2.vx*cos+p2.vy*sin, vy2=p2.vy*cos-p2.vx*sin;
+            [vx1, vx2] = [vx2*0.96, vx1*0.96];
+            p1.vx = vx1*cos - vy1*sin; p1.vy = vy1*cos + vx1*sin;
+            p2.vx = vx2*cos - vy2*sin; p2.vy = vy2*cos + vx2*sin;
+            const cx = overlap*cos*0.5, cy = overlap*sin*0.5;
+            p1.x -= cx; p1.y -= cy; p2.x += cx; p2.y += cy;
+        }
+        
+        function animateParticles() {
+            const container = document.getElementById('particles-container');
+            if(!container) { animationFrame=requestAnimationFrame(animateParticles); return; }
+            const w=container.offsetWidth, h=container.offsetHeight;
+            if(w===0) { animationFrame=requestAnimationFrame(animateParticles); return; }
+            const pad=30, minX=pad, maxX=w-pad, minY=pad, maxY=h-pad;
+            const speedLimit = currentState==='solid' ? 1.2 : (currentState==='liquid' ? 3.8 : 7.5);
+            for(let p of particles) {
+                if(currentState === 'solid') {
+                    let dx = p.homeX - p.x, dy = p.homeY - p.y;
+                    p.vx += dx*0.028; p.vy += dy*0.028;
+                    p.vx *= 0.96; p.vy *= 0.96;
+                } else if(currentState === 'liquid') {
+                    p.vy += 0.12; p.vx *= 0.99; p.vy *= 0.99;
+                } else {
+                    if(Math.random()<0.02) { p.vx += (Math.random()-0.5)*0.4; p.vy += (Math.random()-0.5)*0.4; }
+                    p.vx *= 0.998; p.vy *= 0.998;
+                }
+                let spd = Math.hypot(p.vx,p.vy);
+                if(spd > speedLimit) { p.vx = p.vx/spd * speedLimit; p.vy = p.vy/spd * speedLimit; }
+                p.x += p.vx; p.y += p.vy;
+                if(p.x-p.radius <= minX) { p.x = minX+p.radius; p.vx = Math.abs(p.vx)*0.92; }
+                if(p.x+p.radius >= maxX) { p.x = maxX-p.radius; p.vx = -Math.abs(p.vx)*0.92; }
+                if(p.y-p.radius <= minY) { p.y = minY+p.radius; p.vy = Math.abs(p.vy)*0.92; }
+                if(p.y+p.radius >= maxY) { p.y = maxY-p.radius; p.vy = -Math.abs(p.vy)*0.92; }
+                p.x = Math.min(maxX-p.radius, Math.max(minX+p.radius, p.x));
+                p.y = Math.min(maxY-p.radius, Math.max(minY+p.radius, p.y));
+            }
+            if(currentState !== 'solid') {
+                for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++) {
+                    const dx = particles[j].x-particles[i].x, dy=particles[j].y-particles[i].y;
+                    if(Math.hypot(dx,dy) < particles[i].radius+particles[j].radius) resolveCollision(particles[i], particles[j]);
+                }
+            }
+            updatePositions();
+            animationFrame = requestAnimationFrame(animateParticles);
+        }
+        
+        async function smoothStateTransition(newState) {
+            if(isTransitioning || currentState === newState) return;
+            isTransitioning = true;
+            const flaskDiv = document.getElementById('flask-wrapper');
+            flaskDiv.classList.add('state-transition-flask');
+            setTimeout(() => flaskDiv.classList.remove('state-transition-flask'), 400);
+            
+            const oldState = currentState;
+            currentState = newState;
+            
+            if(oldState === 'solid' && newState === 'liquid') {
+                const gravityBoost = 0.45;
+                for(let p of particles) {
+                    p.vx += (Math.random()-0.5)*0.8;
+                    p.vy += 2.2 + Math.random()*1.5;
+                    p.homeX = undefined;
+                }
+                let start = performance.now();
+                function extraGravity(now) {
+                    if(!isTransitioning) return;
+                    const elapsed = now - start;
+                    if(elapsed < 700) {
+                        for(let p of particles) {
+                            p.vy += 0.25;
+                            let spd = Math.hypot(p.vx,p.vy);
+                            if(spd>5) { p.vx*=0.99; p.vy*=0.99; }
+                        }
+                        requestAnimationFrame(extraGravity);
+                    } else {
+                        arrangeParticlesImmediate();
+                        isTransitioning = false;
+                    }
+                }
+                requestAnimationFrame(extraGravity);
+            } 
+            else {
+                arrangeParticlesImmediate();
+                setTimeout(() => { isTransitioning = false; }, 250);
+            }
+            
+            if(newState === 'solid') temperature = 0;
+            else if(newState === 'liquid') temperature = 50;
+            else temperature = 120;
+            updateStateInfo();
+            document.querySelectorAll('.state-button').forEach(btn=>btn.classList.remove('active'));
+            document.getElementById(`${newState}-btn`).classList.add('active');
+            if(!isTransitioning) isTransitioning = false;
+        }
+        
+        function setState(newState) { smoothStateTransition(newState); }
+        
+        function updateStateInfo() {
+            document.getElementById('temperature').textContent = `${temperature}°C`;
+            const props = stateProperties[currentState];
+            document.getElementById('shape-value').textContent = props.shape;
+            document.getElementById('volume-value').textContent = props.volume;
+            document.getElementById('energy-value').textContent = props.energy;
+            document.getElementById('bonding-value').textContent = props.bonding;
+            document.getElementById('state-description').textContent = props.description;
+        }
+        
+        function adjustTemperature(delta) {
+            if(isTransitioning) return;
+            temperature = Math.min(200, Math.max(-50, temperature+delta));
+            document.getElementById('temperature').textContent = `${temperature}°C`;
+            let targetState = currentState;
+            if(temperature < 25) targetState = 'solid';
+            else if(temperature >= 85) targetState = 'gas';
+            else if(temperature >=25 && temperature<85) targetState = 'liquid';
+            if(targetState !== currentState) setState(targetState);
+        }
+        
+        // Event binding
+        document.getElementById('solid-btn').addEventListener('click', ()=>setState('solid'));
+        document.getElementById('liquid-btn').addEventListener('click', ()=>setState('liquid'));
+        document.getElementById('gas-btn').addEventListener('click', ()=>setState('gas'));
+        
+        function stopAllIntervals() {
+            if(heatInterval){ clearInterval(heatInterval); heatInterval=null; document.getElementById('flask-wrapper').classList.remove('heating-effect'); document.getElementById('heat-btn').classList.remove('active');}
+            if(coolInterval){ clearInterval(coolInterval); coolInterval=null; document.getElementById('flask-wrapper').classList.remove('cooling-effect'); document.getElementById('cool-btn').classList.remove('active');}
+        }
+        document.getElementById('heat-btn').addEventListener('click',()=>{
+            if(isTransitioning) return;
+            if(heatInterval){ stopAllIntervals(); return; }
+            stopAllIntervals();
+            heatInterval = setInterval(()=>adjustTemperature(3), 150);
+            document.getElementById('flask-wrapper').classList.add('heating-effect');
+            document.getElementById('heat-btn').classList.add('active');
+        });
+        document.getElementById('cool-btn').addEventListener('click',()=>{
+            if(isTransitioning) return;
+            if(coolInterval){ stopAllIntervals(); return; }
+            stopAllIntervals();
+            coolInterval = setInterval(()=>adjustTemperature(-3), 150);
+            document.getElementById('flask-wrapper').classList.add('cooling-effect');
+            document.getElementById('cool-btn').classList.add('active');
+        });
+        
+        // SDK integration (mock)
+        window.elementSdk = window.elementSdk || { init: ()=>{} };
+        updateUI();
+        createParticles();
+        animateParticles();
+        setState('solid');
+    </script>
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكاة الكثافة والطفو | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="14.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Noto Kufi Arabic', sans-serif;
+    }
+    
+    ::selection {
+      background-color: #85b2d2 !important;
+      color: white !important;
+    }
+    
+    ::-moz-selection {
+      background-color: #85b2d2 !important;
+      color: white !important;
+    }
+    
+    .water-tank {
+      background: linear-gradient(180deg, 
+        rgba(64, 164, 223, 0.1) 0%,
+        rgba(64, 164, 223, 0.3) 20%,
+        rgba(41, 128, 185, 0.5) 50%,
+        rgba(30, 100, 160, 0.7) 100%);
+      border: 4px solid #2c3e50;
+      border-radius: 0 0 12px 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .water-surface {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0.6) 0%, 
+        rgba(200,230,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 100%);
+      animation: wave 3s ease-in-out infinite;
+    }
+    
+    @keyframes wave {
+      0%, 100% { transform: translateX(-2px); }
+      50% { transform: translateX(2px); }
+    }
+    
+    .bubbles {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .bubble {
+      position: absolute;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      animation: rise 4s ease-in infinite;
+    }
+    
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.6; }
+      100% { transform: translateY(-300px) scale(0.5); opacity: 0; }
+    }
+    
+    .draggable-object {
+      cursor: grab;
+      transition: transform 0.2s, box-shadow 0.2s;
+      user-select: none;
+    }
+    
+    .draggable-object:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    
+    .draggable-object:active {
+      cursor: grabbing;
+    }
+    
+    .draggable-object.dragging {
+      opacity: 0.8;
+      transform: scale(1.1);
+      z-index: 1000;
+    }
+    
+    .object-in-tank {
+      position: absolute;
+      transition: top 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .wood-block {
+      background: linear-gradient(135deg, #d4a574 0%, #c4956a 50%, #b8865a 100%);
+      border: 2px solid #8b6914;
+      box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3), 
+                  inset -2px -2px 5px rgba(0,0,0,0.2),
+                  3px 3px 10px rgba(0,0,0,0.3);
+    }
+    
+
+    
+    .iron-sphere {
+      background: radial-gradient(circle at 30% 30%, #a8a8a8 0%, #6b6b6b 50%, #404040 100%);
+      border: 2px solid #333;
+      box-shadow: inset 3px 3px 10px rgba(255,255,255,0.4), 
+                  inset -3px -3px 10px rgba(0,0,0,0.4),
+                  4px 4px 15px rgba(0,0,0,0.4);
+    }
+    
+    .plastic-cube {
+      background: linear-gradient(135deg, #ff6b9d 0%, #e91e63 50%, #c2185b 100%);
+      border: 2px solid #880e4f;
+      box-shadow: inset 2px 2px 8px rgba(255,255,255,0.5), 
+                  inset -2px -2px 8px rgba(0,0,0,0.2),
+                  3px 3px 12px rgba(0,0,0,0.3);
+      opacity: 0.9;
+    }
+    
+    .tank-stand {
+      background: linear-gradient(180deg, #5d4e37 0%, #3d3229 100%);
+      border-radius: 0 0 8px 8px;
+    }
+    
+    .ruler {
+      position: absolute;
+      right: -30px;
+      top: 0;
+      bottom: 0;
+      width: 25px;
+      background: #f5f5dc;
+      border: 1px solid #8b8b7a;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+    
+    .ruler-mark {
+      font-size: 8px;
+      color: #333;
+      text-align: center;
+    }
+    
+    .lab-bg {
+      background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    .sidebar-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+      border: 1px solid #dee2e6;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .data-table {
+      background: white;
+      border-collapse: collapse;
+    }
+    
+    .data-table th {
+      background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+      color: white;
+      padding: 10px 8px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    
+    .data-table td {
+      padding: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 11px;
+      text-align: center;
+    }
+    
+    .data-table tr:hover {
+      background: #f5f5f5;
+    }
+    
+    .reset-btn {
+      background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+      transition: all 0.3s;
+    }
+    
+    .reset-btn:hover {
+      background: linear-gradient(180deg, #c0392b 0%, #a93226 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+    
+    .status-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    
+    .status-float { background: #d4edda; color: #155724; }
+    .status-sink { background: #f8d7da; color: #721c24; }
+    .status-suspend { background: #fff3cd; color: #856404; }
+    
+    .return-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .return-btn:hover {
+      background: #1e90ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 144, 255, 0.4);
+    }
+    
+    .return-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    @media (max-width: 640px) {
+      .return-btn {
+        padding: 10px;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        justify-content: center;
+      }
+      
+      .return-btn-text {
+        display: none;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body class="h-full"><!-- Return to Encyclopedia Button --> <a href="https://safa2.my.canva.site/hiba000" class="return-btn" target="_blank" rel="noopener noreferrer">
+   <svg fill="currentColor" viewbox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+   </svg><span class="return-btn-text">العودة للموسوعة الرئيسية</span> </a>
+  <div id="app" class="h-full lab-bg flex flex-col"><!-- Header -->
+   <header class="bg-gradient-to-l from-[#1a365d] to-[#2c5282] text-white py-4 px-6 shadow-lg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+       <svg class="w-7 h-7" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+       </svg>
+      </div>
+      <div>
+       <h1 id="main-title" class="text-xl font-bold">محاكاة الكثافة والطفو</h1>
+       <p class="text-blue-200 text-sm">مختبر الفيزياء الافتراضي</p>
+      </div>
+     </div>
+    </div>
+   </header><!-- Main Content -->
+   <main class="flex-1 p-4 overflow-auto">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 h-full"><!-- Sidebar - Objects -->
+     <aside class="lg:col-span-3 space-y-4">
+      <div class="sidebar-card rounded-xl p-4">
+       <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+         </svg></span> الأجسام المتاحة</h2>
+       <p class="text-xs text-gray-500 mb-4">اسحب الجسم إلى خزان الماء</p>
+       <div id="objects-container" class="space-y-3"><!-- Wood Block -->
+        <div id="wood-source" class="draggable-object wood-block rounded-lg p-4 flex items-center gap-3" draggable="true" data-type="wood">
+         <div class="w-12 h-12 wood-block rounded-md relative"></div>
+         <div><span id="wood-label" class="font-semibold text-gray-800 block">مكعب خشبي</span> <span class="text-xs text-gray-500">كثافة: 0.6 غ/سم³</span>
+         </div>
+        </div><!-- Iron Sphere -->
+        <div id="iron-source" class="draggable-object bg-gray-100 rounded-lg p-4 flex items-center gap-3" draggable="true" data-type="iron">
+         <div class="w-12 h-12 iron-sphere rounded-full"></div>
+         <div><span id="iron-label" class="font-semibold text-gray-800 block">كرة حديدية</span> <span class="text-xs text-gray-500">كثافة: 7.8 غ/سم³</span>
+         </div>
+        </div><!-- Plastic Cube -->
+        <div id="plastic-source" class="draggable-object bg-pink-50 rounded-lg p-4 flex items-center gap-3" draggable="true" data-type="plastic">
+         <div class="w-12 h-12 plastic-cube rounded-md"></div>
+         <div><span id="plastic-label" class="font-semibold text-gray-800 block">مكعب بلاستيكي</span> <span class="text-xs text-gray-500">كثافة: 1.0 غ/سم³</span>
+         </div>
+        </div>
+       </div><button id="reset-btn" class="reset-btn w-full mt-4 text-white py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg> إعادة التجربة </button>
+      </div><!-- Liquids Selection -->
+      <div class="sidebar-card rounded-xl p-4">
+       <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+        </svg> اختر السوائل</h3>
+       <div class="space-y-2"><label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50"> <input type="checkbox" class="liquid-checkbox w-4 h-4" data-liquid="oil"> <span class="text-sm font-semibold">🟡 زيت (0.92 غ/سم³)</span> </label> <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50"> <input type="checkbox" class="liquid-checkbox w-4 h-4" data-liquid="water" checked> <span class="text-sm font-semibold">💧 ماء (1.0 غ/سم³)</span> </label> <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50"> <input type="checkbox" class="liquid-checkbox w-4 h-4" data-liquid="honey"> <span class="text-sm font-semibold">🍯 عسل (1.42 غ/سم³)</span> </label>
+       </div>
+      </div><!-- Info Card -->
+      <div class="sidebar-card rounded-xl p-4">
+       <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+        <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+        </svg> معلومة ��لمية</h3>
+       <p class="text-xs text-gray-600 leading-relaxed">• الأجسام تطفو على السائل إذا كانت كثافتها أقل من كثافة السائل<br>
+         • الأجسام تغرق إذا كانت كثافتها أكبر من كثافة السائل<br>
+         • يمكن خلط السوائل لمشاهدة الطبقات</p>
+      </div>
+     </aside><!-- Water Tank -->
+     <section class="lg:col-span-5 flex flex-col items-center justify-center">
+      <div class="relative"><!-- Tank Label -->
+       <div class="text-center mb-2"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold"> خزان الماء </span>
+       </div><!-- Tank Top (Glass rim) -->
+       <div class="w-80 h-4 bg-gradient-to-b from-gray-300 to-gray-400 rounded-t-lg border-2 border-gray-500"></div><!-- Main Tank -->
+       <div id="water-tank" class="water-tank w-80 h-96 relative">
+        <div class="water-surface"></div><!-- Bubbles -->
+        <div class="bubbles">
+         <div class="bubble" style="width:8px;height:8px;left:20%;bottom:10%;animation-delay:0s;"></div>
+         <div class="bubble" style="width:6px;height:6px;left:50%;bottom:5%;animation-delay:1s;"></div>
+         <div class="bubble" style="width:10px;height:10px;left:70%;bottom:15%;animation-delay:2s;"></div>
+         <div class="bubble" style="width:5px;height:5px;left:30%;bottom:8%;animation-delay:0.5s;"></div>
+        </div><!-- Objects will be placed here -->
+        <div id="tank-objects"></div><!-- Water level indicator -->
+        <div class="absolute left-2 top-4 bottom-4 w-1 bg-white/30 rounded"></div><!-- Ruler -->
+        <div class="ruler"><span class="ruler-mark">0</span> <span class="ruler-mark">5</span> <span class="ruler-mark">10</span> <span class="ruler-mark">15</span> <span class="ruler-mark">20</span> <span class="ruler-mark">25</span> <span class="ruler-mark">30</span>
+        </div>
+       </div><!-- Tank Stand -->
+       <div class="tank-stand w-80 h-6"></div>
+       <div class="w-72 h-3 bg-gradient-to-b from-gray-600 to-gray-800 mx-auto rounded-b-lg"></div><!-- Drop Zone Indicator -->
+       <div id="drop-indicator" class="absolute inset-0 border-4 border-dashed border-green-400 rounded-lg opacity-0 transition-opacity pointer-events-none"></div>
+      </div>
+     </section><!-- Data Table -->
+     <aside class="lg:col-span-4 space-y-4">
+      <div class="sidebar-card rounded-xl p-4">
+       <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><span class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+         </svg></span> جدول البيانات</h2>
+       <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="data-table w-full">
+         <thead>
+          <tr>
+           <th class="rounded-tr-lg">الجسم</th>
+           <th>الكتلة (غ)</th>
+           <th>الحجم (سم³)</th>
+           <th>الكثافة (غ/سم³)</th>
+           <th class="rounded-tl-lg">الحالة</th>
+          </tr>
+         </thead>
+         <tbody id="data-table-body">
+          <tr>
+           <td class="font-semibold text-amber-700">مكعب خشبي</td>
+           <td>48</td>
+           <td>80</td>
+           <td class="font-mono font-bold text-blue-600">0.60</td>
+           <td><span class="status-badge status-float">يطفو ↑</span></td>
+          </tr>
+          <tr>
+           <td class="font-semibold text-gray-700">كرة حديدية</td>
+           <td>327</td>
+           <td>42</td>
+           <td class="font-mono font-bold text-blue-600">7.80</td>
+           <td><span class="status-badge status-sink">يغرق ↓</span></td>
+          </tr>
+          <tr>
+           <td class="font-semibold text-pink-700">مكعب بلاستيكي</td>
+           <td>64</td>
+           <td>64</td>
+           <td class="font-mono font-bold text-blue-600">1.00</td>
+           <td><span class="status-badge status-suspend">يعلق ≈</span></td>
+          </tr>
+         </tbody>
+        </table>
+       </div><!-- Formula Box -->
+       <div class="mt-4 bg-gradient-to-l from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+        <h3 class="font-bold text-blue-800 mb-2">قانون الكثافة</h3>
+        <div class="text-center py-3 bg-white rounded-lg shadow-inner"><span class="text-xl font-bold text-gray-800">الكثافة = الكتلة ÷ الحجم</span>
+        </div>
+        <div class="mt-2 text-xs text-gray-600 space-y-1">
+         <p><strong>الكثافة</strong> تُقاس بـ غ/سم³</p>
+         <p><strong>الكتلة</strong> تُقاس بالغرام</p>
+         <p><strong>الحجم</strong> تُقاس بـ سم³</p>
+        </div>
+       </div>
+      </div><!-- Results Summary -->
+      <div id="results-summary" class="sidebar-card rounded-xl p-4 hidden">
+       <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+        <svg class="w-5 h-5 text-purple-500" fill="currentColor" viewbox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+        </svg> نتائج التجربة</h3>
+       <div id="results-content" class="space-y-2 text-sm"></div>
+      </div>
+     </aside>
+    </div>
+   </main><!-- Footer -->
+   <footer class="bg-gradient-to-l from-[#1a365d] to-[#2c5282] text-white py-3 px-6 text-center">
+    <p class="text-sm">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: 'محاكاة الكثافة والطفو',
+      wood_label: 'مكعب خشبي',
+      iron_label: 'كرة حديدية',
+      plastic_label: 'مكعب بلاستيكي',
+      background_color: '#f8f9fa',
+      primary_color: '#2c5282',
+      text_color: '#1a202c',
+      accent_color: '#e74c3c',
+      surface_color: '#ffffff'
+    };
+
+    const objectsData = {
+      wood: { mass: 48, volume: 80, density: 0.6, label: 'مكعب خشبي', class: 'wood-block', shape: 'rounded-md', size: 'w-14 h-14' },
+      iron: { mass: 327, volume: 42, density: 7.8, label: 'كرة حديدية', class: 'iron-sphere', shape: 'rounded-full', size: 'w-12 h-12' },
+      plastic: { mass: 64, volume: 64, density: 1.0, label: 'مكعب بلاستيكي', class: 'plastic-cube', shape: 'rounded-md', size: 'w-12 h-12' }
+    };
+
+    const liquidsData = {
+      oil: { 
+        name: 'زيت', 
+        density: 0.92, 
+        color: 'rgba(255, 215, 0, 0.4)',
+        gradient: 'linear-gradient(180deg, rgba(255, 235, 150, 0.3) 0%, rgba(255, 215, 0, 0.5) 100%)'
+      },
+      water: { 
+        name: 'ماء', 
+        density: 1.0, 
+        color: 'rgba(64, 164, 223, 0.4)',
+        gradient: 'linear-gradient(180deg, rgba(64, 164, 223, 0.2) 0%, rgba(41, 128, 185, 0.6) 100%)'
+      },
+      honey: { 
+        name: 'عسل', 
+        density: 1.42, 
+        color: 'rgba(218, 165, 32, 0.6)',
+        gradient: 'linear-gradient(180deg, rgba(238, 180, 50, 0.5) 0%, rgba(184, 134, 11, 0.8) 100%)'
+      }
+    };
+
+    let activeLiquids = ['water'];
+    const objectsInTank = new Map();
+    let draggedType = null;
+
+    function getPosition(density, liquidType = 'water') {
+      const liquidDensity = liquidsData[liquidType].density;
+      
+      if (density < liquidDensity) return 15; // يطفو
+      if (density > liquidDensity) return 85; // يغرق للقاع
+      return 45; // يعلق في المنتصف
+    }
+
+    function updateLiquidsDisplay() {
+      const tank = document.getElementById('water-tank');
+      
+      if (activeLiquids.length === 0) {
+        tank.style.background = 'linear-gradient(180deg, rgba(200,200,200,0.1) 0%, rgba(150,150,150,0.2) 100%)';
+        return;
+      }
+      
+      // Sort liquids by density (lightest on top)
+      const sortedLiquids = [...activeLiquids].sort((a, b) => 
+        liquidsData[a].density - liquidsData[b].density
+      );
+      
+      if (sortedLiquids.length === 1) {
+        tank.style.background = liquidsData[sortedLiquids[0]].gradient;
+      } else if (sortedLiquids.length === 2) {
+        const liquid1 = liquidsData[sortedLiquids[0]];
+        const liquid2 = liquidsData[sortedLiquids[1]];
+        tank.style.background = `linear-gradient(180deg, 
+          ${liquid1.color} 0%, 
+          ${liquid1.color} 40%, 
+          ${liquid2.color} 60%, 
+          ${liquid2.color} 100%)`;
+      } else if (sortedLiquids.length === 3) {
+        const liquid1 = liquidsData[sortedLiquids[0]];
+        const liquid2 = liquidsData[sortedLiquids[1]];
+        const liquid3 = liquidsData[sortedLiquids[2]];
+        tank.style.background = `linear-gradient(180deg, 
+          ${liquid1.color} 0%, 
+          ${liquid1.color} 25%, 
+          ${liquid2.color} 40%, 
+          ${liquid2.color} 60%, 
+          ${liquid3.color} 75%, 
+          ${liquid3.color} 100%)`;
+      }
+      
+      // Update all objects positions based on their density
+      updateAllObjectsPositions();
+    }
+
+    function getLiquidLayerForObject(objectDensity) {
+      // إذا لم يكن هناك سائل، كل الأجسام تسقط للأسفل
+      if (activeLiquids.length === 0) return { liquid: 'air', position: 85 };
+      
+      const sortedLiquids = [...activeLiquids].sort((a, b) => 
+        liquidsData[a].density - liquidsData[b].density
+      );
+      
+      // Find which liquid layer the object will settle in
+      for (let i = 0; i < sortedLiquids.length; i++) {
+        const liquidType = sortedLiquids[i];
+        const liquidDensity = liquidsData[liquidType].density;
+        
+        // إذا كانت الكثافة مساوية للسائل، يعلق في المنتصف
+        if (Math.abs(objectDensity - liquidDensity) < 0.01) {
+          if (i === 0 && sortedLiquids.length === 1) return { liquid: liquidType, position: 50 }; // منتصف السائل الوحيد
+          if (i === 0) return { liquid: liquidType, position: 30 }; // منتصف الطبقة العليا
+          if (i === 1) return { liquid: liquidType, position: 50 }; // منتصف الطبقة الوسطى
+          return { liquid: liquidType, position: 70 }; // منتصف الطبقة السفلى
+        }
+        
+        if (objectDensity < liquidDensity) {
+          // Object floats on this liquid
+          if (i === 0) return { liquid: liquidType, position: 15 }; // Top layer
+          if (i === 1) return { liquid: liquidType, position: 45 }; // Middle layer
+          return { liquid: liquidType, position: 65 }; // Lower-middle
+        }
+      }
+      
+      // Object sinks to bottom
+      return { liquid: sortedLiquids[sortedLiquids.length - 1], position: 85 };
+    }
+
+    function updateAllObjectsPositions() {
+      objectsInTank.forEach((obj, type) => {
+        const data = objectsData[type];
+        const { position } = getLiquidLayerForObject(data.density);
+        obj.style.top = `${position}%`;
+      });
+    }
+
+    function getStatus(density) {
+      if (activeLiquids.length === 0) return { text: 'لا يوجد سائل', class: 'status-suspend' };
+      
+      const sortedLiquids = [...activeLiquids].sort((a, b) => 
+        liquidsData[a].density - liquidsData[b].density
+      );
+      
+      for (let liquid of sortedLiquids) {
+        const liquidDensity = liquidsData[liquid].density;
+        if (density < liquidDensity) {
+          return { text: `يطفو على ${liquidsData[liquid].name} ↑`, class: 'status-float' };
+        }
+      }
+      
+      const heaviestLiquid = sortedLiquids[sortedLiquids.length - 1];
+      return { text: `��غرق ��ي ${liquidsData[heaviestLiquid].name} ↓`, class: 'status-sink' };
+    }
+
+    function addObjectToTank(type) {
+      if (objectsInTank.has(type)) return;
+      
+      const data = objectsData[type];
+      const tankObjects = document.getElementById('tank-objects');
+      const { position } = getLiquidLayerForObject(data.density);
+      
+      const obj = document.createElement('div');
+      obj.id = `tank-${type}`;
+      obj.className = `object-in-tank ${data.class} ${data.shape} ${data.size} flex items-center justify-center`;
+      obj.style.cssText = `left: ${30 + Math.random() * 40}%; top: -20%;`;
+      
+      tankObjects.appendChild(obj);
+      objectsInTank.set(type, obj);
+      
+      // Disable source
+      const source = document.getElementById(`${type}-source`);
+      source.style.opacity = '0.4';
+      source.style.pointerEvents = 'none';
+      
+      // Animate to position
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          obj.style.top = `${position}%`;
+        }, 50);
+      });
+      
+      updateResults();
+    }
+
+    function updateResults() {
+      const summary = document.getElementById('results-summary');
+      const content = document.getElementById('results-content');
+      
+      if (objectsInTank.size === 0) {
+        summary.classList.add('hidden');
+        return;
+      }
+      
+      summary.classList.remove('hidden');
+      content.innerHTML = '';
+      
+      objectsInTank.forEach((_, type) => {
+        const data = objectsData[type];
+        const status = getStatus(data.density);
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between p-2 bg-gray-50 rounded-lg';
+        div.innerHTML = `
+          <span class="font-semibold">${data.label}</span>
+          <span class="status-badge ${status.class}">${status.text}</span>
+        `;
+        content.appendChild(div);
+      });
+    }
+
+    function resetExperiment() {
+      const tankObjects = document.getElementById('tank-objects');
+      tankObjects.innerHTML = '';
+      objectsInTank.clear();
+      
+      ['wood', 'iron', 'plastic'].forEach(type => {
+        const source = document.getElementById(`${type}-source`);
+        source.style.opacity = '1';
+        source.style.pointerEvents = 'auto';
+      });
+      
+      document.getElementById('results-summary').classList.add('hidden');
+    }
+
+    // Drag and Drop
+    document.querySelectorAll('.draggable-object').forEach(el => {
+      el.addEventListener('dragstart', (e) => {
+        draggedType = e.target.closest('.draggable-object').dataset.type;
+        e.target.closest('.draggable-object').classList.add('dragging');
+      });
+      
+      el.addEventListener('dragend', (e) => {
+        e.target.closest('.draggable-object').classList.remove('dragging');
+        document.getElementById('drop-indicator').style.opacity = '0';
+      });
+    });
+
+    const tank = document.getElementById('water-tank');
+    
+    tank.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      document.getElementById('drop-indicator').style.opacity = '1';
+    });
+    
+    tank.addEventListener('dragleave', () => {
+      document.getElementById('drop-indicator').style.opacity = '0';
+    });
+    
+    tank.addEventListener('drop', (e) => {
+      e.preventDefault();
+      document.getElementById('drop-indicator').style.opacity = '0';
+      if (draggedType) {
+        addObjectToTank(draggedType);
+        draggedType = null;
+      }
+    });
+
+    // Touch support
+    let touchedElement = null;
+    
+    document.querySelectorAll('.draggable-object').forEach(el => {
+      el.addEventListener('touchstart', (e) => {
+        if (el.style.pointerEvents === 'none') return;
+        touchedElement = el;
+        el.classList.add('dragging');
+      });
+    });
+
+    document.addEventListener('touchend', (e) => {
+      if (!touchedElement) return;
+      
+      const touch = e.changedTouches[0];
+      const tankRect = tank.getBoundingClientRect();
+      
+      if (touch.clientX >= tankRect.left && touch.clientX <= tankRect.right &&
+          touch.clientY >= tankRect.top && touch.clientY <= tankRect.bottom) {
+        const type = touchedElement.dataset.type;
+        if (type) addObjectToTank(type);
+      }
+      
+      touchedElement.classList.remove('dragging');
+      touchedElement = null;
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', resetExperiment);
+
+    // Liquid selection handlers
+    document.querySelectorAll('.liquid-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const liquidType = e.target.dataset.liquid;
+        if (e.target.checked) {
+          if (!activeLiquids.includes(liquidType)) {
+            activeLiquids.push(liquidType);
+          }
+        } else {
+          activeLiquids = activeLiquids.filter(l => l !== liquidType);
+        }
+        updateLiquidsDisplay();
+        updateResults();
+      });
+    });
+
+    // Initialize liquids display
+    updateLiquidsDisplay();
+
+    // Element SDK
+    async function onConfigChange(config) {
+      document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+      document.getElementById('wood-label').textContent = config.wood_label || defaultConfig.wood_label;
+      document.getElementById('iron-label').textContent = config.iron_label || defaultConfig.iron_label;
+      document.getElementById('plastic-label').textContent = config.plastic_label || defaultConfig.plastic_label;
+      
+      objectsData.wood.label = config.wood_label || defaultConfig.wood_label;
+      objectsData.iron.label = config.iron_label || defaultConfig.iron_label;
+      objectsData.plastic.label = config.plastic_label || defaultConfig.plastic_label;
+      
+      // Update table
+      const rows = document.querySelectorAll('#data-table-body tr');
+      if (rows[0]) rows[0].querySelector('td').textContent = config.wood_label || defaultConfig.wood_label;
+      if (rows[1]) rows[1].querySelector('td').textContent = config.iron_label || defaultConfig.iron_label;
+      if (rows[2]) rows[2].querySelector('td').textContent = config.plastic_label || defaultConfig.plastic_label;
+      
+      // Colors
+      const bg = config.background_color || defaultConfig.background_color;
+      const primary = config.primary_color || defaultConfig.primary_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const accent = config.accent_color || defaultConfig.accent_color;
+      const surface = config.surface_color || defaultConfig.surface_color;
+      
+      document.getElementById('app').style.backgroundColor = bg;
+      document.querySelectorAll('header, footer').forEach(el => {
+        el.style.background = `linear-gradient(to left, ${primary}, ${primary}dd)`;
+      });
+      document.querySelectorAll('.sidebar-card').forEach(el => {
+        el.style.backgroundColor = surface;
+      });
+      document.getElementById('reset-btn').style.background = `linear-gradient(180deg, ${accent}, ${accent}cc)`;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['main_title', config.main_title || defaultConfig.main_title],
+        ['wood_label', config.wood_label || defaultConfig.wood_label],
+        ['iron_label', config.iron_label || defaultConfig.iron_label],
+        ['plastic_label', config.plastic_label || defaultConfig.plastic_label]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a08065cdfaf0ddf9',t:'MTc4MDg0MzA3Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

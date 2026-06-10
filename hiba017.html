@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكاة البندول البسيط | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="17.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&amp;family=Cairo:wght@400;600;700&amp;family=Amiri:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      height: 100%;
+    }
+    
+    body {
+      height: auto;
+      min-height: 100%;
+      display: block;
+      overflow-y: auto;
+      font-family: 'Tajawal', 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      background-attachment: fixed;
+      color: #f1f5f9;
+    }
+    
+    .page-wrapper {
+      width: 100%;
+      padding: 100px 20px 20px 20px;
+    }
+    
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      max-width: 1400px;
+      margin: 0 auto 30px auto;
+    }
+    
+    .simulation-section {
+      flex: 1 1 600px;
+      min-width: 300px;
+      max-width: 900px;
+    }
+    
+    .controls-section {
+      flex: 0 0 350px;
+      width: 350px;
+      min-width: 300px;
+    }
+    
+    .canvas-container {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 500px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    
+    .control-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    
+    .info-section {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    .site-footer {
+      position: relative;
+      clear: both;
+      margin-top: 50px;
+      padding: 30px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+      .simulation-section,
+      .controls-section {
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .page-wrapper {
+        padding-top: 120px;
+      }
+      
+      #return-text {
+        display: none;
+      }
+      
+      #return-button {
+        padding: 10px;
+        width: 44px;
+        height: 44px;
+        justify-content: center;
+      }
+    }
+    
+    .slider-track {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      outline: none;
+      background: #475569;
+      width: 100%;
+    }
+    
+    .slider-track::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      border: 2px solid currentColor;
+    }
+    
+    .slider-track::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .slider-track::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      border: none;
+    }
+    
+    .energy-bar {
+      transition: height 0.05s ease-out;
+    }
+    
+    #return-button:hover {
+      background: rgba(30, 144, 255, 0.9) !important;
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(30, 144, 255, 0.3);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body><a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" id="return-button" class="fixed top-4 left-4 z-[9999] flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+   <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+   </svg><span id="return-text" class="text-white font-medium text-sm">العودة للموسوعة الرئيسية</span> </a>
+  <div class="page-wrapper">
+   <header style="text-align: center; margin-bottom: 40px;">
+    <h1 id="main-title" style="font-size: 2.5rem; font-weight: 700; background: linear-gradient(to left, #22d3ee, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px;">محاكاة البندول البسيط</h1>
+    <p style="color: #94a3b8; font-size: 1rem;">تجربة تفاعلية لفهم حركة البندول والطاقة</p>
+   </header>
+   <div class="main-container">
+    <div class="simulation-section">
+     <div class="canvas-container">
+      <canvas id="pendulum-canvas" style="width: 100%; height: 100%;"></canvas>
+      <div style="position: absolute; top: 20px; left: 20px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-radius: 12px; padding: 15px; border: 1px solid rgba(148, 163, 184, 0.3);">
+       <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 5px;">صيغة الدورة الزمنية</p>
+       <p style="font-family: monospace; font-size: 1.125rem; color: #22d3ee;">T = 2π√(L/g)</p>
+       <p id="period-value" style="font-family: monospace; font-size: 0.875rem; color: #a5b4fc; margin-top: 5px;">T = 2.01 s</p>
+      </div>
+     </div>
+    </div>
+    <div class="controls-section">
+     <div class="control-card" style="margin-bottom: 20px;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: #22d3ee; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+       <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+       </svg> لوحة التحكم</h2>
+      <div style="margin-bottom: 20px;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">طول الخيط (L)</label> <span id="length-value" style="font-family: monospace; color: #22d3ee; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">1.00 م</span>
+       </div><input type="range" id="length-slider" min="0.5" max="2.5" step="0.1" value="1.0" class="slider-track" style="color: #22d3ee;">
+      </div>
+      <div style="margin-bottom: 20px;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">الكتلة (m)</label> <span id="mass-value" style="font-family: monospace; color: #818cf8; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">1.0 كجم</span>
+       </div><input type="range" id="mass-slider" min="0.5" max="3.0" step="0.1" value="1.0" class="slider-track" style="color: #818cf8;">
+      </div>
+      <div style="margin-bottom: 20px;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">زاوية الإطلاق</label> <span id="angle-value" style="font-family: monospace; color: #fbbf24; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">45°</span>
+       </div><input type="range" id="angle-slider" min="10" max="80" step="5" value="45" class="slider-track" style="color: #fbbf24;">
+      </div>
+      <div style="margin-bottom: 20px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500; display: block; margin-bottom: 10px;">قوة الجاذبية</label> <select id="gravity-selector" style="width: 100%; padding: 10px 12px; border-radius: 8px; background: #334155; color: white; border: 1px solid #475569; outline: none; transition: border-color 0.3s;"> <option value="9.81">🌍 الأرض (9.81 م/ث²)</option> <option value="1.62">🌕 القمر (1.62 م/ث²)</option> <option value="3.71">🔴 المريخ (3.71 م/ث²)</option> <option value="24.79">🟡 المشتري (24.79 م/ث²)</option> <option value="10.44">🪐 زحل (10.44 م/ث²)</option> </select>
+      </div><button id="release-btn" style="width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; color: white; background: linear-gradient(to left, #6366f1, #22d3ee); border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);"> 🚀 إطلاق البندول </button> <button id="reset-btn" style="width: 100%; margin-top: 10px; padding: 10px; border-radius: 12px; font-weight: 500; color: #cbd5e1; background: #334155; border: none; cursor: pointer; transition: all 0.3s;"> ↻ إعادة ضبط </button>
+      <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between; background: rgba(51, 65, 85, 0.5); padding: 12px; border-radius: 12px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+        <svg style="width: 16px; height: 16px; color: #22d3ee;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+        </svg> رسم المسار </label> <button id="trail-toggle" style="position: relative; display: inline-flex; height: 24px; width: 44px; align-items: center; border-radius: 9999px; transition: background-color 0.3s; background: #475569; border: none; cursor: pointer;"> <span id="trail-toggle-circle" style="display: inline-block; height: 16px; width: 16px; border-radius: 9999px; background: white; transition: transform 0.3s; transform: translateX(4px);"></span> </button>
+      </div>
+     </div>
+     <div class="control-card" style="margin-bottom: 20px;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: #fbbf24; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+       <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+       </svg> مخطط الطاقة</h2>
+      <div style="display: flex; justify-content: center; gap: 40px; height: 160px;">
+       <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="flex: 1; width: 48px; background: #334155; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; position: relative;">
+         <div id="pe-bar" class="energy-bar" style="width: 100%; background: linear-gradient(to top, #d97706, #fbbf24); border-radius: 8px 8px 0 0; height: 100%;"></div>
+        </div>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 8px;">طاقة وضع</p>
+        <p id="pe-value" style="font-family: monospace; font-size: 0.75rem; color: #fbbf24;">0.00 J</p>
+       </div>
+       <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="flex: 1; width: 48px; background: #334155; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; position: relative;">
+         <div id="ke-bar" class="energy-bar" style="width: 100%; background: linear-gradient(to top, #0891b2, #22d3ee); border-radius: 8px 8px 0 0; height: 0%;"></div>
+        </div>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 8px;">طاقة حركة</p>
+        <p id="ke-value" style="font-family: monospace; font-size: 0.75rem; color: #22d3ee;">0.00 J</p>
+       </div>
+       <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="flex: 1; width: 48px; background: #334155; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; position: relative;">
+         <div id="te-bar" class="energy-bar" style="width: 100%; background: linear-gradient(to top, #4f46e5, #818cf8); border-radius: 8px 8px 0 0; height: 100%;"></div>
+        </div>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 8px;">الطاقة الكلية</p>
+        <p id="te-value" style="font-family: monospace; font-size: 0.75rem; color: #818cf8;">0.00 J</p>
+       </div>
+      </div>
+     </div>
+     <div class="control-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <svg style="width: 20px; height: 20px; color: #10b981;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg> سرعة المحاكاة </label> <span id="speed-value" style="font-family: monospace; color: #10b981; font-size: 1rem; background: #334155; padding: 6px 12px; border-radius: 8px; font-weight: 500;">1.0x</span>
+      </div><input type="range" id="speed-slider" min="0.25" max="4" step="0.25" value="1" class="slider-track" style="color: #10b981;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; margin-top: 8px;"><span>بطيء</span> <span>عادي</span> <span>سريع</span>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="info-section">
+    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8)); border-radius: 16px; padding: 30px; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);">
+     <div style="display: flex; align-items: flex-start; gap: 15px;">
+      <svg style="width: 28px; height: 28px; color: #3b82f6; flex-shrink: 0; margin-top: 4px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+      </svg>
+      <div style="flex: 1;">
+       <h2 style="font-size: 1.5rem; font-weight: 700; color: #3b82f6; margin-bottom: 20px;">المبدأ الفيزيائي للبندول البسيط</h2>
+       <div style="background: rgba(51, 65, 85, 0.4); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="color: #22d3ee; font-weight: 600; font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+         <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+         </svg> ما هو البندول البسيط؟</h3>
+        <p style="color: #e2e8f0; font-size: 0.875rem; line-height: 1.7; margin-bottom: 15px;">البندول البسيط هو أحد أبسط الأنظمة الميكانيكية وأكثرها أهمية في الفيزياء الكلاسيكية. يتكون من كتلة نقطية معلقة بواسطة خيط أو قضيب خفيف غير قابل للتمدد بطول محدد، مثبت من نهايته العليا بنقطة ثابتة تسمى نقطة التعليق.</p>
+        <p style="color: #e2e8f0; font-size: 0.875rem; line-height: 1.7;">عندما تزاح الكتلة عن موضع الاتزان الرأسي بزاوية معينة ثم تترك حرة، فإنها تبدأ بالتأرجح ذهابا وإيابا حول نقطة الاتزان تحت تأثير قوة الجاذبية الأرضية. هذه الحركة الدورية تسمى الحركة التوافقية البسيطة.</p>
+       </div>
+       <div style="background: rgba(51, 65, 85, 0.4); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="color: #22d3ee; font-weight: 600; font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+         <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+         </svg> قانون الدورة الزمنية</h3>
+        <div style="background: rgba(15, 23, 42, 0.6); border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+         <p style="font-family: monospace; text-align: center; font-size: 1.5rem; color: #22d3ee; margin-bottom: 15px;">T = 2π√(L/g)</p>
+         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.875rem;">
+          <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 10px;"><span style="font-family: monospace; color: #22d3ee; font-weight: 700;">T</span> <span style="color: #cbd5e1;"> = الزمن الدوري (ثانية)</span>
+          </div>
+          <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 10px;"><span style="font-family: monospace; color: #22d3ee; font-weight: 700;">L</span> <span style="color: #cbd5e1;"> = طول الخيط (متر)</span>
+          </div>
+          <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 10px;"><span style="font-family: monospace; color: #22d3ee; font-weight: 700;">g</span> <span style="color: #cbd5e1;"> = تسارع الجاذبية (م/ث²)</span>
+          </div>
+          <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 10px;"><span style="font-family: monospace; color: #22d3ee; font-weight: 700;">π</span> <span style="color: #cbd5e1;"> = النسبة الثابتة (3.14159...)</span>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div style="background: rgba(51, 65, 85, 0.4); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="color: #fbbf24; font-weight: 600; font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+         <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+         </svg> تحويل الطاقة وقانون حفظ الطاقة</h3>
+        <p style="color: #e2e8f0; font-size: 0.875rem; line-height: 1.7; margin-bottom: 15px;">حركة البندول هي تطبيق مثالي على قانون حفظ الطاقة الميكانيكية. الطاقة الكلية تبقى ثابتة طوال الحركة، لكنها تتحول باستمرار بين شكلين:</p>
+        <div style="margin-bottom: 12px;">
+         <div style="background: rgba(217, 119, 6, 0.2); border-radius: 8px; padding: 15px; border-right: 4px solid #fbbf24;">
+          <h4 style="color: #fbbf24; font-weight: 600; font-size: 0.875rem; margin-bottom: 5px;">أقصى ارتفاع</h4>
+          <p style="color: #cbd5e1; font-size: 0.875rem;">طاقة الوضع في أعلى قيمة، الطاقة الحركية = صفر</p>
+         </div>
+        </div>
+        <div style="margin-bottom: 12px;">
+         <div style="background: rgba(8, 145, 178, 0.2); border-radius: 8px; padding: 15px; border-right: 4px solid #22d3ee;">
+          <h4 style="color: #22d3ee; font-weight: 600; font-size: 0.875rem; margin-bottom: 5px;">أدنى نقطة</h4>
+          <p style="color: #cbd5e1; font-size: 0.875rem;">الطاقة الحركية في أعلى قيمة، طاقة الوضع = صفر</p>
+         </div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.6); border-radius: 8px; padding: 20px; margin-top: 20px;">
+         <p style="text-align: center; color: #94a3b8; font-size: 0.875rem; margin-bottom: 10px;">معادلة حفظ الطاقة</p>
+         <p style="font-family: monospace; text-align: center; font-size: 1.25rem; color: #a5b4fc;">PE + KE = Constant</p>
+        </div>
+       </div>
+       <div style="background: rgba(51, 65, 85, 0.4); border-radius: 12px; padding: 20px;">
+        <h3 style="color: #10b981; font-weight: 600; font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+         <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+         </svg> التطبيقات العملية</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; font-size: 0.875rem; color: #e2e8f0;">
+         <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 15px;">
+          <p style="font-weight: 600; color: #10b981; margin-bottom: 5px;">⏰ الساعات الرقاصية</p>
+          <p>استخدم البندول لقرون في الساعات الميكانيكية لضبط الوقت</p>
+         </div>
+         <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 15px;">
+          <p style="font-weight: 600; color: #10b981; margin-bottom: 5px;">🌍 قياس الجاذبية</p>
+          <p>يستخدم لقياس قيمة تسارع الجاذبية في مواقع مختلفة</p>
+         </div>
+         <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 15px;">
+          <p style="font-weight: 600; color: #10b981; margin-bottom: 5px;">🏗️ مقاومة الزلازل</p>
+          <p>تصميم مثبطات الاهتزازات في ناطحات السحاب</p>
+         </div>
+         <div style="background: rgba(30, 41, 59, 0.5); border-radius: 8px; padding: 15px;">
+          <p style="font-weight: 600; color: #10b981; margin-bottom: 5px;">🎪 الألعاب والمراجيح</p>
+          <p>فهم حركة المراجيح والأرجوحات في الملاهي</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <footer class="site-footer">
+   <p id="footer-text" style="color: #64748b; font-size: 0.875rem;">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+  </footer>
+  <script>
+    const defaultConfig = {
+      main_title: 'محاكاة البندول البسيط',
+      footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين',
+      background_color: '#0f172a',
+      surface_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_action_color: '#6366f1',
+      secondary_action_color: '#22d3ee',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    let g = 9.81;
+    let length = 1.0;
+    let mass = 1.0;
+    let initialAngle = Math.PI / 4;
+    let angle = initialAngle;
+    let angularVelocity = 0;
+    let simulationSpeed = 1.0;
+    let isRunning = false;
+    let animationId = null;
+    let lastTime = 0;
+    let trailEnabled = false;
+    let trailPoints = [];
+    const maxTrailPoints = 200;
+
+    const canvas = document.getElementById('pendulum-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const lengthSlider = document.getElementById('length-slider');
+    const massSlider = document.getElementById('mass-slider');
+    const angleSlider = document.getElementById('angle-slider');
+    const gravitySelector = document.getElementById('gravity-selector');
+    const speedSlider = document.getElementById('speed-slider');
+    const lengthValue = document.getElementById('length-value');
+    const massValue = document.getElementById('mass-value');
+    const angleValue = document.getElementById('angle-value');
+    const speedValue = document.getElementById('speed-value');
+    const periodValue = document.getElementById('period-value');
+    const releaseBtn = document.getElementById('release-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const peBar = document.getElementById('pe-bar');
+    const keBar = document.getElementById('ke-bar');
+    const teBar = document.getElementById('te-bar');
+    const peValue = document.getElementById('pe-value');
+    const keValue = document.getElementById('ke-value');
+    const teValue = document.getElementById('te-value');
+    const trailToggle = document.getElementById('trail-toggle');
+    const trailToggleCircle = document.getElementById('trail-toggle-circle');
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width - 40;
+      canvas.height = rect.height - 40;
+      if (!isRunning) drawPendulum();
+    }
+
+    function calculatePeriod() {
+      return 2 * Math.PI * Math.sqrt(length / g);
+    }
+
+    function updatePeriodDisplay() {
+      const T = calculatePeriod();
+      periodValue.textContent = 'T = ' + T.toFixed(2) + ' s';
+    }
+
+    function calculateEnergies() {
+      const h = length * (1 - Math.cos(angle));
+      const velocity = length * angularVelocity;
+      const PE = mass * g * h;
+      const KE = 0.5 * mass * velocity * velocity;
+      const TE = PE + KE;
+      return { PE, KE, TE };
+    }
+
+    function updateEnergyDisplay() {
+      const { PE, KE, TE } = calculateEnergies();
+      const maxEnergy = mass * g * length * (1 - Math.cos(initialAngle)) * 1.1;
+      
+      const pePercent = Math.min((PE / maxEnergy) * 100, 100);
+      const kePercent = Math.min((KE / maxEnergy) * 100, 100);
+      const tePercent = Math.min((TE / maxEnergy) * 100, 100);
+      
+      peBar.style.height = pePercent + '%';
+      keBar.style.height = kePercent + '%';
+      teBar.style.height = tePercent + '%';
+      
+      peValue.textContent = PE.toFixed(2) + ' J';
+      keValue.textContent = KE.toFixed(2) + ' J';
+      teValue.textContent = TE.toFixed(2) + ' J';
+    }
+
+    function drawPendulum() {
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      const pivotX = width / 2;
+      const pivotY = height * 0.15;
+      
+      const scale = Math.min(width, height) * 0.25;
+      const displayLength = length * scale;
+      
+      const bobX = pivotX + displayLength * Math.sin(angle);
+      const bobY = pivotY + displayLength * Math.cos(angle);
+      
+      if (trailEnabled && trailPoints.length > 1) {
+        ctx.strokeStyle = '#22d3ee';
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(trailPoints[0].x, trailPoints[0].y);
+        for (let i = 1; i < trailPoints.length; i++) {
+          const alpha = i / trailPoints.length;
+          ctx.globalAlpha = alpha * 0.6;
+          ctx.lineTo(trailPoints[i].x, trailPoints[i].y);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
+      
+      ctx.fillStyle = '#64748b';
+      ctx.beginPath();
+      ctx.moveTo(pivotX - 40, pivotY - 10);
+      ctx.lineTo(pivotX + 40, pivotY - 10);
+      ctx.lineTo(pivotX + 30, pivotY);
+      ctx.lineTo(pivotX - 30, pivotY);
+      ctx.closePath();
+      ctx.fill();
+      
+      const stringGradient = ctx.createLinearGradient(pivotX, pivotY, bobX, bobY);
+      stringGradient.addColorStop(0, '#94a3b8');
+      stringGradient.addColorStop(1, '#64748b');
+      ctx.strokeStyle = stringGradient;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pivotX, pivotY);
+      ctx.lineTo(bobX, bobY);
+      ctx.stroke();
+      
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(bobX + 5, bobY + 5, 15 + mass * 8, 8 + mass * 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      const bobRadius = 15 + mass * 8;
+      const bobGradient = ctx.createRadialGradient(bobX - bobRadius * 0.3, bobY - bobRadius * 0.3, 0, bobX, bobY, bobRadius);
+      bobGradient.addColorStop(0, '#818cf8');
+      bobGradient.addColorStop(0.7, '#6366f1');
+      bobGradient.addColorStop(1, '#4338ca');
+      ctx.fillStyle = bobGradient;
+      ctx.beginPath();
+      ctx.arc(bobX, bobY, bobRadius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.arc(bobX - bobRadius * 0.3, bobY - bobRadius * 0.3, bobRadius * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.arc(pivotX, pivotY, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(pivotX, pivotY, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function updatePhysics(deltaTime) {
+      const damping = 0.999;
+      const angularAcceleration = -(g / length) * Math.sin(angle);
+      angularVelocity += angularAcceleration * deltaTime;
+      angularVelocity *= damping;
+      angle += angularVelocity * deltaTime;
+    }
+
+    function animate(currentTime) {
+      if (!isRunning) return;
+      
+      if (lastTime === 0) lastTime = currentTime;
+      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.05) * simulationSpeed;
+      lastTime = currentTime;
+      
+      updatePhysics(deltaTime);
+      
+      if (trailEnabled) {
+        const width = canvas.width;
+        const height = canvas.height;
+        const pivotX = width / 2;
+        const pivotY = height * 0.15;
+        const scale = Math.min(width, height) * 0.25;
+        const displayLength = length * scale;
+        const bobX = pivotX + displayLength * Math.sin(angle);
+        const bobY = pivotY + displayLength * Math.cos(angle);
+        
+        trailPoints.push({ x: bobX, y: bobY });
+        if (trailPoints.length > maxTrailPoints) {
+          trailPoints.shift();
+        }
+      }
+      
+      drawPendulum();
+      updateEnergyDisplay();
+      
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function startSimulation() {
+      if (isRunning) return;
+      isRunning = true;
+      lastTime = 0;
+      releaseBtn.textContent = '⏸ إيقاف مؤقت';
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function stopSimulation() {
+      isRunning = false;
+      releaseBtn.textContent = '🚀 إطلاق البندول';
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    }
+
+    function resetSimulation() {
+      stopSimulation();
+      angle = initialAngle;
+      angularVelocity = 0;
+      trailPoints = [];
+      drawPendulum();
+      updateEnergyDisplay();
+    }
+
+    lengthSlider.addEventListener('input', function(e) {
+      length = parseFloat(e.target.value);
+      lengthValue.textContent = length.toFixed(2) + ' م';
+      updatePeriodDisplay();
+      if (!isRunning) resetSimulation();
+    });
+
+    massSlider.addEventListener('input', function(e) {
+      mass = parseFloat(e.target.value);
+      massValue.textContent = mass.toFixed(1) + ' كجم';
+      if (!isRunning) {
+        drawPendulum();
+        updateEnergyDisplay();
+      }
+    });
+
+    angleSlider.addEventListener('input', function(e) {
+      const degrees = parseInt(e.target.value);
+      initialAngle = degrees * Math.PI / 180;
+      angleValue.textContent = degrees + '°';
+      if (!isRunning) {
+        angle = initialAngle;
+        drawPendulum();
+        updateEnergyDisplay();
+      }
+    });
+
+    gravitySelector.addEventListener('change', function(e) {
+      g = parseFloat(e.target.value);
+      updatePeriodDisplay();
+      if (!isRunning) resetSimulation();
+    });
+
+    speedSlider.addEventListener('input', function(e) {
+      simulationSpeed = parseFloat(e.target.value);
+      speedValue.textContent = simulationSpeed.toFixed(2) + 'x';
+    });
+
+    releaseBtn.addEventListener('click', function() {
+      if (isRunning) {
+        stopSimulation();
+      } else {
+        startSimulation();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetSimulation);
+    
+    trailToggle.addEventListener('click', function() {
+      trailEnabled = !trailEnabled;
+      if (trailEnabled) {
+        trailToggle.style.backgroundColor = '#22d3ee';
+        trailToggleCircle.style.transform = 'translateX(24px)';
+      } else {
+        trailToggle.style.backgroundColor = '#475569';
+        trailToggleCircle.style.transform = 'translateX(4px)';
+        trailPoints = [];
+        if (!isRunning) drawPendulum();
+      }
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function applyConfig(config) {
+      const title = config.main_title || defaultConfig.main_title;
+      const footer = config.footer_text || defaultConfig.footer_text;
+      const bgColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      document.getElementById('main-title').textContent = title;
+      document.getElementById('footer-text').textContent = footer;
+      
+      document.body.style.background = 'linear-gradient(135deg, ' + bgColor + ' 0%, ' + surfaceColor + ' 50%, ' + bgColor + ' 100%)';
+      document.body.style.fontFamily = fontFamily + ', Tajawal, sans-serif';
+      document.body.style.fontSize = fontSize + 'px';
+      document.body.style.color = textColor;
+      
+      releaseBtn.style.background = 'linear-gradient(to left, ' + primaryColor + ', ' + secondaryColor + ')';
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: defaultConfig,
+        onConfigChange: async function(config) {
+          applyConfig(config);
+        },
+        mapToCapabilities: function(config) {
+          return {
+            recolorables: [
+              {
+                get: function() { return config.background_color || defaultConfig.background_color; },
+                set: function(value) { window.elementSdk.setConfig({ background_color: value }); }
+              },
+              {
+                get: function() { return config.surface_color || defaultConfig.surface_color; },
+                set: function(value) { window.elementSdk.setConfig({ surface_color: value }); }
+              },
+              {
+                get: function() { return config.text_color || defaultConfig.text_color; },
+                set: function(value) { window.elementSdk.setConfig({ text_color: value }); }
+              },
+              {
+                get: function() { return config.primary_action_color || defaultConfig.primary_action_color; },
+                set: function(value) { window.elementSdk.setConfig({ primary_action_color: value }); }
+              },
+              {
+                get: function() { return config.secondary_action_color || defaultConfig.secondary_action_color; },
+                set: function(value) { window.elementSdk.setConfig({ secondary_action_color: value }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: function() { return config.font_family || defaultConfig.font_family; },
+              set: function(value) { window.elementSdk.setConfig({ font_family: value }); }
+            },
+            fontSizeable: {
+              get: function() { return config.font_size || defaultConfig.font_size; },
+              set: function(value) { window.elementSdk.setConfig({ font_size: value }); }
+            }
+          };
+        },
+        mapToEditPanelValues: function(config) {
+          return new Map([
+            ['main_title', config.main_title || defaultConfig.main_title],
+            ['footer_text', config.footer_text || defaultConfig.footer_text]
+          ]);
+        }
+      });
+    }
+
+    resizeCanvas();
+    updatePeriodDisplay();
+    updateEnergyDisplay();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a08098d7186c2332',t:'MTc4MDg0NTE2Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

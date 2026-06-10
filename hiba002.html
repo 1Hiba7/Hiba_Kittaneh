@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قائمة المهام اليومية</title>
+  <link rel="icon" type="image/png" href="2.png">
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+    
+    * {
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    .task-checkbox {
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .task-checkbox:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .task-checkbox:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    
+    .task-item {
+      transition: all 0.3s ease;
+    }
+    
+    .task-item:hover {
+      transform: translateX(-2px);
+    }
+    
+    .delete-btn {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .task-item:hover .delete-btn {
+      opacity: 1;
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      z-index: 9999;
+      animation: confetti-fall 3s ease-out forwards;
+      pointer-events: none;
+    }
+    
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    .controls-panel {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .control-group {
+      background: white;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .lang-btn, .filter-btn, .theme-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: transparent;
+      white-space: nowrap;
+    }
+    
+    .lang-btn.active, .filter-btn.active {
+      font-weight: bold;
+    }
+    
+    .progress-ring {
+      transition: stroke-dashoffset 0.5s ease;
+    }
+    
+    .priority-badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 90%;
+      max-height: 80%;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .theme-card {
+      height: 80px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .theme-card:hover {
+      transform: scale(1.05);
+    }
+    
+    .theme-card.selected {
+      border-color: #3b82f6;
+    }
+    
+    .theme-name {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 6px;
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body class="h-full">
+  <div class="controls-panel">
+   <div class="control-group" style="display: flex; gap: 8px;"><button class="lang-btn" data-lang="ar">🇸🇦</button> <button class="lang-btn" data-lang="en">🇬🇧</button> <button class="lang-btn" data-lang="fr">🇫🇷</button>
+   </div>
+   <div class="control-group" id="filterGroup" style="display: flex; flex-direction: column; gap: 6px;"><button class="filter-btn" data-filter="all">📋</button> <button class="filter-btn" data-filter="active">⚡</button> <button class="filter-btn" data-filter="completed">✅</button>
+   </div>
+   <div class="control-group"><button id="themeBtn" class="theme-btn">🎨</button>
+   </div>
+   <div class="control-group"><button id="darkModeBtn" class="theme-btn">🌙</button>
+   </div>
+  </div>
+  <div id="app" class="h-full w-full overflow-auto"></div>
+  <div id="themeModal"></div>
+  <script>
+    const themes = {
+      classic: { name: 'كلاسيكي', bg: '#f0f4f8', pattern: 'none' },
+      sunset: { name: 'غروب', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', pattern: 'none' },
+      ocean: { name: 'محيط', bg: 'linear-gradient(135deg, #667eea 0%, #08AEEA 100%)', pattern: 'none' },
+      forest: { name: 'غابة', bg: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', pattern: 'none' },
+      candy: { name: 'حلوى', bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', pattern: 'none' },
+      midnight: { name: 'منتصف الليل', bg: 'linear-gradient(135deg, #2c3e50 0%, #000428 100%)', pattern: 'none' },
+      peach: { name: 'خوخ', bg: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', pattern: 'none' },
+      mint: { name: 'نعناع', bg: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', pattern: 'none' },
+      fire: { name: 'نار', bg: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)', pattern: 'none' },
+      lavender: { name: 'خزامى', bg: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)', pattern: 'none' },
+      dots: { name: 'نقاط', bg: '#f0f4f8', pattern: 'radial-gradient(circle, rgba(59,130,246,0.15) 1px, transparent 1px)', patternSize: '20px 20px' },
+      grid: { name: 'شبكة', bg: '#f0f4f8', pattern: 'linear-gradient(rgba(59,130,246,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.1) 1px, transparent 1px)', patternSize: '30px 30px' },
+      diagonal: { name: 'قطري', bg: '#f0f4f8', pattern: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(59,130,246,0.1) 10px, rgba(59,130,246,0.1) 20px)', patternSize: 'auto' },
+      zigzag: { name: 'متعرج', bg: '#f0f4f8', pattern: 'linear-gradient(135deg, rgba(59,130,246,0.1) 25%, transparent 25%), linear-gradient(225deg, rgba(59,130,246,0.1) 25%, transparent 25%)', patternSize: '20px 20px' },
+      bubbles: { name: 'فقاعات', bg: '#e3f2fd', pattern: 'radial-gradient(circle, rgba(59,130,246,0.2) 10%, transparent 10%), radial-gradient(circle, rgba(59,130,246,0.15) 15%, transparent 15%)', patternSize: '60px 60px', patternPosition: '0 0, 30px 30px' },
+      waves: { name: 'أمواج', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', pattern: 'none' },
+      stars: { name: 'نجوم', bg: '#0f0c29', pattern: 'radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent), radial-gradient(2px 2px at 60px 70px, rgba(255,255,255,0.6), transparent)', patternSize: '80px 80px' },
+      hexagon: { name: 'سداسي', bg: '#f5f5f5', pattern: 'radial-gradient(circle at 50% 0, transparent 30%, rgba(59,130,246,0.1) 30.5%, rgba(59,130,246,0.1) 45%, transparent 45.5%)', patternSize: '40px 70px' },
+      circuit: { name: 'دائرة', bg: '#1a1a2e', pattern: 'linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)', patternSize: '25px 25px' },
+      tropical: { name: 'استوائي', bg: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', pattern: 'none' },
+      aurora: { name: 'شفق', bg: 'linear-gradient(135deg, #00f260 0%, #0575e6 100%)', pattern: 'none' },
+      sakura: { name: 'ساكورا', bg: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', pattern: 'radial-gradient(circle, rgba(255,182,193,0.3) 2px, transparent 2px)', patternSize: '30px 30px' },
+      cosmic: { name: 'كوني', bg: 'linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%)', pattern: 'radial-gradient(2px 2px at 25% 25%, rgba(255,255,255,0.5), transparent), radial-gradient(2px 2px at 75% 75%, rgba(255,255,255,0.3), transparent)', patternSize: '50px 50px' }
+    };
+
+    const translations = {
+      ar: {
+        title: 'مهامي اليومية',
+        progress: 'من',
+        completed: 'مُنجزة',
+        noTasks: 'لا توجد مهام بعد',
+        startAdding: 'ابدأ بإضافة مهمتك الأولى',
+        placeholder: 'اكتب مهمة جديدة...',
+        addButton: 'أضف مهمة جديدة',
+        footer: 'أنجز مهامك بكل ثقة!',
+        addSuccess: 'تمت إضافة المهمة بنجاح',
+        addError: 'فشل في إضافة المهمة',
+        deleteSuccess: 'تم حذف المهمة',
+        deleteError: 'فشل في حذف المهمة',
+        updateError: 'فشل في تحديث المهمة',
+        maxLimit: 'تم الوصول للحد الأقصى (999 مهمة). يرجى حذف بعض المهام أولاً.',
+        stats: 'الإحصائيات',
+        totalTasks: 'إجمالي المهام',
+        completedTasks: 'المهام المنجزة',
+        pendingTasks: 'المهام المتبقية',
+        completionRate: 'ن��بة الإنجاز',
+        themes: 'اختر النمط',
+        filter: 'تصفية المهام',
+        all: 'الكل',
+        active: 'النشطة',
+        search: 'بحث...',
+        priority: 'الأولوية',
+        high: 'عالية',
+        medium: 'متوسطة',
+        low: 'منخفضة',
+        dueDate: 'تاريخ الاستحقاق',
+        noDueDate: 'بدون تاريخ',
+        darkMode: 'الوضع الليلي',
+        lightMode: 'الوضع النهاري',
+        close: 'إغلاق',
+        edit: 'تعديل',
+        save: 'حفظ',
+        cancel: 'إلغاء'
+      },
+      en: {
+        title: 'My Daily Tasks',
+        progress: 'of',
+        completed: 'completed',
+        noTasks: 'No tasks yet',
+        startAdding: 'Start by adding your first task',
+        placeholder: 'Write a new task...',
+        addButton: 'Add New Task',
+        footer: 'Complete your tasks with confidence!',
+        addSuccess: 'Task added successfully',
+        addError: 'Failed to add task',
+        deleteSuccess: 'Task deleted',
+        deleteError: 'Failed to delete task',
+        updateError: 'Failed to update task',
+        maxLimit: 'Maximum limit reached (999 tasks). Please delete some tasks first.',
+        stats: 'Statistics',
+        totalTasks: 'Total Tasks',
+        completedTasks: 'Completed Tasks',
+        pendingTasks: 'Pending Tasks',
+        completionRate: 'Completion Rate',
+        themes: 'Choose Theme',
+        filter: 'Filter Tasks',
+        all: 'All',
+        active: 'Active',
+        search: 'Search...',
+        priority: 'Priority',
+        high: 'High',
+        medium: 'Medium',
+        low: 'Low',
+        dueDate: 'Due Date',
+        noDueDate: 'No due date',
+        darkMode: 'Dark Mode',
+        lightMode: 'Light Mode',
+        close: 'Close',
+        edit: 'Edit',
+        save: 'Save',
+        cancel: 'Cancel'
+      },
+      fr: {
+        title: 'Mes Tâches Quotidiennes',
+        progress: 'sur',
+        completed: 'terminées',
+        noTasks: 'Aucune tâche pour le moment',
+        startAdding: 'Commencez par ajouter votre première tâche',
+        placeholder: 'Écrire une nouvelle tâche...',
+        addButton: 'Ajouter une Tâche',
+        footer: 'Accomplissez vos tâches avec confiance!',
+        addSuccess: 'Tâche ajoutée avec succès',
+        addError: 'Échec de l\'ajout de la tâche',
+        deleteSuccess: 'Tâche supprimée',
+        deleteError: 'Échec de la suppression',
+        updateError: 'Échec de la mise à jour',
+        maxLimit: 'Limite maximale atteinte (999 tâches). Veuillez supprimer certaines tâches d\'abord.',
+        stats: 'Statistiques',
+        totalTasks: 'Total des Tâches',
+        completedTasks: 'Tâches Terminées',
+        pendingTasks: 'Tâches en Attente',
+        completionRate: 'Taux de Réalisation',
+        themes: 'Choisir le Thème',
+        filter: 'Filtrer les Tâches',
+        all: 'Toutes',
+        active: 'Actives',
+        search: 'Rechercher...',
+        priority: 'Priorité',
+        high: 'Haute',
+        medium: 'Moyenne',
+        low: 'Basse',
+        dueDate: 'Date d\'échéance',
+        noDueDate: 'Pas de date',
+        darkMode: 'Mode Sombre',
+        lightMode: 'Mode Clair',
+        close: 'Fermer',
+        edit: 'Modifier',
+        save: 'Sauvegarder',
+        cancel: 'Annuler'
+      }
+    };
+
+    let currentLanguage = 'ar';
+    let currentTheme = 'classic';
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let isDarkMode = false;
+
+    const defaultConfig = {
+      background_color: '#f0f4f8',
+      surface_color: '#ffffff',
+      text_color: '#1a202c',
+      primary_action_color: '#3b82f6',
+      secondary_action_color: '#ef4444',
+      font_family: 'Tajawal',
+      font_size: 16,
+      list_title: 'مهامي اليومية',
+      add_button_text: 'أضف مهمة جديدة',
+      footer_text: 'أنجز مهامك بكل ثقة!'
+    };
+
+    let currentTasks = [];
+
+    const dataHandler = {
+      onDataChanged(data) {
+        currentTasks = data;
+        renderUI();
+      }
+    };
+
+    async function initApp() {
+      const initResult = await window.dataSdk.init(dataHandler);
+      if (!initResult.isOk) {
+        showToast(translations[currentLanguage].addError, false);
+      }
+      setupLanguageSwitcher();
+      setupFilterButtons();
+      setupThemeButton();
+      setupDarkModeButton();
+    }
+
+    function setupLanguageSwitcher() {
+      const langButtons = document.querySelectorAll('.lang-btn');
+      langButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentLanguage = btn.dataset.lang;
+          langButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          const html = document.documentElement;
+          if (currentLanguage === 'ar') {
+            html.setAttribute('dir', 'rtl');
+            html.setAttribute('lang', 'ar');
+          } else {
+            html.setAttribute('dir', 'ltr');
+            html.setAttribute('lang', currentLanguage);
+          }
+          
+          renderUI();
+        });
+        
+        if (btn.dataset.lang === currentLanguage) {
+          btn.classList.add('active');
+        }
+      });
+
+      updateControlColors();
+    }
+
+    function setupFilterButtons() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentFilter = btn.dataset.filter;
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderUI();
+        });
+        
+        if (btn.dataset.filter === 'all') {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    function setupThemeButton() {
+      const themeBtn = document.getElementById('themeBtn');
+      themeBtn.addEventListener('click', showThemeModal);
+    }
+
+    function setupDarkModeButton() {
+      const darkModeBtn = document.getElementById('darkModeBtn');
+      darkModeBtn.addEventListener('click', () => {
+        isDarkMode = !isDarkMode;
+        darkModeBtn.textContent = isDarkMode ? '☀️' : '🌙';
+        renderUI();
+      });
+    }
+
+    function showThemeModal() {
+      const t = translations[currentLanguage];
+      const config = window.elementSdk?.config || defaultConfig;
+      
+      const modalHTML = `
+        <div class="modal-overlay" id="themeModalOverlay">
+          <div class="modal-content" style="background: ${config.surface_color}; width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h2 style="font-size: 24px; font-weight: 700; color: ${config.text_color};">
+                🎨 ${t.themes}
+              </h2>
+              <button id="closeModal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: ${config.text_color};">
+                ✕
+              </button>
+            </div>
+            <div class="theme-grid">
+              ${Object.keys(themes).map(key => {
+                const theme = themes[key];
+                return `
+                  <div class="theme-card ${currentTheme === key ? 'selected' : ''}" 
+                       data-theme="${key}"
+                       style="background: ${theme.bg}; ${theme.pattern !== 'none' ? `background-image: ${theme.pattern}; background-size: ${theme.patternSize || 'auto'}; background-position: ${theme.patternPosition || '0 0'};` : ''}">
+                    <div class="theme-name">${theme.name}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      const modalContainer = document.getElementById('themeModal');
+      modalContainer.innerHTML = modalHTML;
+      
+      document.getElementById('closeModal').addEventListener('click', () => {
+        modalContainer.innerHTML = '';
+      });
+      
+      document.getElementById('themeModalOverlay').addEventListener('click', (e) => {
+        if (e.target.id === 'themeModalOverlay') {
+          modalContainer.innerHTML = '';
+        }
+      });
+      
+      document.querySelectorAll('.theme-card').forEach(card => {
+        card.addEventListener('click', () => {
+          currentTheme = card.dataset.theme;
+          modalContainer.innerHTML = '';
+          renderUI();
+        });
+      });
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    async function addTask(text, priority = 'medium', dueDate = '') {
+      if (currentTasks.length >= 999) {
+        showToast(translations[currentLanguage].maxLimit, false);
+        return;
+      }
+
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const taskInput = document.getElementById('taskInput');
+      
+      if (submitBtn) submitBtn.disabled = true;
+      if (taskInput) taskInput.disabled = true;
+      if (submitBtn) submitBtn.textContent = '...';
+
+      const newTask = {
+        id: generateId(),
+        text: text,
+        completed: false,
+        createdAt: new Date().toISOString(),
+        priority: priority,
+        dueDate: dueDate
+      };
+
+      const result = await window.dataSdk.create(newTask);
+
+      if (submitBtn) submitBtn.disabled = false;
+      if (taskInput) taskInput.disabled = false;
+      
+      const config = window.elementSdk?.config || defaultConfig;
+      if (submitBtn) submitBtn.textContent = config.add_button_text || defaultConfig.add_button_text;
+
+      if (result.isOk) {
+        showToast(translations[currentLanguage].addSuccess, true);
+      } else {
+        showToast(translations[currentLanguage].addError, false);
+      }
+    }
+
+    async function toggleTask(task) {
+      const checkbox = document.querySelector(`[data-task-id="${task.id}"] .task-checkbox`);
+      if (checkbox) checkbox.disabled = true;
+
+      const wasCompleted = task.completed;
+      const updatedTask = { ...task, completed: !task.completed };
+      const result = await window.dataSdk.update(updatedTask);
+
+      if (checkbox) checkbox.disabled = false;
+
+      if (result.isOk && !wasCompleted && updatedTask.completed) {
+        showConfetti();
+      } else if (!result.isOk) {
+        showToast(translations[currentLanguage].updateError, false);
+      }
+    }
+
+    async function deleteTask(task) {
+      const deleteBtn = document.querySelector(`[data-task-id="${task.id}"] .delete-btn`);
+      if (deleteBtn) {
+        deleteBtn.disabled = true;
+        deleteBtn.textContent = '...';
+      }
+
+      const result = await window.dataSdk.delete(task);
+
+      if (!result.isOk) {
+        if (deleteBtn) {
+          deleteBtn.disabled = false;
+          deleteBtn.textContent = '🗑️';
+        }
+        showToast(translations[currentLanguage].deleteError, false);
+      } else {
+        showToast(translations[currentLanguage].deleteSuccess, true);
+      }
+    }
+
+    function showConfetti() {
+      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ff69b4', '#9b59b6', '#1abc9c'];
+      const confettiCount = 80;
+
+      for (let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.top = '-10px';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDelay = Math.random() * 0.3 + 's';
+          confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+          confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+          
+          document.body.appendChild(confetti);
+          
+          setTimeout(() => {
+            confetti.remove();
+          }, 4000);
+        }, i * 20);
+      }
+    }
+
+    function showToast(message, isSuccess) {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+
+      const config = window.elementSdk?.config || defaultConfig;
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      toast.style.backgroundColor = isSuccess ? config.primary_action_color : config.secondary_action_color;
+      toast.style.color = '#ffffff';
+      
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    function getFilteredTasks() {
+      let filtered = currentTasks;
+      
+      if (currentFilter === 'active') {
+        filtered = filtered.filter(t => !t.completed);
+      } else if (currentFilter === 'completed') {
+        filtered = filtered.filter(t => t.completed);
+      }
+      
+      if (searchQuery) {
+        filtered = filtered.filter(t => t.text.toLowerCase().includes(searchQuery.toLowerCase()));
+      }
+      
+      return filtered;
+    }
+
+    function getPriorityColor(priority) {
+      const colors = {
+        high: '#ef4444',
+        medium: '#f59e0b',
+        low: '#10b981'
+      };
+      return colors[priority] || colors.medium;
+    }
+
+    function getPriorityLabel(priority) {
+      const t = translations[currentLanguage];
+      const labels = {
+        high: t.high,
+        medium: t.medium,
+        low: t.low
+      };
+      return labels[priority] || labels.medium;
+    }
+
+    function applyTheme() {
+      const theme = themes[currentTheme];
+      const app = document.getElementById('app');
+      
+      if (theme) {
+        // Clear previous styles first
+        app.style.background = '';
+        app.style.backgroundImage = '';
+        app.style.backgroundSize = '';
+        app.style.backgroundPosition = '';
+        
+        // Apply new theme
+        if (theme.pattern !== 'none') {
+          // For patterns, set solid background first then pattern
+          app.style.backgroundColor = theme.bg;
+          app.style.backgroundImage = theme.pattern;
+          app.style.backgroundSize = theme.patternSize || 'auto';
+          app.style.backgroundPosition = theme.patternPosition || '0 0';
+        } else {
+          // For solid colors or gradients
+          app.style.background = theme.bg;
+        }
+      }
+
+      if (isDarkMode) {
+        app.style.filter = 'brightness(0.8) contrast(1.1)';
+      } else {
+        app.style.filter = 'none';
+      }
+    }
+
+    function renderUI() {
+      const config = window.elementSdk?.config || defaultConfig;
+      const app = document.getElementById('app');
+      const t = translations[currentLanguage];
+      
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const baseFontStack = 'Arial, sans-serif';
+      
+      app.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      applyTheme();
+      
+      const filteredTasks = getFilteredTasks();
+      const completedCount = currentTasks.filter(t => t.completed).length;
+      const totalCount = currentTasks.length;
+      const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      const pendingCount = totalCount - completedCount;
+      
+      const circumference = 2 * Math.PI * 45;
+      const offset = circumference - (completionRate / 100) * circumference;
+      
+      app.innerHTML = `
+        <div style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+          <header style="text-align: center; margin-bottom: 40px;">
+            <h1 style="font-size: ${baseSize * 2}px; font-weight: 700; color: ${config.text_color}; margin-bottom: 12px;">
+              ${config.list_title || defaultConfig.list_title}
+            </h1>
+            <p style="font-size: ${baseSize * 0.9}px; color: ${config.text_color}; opacity: 0.7;">
+              ${totalCount > 0 ? `${completedCount} ${t.progress} ${totalCount} ${t.completed}` : t.noTasks}
+            </p>
+          </header>
+
+          ${totalCount > 0 ? `
+          <div style="background: ${config.surface_color}; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 24px;">
+            <h3 style="font-size: ${baseSize * 1.2}px; font-weight: 600; color: ${config.text_color}; margin-bottom: 20px; text-align: center;">
+              📊 ${t.stats}
+            </h3>
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+              <svg width="120" height="120">
+                <circle cx="60" cy="60" r="45" fill="none" stroke="${config.text_color}20" stroke-width="10"/>
+                <circle 
+                  class="progress-ring"
+                  cx="60" cy="60" r="45" 
+                  fill="none" 
+                  stroke="${config.primary_action_color}" 
+                  stroke-width="10"
+                  stroke-dasharray="${circumference}"
+                  stroke-dashoffset="${offset}"
+                  transform="rotate(-90 60 60)"
+                  stroke-linecap="round"
+                />
+                <text x="60" y="60" text-anchor="middle" dy="7" style="font-size: ${baseSize * 1.5}px; font-weight: 700; fill: ${config.text_color};">
+                  ${completionRate}%
+                </text>
+              </svg>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+              <div style="text-align: center; padding: 12px; background: ${config.text_color}05; border-radius: 12px;">
+                <div style="font-size: ${baseSize * 1.8}px; font-weight: 700; color: ${config.primary_action_color};">${totalCount}</div>
+                <div style="font-size: ${baseSize * 0.85}px; color: ${config.text_color}; opacity: 0.7; margin-top: 4px;">${t.totalTasks}</div>
+              </div>
+              <div style="text-align: center; padding: 12px; background: ${config.text_color}05; border-radius: 12px;">
+                <div style="font-size: ${baseSize * 1.8}px; font-weight: 700; color: #10b981;">${completedCount}</div>
+                <div style="font-size: ${baseSize * 0.85}px; color: ${config.text_color}; opacity: 0.7; margin-top: 4px;">${t.completedTasks}</div>
+              </div>
+              <div style="text-align: center; padding: 12px; background: ${config.text_color}05; border-radius: 12px;">
+                <div style="font-size: ${baseSize * 1.8}px; font-weight: 700; color: #f59e0b;">${pendingCount}</div>
+                <div style="font-size: ${baseSize * 0.85}px; color: ${config.text_color}; opacity: 0.7; margin-top: 4px;">${t.pendingTasks}</div>
+              </div>
+            </div>
+          </div>
+          ` : ''}
+
+          <div style="background: ${config.surface_color}; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 24px;">
+            <input 
+              type="text" 
+              id="searchInput"
+              placeholder="${t.search}"
+              value="${searchQuery}"
+              style="width: 100%; padding: 12px 16px; border: 2px solid ${config.text_color}20; border-radius: 8px; font-size: ${baseSize}px; color: ${config.text_color}; outline: none; transition: border-color 0.3s; margin-bottom: 16px;"
+            >
+            
+            <form id="taskForm" style="display: grid; gap: 12px;">
+              <input 
+                type="text" 
+                id="taskInput"
+                placeholder="${t.placeholder}"
+                required
+                style="padding: 12px 16px; border: 2px solid ${config.text_color}20; border-radius: 8px; font-size: ${baseSize}px; color: ${config.text_color}; outline: none; transition: border-color 0.3s;"
+              >
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <select id="prioritySelect" style="padding: 12px 16px; border: 2px solid ${config.text_color}20; border-radius: 8px; font-size: ${baseSize}px; color: ${config.text_color}; outline: none; background: white;">
+                  <option value="low">${t.low} 🟢</option>
+                  <option value="medium" selected>${t.medium} 🟡</option>
+                  <option value="high">${t.high} 🔴</option>
+                </select>
+                <input 
+                  type="date" 
+                  id="dueDateInput"
+                  style="padding: 12px 16px; border: 2px solid ${config.text_color}20; border-radius: 8px; font-size: ${baseSize}px; color: ${config.text_color}; outline: none; background: white;"
+                >
+              </div>
+              <button 
+                type="submit"
+                style="background: ${config.primary_action_color}; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: ${baseSize}px; font-weight: 500; cursor: pointer; transition: all 0.3s;"
+              >
+                ${config.add_button_text || defaultConfig.add_button_text}
+              </button>
+            </form>
+          </div>
+
+          <div id="tasksList" style="background: ${config.surface_color}; border-radius: 16px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-height: 200px;">
+            ${filteredTasks.length === 0 ? `
+              <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <p style="font-size: ${baseSize * 1.1}px; color: ${config.text_color}; opacity: 0.5;">
+                  ${currentTasks.length === 0 ? t.startAdding : t.noTasks}
+                </p>
+              </div>
+            ` : filteredTasks.map((task, index) => {
+              const priorityColor = getPriorityColor(task.priority);
+              const priorityLabel = getPriorityLabel(task.priority);
+              const dueDate = task.dueDate ? new Date(task.dueDate).toLocaleDateString(currentLanguage === 'ar' ? 'ar-SA' : currentLanguage === 'fr' ? 'fr-FR' : 'en-US') : '';
+              
+              return `
+              <div class="task-item" data-task-id="${task.id}" style="display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid ${config.text_color}10; ${index === filteredTasks.length - 1 ? 'border-bottom: none;' : ''}">
+                <input 
+                  type="checkbox" 
+                  class="task-checkbox"
+                  ${task.completed ? 'checked' : ''}
+                  style="border-color: ${config.primary_action_color}; ${task.completed ? `background: ${config.primary_action_color}; color: white;` : ''}"
+                >
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <span class="priority-badge" style="background: ${priorityColor}20; color: ${priorityColor};">
+                      ${priorityLabel}
+                    </span>
+                    ${dueDate ? `
+                      <span style="font-size: ${baseSize * 0.75}px; color: ${config.text_color}; opacity: 0.6;">
+                        📅 ${dueDate}
+                      </span>
+                    ` : ''}
+                  </div>
+                  <span style="font-size: ${baseSize}px; color: ${config.text_color}; ${task.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''} word-break: break-word; display: block;">
+                    ${task.text}
+                  </span>
+                </div>
+                <button 
+                  class="delete-btn"
+                  style="background: none; border: none; color: ${config.secondary_action_color}; cursor: pointer; font-size: ${baseSize * 1.2}px; padding: 4px 8px;"
+                >
+                  🗑️
+                </button>
+              </div>
+            `;
+            }).join('')}
+          </div>
+
+          <footer style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 2px solid ${config.text_color}10;">
+            <p style="font-size: ${baseSize * 0.9}px; color: ${config.text_color}; opacity: 0.7;">
+              ${config.footer_text || defaultConfig.footer_text}
+            </p>
+          </footer>
+        </div>
+      `;
+
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderUI();
+      });
+
+      const taskForm = document.getElementById('taskForm');
+      taskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('taskInput');
+        const prioritySelect = document.getElementById('prioritySelect');
+        const dueDateInput = document.getElementById('dueDateInput');
+        
+        const text = input.value.trim();
+        const priority = prioritySelect.value;
+        const dueDate = dueDateInput.value;
+        
+        if (text) {
+          addTask(text, priority, dueDate);
+          input.value = '';
+          prioritySelect.value = 'medium';
+          dueDateInput.value = '';
+        }
+      });
+
+      const taskItems = document.querySelectorAll('.task-item');
+      taskItems.forEach(item => {
+        const taskId = item.dataset.taskId;
+        const task = currentTasks.find(t => t.id === taskId);
+        
+        if (!task) return;
+        
+        const checkbox = item.querySelector('.task-checkbox');
+        checkbox.addEventListener('change', () => {
+          toggleTask(task);
+        });
+
+        const deleteBtn = item.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => {
+          deleteTask(task);
+        });
+      });
+
+      const taskInput = document.getElementById('taskInput');
+      taskInput.addEventListener('focus', (e) => {
+        e.target.style.borderColor = config.primary_action_color;
+      });
+      taskInput.addEventListener('blur', (e) => {
+        e.target.style.borderColor = `${config.text_color}20`;
+      });
+
+      searchInput.addEventListener('focus', (e) => {
+        e.target.style.borderColor = config.primary_action_color;
+      });
+      searchInput.addEventListener('blur', (e) => {
+        e.target.style.borderColor = `${config.text_color}20`;
+      });
+
+      const submitBtn = taskForm.querySelector('button[type="submit"]');
+      submitBtn.addEventListener('mouseenter', (e) => {
+        e.target.style.opacity = '0.8';
+      });
+      submitBtn.addEventListener('mouseleave', (e) => {
+        e.target.style.opacity = '1';
+      });
+
+      updateControlColors();
+    }
+
+    function updateControlColors() {
+      const config = window.elementSdk?.config || defaultConfig;
+      const langButtons = document.querySelectorAll('.lang-btn');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const themeBtn = document.getElementById('themeBtn');
+      const darkModeBtn = document.getElementById('darkModeBtn');
+      
+      langButtons.forEach(btn => {
+        if (btn.classList.contains('active')) {
+          btn.style.backgroundColor = config.primary_action_color;
+          btn.style.color = 'white';
+        } else {
+          btn.style.backgroundColor = 'transparent';
+          btn.style.color = config.text_color;
+        }
+      });
+
+      filterButtons.forEach(btn => {
+        if (btn.classList.contains('active')) {
+          btn.style.backgroundColor = config.primary_action_color;
+          btn.style.color = 'white';
+        } else {
+          btn.style.backgroundColor = 'transparent';
+          btn.style.color = config.text_color;
+        }
+      });
+
+      if (themeBtn) {
+        themeBtn.style.color = config.text_color;
+      }
+      if (darkModeBtn) {
+        darkModeBtn.style.color = config.text_color;
+      }
+    }
+
+    async function onConfigChange(config) {
+      renderUI();
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['list_title', config.list_title || defaultConfig.list_title],
+          ['add_button_text', config.add_button_text || defaultConfig.add_button_text],
+          ['footer_text', config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
+
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a06727b61e5bc3f4',t:'MTc4MDU3ODM4OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

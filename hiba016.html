@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التفاعلات النووية | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="16.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 10px currentColor); }
+      50% { filter: drop-shadow(0 0 25px currentColor); }
+    }
+    
+    @keyframes neutron-approach {
+      0% { transform: translateX(200px) translateY(0); opacity: 1; }
+      100% { transform: translateX(-290px) translateY(0); opacity: 1; }
+    }
+    
+    @keyframes nucleus-shake {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(2deg); }
+      50% { transform: scale(0.95) rotate(-2deg); }
+      75% { transform: scale(1.05) rotate(1deg); }
+    }
+    
+    @keyframes split-left {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(-80px, -40px) scale(0.6); opacity: 1; }
+    }
+    
+    @keyframes split-right {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(80px, 40px) scale(0.5); opacity: 1; }
+    }
+    
+    @keyframes neutron-release-1 {
+      0% { transform: translate(0, 0); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translate(-100px, -80px); opacity: 0; }
+    }
+    
+    @keyframes neutron-release-2 {
+      0% { transform: translate(0, 0); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translate(100px, -60px); opacity: 0; }
+    }
+    
+    @keyframes neutron-release-3 {
+      0% { transform: translate(0, 0); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translate(60px, 100px); opacity: 0; }
+    }
+    
+    @keyframes energy-burst {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(2); opacity: 0.8; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+    
+    @keyframes fusion-approach-left {
+      0% { transform: translateX(-100px); }
+      100% { transform: translateX(0); }
+    }
+    
+    @keyframes fusion-approach-right {
+      0% { transform: translateX(100px); }
+      100% { transform: translateX(0); }
+    }
+    
+    @keyframes fusion-combine {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes fusion-energy-burst {
+      0% { transform: scale(0); opacity: 1; }
+      30% { transform: scale(2.5); opacity: 0.9; }
+      100% { transform: scale(5); opacity: 0; }
+    }
+    
+    @keyframes particle-vibrate {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(2px, -2px); }
+      50% { transform: translate(-2px, 2px); }
+      75% { transform: translate(2px, 2px); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .reactor-core {
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 50%, #050510 100%);
+      border: 3px solid #2d2d4a;
+      box-shadow: inset 0 0 100px rgba(0, 150, 255, 0.1), 0 0 30px rgba(0, 100, 200, 0.2);
+    }
+    
+    .atom-uranium {
+      background: radial-gradient(circle at 30% 30%, #00ff88, #00aa55, #005533);
+      animation: pulse-glow 2s ease-in-out infinite;
+      color: #00ff88;
+    }
+    
+    .atom-krypton {
+      background: radial-gradient(circle at 30% 30%, #ff6b6b, #cc4444, #882222);
+      color: #ff6b6b;
+    }
+    
+    .atom-barium {
+      background: radial-gradient(circle at 30% 30%, #4ecdc4, #2d9a94, #1a6b66);
+      color: #4ecdc4;
+    }
+    
+    .neutron {
+      background: radial-gradient(circle at 30% 30%, #ffd93d, #ff9500, #cc6600);
+      color: #ffd93d;
+    }
+    
+    .atom-deuterium {
+      background: radial-gradient(circle at 30% 30%, #a855f7, #7c3aed, #5b21b6);
+      color: #a855f7;
+    }
+    
+    .atom-tritium {
+      background: radial-gradient(circle at 30% 30%, #f472b6, #db2777, #9d174d);
+      color: #f472b6;
+    }
+    
+    .atom-helium {
+      background: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b, #d97706);
+      color: #fbbf24;
+    }
+    
+    .energy-particle {
+      background: radial-gradient(circle, #fff, #ffeb3b, #ff9800);
+      box-shadow: 0 0 30px #ffeb3b, 0 0 60px #ff9800;
+    }
+    
+    .btn-active {
+      background: linear-gradient(135deg, #00d4ff, #0099cc);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-inactive {
+      background: linear-gradient(135deg, #2d2d4a, #1a1a2e);
+      border: 2px solid #3d3d5a;
+    }
+    
+    .equation-box {
+      background: rgba(0, 20, 40, 0.8);
+      border: 1px solid #00d4ff;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    }
+    
+    .energy-meter-bg {
+      background: linear-gradient(90deg, #1a1a2e, #0f0f1a);
+      border: 2px solid #3d3d5a;
+    }
+    
+    .energy-meter-fill-fission {
+      background: linear-gradient(90deg, #00ff88, #00d4ff, #00ff88);
+      box-shadow: 0 0 20px #00ff88, 0 0 40px #00d4ff;
+    }
+    
+    .energy-meter-fill-fusion {
+      background: linear-gradient(90deg, #ff6b6b, #ffd93d, #ff6b6b);
+      box-shadow: 0 0 30px #ffd93d, 0 0 60px #ff6b6b;
+    }
+    
+    @media (max-width: 640px) {
+      #return-text {
+        display: none;
+      }
+      #return-btn {
+        padding: 0.75rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body class="h-full bg-gray-950 text-white overflow-auto"><!-- Return to Encyclopedia Button --> <a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" id="return-btn" class="fixed top-4 left-4 z-[9999] flex items-center gap-2 px-4 py-3 rounded-full backdrop-blur-md border border-white/30 transition-all duration-300 hover:bg-blue-500 hover:border-blue-400 hover:scale-105 shadow-lg" style="background: rgba(255, 255, 255, 0.1);">
+   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+   </svg><span id="return-text" class="font-bold text-sm whitespace-nowrap">العودة للموسوعة الرئيسية</span> </a>
+  <div id="app" class="min-h-full w-full flex flex-col">
+   <header class="py-4 px-6 bg-gradient-to-b from-gray-900 to-transparent">
+    <h1 id="main-title" class="text-3xl md:text-4xl font-extrabold text-center bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">التفاعلات النووية</h1>
+    <p class="text-center text-cyan-300 mt-2 text-sm md:text-base opacity-80">محاكاة تفاعلية للانشطار والاندماج النووي</p>
+   </header>
+   <div class="flex justify-center gap-4 px-4 py-3"><button id="btn-fission" onclick="setMode('fission')" class="btn-active px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105"> ⚛️ انشطار نووي </button> <button id="btn-fusion" onclick="setMode('fusion')" class="btn-inactive px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 text-gray-400"> 🌟 اندماج نووي </button>
+   </div>
+   <main class="flex-1 px-4 py-4">
+    <div class="reactor-core rounded-3xl p-6 h-full min-h-96 relative overflow-hidden">
+     <div id="fission-panel" class="h-full flex flex-col items-center justify-center">
+      <h2 id="fission-title" class="text-2xl font-bold text-cyan-400 mb-4">الانشطار النووي</h2>
+      <div class="relative w-80 h-64 flex items-center justify-center">
+       <div id="uranium-atom" class="atom-uranium w-24 h-24 rounded-full flex items-center justify-center font-bold text-lg shadow-lg z-10">
+        U-235
+       </div>
+       <div id="incoming-neutron" class="neutron absolute w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold opacity-0">
+        n
+       </div>
+       <div id="krypton" class="atom-krypton absolute w-16 h-16 rounded-full flex items-center justify-center font-bold text-sm opacity-0">
+        Kr
+       </div>
+       <div id="barium" class="atom-barium absolute w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm opacity-0">
+        Ba
+       </div>
+       <div id="neutron-1" class="neutron absolute w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0">
+        n
+       </div>
+       <div id="neutron-2" class="neutron absolute w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0">
+        n
+       </div>
+       <div id="neutron-3" class="neutron absolute w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0">
+        n
+       </div>
+       <div id="fission-energy" class="energy-particle absolute w-20 h-20 rounded-full opacity-0"></div>
+      </div>
+      <div class="equation-box rounded-xl px-6 py-3 mt-4">
+       <p class="text-lg font-mono text-cyan-300 text-center" dir="ltr">U-235 + n → Ba + Kr + 3n + <span class="text-yellow-400">طاقة</span></p>
+      </div><button id="start-fission" onclick="startFission()" class="mt-6 px-8 py-3 bg-gradient-to-r from-green-500 to-cyan-500 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-cyan-500/30"> ▶️ بدء التفاعل </button>
+     </div>
+     <div id="fusion-panel" class="h-full flex flex-col items-center justify-center hidden">
+      <h2 id="fusion-title" class="text-2xl font-bold text-orange-400 mb-4">الاندماج النووي</h2>
+      <div class="relative w-80 h-64 flex items-center justify-center">
+       <div id="deuterium" class="atom-deuterium absolute w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm shadow-lg">
+        D
+       </div>
+       <div id="tritium" class="atom-tritium absolute w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm shadow-lg">
+        T
+       </div>
+       <div id="helium" class="atom-helium absolute w-20 h-20 rounded-full flex items-center justify-center font-bold text-lg opacity-0">
+        He
+       </div>
+       <div id="fusion-neutron" class="neutron absolute w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold opacity-0">
+        n
+       </div>
+       <div id="fusion-energy" class="energy-particle absolute w-24 h-24 rounded-full opacity-0"></div>
+      </div>
+      <div class="equation-box rounded-xl px-6 py-3 mt-4 border-orange-500">
+       <p class="text-lg font-mono text-orange-300 text-center" dir="ltr">D + T → He + n + <span class="text-yellow-400 font-bold">طاقة كبيرة</span></p>
+      </div><button id="start-fusion" onclick="startFusion()" class="mt-6 px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-orange-500/30"> ▶️ بدء التفاعل </button>
+     </div>
+    </div>
+   </main>
+   <div class="px-6 py-4">
+    <div class="max-w-2xl mx-auto">
+     <h3 id="energy-label" class="text-center text-lg font-bold text-gray-300 mb-2">⚡ مقياس الطاقة</h3>
+     <div class="energy-meter-bg rounded-full h-8 overflow-hidden">
+      <div id="energy-meter" class="h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+     </div>
+     <div class="flex justify-between mt-2 text-sm text-gray-500"><span>0%</span> <span id="energy-value" class="text-yellow-400 font-bold">0 MeV</span> <span>100%</span>
+     </div>
+    </div>
+   </div>
+   <div class="px-4 py-6 bg-gradient-to-b from-transparent to-gray-900">
+    <div class="max-w-6xl mx-auto"><button onclick="toggleInfo()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 px-6 py-4 rounded-2xl font-bold text-xl transition-all duration-300 shadow-lg shadow-cyan-500/20 flex items-center justify-between"> <span>📚 لمحة شاملة عن التفاعلات النووية</span> <span id="info-arrow" class="text-2xl transition-transform duration-300">▼</span> </button>
+     <div id="info-content" class="hidden mt-6 space-y-6">
+      <div class="bg-gradient-to-br from-cyan-900/40 to-blue-900/40 rounded-2xl p-6 border-2 border-cyan-500/30 shadow-xl">
+       <h3 class="text-2xl font-bold text-cyan-400 mb-4 flex items-center gap-2">⚛️ الانشطار النووي (Nuclear Fission)</h3>
+       <div class="space-y-4 text-gray-200">
+        <div>
+         <h4 class="text-xl font-bold text-cyan-300 mb-2">التعريف:</h4>
+         <p class="leading-relaxed">عملية انقسام نواة ذرة ثقيلة (مثل اليورانيوم-235 أو البلوتونيوم-239) إلى نواتين أخف عند قذفها بنيوترون، مع إطلاق كمية هائلة من الطاقة ونيوترونات إضافية.</p>
+        </div>
+        <div>
+         <h4 class="text-xl font-bold text-cyan-300 mb-2">كيف يحدث:</h4>
+         <ol class="list-decimal list-inside space-y-2 mr-4">
+          <li>نيوترون بطيء يصطدم بنواة اليورانيوم-235</li>
+          <li>النواة تصبح غير مستقرة وتنقسم إلى نواتين أصغر (مثل الكريبتون والباريوم)</li>
+          <li>يتم إطلاق 2-3 نيوترونات جديدة + طاقة هائلة</li>
+          <li>النيوترونات المنطلقة تصطدم بنوى أخرى - <span class="text-yellow-400 font-bold">تفاعل متسلسل</span></li>
+         </ol>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+         <div class="bg-green-900/30 rounded-xl p-4 border border-green-500/30">
+          <h5 class="font-bold text-green-400 mb-2">✅ المميزات:</h5>
+          <ul class="space-y-1 text-sm">
+           <li>• تقنية متقنة ومستخدمة حالياً</li>
+           <li>• سهل نسبياً في التحكم والإيقاف</li>
+           <li>• ينتج طاقة كبيرة من كمية صغيرة</li>
+          </ul>
+         </div>
+         <div class="bg-red-900/30 rounded-xl p-4 border border-red-500/30">
+          <h5 class="font-bold text-red-400 mb-2">❌ العيوب:</h5>
+          <ul class="space-y-1 text-sm">
+           <li>• نفايات نووية خطرة لآلاف السنين</li>
+           <li>• خطر الحوادث النووية</li>
+           <li>• يستخدم مواد نا����رة</li>
+          </ul>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-gradient-to-br from-orange-900/40 to-red-900/40 rounded-2xl p-6 border-2 border-orange-500/30 shadow-xl">
+       <h3 class="text-2xl font-bold text-orange-400 mb-4 flex items-center gap-2">🌟 الاندماج النووي (Nuclear Fusion)</h3>
+       <div class="space-y-4 text-gray-200">
+        <div>
+         <h4 class="text-xl font-bold text-orange-300 mb-2">التعريف:</h4>
+         <p class="leading-relaxed">عملية دمج نواتين خفيفتين (مثل الديوتيريوم والتريتيوم) لتكوين نواة أثقل (الهيليوم) مع إطلاق طاقة هائلة جداً.</p>
+        </div>
+        <div>
+         <h4 class="text-xl font-bold text-orange-300 mb-2">كيف يحدث:</h4>
+         <ol class="list-decimal list-inside space-y-2 mr-4">
+          <li>نواتان خفيفتان (ديوتيريوم + تريتيوم) تقتربان من بعضهما</li>
+          <li>تحتاج لحرارة ملايين الدرجات وضغط هائل للتغلب على التنافر</li>
+          <li>النواتان تندمجان لتكوين الهيليوم + نيوترون + <span class="text-yellow-400 font-bold">طاقة ضخمة</span></li>
+          <li>هذا التفاعل هو مصدر طاقة الشمس والنجوم ⭐</li>
+         </ol>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+         <div class="bg-green-900/30 rounded-xl p-4 border border-green-500/30">
+          <h5 class="font-bold text-green-400 mb-2">✅ المميزات:</h5>
+          <ul class="space-y-1 text-sm">
+           <li>• طاقة أكبر بـ4 أضعاف من الانشطار</li>
+           <li>• وقود وفير ورخيص (من الماء)</li>
+           <li>• نفايات أقل وأقصر عمراً</li>
+           <li>• أكثر أماناً - لا يخرج عن السيطرة</li>
+          </ul>
+         </div>
+         <div class="bg-red-900/30 rounded-xl p-4 border border-red-500/30">
+          <h5 class="font-bold text-red-400 mb-2">❌ العيوب:</h5>
+          <ul class="space-y-1 text-sm">
+           <li>• تقنية صعبة - لم نتقنها تجارياً</li>
+           <li>• يحتاج 150 مليون درجة مئوية!</li>
+           <li>• تكلفة بحث وتطوير عالية</li>
+          </ul>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 rounded-2xl p-6 border-2 border-purple-500/30 shadow-xl">
+       <h3 class="text-2xl font-bold text-purple-400 mb-4 text-center">📊 المقارنة بين الانشطار والاندماج</h3>
+       <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+         <thead>
+          <tr class="border-b-2 border-purple-500/50">
+           <th class="p-3 text-right text-purple-300 font-bold">المعيار</th>
+           <th class="p-3 text-center text-cyan-300 font-bold">الانشطار ⚛️</th>
+           <th class="p-3 text-center text-orange-300 font-bold">الاندماج 🌟</th>
+          </tr>
+         </thead>
+         <tbody class="text-gray-200">
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">الآلية</td>
+           <td class="p-3 text-center">تقسيم نواة ثقيلة</td>
+           <td class="p-3 text-center">دمج نواتين خفيفتين</td>
+          </tr>
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">الوقود</td>
+           <td class="p-3 text-center">يورانيوم-235</td>
+           <td class="p-3 text-center">ديوتيريوم، تريتيوم</td>
+          </tr>
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">توفر الوقود</td>
+           <td class="p-3 text-center">نادر ومحدود</td>
+           <td class="p-3 text-center text-green-400">وفير جداً (من المحيطات)</td>
+          </tr>
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">��لطاقة المنتجة</td>
+           <td class="p-3 text-center">��الية جداً</td>
+           <td class="p-3 text-center text-green-400">أعلى بـ 4 أضعاف</td>
+          </tr>
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">درجة الحرارة</td>
+           <td class="p-3 text-center">عادية نسبياً</td>
+           <td class="p-3 text-center">150 مليون درجة</td>
+          </tr>
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">الحالة الحالية</td>
+           <td class="p-3 text-center text-green-400">مستخدم تجارياً</td>
+           <td class="p-3 text-center text-yellow-400">قيد التطوير</td>
+          </tr>
+          <tr class="border-b border-purple-500/20">
+           <td class="p-3 font-bold text-purple-300">النفايات</td>
+           <td class="p-3 text-center text-red-400">خطرة لآلاف السنين</td>
+           <td class="p-3 text-center text-green-400">أقل وأقصر عمراً</td>
+          </tr>
+          <tr>
+           <td class="p-3 font-bold text-purple-300">مثال طبيعي</td>
+           <td class="p-3 text-center">لا يحدث طبيعياً</td>
+           <td class="p-3 text-center text-yellow-400">الشمس والنجوم ⭐</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </div>
+      <div class="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 rounded-2xl p-6 border-2 border-yellow-500/30 shadow-xl">
+       <h3 class="text-2xl font-bold text-yellow-400 mb-4 text-center">🔬 حقائق مثيرة</h3>
+       <div class="grid md:grid-cols-2 gap-4 text-gray-200">
+        <div class="bg-black/30 rounded-xl p-4 border border-yellow-500/20">
+         <div class="text-3xl mb-2">
+          ☀️
+         </div>
+         <p class="text-sm"><span class="font-bold text-yellow-300">الشمس:</span> تعمل بالاندماج النووي منذ 4.6 مليار سنة وستستمر 5 مليارات سنة أخرى!</p>
+        </div>
+        <div class="bg-black/30 rounded-xl p-4 border border-yellow-500/20">
+         <div class="text-3xl mb-2">
+          💪
+         </div>
+         <p class="text-sm"><span class="font-bold text-yellow-300">طاقة هائلة:</span> كوب واحد من وقود الاندماج = 1000 طن فحم!</p>
+        </div>
+        <div class="bg-black/30 rounded-xl p-4 border border-yellow-500/20">
+         <div class="text-3xl mb-2">
+          🔬
+         </div>
+         <p class="text-sm"><span class="font-bold text-yellow-300">مشروع ITER:</span> أكبر مفاعل اندماج تجريبي في ال��الم (فرنسا) يهدف لتحقيق اندماج مستدام بحلول 2025-2035</p>
+        </div>
+        <div class="bg-black/30 rounded-xl p-4 border border-yellow-500/20">
+         <div class="text-3xl mb-2">
+          💣
+         </div>
+         <p class="text-sm"><span class="font-bold text-yellow-300">القنبلة الهيدروجينية:</span> تستخدم قنبلة انشطار أولاً لخلق الحرارة اللازمة لبدء الاندماج!</p>
+        </div>
+        <div class="bg-black/30 rounded-xl p-4 border border-yellow-500/20 md:col-span-2">
+         <div class="text-3xl mb-2">
+          ♻️
+         </div>
+         <p class="text-sm"><span class="font-bold text-yellow-300">الطاقة ال��ظيفة المستقبلية:</span> الاندماج يعتبر "الكأس المقدسة" للطاقة - نظيف، آمن، ولا نهائي تقريباً!</p>
+        </div>
+       </div>
+      </div>
+      <div class="bg-gradient-to-r from-cyan-900/40 via-purple-900/40 to-orange-900/40 rounded-2xl p-6 border-2 border-white/20 shadow-xl text-center">
+       <h3 class="text-2xl font-bold text-white mb-4">🎯 الخلاصة</h3>
+       <div class="space-y-3 text-gray-200">
+        <p class="text-lg"><span class="text-cyan-400 font-bold">الانشطار</span> = تقنية الحاضر (مفاعلات نووية حالية)</p>
+        <p class="text-lg"><span class="text-orange-400 font-bold">الاندماج</span> = تقنية المستقبل (طاقة نظ��فة لا نهائية)</p>
+        <p class="mt-4 text-yellow-300 font-bold text-xl">E = mc²</p>
+        <p class="text-sm text-gray-400">كلاهما يستخدم مبدأ تحويل الكتلة إلى طاقة حسب معادلة أينشتاين الشهيرة</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <footer class="py-4 px-6 bg-gradient-to-t from-gray-900 to-transparent">
+    <p class="text-center text-gray-400 text-sm">جميع الحقوق محفوظة لـ هبة كنانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: 'التفاعلات النووية',
+      fission_title: 'الانشطار النووي',
+      fusion_title: 'الاندماج النووي',
+      energy_label: 'مقياس الطاقة'
+    };
+    
+    let currentMode = 'fission';
+    let isAnimating = false;
+    let infoExpanded = false;
+    
+    function toggleInfo() {
+      const content = document.getElementById('info-content');
+      const arrow = document.getElementById('info-arrow');
+      
+      if (infoExpanded) {
+        content.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+      } else {
+        content.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+      }
+      
+      infoExpanded = !infoExpanded;
+    }
+    
+    function setMode(mode) {
+      currentMode = mode;
+      const btnFission = document.getElementById('btn-fission');
+      const btnFusion = document.getElementById('btn-fusion');
+      const fissionPanel = document.getElementById('fission-panel');
+      const fusionPanel = document.getElementById('fusion-panel');
+      const energyMeter = document.getElementById('energy-meter');
+      
+      if (mode === 'fission') {
+        btnFission.className = 'btn-active px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 text-white';
+        btnFusion.className = 'btn-inactive px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 text-gray-400';
+        fissionPanel.classList.remove('hidden');
+        fusionPanel.classList.add('hidden');
+        energyMeter.className = 'h-full rounded-full transition-all duration-1000 ease-out energy-meter-fill-fission';
+      } else {
+        btnFusion.className = 'btn-active px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 text-white';
+        btnFission.className = 'btn-inactive px-6 py-3 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 text-gray-400';
+        fusionPanel.classList.remove('hidden');
+        fissionPanel.classList.add('hidden');
+        energyMeter.className = 'h-full rounded-full transition-all duration-1000 ease-out energy-meter-fill-fusion';
+      }
+      
+      resetSimulation();
+    }
+    
+    function resetSimulation() {
+      document.getElementById('energy-meter').style.width = '0%';
+      document.getElementById('energy-value').textContent = '0 MeV';
+      
+      const uranium = document.getElementById('uranium-atom');
+      const neutron = document.getElementById('incoming-neutron');
+      const krypton = document.getElementById('krypton');
+      const barium = document.getElementById('barium');
+      const n1 = document.getElementById('neutron-1');
+      const n2 = document.getElementById('neutron-2');
+      const n3 = document.getElementById('neutron-3');
+      const fissionEnergy = document.getElementById('fission-energy');
+      
+      uranium.style.animation = 'none';
+      uranium.style.transform = '';
+      uranium.style.opacity = '1';
+      uranium.classList.remove('hidden');
+      void uranium.offsetWidth;
+      
+      neutron.style.animation = 'none';
+      neutron.style.transform = '';
+      neutron.style.opacity = '0';
+      void neutron.offsetWidth;
+      
+      krypton.style.animation = 'none';
+      krypton.style.transform = '';
+      krypton.style.opacity = '0';
+      void krypton.offsetWidth;
+      
+      barium.style.animation = 'none';
+      barium.style.transform = '';
+      barium.style.opacity = '0';
+      void barium.offsetWidth;
+      
+      n1.style.animation = 'none';
+      n1.style.transform = '';
+      n1.style.opacity = '0';
+      void n1.offsetWidth;
+      
+      n2.style.animation = 'none';
+      n2.style.transform = '';
+      n2.style.opacity = '0';
+      void n2.offsetWidth;
+      
+      n3.style.animation = 'none';
+      n3.style.transform = '';
+      n3.style.opacity = '0';
+      void n3.offsetWidth;
+      
+      fissionEnergy.style.animation = 'none';
+      fissionEnergy.style.transform = '';
+      fissionEnergy.style.opacity = '0';
+      void fissionEnergy.offsetWidth;
+      
+      const deuterium = document.getElementById('deuterium');
+      const tritium = document.getElementById('tritium');
+      const helium = document.getElementById('helium');
+      const fusionNeutron = document.getElementById('fusion-neutron');
+      const fusionEnergy = document.getElementById('fusion-energy');
+      
+      deuterium.style.animation = 'none';
+      deuterium.style.transform = 'translateX(-60px)';
+      deuterium.style.opacity = '1';
+      void deuterium.offsetWidth;
+      
+      tritium.style.animation = 'none';
+      tritium.style.transform = 'translateX(60px)';
+      tritium.style.opacity = '1';
+      void tritium.offsetWidth;
+      
+      helium.style.animation = 'none';
+      helium.style.transform = '';
+      helium.style.opacity = '0';
+      void helium.offsetWidth;
+      
+      fusionNeutron.style.animation = 'none';
+      fusionNeutron.style.transform = '';
+      fusionNeutron.style.opacity = '0';
+      void fusionNeutron.offsetWidth;
+      
+      fusionEnergy.style.animation = 'none';
+      fusionEnergy.style.transform = '';
+      fusionEnergy.style.opacity = '0';
+      void fusionEnergy.offsetWidth;
+      
+      isAnimating = false;
+    }
+    
+    function startFission() {
+      if (isAnimating) return;
+      isAnimating = true;
+      resetSimulation();
+      
+      const startButton = document.getElementById('start-fission');
+      startButton.disabled = true;
+      startButton.style.opacity = '0.5';
+      startButton.style.cursor = 'not-allowed';
+      
+      const uranium = document.getElementById('uranium-atom');
+      const neutron = document.getElementById('incoming-neutron');
+      const krypton = document.getElementById('krypton');
+      const barium = document.getElementById('barium');
+      const n1 = document.getElementById('neutron-1');
+      const n2 = document.getElementById('neutron-2');
+      const n3 = document.getElementById('neutron-3');
+      const fissionEnergy = document.getElementById('fission-energy');
+      const energyMeter = document.getElementById('energy-meter');
+      const energyValue = document.getElementById('energy-value');
+      
+      neutron.style.cssText = 'opacity: 1; animation: neutron-approach 1.5s linear forwards; top: 50%; right: -200px; transform: translateY(-50%);';
+      
+      setTimeout(() => {
+        uranium.style.animation = 'nucleus-shake 0.3s ease-in-out';
+      }, 1500);
+      
+      setTimeout(() => {
+        uranium.classList.add('hidden');
+        neutron.style.opacity = '0';
+        
+        krypton.style.cssText = 'opacity: 1; animation: split-left 0.8s ease-out forwards;';
+        barium.style.cssText = 'opacity: 1; animation: split-right 0.8s ease-out forwards;';
+        
+        n1.style.cssText = 'opacity: 1; animation: neutron-release-1 1s ease-out forwards;';
+        n2.style.cssText = 'opacity: 1; animation: neutron-release-2 1s ease-out forwards; animation-delay: 0.1s;';
+        n3.style.cssText = 'opacity: 1; animation: neutron-release-3 1s ease-out forwards; animation-delay: 0.2s;';
+        
+        fissionEnergy.style.cssText = 'opacity: 1; animation: energy-burst 1s ease-out forwards;';
+        
+        energyMeter.style.width = '60%';
+        
+        let energy = 0;
+        const targetEnergy = 200;
+        const energyInterval = setInterval(() => {
+          energy += 5;
+          if (energy >= targetEnergy) {
+            energy = targetEnergy;
+            clearInterval(energyInterval);
+          }
+          energyValue.textContent = energy + ' MeV';
+        }, 30);
+        
+      }, 1800);
+      
+      setTimeout(() => {
+        isAnimating = false;
+        startButton.disabled = false;
+        startButton.style.opacity = '1';
+        startButton.style.cursor = 'pointer';
+      }, 4000);
+    }
+    
+    function startFusion() {
+      if (isAnimating) return;
+      isAnimating = true;
+      resetSimulation();
+      
+      const startButton = document.getElementById('start-fusion');
+      startButton.disabled = true;
+      startButton.style.opacity = '0.5';
+      startButton.style.cursor = 'not-allowed';
+      
+      const deuterium = document.getElementById('deuterium');
+      const tritium = document.getElementById('tritium');
+      const helium = document.getElementById('helium');
+      const fusionNeutron = document.getElementById('fusion-neutron');
+      const fusionEnergy = document.getElementById('fusion-energy');
+      const energyMeter = document.getElementById('energy-meter');
+      const energyValue = document.getElementById('energy-value');
+      
+      deuterium.style.animation = 'particle-vibrate 0.1s infinite, fusion-approach-left 1.5s ease-in forwards';
+      tritium.style.animation = 'particle-vibrate 0.1s infinite, fusion-approach-right 1.5s ease-in forwards';
+      
+      setTimeout(() => {
+        deuterium.style.opacity = '0';
+        tritium.style.opacity = '0';
+        
+        helium.style.cssText = 'opacity: 1; animation: fusion-combine 0.8s ease-out forwards;';
+        
+        fusionNeutron.style.cssText = 'opacity: 1; animation: neutron-release-2 1.2s ease-out forwards;';
+        
+        fusionEnergy.style.cssText = 'opacity: 1; animation: fusion-energy-burst 1.5s ease-out forwards;';
+        
+        energyMeter.style.width = '95%';
+        
+        let energy = 0;
+        const targetEnergy = 17600;
+        const energyInterval = setInterval(() => {
+          energy += 400;
+          if (energy >= targetEnergy) {
+            energy = targetEnergy;
+            clearInterval(energyInterval);
+          }
+          energyValue.textContent = (energy / 1000).toFixed(1) + ' GeV';
+        }, 30);
+        
+      }, 1500);
+      
+      setTimeout(() => {
+        isAnimating = false;
+        startButton.disabled = false;
+        startButton.style.opacity = '1';
+        startButton.style.cursor = 'pointer';
+      }, 4000);
+    }
+    
+    async function onConfigChange(config) {
+      const mainTitle = document.getElementById('main-title');
+      const fissionTitle = document.getElementById('fission-title');
+      const fusionTitle = document.getElementById('fusion-title');
+      const energyLabel = document.getElementById('energy-label');
+      
+      if (mainTitle) mainTitle.textContent = config.main_title || defaultConfig.main_title;
+      if (fissionTitle) fissionTitle.textContent = config.fission_title || defaultConfig.fission_title;
+      if (fusionTitle) fusionTitle.textContent = config.fusion_title || defaultConfig.fusion_title;
+      if (energyLabel) energyLabel.textContent = '⚡ ' + (config.energy_label || defaultConfig.energy_label);
+    }
+    
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+    
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['main_title', config.main_title || defaultConfig.main_title],
+        ['fission_title', config.fission_title || defaultConfig.fission_title],
+        ['fusion_title', config.fusion_title || defaultConfig.fusion_title],
+        ['energy_label', config.energy_label || defaultConfig.energy_label]
+      ]);
+    }
+    
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+    
+    setMode('fission');
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0808ea8fde3d25e',t:'MTc4MDg0NDc1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

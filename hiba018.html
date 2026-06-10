@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة مختبر الدوائر الكهربائية</title>
+  <link rel="icon" type="image/png" href="18.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&amp;family=Tajawal:wght@400;500;700;800&amp;family=Almarai:wght@400;700;800&amp;family=Orbitron:wght@500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Tajawal', 'Cairo', sans-serif;
+    }
+    
+    .return-home-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 9999;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .return-home-btn:hover {
+      background: #1e90ff;
+      border-color: #1e90ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 144, 255, 0.4);
+    }
+    
+    .return-home-btn .icon {
+      font-size: 18px;
+      transition: transform 0.3s ease;
+    }
+    
+    .return-home-btn:hover .icon {
+      transform: translateX(3px);
+    }
+    
+    @media (max-width: 768px) {
+      .return-home-btn {
+        padding: 10px 16px;
+        font-size: 12px;
+        top: 15px;
+        left: 15px;
+      }
+      
+      .return-home-btn .btn-text {
+        display: none;
+      }
+      
+      .return-home-btn .icon {
+        font-size: 20px;
+        margin: 0;
+      }
+    }
+    
+    .digital-font {
+      font-family: 'Orbitron', monospace;
+    }
+    
+    @keyframes electricFlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    
+    @keyframes bulbGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.5); }
+    }
+    
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+      50% { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.4s ease-out;
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.8; }
+      100% { transform: scale(0.5); opacity: 0; }
+    }
+    
+    @keyframes smokeRise {
+      0% { transform: translateY(0) scale(1); opacity: 0.8; }
+      100% { transform: translateY(-50px) scale(2); opacity: 0; }
+    }
+    
+    .exploded {
+      animation: explode 0.5s ease-out forwards;
+    }
+    
+    .smoke {
+      animation: smokeRise 2s ease-out forwards;
+    }
+    
+    .blueprint-grid {
+      background-color: #0a1628;
+      background-image: 
+        linear-gradient(rgba(0, 170, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 170, 255, 0.1) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    
+    .component-item {
+      cursor: grab;
+      transition: all 0.3s ease;
+      border: 2px solid #00aaff;
+      box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+    }
+    
+    .component-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+    }
+    
+    .component-item:active {
+      cursor: grabbing;
+    }
+    
+    .dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+    
+    .placed-component {
+      position: absolute;
+      cursor: move;
+    }
+    
+    .wire-glow {
+      filter: drop-shadow(0 0 8px #00ff88);
+    }
+    
+    .active-circuit {
+      animation: electricFlow 1s ease-in-out infinite;
+    }
+    
+    .bulb-active {
+      animation: bulbGlow 0.8s ease-in-out infinite;
+    }
+    
+    .neon-text {
+      animation: neonPulse 2s ease-in-out infinite;
+    }
+    
+    .toolbox-item {
+      background: linear-gradient(145deg, #1a2942, #0f1829);
+      border: 2px solid #00aaff;
+    }
+    
+    .measurement-display {
+      background: rgba(10, 22, 40, 0.95);
+      border: 2px solid #00ff88;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 170, 255, 0.4);
+    }
+    
+    .glass-morphism {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 170, 255, 0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0284c7, #0891b2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(6, 182, 212, 0.4);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, #8b5cf6, #a855f7);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 4px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #0ea5e9, #06b6d4);
+      border-radius: 4px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #0284c7, #0891b2);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950"><a href="index.html" target="_blank" rel="noopener noreferrer" class="return-home-btn"> <span class="icon">🏠</span> <span class="btn-text">العودة للموسوعة الرئيسية</span> </a>
+  <div id="main-dashboard" class="h-full w-full flex flex-col">
+   <nav class="bg-gradient-to-r from-blue-950/90 to-slate-950/90 border-b-2 border-cyan-500/30 px-4 py-3">
+    <div class="flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="text-3xl">
+       ⚡
+      </div>
+      <div>
+       <h1 id="platform-title" class="text-lg font-bold text-cyan-400">منصة المختبر الكهربائي</h1>
+       <p class="text-cyan-500/60 text-xs">مختبر افتراضي لتصميم الدوائر الكهربائية</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-2">
+     </div>
+    </div>
+   </nav>
+   <div id="section-lab" class="flex-1 flex flex-col md:flex-row gap-3 p-3 overflow-hidden">
+    <aside class="w-full md:w-64 bg-gradient-to-b from-slate-900/90 to-blue-950/90 rounded-lg border-2 border-cyan-500/30 p-3 overflow-y-auto scrollbar-custom" style="max-height: 100%;">
+     <h2 class="text-cyan-400 font-bold text-center mb-3 text-sm md:text-base border-b border-cyan-500/30 pb-2">🔧 صندوق المكونات</h2>
+     <div class="space-y-3">
+      <div class="toolbox-item rounded-lg p-3 component-item" draggable="true" data-component="battery">
+       <div class="flex items-center gap-2">
+        <div class="text-2xl">
+         🔋
+        </div>
+        <div class="flex-1">
+         <p class="text-cyan-300 font-semibold text-sm">بطارية</p>
+         <p class="text-cyan-500/60 text-xs">مصدر الجهد</p>
+        </div>
+       </div>
+      </div>
+      <div class="toolbox-item rounded-lg p-3 component-item" draggable="true" data-component="bulb">
+       <div class="flex items-center gap-2">
+        <div class="text-2xl">
+         💡
+        </div>
+        <div class="flex-1">
+         <p class="text-yellow-300 font-semibold text-sm">مصباح كهربائي</p>
+         <p class="text-yellow-500/60 text-xs">حمل كهربائي</p>
+        </div>
+       </div>
+      </div>
+      <div class="toolbox-item rounded-lg p-3 component-item" draggable="true" data-component="switch">
+       <div class="flex items-center gap-2">
+        <div class="text-2xl">
+         🎚️
+        </div>
+        <div class="flex-1">
+         <p class="text-emerald-300 font-semibold text-sm">مفتاح كهربائي</p>
+         <p class="text-emerald-500/60 text-xs">للتحكم بالدائرة</p>
+        </div>
+       </div>
+      </div>
+      <div class="toolbox-item rounded-lg p-3 component-item" draggable="true" data-component="dmm">
+       <div class="flex items-center gap-2">
+        <div class="text-2xl">
+         📟
+        </div>
+        <div class="flex-1">
+         <p class="text-blue-300 font-semibold text-sm">DMM جهاز</p>
+         <p class="text-blue-500/60 text-xs">قياس شامل</p>
+        </div>
+       </div>
+      </div>
+      <div class="toolbox-item rounded-lg p-3 component-item" draggable="true" data-component="ammeter">
+       <div class="flex items-center gap-2">
+        <div class="text-2xl">
+         📊
+        </div>
+        <div class="flex-1">
+         <p class="text-purple-300 font-semibold text-sm">أميتر</p>
+         <p class="text-purple-500/60 text-xs">قياس التيار</p>
+        </div>
+       </div>
+      </div>
+      <div class="toolbox-item rounded-lg p-3 component-item" draggable="true" data-component="voltmeter">
+       <div class="flex items-center gap-2">
+        <div class="text-2xl">
+         ⚡
+        </div>
+        <div class="flex-1">
+         <p class="text-cyan-300 font-semibold text-sm">فولتميتر</p>
+         <p class="text-cyan-500/60 text-xs">قياس الجهد</p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="mt-4 p-3 bg-blue-950/50 rounded-lg border border-cyan-500/20">
+      <p class="text-cyan-400 font-semibold text-xs mb-2">📋 التعليمات:</p>
+      <ul class="text-cyan-300/70 text-xs space-y-1">
+       <li>• اسحب المكونات للطاولة</li>
+       <li>• الأسلاك تظهر تلقائياً</li>
+       <li>• اضغط على المفتاح للتحكم</li>
+       <li>• احذر! تجاوز 2A يفجر المصباح</li>
+      </ul>
+     </div>
+    </aside>
+    <main class="flex-1 flex flex-col gap-3 overflow-hidden">
+     <div class="flex-1 blueprint-grid rounded-lg border-2 border-cyan-500/40 relative overflow-hidden" id="workbench">
+      <div class="absolute top-2 left-2 text-cyan-500/40 text-xs digital-font">
+       GRID: 30x30px
+      </div>
+      <div class="absolute top-2 right-2 flex gap-2" style="z-index: 10;"><button id="clear-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all"> 🗑️ مسح الكل </button>
+      </div>
+      <svg id="wire-canvas" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;"><defs>
+        <filter id="glow">
+         <fegaussianblur stddeviation="3" result="coloredBlur" />
+         <femerge>
+          <femergenode in="coloredBlur" />
+          <femergenode in="SourceGraphic" />
+         </femerge>
+        </filter>
+       </defs>
+      </svg>
+      <div id="placed-components" class="absolute inset-0" style="z-index: 2;"></div>
+     </div>
+     <div id="controls-panel" class="hidden bg-gradient-to-r from-slate-900/90 to-blue-950/90 rounded-lg border-2 border-cyan-500/30 p-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       <div><label class="block text-cyan-400 font-semibold text-sm mb-2">⚡ جهد البطارية (V)</label> <input type="range" id="voltage-slider" min="1" max="12" value="6" step="0.5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+        <div class="flex justify-between text-xs text-cyan-500 mt-1"><span>1V</span> <span id="voltage-display" class="text-cyan-400 font-bold digital-font">6.0V</span> <span>12V</span>
+        </div>
+       </div>
+       <div><label class="block text-yellow-400 font-semibold text-sm mb-2">💡 مقاومة المصباح (Ω)</label> <input type="range" id="resistance-slider" min="1" max="20" value="10" step="1" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-yellow-500">
+        <div class="flex justify-between text-xs text-yellow-500 mt-1"><span>1Ω</span> <span id="resistance-display" class="text-yellow-400 font-bold digital-font">10Ω</span> <span>20Ω</span>
+        </div>
+       </div>
+      </div>
+      <div class="mt-4 measurement-display rounded-lg p-4">
+       <div class="text-center">
+        <p class="text-emerald-400 font-semibold text-sm mb-2">قانون أوم</p>
+        <div class="text-2xl md:text-3xl font-bold"><span class="text-emerald-400">التيار</span> <span class="text-white"> = </span> <span class="text-cyan-400">الجهد</span> <span class="text-white"> ÷ </span> <span class="text-yellow-400">المقاومة</span>
+        </div>
+        <div id="current-calculation" class="mt-2 text-lg digital-font text-emerald-300">
+         ت = 6.0 فولت ÷ 10 أوم = <span class="text-emerald-400 font-bold">0.60 أمبير</span>
+        </div>
+        <div id="safety-indicator" class="hidden mt-3 bg-red-900/50 border border-red-500 rounded-lg p-2">
+         <p class="text-red-400 font-bold text-sm">⚠️ تحذير: التيار &gt; 2.0A</p>
+         <p class="text-red-300 text-xs">قلل الجهد أو زد المقاومة!</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div>
+   <footer class="bg-gradient-to-r from-blue-950/80 to-slate-950/80 border-t-2 border-cyan-500/30 px-4 py-3">
+    <p id="footer-text" class="text-center text-cyan-400/70 text-xs">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      platform_title: 'منصة مختبر الدوائر الكهربائية',
+      footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين',
+      primary_color: '#0ea5e9',
+      secondary_color: '#8b5cf6',
+      accent_color: '#00ff88',
+      background_color: '#0a1628',
+      text_color: '#22d3ee'
+    };
+
+    let config = { ...defaultConfig };
+    let placedComponents = [];
+    let switchState = false;
+    let componentIdCounter = 0;
+    let canOperateCircuit = true;
+
+    async function onConfigChange(cfg) {
+      config = { ...defaultConfig, ...cfg };
+      
+      const platformTitle = document.getElementById('platform-title');
+      const footerText = document.getElementById('footer-text');
+      
+      if (platformTitle) platformTitle.textContent = config.platform_title || defaultConfig.platform_title;
+      if (footerText) footerText.textContent = config.footer_text || defaultConfig.footer_text;
+    }
+
+    function mapToCapabilities(cfg) {
+      return {
+        recolorables: [
+          {
+            get: () => cfg.background_color || defaultConfig.background_color,
+            set: (v) => { cfg.background_color = v; if(window.elementSdk) window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => cfg.primary_color || defaultConfig.primary_color,
+            set: (v) => { cfg.primary_color = v; if(window.elementSdk) window.elementSdk.setConfig({ primary_color: v }); }
+          },
+          {
+            get: () => cfg.accent_color || defaultConfig.accent_color,
+            set: (v) => { cfg.accent_color = v; if(window.elementSdk) window.elementSdk.setConfig({ accent_color: v }); }
+          },
+          {
+            get: () => cfg.text_color || defaultConfig.text_color,
+            set: (v) => { cfg.text_color = v; if(window.elementSdk) window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => cfg.secondary_color || defaultConfig.secondary_color,
+            set: (v) => { cfg.secondary_color = v; if(window.elementSdk) window.elementSdk.setConfig({ secondary_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ['platform_title', cfg.platform_title || defaultConfig.platform_title],
+        ['footer_text', cfg.footer_text || defaultConfig.footer_text]
+      ]);
+    }
+
+    document.querySelectorAll('.component-item').forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('component', e.target.dataset.component);
+        e.target.classList.add('dragging');
+      });
+
+      item.addEventListener('dragend', (e) => {
+        e.target.classList.remove('dragging');
+      });
+    });
+
+    const workbench = document.getElementById('workbench');
+    workbench.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    workbench.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const componentType = e.dataTransfer.getData('component');
+      if (!componentType) return;
+
+      const rect = workbench.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      placeComponent(componentType, x, y);
+    });
+
+    function placeComponent(type, x, y) {
+      const id = `comp-${componentIdCounter++}`;
+      const component = { id, type, x, y };
+
+      placedComponents.push(component);
+      renderComponent(component);
+      checkCircuit();
+    }
+
+    function renderComponent(component) {
+      const container = document.getElementById('placed-components');
+      const div = document.createElement('div');
+      div.id = component.id;
+      div.className = 'placed-component';
+      div.style.left = `${component.x}px`;
+      div.style.top = `${component.y}px`;
+
+      let content = '';
+      switch(component.type) {
+        case 'battery':
+          content = `
+            <div class="bg-slate-800/90 border-2 border-cyan-400 rounded-lg p-3 shadow-lg" style="width: 80px;">
+              <div class="text-3xl text-center">🔋</div>
+              <p class="text-cyan-400 text-xs text-center font-semibold mt-1">بطارية</p>
+            </div>
+          `;
+          break;
+        case 'bulb':
+          content = `
+            <div class="bg-slate-800/90 border-2 border-yellow-400 rounded-lg p-3 shadow-lg relative" style="width: 70px;">
+              <div id="${component.id}-glow" class="absolute inset-0 rounded-lg"></div>
+              <div class="text-3xl text-center relative z-10" id="${component.id}-icon">💡</div>
+              <p class="text-yellow-400 text-xs text-center font-semibold mt-1 relative z-10">مصباح</p>
+              <div id="${component.id}-smoke" class="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none"></div>
+            </div>
+          `;
+          break;
+        case 'switch':
+          content = `
+            <div class="bg-slate-800/90 border-2 border-emerald-400 rounded-lg p-3 shadow-lg cursor-pointer" style="width: 80px;" onclick="toggleSwitch('${component.id}')">
+              <div class="text-3xl text-center">🎚️</div>
+              <p class="text-emerald-400 text-xs text-center font-semibold mt-1">مفتاح</p>
+              <p id="${component.id}-state" class="text-red-400 text-xs text-center font-bold">إيقاف</p>
+            </div>
+          `;
+          break;
+        case 'ammeter':
+          content = `
+            <div class="measurement-display rounded-lg p-3 shadow-lg" style="width: 100px;">
+              <div class="text-2xl text-center">📊</div>
+              <p class="text-purple-400 text-xs text-center font-semibold">أميتر</p>
+              <p id="${component.id}-reading" class="text-emerald-400 text-sm text-center font-bold digital-font mt-1">0.00 ت</p>
+            </div>
+          `;
+          break;
+        case 'voltmeter':
+          content = `
+            <div class="measurement-display rounded-lg p-3 shadow-lg" style="width: 100px;">
+              <div class="text-2xl text-center">⚡</div>
+              <p class="text-cyan-400 text-xs text-center font-semibold">فولتميتر</p>
+              <p id="${component.id}-reading" class="text-cyan-400 text-sm text-center font-bold digital-font mt-1">0.0 ج</p>
+            </div>
+          `;
+          break;
+        case 'dmm':
+          content = `
+            <div class="measurement-display rounded-lg p-4 shadow-lg" style="width: 140px;">
+              <div class="text-3xl text-center mb-2">📟</div>
+              <p class="text-blue-400 text-xs text-center font-semibold mb-2">DMM</p>
+              <div class="bg-black/70 rounded p-2 space-y-1">
+                <div class="flex justify-between items-center">
+                  <span class="text-cyan-400 text-xs">ج:</span>
+                  <span id="${component.id}-voltage" class="text-cyan-400 text-xs digital-font font-bold">0.0 ج</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-emerald-400 text-xs">ت:</span>
+                  <span id="${component.id}-current" class="text-emerald-400 text-xs digital-font font-bold">0.00 ت</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-yellow-400 text-xs">م:</span>
+                  <span id="${component.id}-resistance" class="text-yellow-400 text-xs digital-font font-bold">0 م</span>
+                </div>
+              </div>
+            </div>
+          `;
+          break;
+      }
+
+      div.innerHTML = content + `
+        <button onclick="removeComponent('${component.id}')" 
+          class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs font-bold hover:bg-red-700 z-20">
+          ✕
+        </button>
+      `;
+
+      container.appendChild(div);
+      makeDraggable(div, component);
+    }
+
+    function makeDraggable(element, component) {
+      let isDragging = false;
+      let hasDraggedWhileOn = false;
+      let initialX, initialY;
+
+      element.addEventListener('mousedown', (e) => {
+        if (e.target.tagName === 'BUTTON') return;
+        isDragging = true;
+        hasDraggedWhileOn = false;
+        initialX = e.clientX - component.x;
+        initialY = e.clientY - component.y;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        
+        if (switchState && !hasDraggedWhileOn) {
+          hasDraggedWhileOn = true;
+          switchState = false;
+          const switchComp = placedComponents.find(c => c.type === 'switch');
+          if (switchComp) {
+            const stateElement = document.getElementById(`${switchComp.id}-state`);
+            if (stateElement) {
+              stateElement.textContent = 'إيقاف';
+              stateElement.className = 'text-red-400 text-xs text-center font-bold';
+            }
+          }
+          updateCircuit();
+        }
+        
+        component.x = e.clientX - initialX;
+        component.y = e.clientY - initialY;
+        element.style.left = `${component.x}px`;
+        element.style.top = `${component.y}px`;
+        drawWires();
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        hasDraggedWhileOn = false;
+      });
+    }
+
+    window.removeComponent = function(id) {
+      placedComponents = placedComponents.filter(c => c.id !== id);
+      const element = document.getElementById(id);
+      if (element) element.remove();
+      
+      if (switchState) {
+        switchState = false;
+        const switchComp = placedComponents.find(c => c.type === 'switch');
+        if (switchComp) {
+          const stateElement = document.getElementById(`${switchComp.id}-state`);
+          if (stateElement) {
+            stateElement.textContent = 'إيقاف';
+            stateElement.className = 'text-red-400 text-xs text-center font-bold';
+          }
+        }
+      }
+      
+      checkCircuit();
+      drawWires();
+    };
+
+    window.toggleSwitch = function(id) {
+      const component = placedComponents.find(c => c.id === id);
+      if (!component) return;
+      
+      const hasExplodedBulb = placedComponents.some(c => c.type === 'bulb' && c.exploded);
+      if (hasExplodedBulb) {
+        showNotification('⚠️ أزل المصباح المحترق أولاً!', 'error');
+        return;
+      }
+      
+      if (!canOperateCircuit) {
+        const hasBulb = placedComponents.some(c => c.type === 'bulb' && !c.exploded);
+        const voltage = parseFloat(document.getElementById('voltage-slider').value);
+        const resistance = parseFloat(document.getElementById('resistance-slider').value);
+        const projectedCurrent = voltage / resistance;
+        
+        if (!hasBulb) {
+          showNotification('⚠️ يجب إضافة مصباح جديد أولاً!', 'error');
+          return;
+        }
+        
+        if (projectedCurrent > 2.0) {
+          showNotification('⚠️ عدل المعطيات أولاً! التيار المتوقع: ' + projectedCurrent.toFixed(2) + ' ت', 'error');
+          return;
+        }
+        
+        canOperateCircuit = true;
+      }
+      
+      switchState = !switchState;
+      const stateElement = document.getElementById(`${id}-state`);
+      
+      if (switchState) {
+        stateElement.textContent = 'تشغيل';
+        stateElement.className = 'text-green-400 text-xs text-center font-bold';
+      } else {
+        stateElement.textContent = 'إيقاف';
+        stateElement.className = 'text-red-400 text-xs text-center font-bold';
+      }
+      
+      updateCircuit();
+    };
+
+    function checkCircuit() {
+      const hasBattery = placedComponents.some(c => c.type === 'battery');
+      const hasBulb = placedComponents.some(c => c.type === 'bulb' && !c.exploded);
+      const hasSwitch = placedComponents.some(c => c.type === 'switch');
+
+      const circuitComplete = hasBattery && hasBulb && hasSwitch && placedComponents.length >= 3;
+
+      const controlsPanel = document.getElementById('controls-panel');
+      if (circuitComplete) {
+        controlsPanel.classList.remove('hidden');
+      } else {
+        controlsPanel.classList.add('hidden');
+      }
+
+      drawWires();
+      updateCircuit();
+    }
+
+    function updateCircuit() {
+      const hasBattery = placedComponents.some(c => c.type === 'battery');
+      const hasBulb = placedComponents.some(c => c.type === 'bulb' && !c.exploded);
+      const hasSwitch = placedComponents.some(c => c.type === 'switch');
+      const circuitComplete = hasBattery && hasBulb && hasSwitch;
+
+      if (!circuitComplete || !switchState) {
+        placedComponents.forEach(comp => {
+          if (comp.type === 'bulb' && !comp.exploded) {
+            const glow = document.getElementById(`${comp.id}-glow`);
+            const icon = document.getElementById(`${comp.id}-icon`);
+            if (glow) glow.style.background = '';
+            if (icon) {
+              icon.classList.remove('bulb-active');
+              icon.style.filter = 'brightness(0.5)';
+            }
+          }
+        });
+        drawWires(false);
+        
+        placedComponents.forEach(comp => {
+          if (comp.type === 'dmm') {
+            document.getElementById(`${comp.id}-voltage`).textContent = '0.0 ج';
+            document.getElementById(`${comp.id}-current`).textContent = '0.00 ت';
+            document.getElementById(`${comp.id}-resistance`).textContent = '0 م';
+          }
+          if (comp.type === 'ammeter') {
+            const reading = document.getElementById(`${comp.id}-reading`);
+            if (reading) reading.textContent = '0.00 ت';
+          }
+          if (comp.type === 'voltmeter') {
+            const reading = document.getElementById(`${comp.id}-reading`);
+            if (reading) reading.textContent = '0.0 ج';
+          }
+        });
+        
+        const safetyIndicator = document.getElementById('safety-indicator');
+        if (safetyIndicator) safetyIndicator.classList.add('hidden');
+        return;
+      }
+
+      const voltage = parseFloat(document.getElementById('voltage-slider').value);
+      const resistance = parseFloat(document.getElementById('resistance-slider').value);
+      const current = voltage / resistance;
+
+      document.getElementById('voltage-display').textContent = `${voltage.toFixed(1)}V`;
+      document.getElementById('resistance-display').textContent = `${resistance}Ω`;
+      document.getElementById('current-calculation').innerHTML = 
+        `ت = ${voltage.toFixed(1)} فولت ÷ ${resistance} أوم = <span class="text-emerald-400 font-bold">${current.toFixed(2)} أمبير</span>`;
+
+      const safetyIndicator = document.getElementById('safety-indicator');
+      if (current > 2.0) {
+        safetyIndicator.innerHTML = `
+          <p class="text-red-400 font-bold text-sm">⚠️ تحذير: التيار > 2.0 ت</p>
+          <p class="text-red-300 text-xs">قلل الجهد أو زد المقاومة!</p>
+        `;
+        safetyIndicator.classList.remove('hidden');
+        
+        setTimeout(() => {
+          if (current > 2.0 && switchState) {
+            explodeBulb();
+          }
+        }, 1500);
+      } else {
+        safetyIndicator.classList.add('hidden');
+      }
+
+      placedComponents.forEach(comp => {
+        if (comp.type === 'bulb' && !comp.exploded) {
+          const glow = document.getElementById(`${comp.id}-glow`);
+          const icon = document.getElementById(`${comp.id}-icon`);
+          const brightness = Math.min(current / 1.5, 1);
+          
+          if (glow) {
+            const glowSize = 50 + (brightness * 100);
+            glow.style.background = `radial-gradient(circle, rgba(255,255,0,${brightness * 0.6}) 0%, rgba(255,255,0,0) ${glowSize}%)`;
+          }
+          
+          if (icon) {
+            icon.classList.add('bulb-active');
+            icon.style.filter = `brightness(${1 + brightness})`;
+          }
+        }
+        
+        if (comp.type === 'ammeter') {
+          const reading = document.getElementById(`${comp.id}-reading`);
+          if (reading) reading.textContent = `${current.toFixed(2)} ت`;
+        }
+        
+        if (comp.type === 'voltmeter') {
+          const reading = document.getElementById(`${comp.id}-reading`);
+          if (reading) reading.textContent = `${voltage.toFixed(1)} ج`;
+        }
+        
+        if (comp.type === 'dmm') {
+          document.getElementById(`${comp.id}-voltage`).textContent = `${voltage.toFixed(1)} ج`;
+          document.getElementById(`${comp.id}-current`).textContent = `${current.toFixed(2)} ت`;
+          document.getElementById(`${comp.id}-resistance`).textContent = `${resistance} م`;
+        }
+      });
+
+      drawWires(true, voltage);
+    }
+
+    function explodeBulb() {
+      const bulb = placedComponents.find(c => c.type === 'bulb' && !c.exploded);
+      if (!bulb) return;
+      
+      bulb.exploded = true;
+      canOperateCircuit = false;
+      
+      const icon = document.getElementById(`${bulb.id}-icon`);
+      const glow = document.getElementById(`${bulb.id}-glow`);
+      const smokeContainer = document.getElementById(`${bulb.id}-smoke`);
+      
+      if (icon) {
+        icon.textContent = '💥';
+        icon.classList.add('exploded');
+        setTimeout(() => {
+          icon.textContent = '🔴';
+          icon.style.filter = 'brightness(0.3)';
+        }, 500);
+      }
+      
+      if (glow) {
+        glow.style.background = 'radial-gradient(circle, rgba(255,0,0,0.3) 0%, rgba(255,0,0,0) 100%)';
+      }
+      
+      if (smokeContainer) {
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            const smoke = document.createElement('div');
+            smoke.className = 'smoke';
+            smoke.style.cssText = `
+              position: absolute;
+              width: 20px;
+              height: 20px;
+              background: radial-gradient(circle, rgba(100,100,100,0.6) 0%, transparent 70%);
+              border-radius: 50%;
+              left: ${Math.random() * 20 - 10}px;
+            `;
+            smokeContainer.appendChild(smoke);
+            setTimeout(() => smoke.remove(), 2000);
+          }, i * 200);
+        }
+      }
+      
+      switchState = false;
+      const switchComp = placedComponents.find(c => c.type === 'switch');
+      if (switchComp) {
+        const stateElement = document.getElementById(`${switchComp.id}-state`);
+        if (stateElement) {
+          stateElement.textContent = 'إيقاف';
+          stateElement.className = 'text-red-400 text-xs text-center font-bold';
+        }
+      }
+      
+      showNotification('💥 انفجر المصباح! أضف مصباحاً جديداً وعدل المعطيات', 'error');
+      updateCircuit();
+    }
+
+    function drawWires(active = false, voltage = 0) {
+      const canvas = document.getElementById('wire-canvas');
+      if (!canvas) return;
+      
+      canvas.innerHTML = '<defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+
+      if (placedComponents.length < 2) return;
+
+      for (let i = 0; i < placedComponents.length - 1; i++) {
+        const comp1 = placedComponents[i];
+        const comp2 = placedComponents[i + 1];
+        
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', comp1.x + 40);
+        line.setAttribute('y1', comp1.y + 20);
+        line.setAttribute('x2', comp2.x + 40);
+        line.setAttribute('y2', comp2.y + 20);
+        
+        if (active) {
+          const intensity = Math.min(voltage / 12, 1);
+          line.setAttribute('stroke', '#00ff88');
+          line.setAttribute('stroke-width', 3 + intensity * 2);
+          line.setAttribute('filter', 'url(#glow)');
+          line.style.opacity = 0.7 + (intensity * 0.3);
+        } else {
+          line.setAttribute('stroke', '#334155');
+          line.setAttribute('stroke-width', 2);
+          line.style.opacity = 0.3;
+        }
+        
+        line.setAttribute('stroke-linecap', 'round');
+        canvas.appendChild(line);
+      }
+
+      if (placedComponents.length > 2) {
+        const first = placedComponents[0];
+        const last = placedComponents[placedComponents.length - 1];
+        
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', last.x + 40);
+        line.setAttribute('y1', last.y + 20);
+        line.setAttribute('x2', first.x + 40);
+        line.setAttribute('y2', first.y + 20);
+        
+        if (active) {
+          const intensity = Math.min(voltage / 12, 1);
+          line.setAttribute('stroke', '#00ff88');
+          line.setAttribute('stroke-width', 3 + intensity * 2);
+          line.setAttribute('filter', 'url(#glow)');
+          line.style.opacity = 0.7 + (intensity * 0.3);
+        } else {
+          line.setAttribute('stroke', '#334155');
+          line.setAttribute('stroke-width', 2);
+          line.style.opacity = 0.3;
+        }
+        
+        line.setAttribute('stroke-linecap', 'round');
+        canvas.appendChild(line);
+      }
+    }
+
+    function clearCircuit() {
+      placedComponents = [];
+      switchState = false;
+      canOperateCircuit = true;
+      clearCircuitDisplay();
+      checkCircuit();
+      showNotification('🗑️ تم مسح جميع المكونات', 'success');
+    }
+
+    function clearCircuitDisplay() {
+      document.getElementById('placed-components').innerHTML = '';
+      const canvas = document.getElementById('wire-canvas');
+      if (canvas) {
+        canvas.innerHTML = '<defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+      }
+    }
+
+    function showNotification(message, type = 'success') {
+      const safetyIndicator = document.getElementById('safety-indicator');
+      if (!safetyIndicator) return;
+      
+      const bgColor = type === 'success' ? 'bg-emerald-900/50 border-emerald-500' : 'bg-red-900/50 border-red-500';
+      const textColor = type === 'success' ? 'text-emerald-400' : 'text-red-400';
+      
+      safetyIndicator.innerHTML = `<p class="${textColor} font-bold text-sm">${message}</p>`;
+      safetyIndicator.className = `mt-3 ${bgColor} border rounded-lg p-2`;
+      safetyIndicator.classList.remove('hidden');
+      
+      setTimeout(() => {
+        safetyIndicator.classList.add('hidden');
+      }, 3000);
+    }
+
+    document.getElementById('voltage-slider').addEventListener('input', updateCircuit);
+    document.getElementById('resistance-slider').addEventListener('input', updateCircuit);
+    document.getElementById('clear-btn').addEventListener('click', clearCircuit);
+
+    async function init() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+      }
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ed2ca8986df5daf',t:'MTc3NjMzODMyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

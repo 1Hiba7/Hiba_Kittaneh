@@ -1,0 +1,409 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>محاكاة المرايا | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="12.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    ::selection { background-color: #0891b2 !important; color: white !important; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Cairo', sans-serif; background: linear-gradient(145deg, #0b1a2a 0%, #1a2f3f 100%); min-height: 100vh; padding: 16px; color: #e0f2fe; }
+    .return-btn { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); border-radius: 60px; padding: 12px 22px; color: white; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+    .return-btn:hover { background: #1e90ff; box-shadow: 0 10px 25px rgba(30,144,255,0.5); transform: translateY(-2px); }
+    .sim-card { max-width: 1400px; width: 100%; background: rgba(15,30,40,0.7); backdrop-filter: blur(8px); border-radius: 40px; padding: 25px 20px; box-shadow: 0 25px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); margin: 70px auto 0; }
+    h1 { text-align: center; font-size: 2.2rem; font-weight: 700; color: white; text-shadow: 0 4px 12px #0891b2; margin-bottom: 20px; }
+    .mirror-type-selector { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+    .mirror-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; font-size: 1.2rem; font-weight: 600; padding: 10px 24px; border-radius: 60px; cursor: pointer; transition: all 0.2s; font-family: 'Cairo', sans-serif; }
+    .mirror-btn.active { background: #0891b2; color: white; border-color: #34d399; box-shadow: 0 0 20px #0891b2; }
+    .mirror-btn:hover { background: #1e3a5f; border-color: #0891b2; }
+    canvas { display: block; width: 100%; height: 480px; background: radial-gradient(circle at 20% 30%, #132c3b, #051015); border-radius: 20px; }
+    .canvas-wrapper { background: #0c1a24; border-radius: 30px; padding: 10px; box-shadow: inset 0 0 10px #00000055; border: 1px solid #2c4c64; margin-bottom: 20px; }
+    .control-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px 25px; background: rgba(0,20,30,0.6); padding: 18px 25px; border-radius: 60px; border: 1px solid #1e4b62; margin-top: 10px; }
+    .slider-group { display: flex; flex-direction: column; gap: 6px; }
+    .slider-group label { font-weight: 600; color: #b6e6ff; display: flex; align-items: center; gap: 8px; }
+    input[type="range"] { width: 100%; accent-color: #0891b2; height: 6px; }
+    .value-display { background: #0b1f2a; padding: 5px 12px; border-radius: 30px; text-align: center; font-weight: 700; color: #9ce6ff; border: 1px solid #1e6a8a; }
+    .info-box { grid-column: span 2; display: flex; flex-wrap: wrap; justify-content: space-around; gap: 15px; background: #06212e; padding: 12px 20px; border-radius: 40px; border-right: 6px solid #0891b2; }
+    .info-item { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+    .article-section { margin-top: 25px; background: rgba(0,20,30,0.5); backdrop-filter: blur(4px); border-radius: 30px; padding: 20px 25px; border: 1px solid rgba(8,145,178,0.3); }
+    .article-title { font-size: 1.7rem; font-weight: 700; color: #9ce6ff; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #0891b2; padding-bottom: 8px; }
+    .article-content { font-size: 1.05rem; line-height: 1.8; color: #d4eaff; text-align: justify; }
+    .article-content p { margin-bottom: 12px; }
+    .article-content strong { color: #ffd966; }
+    .article-content ul { margin-right: 25px; margin-bottom: 12px; }
+    .article-content li { margin-bottom: 8px; }
+    .footer-note { text-align: center; margin-top: 20px; color: #aaccdd; font-size: 1rem; border-top: 1px dashed #2c6475; padding-top: 18px; }
+    @media (max-width: 700px) { .sim-card { padding: 20px 12px; } h1 { font-size: 1.8rem; } .control-panel { grid-template-columns: 1fr; } .info-box { grid-column: span 1; } }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body><a href="https://safa2.my.canva.site/hiba000" class="return-btn" target="_blank" rel="noopener noreferrer"> <i class="fas fa-home"></i><span>العودة للموسوعة</span> </a>
+  <div class="sim-card">
+   <h1><i class="fas fa-mirror"></i> محاكاة المرايا <i class="fas fa-mirror" style="transform: scaleX(-1);"></i></h1>
+   <div class="mirror-type-selector"><button class="mirror-btn active" data-type="plane"><i class="fas fa-arrows-alt-h"></i> مستوية</button> <button class="mirror-btn" data-type="concave"><i class="fas fa-circle-notch"></i> مقعرة</button> <button class="mirror-btn" data-type="convex"><i class="fas fa-circle"></i> محدبة</button>
+   </div>
+   <div class="canvas-wrapper">
+    <canvas id="mirrorCanvas" width="1000" height="500"></canvas>
+   </div>
+   <div class="control-panel">
+    <div class="slider-group"><label><i class="fas fa-ruler"></i> بُعد الجسم (سم)</label> <input type="range" id="objectDist" min="20" max="380" value="200" step="1">
+     <div class="value-display" id="objDistVal">
+      200.0
+     </div>
+    </div>
+    <div class="slider-group" id="focalGroup"><label><i class="fas fa-dot-circle"></i> البعد البؤري (سم)</label> <input type="range" id="focalLength" min="20" max="200" value="80" step="1">
+     <div class="value-display" id="focalVal">
+      80.0
+     </div>
+    </div>
+    <div class="slider-group"><label><i class="fas fa-arrow-up"></i> ارتفاع الجسم (سم)</label> <input type="range" id="objectHeight" min="10" max="100" value="50" step="1">
+     <div class="value-display" id="objHeightVal">
+      50.0
+     </div>
+    </div>
+    <div class="info-box">
+     <div class="info-item">
+      <i class="fas fa-image"></i> <span id="imageType">صورة خيالية معتدلة</span>
+     </div>
+     <div class="info-item">
+      <i class="fas fa-arrows-alt-v"></i> بُعد الصورة: <span id="imageDistVal">200.0</span> سم
+     </div>
+     <div class="info-item">
+      <i class="fas fa-expand"></i> تكبير: <span id="magnification">1.00x</span>
+     </div>
+    </div><label style="display: flex; align-items: center; gap: 10px; grid-column: 1;"> <i class="fas fa-bolt" style="color:#0891b2;"></i> <input type="checkbox" id="showRays" checked> إظهار الأشعة الرئيسية </label>
+   </div>
+   <div class="article-section">
+    <div class="article-title"><i class="fas fa-book-open" id="articleIcon"></i> <span id="articleTitle">المرآة المستوية</span>
+    </div>
+    <div class="article-content" id="articleContent"></div>
+   </div>
+   <div class="footer-note">
+    جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين
+   </div>
+  </div>
+  <script>
+    const canvas = document.getElementById('mirrorCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const objDistInput = document.getElementById('objectDist');
+    const focalInput = document.getElementById('focalLength');
+    const objHeightInput = document.getElementById('objectHeight');
+    const showRaysCheck = document.getElementById('showRays');
+    
+    const articleTitleSpan = document.getElementById('articleTitle');
+    const articleContentDiv = document.getElementById('articleContent');
+    const articleIcon = document.getElementById('articleIcon');
+
+    let mirrorType = 'plane';
+    let objectDistance = 200;
+    let focalLength = 80;
+    let objectHeight = 50;
+    
+    const axisY = 250;
+    const mirrorX = 600;
+
+    const articles = {
+      plane: {
+        title: 'المرآة المستوية - دراسة تفصيلية شاملة',
+        icon: 'fa-arrows-alt-h',
+        content: `
+          <p><strong>تعريف المرآة المستوية:</strong> هي سطح أملس مستوٍ يعكس الضوء بانتظام، حيث تحافظ الأشعة الضوئية المتوازية على توازيها بعد الانعكاس. وهي الأكثر استخداماً في حياتنا اليومية.</p>
+          <p><strong>التطبيقات العملية:</strong> المرايا المنزلية، مرايا الحمام، الرفوف المزينة، الزجاج العاكس في المباني، الأجهزة البصرية المختلفة.</p>
+          <p><strong>خصائص الصورة المتكونة:</strong></p>
+          <ul>
+            <li><strong>صورة خيالية:</strong> لا يمكن استقبالها على حائل (الأشعة لا تتقاطع فعلياً، بل امتداداتها).</li>
+            <li><strong>صورة معتدلة:</strong> غير مقلوبة، بنفس اتجاه الجسم.</li>
+            <li><strong>تساوي الحجم:</strong> حجم الصورة = حجم الجسم (معامل التكبير = +1).</li>
+            <li><strong>مسافة متساوية:</strong> بعد الصورة = بعد الجسم من المرآة.</li>
+            <li><strong>انعكاس جانبي:</strong> تنعكس من اليمين إلى اليسار (الكتابة معكوسة).</li>
+          </ul>
+          <p><strong>قوانين الانعكاس:</strong></p>
+          <ul>
+            <li>زاوية السقوط = زاوية الانعكاس (بالنسبة للعمود)</li>
+            <li>الشعاع الساقط والمنعكس والعمود في مستوى واحد</li>
+          </ul>
+          <p><strong>المعادلات:</strong> di = -do | m = +1 | hi = ho</p>
+        `
+      },
+      concave: {
+        title: 'المرآة المقعرة - تحليل شامل ودقيق',
+        icon: 'fa-circle-notch',
+        content: `
+          <p><strong>تعريف المرآة المقعرة:</strong> مرآة كروية سطحها العاكس إلى الداخل (مقعراً). تجمع الأشعة الضوئية الموازية في نقطة واحدة تسمى البؤرة.</p>
+          <p><strong>التطبيقات الصناعية:</strong> التلسكوبات الفلكية، المرايا الطبيّة، المصابيح الأمامية للسيارات، أطباق الطاقة الشمسية.</p>
+          <p><strong>المصطلحات الأساسية:</strong></p>
+          <ul>
+            <li><strong>البؤرة (F):</strong> نقطة تجمع الأشعة الموازية</li>
+            <li><strong>مركز التكور (C):</strong> مركز الكرة الوهمية (بعده 2f)</li>
+            <li><strong>البعد البؤري (f):</strong> المسافة من المرآة للبؤرة</li>
+          </ul>
+          <p><strong>معادلة المرآة:</strong> <strong>1/f = 1/do + 1/di</strong></p>
+          <p><strong>حالات تكوين الصورة:</strong> do > 2f (حقيقية مقلوبة مصغرة)، do = 2f (حقيقية مقلوبة مساوية)، f < do < 2f (حقيقية مقلوبة مكبرة)، do < f (خيالية معتدلة مكبرة).</p>
+        `
+      },
+      convex: {
+        title: 'المرآة المحدبة - شرح مفصل وعملي',
+        icon: 'fa-circle',
+        content: `
+          <p><strong>تعريف المرآة المحدبة:</strong> مرآة كروية سطحها العاكس إلى الخارج (محدباً). تفرق الأشعة الضوئية الموازية كأنها صادرة من نقطة خيالية خلفها.</p>
+          <p><strong>التطبيقات الشائعة:</strong> مرايا الرؤية الجانبية في السيارات (توسع المجال)، مرايا المراقبة الأمنية في المحلات التجارية.</p>
+          <p><strong>خصائص الصورة (ثابتة دائماً):</strong> خيالية، معتدلة، مصغرة دائماً بغض النظر عن موقع الجسم.</p>
+        `
+      }
+    };
+
+    function updateArticle() {
+      const art = articles[mirrorType] || articles.plane;
+      articleTitleSpan.textContent = art.title;
+      articleIcon.className = `fas ${art.icon}`;
+      articleContentDiv.innerHTML = art.content;
+    }
+
+    function updateUI() {
+      document.getElementById('objDistVal').textContent = objectDistance.toFixed(1);
+      document.getElementById('objHeightVal').textContent = objectHeight.toFixed(1);
+      
+      if (mirrorType === 'plane') {
+        focalInput.disabled = true;
+        document.getElementById('focalVal').textContent = '∞';
+        document.getElementById('focalGroup').style.opacity = '0.6';
+      } else {
+        focalInput.disabled = false;
+        document.getElementById('focalGroup').style.opacity = '1';
+        document.getElementById('focalVal').textContent = focalLength.toFixed(1);
+      }
+    }
+    
+    function calculateImage() {
+      if (mirrorType === 'plane') {
+        return { di: -objectDistance, m: 1.0, imageHeight: objectHeight, imageType: 'خيالية معتدلة', real: false };
+      }
+      const f = (mirrorType === 'concave') ? Math.abs(focalLength) : -Math.abs(focalLength);
+      const doObj = objectDistance;
+      if (doObj === 0) return { di: Infinity, m: 0, imageHeight: 0, imageType: 'غير محددة', real: false };
+      
+      const di = 1 / ((1/f) - (1/doObj));
+      const m = -di / doObj;
+      const imageHeight = m * objectHeight;
+      const real = (di > 0);
+      let imageType = real ? 'حقيقية مقلوبة' : 'خيالية معتدلة';
+      if (!isFinite(di)) return { di: Infinity, m: 0, imageHeight: 0, imageType: 'لا تتكون صورة', real: false };
+      return { di, m, imageHeight, imageType, real };
+    }
+    
+    function drawMirror() {
+      ctx.save();
+      ctx.shadowColor = '#0891b2'; 
+      ctx.shadowBlur = 12;
+      ctx.lineWidth = 6; 
+      ctx.strokeStyle = '#e0f0ff';
+      
+      if (mirrorType === 'plane') {
+        ctx.beginPath();
+        ctx.moveTo(mirrorX, axisY - 180);
+        ctx.lineTo(mirrorX, axisY + 160);
+        ctx.stroke();
+      } else {
+        const curve = (mirrorType === 'concave') ? -25 : 25;
+        ctx.beginPath();
+        ctx.moveTo(mirrorX + curve*0.3, axisY - 170);
+        ctx.quadraticCurveTo(mirrorX + curve*1.8, axisY, mirrorX + curve*0.3, axisY + 170);
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#cce5ff';
+      ctx.font = 'bold 14px Cairo';
+      ctx.fillText(mirrorType === 'plane' ? 'مستوية' : (mirrorType==='concave'?'مقعرة':'محدبة'), mirrorX + 20, axisY - 160);
+      ctx.restore();
+    }
+
+    function drawArrow(x, baseY, tipY, color, label) {
+      ctx.save();
+      ctx.lineWidth = 4.5;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      
+      ctx.beginPath();
+      ctx.moveTo(x, baseY);
+      ctx.lineTo(x, tipY);
+      ctx.stroke();
+      
+      const dir = (tipY < baseY) ? -1 : 1;
+      ctx.beginPath();
+      ctx.moveTo(x - 8, tipY + dir * 8);
+      ctx.lineTo(x, tipY);
+      ctx.lineTo(x + 8, tipY + dir * 8);
+      ctx.fill();
+      
+      ctx.font = '600 15px Cairo';
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 6;
+      ctx.fillText(label, x - 18, tipY - 12 * dir);
+      ctx.restore();
+    }
+
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.beginPath();
+      ctx.strokeStyle = '#a0c8e0';
+      ctx.lineWidth = 1.8;
+      ctx.moveTo(30, axisY);
+      ctx.lineTo(canvas.width - 30, axisY);
+      ctx.stroke();
+      
+      drawMirror();
+      
+      let focusX, centerX;
+      if (mirrorType !== 'plane') {
+        const f = (mirrorType === 'concave') ? focalLength : -focalLength;
+        focusX = mirrorX - f;
+        centerX = mirrorX - 2 * f;
+        
+        if (focusX > 20 && focusX < canvas.width - 20) {
+          ctx.beginPath();
+          ctx.arc(focusX, axisY, 6, 0, 2*Math.PI);
+          ctx.fillStyle = '#f0e68c';
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 15px Cairo';
+          ctx.fillText('F', focusX - 5, axisY - 14);
+        }
+        if (centerX > 20 && centerX < canvas.width - 20 && Math.abs(2*f) < 500) {
+          ctx.beginPath();
+          ctx.arc(centerX, axisY, 5, 0, 2*Math.PI);
+          ctx.fillStyle = '#ffb347';
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 14px Cairo';
+          ctx.fillText('C', centerX - 5, axisY - 14);
+        }
+      }
+      
+      const objX = mirrorX - objectDistance;
+      const objTipY = axisY - objectHeight;
+      if (objX > 10 && objX < canvas.width - 10) {
+        drawArrow(objX, axisY, objTipY, '#ff5e5e', 'جسم');
+      }
+      
+      const img = calculateImage();
+      const di = img.di;
+      document.getElementById('imageDistVal').textContent = (isFinite(di) && di !== Infinity) ? (di < 0 ? Math.abs(di).toFixed(1) + ' (خلف)' : di.toFixed(1)) : '∞';
+      document.getElementById('magnification').textContent = img.m.toFixed(2) + 'x';
+      document.getElementById('imageType').textContent = img.imageType;
+      
+      let imageX, imageTipY;
+      if (isFinite(di) && Math.abs(di) < 800) {
+        imageX = mirrorX - di;
+        imageTipY = axisY - img.imageHeight;
+        if (imageX > 10 && imageX < canvas.width - 10) {
+          drawArrow(imageX, axisY, imageTipY, img.real ? '#3b9eff' : '#9f7aea', 'صورة');
+        }
+      }
+
+      // خوارزمية رسم الأشعة الضوئية التفاعلية المضافة حديثاً بالكامل بالتعاون معكِ
+      if (showRaysCheck.checked && isFinite(di) && di !== Infinity) {
+        ctx.save();
+        
+        // 1. الشعاع الموازي للمحور الرئيسي (Parallel Ray)
+        // شعاع ساقط (أصفر فاقع لتسهيل الرؤية للطلاب)
+        ctx.beginPath();
+        ctx.strokeStyle = '#eab308';
+        ctx.lineWidth = 2;
+        ctx.moveTo(objX, objTipY);
+        ctx.lineTo(mirrorX, objTipY);
+        ctx.stroke();
+
+        // شعاع منعكس (أحمر) وامتداده (بنفسجي منقط خلف المرآة)
+        ctx.beginPath();
+        ctx.strokeStyle = '#ef4444';
+        ctx.moveTo(mirrorX, objTipY);
+        if (mirrorType === 'plane') {
+          ctx.lineTo(0, objTipY); ctx.stroke(); // ينعكس على نفسه
+          // امتداد خيالي خلف المرآة
+          ctx.beginPath(); ctx.strokeStyle = '#a855f7'; ctx.setLineDash([5, 5]);
+          ctx.moveTo(mirrorX, objTipY); ctx.lineTo(imageX, imageTipY); ctx.stroke();
+        } else if (mirrorType === 'concave') {
+          if (img.real) {
+            ctx.lineTo(imageX, imageTipY); ctx.stroke();
+          } else {
+            // يمر بالبؤرة الحقيقية لليسار
+            const slope = (axisY - objTipY) / (focusX - mirrorX);
+            ctx.lineTo(0, objTipY + slope * (0 - mirrorX)); ctx.stroke();
+            // امتداد خيالي لليمين نحو الصورة
+            ctx.beginPath(); ctx.strokeStyle = '#a855f7'; ctx.setLineDash([5, 5]);
+            ctx.moveTo(mirrorX, objTipY); ctx.lineTo(imageX, imageTipY); ctx.stroke();
+          }
+        } else if (mirrorType === 'convex') {
+          // يتشتت كأنه قادم من البؤرة الخيالية خلف المرآة
+          const slope = (objTipY - axisY) / (mirrorX - focusX);
+          ctx.lineTo(0, objTipY + slope * (0 - mirrorX)); ctx.stroke();
+          // امتداد خيالي للبؤرة والصورة
+          ctx.beginPath(); ctx.strokeStyle = '#a855f7'; ctx.setLineDash([5, 5]);
+          ctx.moveTo(mirrorX, objTipY); ctx.lineTo(imageX, imageTipY); ctx.stroke();
+        }
+
+        // 2. الشعاع الساقط نحو قطب المرآة (Vertex Ray)
+        ctx.restore(); ctx.save();
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.strokeStyle = '#eab308';
+        ctx.moveTo(objX, objTipY);
+        ctx.lineTo(mirrorX, axisY); // يسقط عند المركز تماماً
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#ef4444';
+        ctx.moveTo(mirrorX, axisY);
+        if (img.real) {
+          ctx.lineTo(imageX, imageTipY); ctx.stroke();
+        } else {
+          // ينعكس بزاوية مساوية للأسفل
+          const reflectedY = axisY + (axisY - objTipY) * (mirrorX / objectDistance);
+          ctx.lineTo(0, reflectedY); ctx.stroke();
+          // امتداد خيالي نحو الصورة
+          ctx.beginPath(); ctx.strokeStyle = '#a855f7'; ctx.setLineDash([5, 5]);
+          ctx.moveTo(mirrorX, axisY); ctx.lineTo(imageX, imageTipY); ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    function updateFromInputs() {
+      objectDistance = parseFloat(objDistInput.value);
+      if (mirrorType !== 'plane') focalLength = parseFloat(focalInput.value);
+      objectHeight = parseFloat(objHeightInput.value);
+      updateUI();
+      drawScene();
+    }
+    
+    function setMirrorType(type) {
+      mirrorType = type;
+      document.querySelectorAll('.mirror-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-type="${type}"]`).classList.add('active');
+      if (type !== 'plane') { focalInput.value = 80; focalLength = 80; }
+      updateArticle();
+      updateFromInputs();
+    }
+    
+    document.querySelectorAll('.mirror-btn').forEach(btn => {
+      btn.addEventListener('click', () => setMirrorType(btn.dataset.type));
+    });
+    objDistInput.addEventListener('input', updateFromInputs);
+    focalInput.addEventListener('input', updateFromInputs);
+    objHeightInput.addEventListener('input', updateFromInputs);
+    showRaysCheck.addEventListener('change', drawScene); // تفعيل وتوصيل زر الأشعة بنجاح هنا
+    
+    setMirrorType('plane');
+  </script>
+ </body>
+</html>

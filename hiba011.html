@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الجدول الدوري التفاعلي | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="11.png">
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    .element-cell {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .element-cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .element-cell:hover::before {
+      opacity: 1;
+    }
+    
+    .element-cell:hover {
+      transform: scale(1.15);
+      z-index: 10;
+      box-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+    }
+    
+    .element-cell.selected {
+      transform: scale(1.1);
+      z-index: 10;
+      box-shadow: 0 0 25px currentColor, 0 0 50px currentColor;
+    }
+    
+    .element-cell.dimmed {
+      opacity: 0.3;
+      filter: grayscale(0.7);
+    }
+    
+    .element-cell.highlighted {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px currentColor; }
+      50% { transform: scale(1.1); box-shadow: 0 0 30px currentColor, 0 0 50px currentColor; }
+    }
+    
+    .alkali { background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%); color: #1a1a1a; }
+    .alkaline { background: linear-gradient(135deg, #ffa94d 0%, #e67700 100%); color: #1a1a1a; }
+    .transition { background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%); color: #1a1a1a; }
+    .post-transition { background: linear-gradient(135deg, #69db7c 0%, #37b24d 100%); color: #1a1a1a; }
+    .metalloid { background: linear-gradient(135deg, #38d9a9 0%, #0ca678 100%); color: #1a1a1a; }
+    .nonmetal { background: linear-gradient(135deg, #4dabf7 0%, #1c7ed6 100%); color: #1a1a1a; }
+    .halogen { background: linear-gradient(135deg, #748ffc 0%, #4c6ef5 100%); color: #1a1a1a; }
+    .noble { background: linear-gradient(135deg, #da77f2 0%, #ae3ec9 100%); color: #1a1a1a; }
+    .lanthanide { background: linear-gradient(135deg, #f783ac 0%, #e64980 100%); color: #1a1a1a; }
+    .actinide { background: linear-gradient(135deg, #ff8787 0%, #fa5252 100%); color: #1a1a1a; }
+    
+    .electron-shell {
+      animation: rotate linear infinite;
+      transform-origin: center;
+    }
+    
+    .electron {
+      animation: glow 1.5s ease-in-out infinite alternate;
+    }
+    
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 3px currentColor); }
+      100% { filter: drop-shadow(0 0 8px currentColor); }
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .info-box {
+      background: linear-gradient(180deg, rgba(30,30,50,0.95) 0%, rgba(20,20,35,0.98) 100%);
+      border: 1px solid rgba(100, 150, 255, 0.3);
+      box-shadow: 0 0 30px rgba(100, 150, 255, 0.2), inset 0 0 60px rgba(0,0,0,0.5);
+    }
+    
+    .glow-text {
+      text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+    }
+    
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(20, 20, 35, 0.8);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 150, 255, 0.4);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 150, 255, 0.6);
+    }
+    
+    #return-btn:hover {
+      background: #1e90ff !important;
+      border-color: #1e90ff;
+      box-shadow: 0 0 20px rgba(30, 144, 255, 0.5);
+    }
+    
+    .filter-btn {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(100, 150, 255, 0.3);
+      color: rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    .filter-btn.active {
+      background: rgba(34, 211, 238, 0.3);
+      border-color: #22d3ee;
+      color: #22d3ee;
+      box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+    }
+  </style>
+<script src="/_sdk/telemetry_sdk.js"></script></head>
+<body class="h-full bg-gray-950 text-white overflow-auto">
+  <div class="min-h-full w-full flex flex-col" style="background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 50%, #050510 100%);">
+    
+    <!-- زر العودة للموسوعة -->
+    <a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" 
+       id="return-btn"
+       class="fixed top-4 left-4 flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold transition-all duration-300 backdrop-blur-md border border-white/20 hover:scale-105 shadow-lg"
+       style="z-index: 9999; background: rgba(255, 255, 255, 0.1);">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="hidden md:inline">العودة للموسوعة الرئيسية</span>
+    </a>
+    
+    <header class="text-center py-4 px-4 flex-shrink-0">
+      <h1 id="main-title" class="text-3xl md:text-4xl font-extrabold text-cyan-400 glow-text tracking-wide">
+        الجدول الدوري للعناصر
+      </h1>
+      <p class="text-cyan-300/60 mt-1 text-sm">انقر على أي عنصر لعرض تفاصيله</p>
+      
+      <!-- شريط البحث وأزرار التصفية -->
+      <div class="max-w-4xl mx-auto mt-4 space-y-3">
+        <!-- شريط البحث -->
+        <div class="relative">
+          <input type="text" id="search-input" placeholder="ابحث عن عنصر (الاسم أو الرمز)..." 
+                 class="w-full px-4 py-2 pr-10 rounded-lg bg-black/40 border border-cyan-500/30 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 transition-all">
+          <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+        
+        <!-- أزرار التصفية -->
+        <div class="flex flex-wrap justify-center gap-2">
+          <button onclick="filterByState('all')" class="filter-btn active px-4 py-1.5 rounded-full text-xs font-semibold border">
+            الكل
+          </button>
+          <button onclick="filterByState('solid')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border">
+            صلب 🧊
+          </button>
+          <button onclick="filterByState('liquid')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border">
+            سائل 💧
+          </button>
+          <button onclick="filterByState('gas')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border">
+            غاز ☁️
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="flex-1 flex flex-col lg:flex-row gap-4 px-2 md:px-4 pb-4 min-h-0">
+      
+      <div class="lg:w-3/5 overflow-auto flex-shrink-0" dir="ltr">
+        <div id="periodic-table" class="min-w-max p-2"></div>
+        
+        <div class="flex flex-wrap justify-center gap-2 mt-3 px-2">
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded alkali"></div>
+            <span class="text-gray-400">فلزات قلوية</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded alkaline"></div>
+            <span class="text-gray-400">فلزات قلوية ترابية</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded transition"></div>
+            <span class="text-gray-400">فلزات انتقالية</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded post-transition"></div>
+            <span class="text-gray-400">فلزات ضعيفة</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded metalloid"></div>
+            <span class="text-gray-400">أشباه فلزات</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded nonmetal"></div>
+            <span class="text-gray-400">لا فلزات</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded halogen"></div>
+            <span class="text-gray-400">هالوجينات</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded noble"></div>
+            <span class="text-gray-400">غازات نبيلة</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded lanthanide"></div>
+            <span class="text-gray-400">لانثانيدات</span>
+          </div>
+          <div class="flex items-center gap-1 text-xs">
+            <div class="w-3 h-3 rounded actinide"></div>
+            <span class="text-gray-400">أكتينيدات</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="lg:w-2/5 flex flex-col min-h-96 lg:min-h-0">
+        <div id="info-box" class="info-box rounded-2xl flex-1 flex flex-col overflow-hidden">
+          
+          <div class="flex-1 flex items-center justify-center p-4 min-h-64">
+            <div id="atom-container" class="relative w-full h-full flex items-center justify-center">
+              <svg id="atom-svg" viewBox="0 0 300 300" class="w-full h-full max-w-80 max-h-80">
+                <text x="150" y="150" text-anchor="middle" fill="#4dabf7" font-size="14" opacity="0.6">
+                  اختر عنصراً لعرض نموذجه الذري
+                </text>
+              </svg>
+            </div>
+          </div>
+          
+          <div id="element-info" class="p-4 border-t border-cyan-500/20 bg-black/30 overflow-y-auto max-h-64">
+            <div class="text-center text-gray-500 py-4">
+              <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+              </svg>
+              <p>انقر على عنصر لعرض معلوماته</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <footer class="text-center py-3 px-4 border-t border-cyan-900/30 flex-shrink-0 bg-black/30">
+      <p id="footer-text" class="text-cyan-400/70 text-sm">
+        جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    const elements = [
+      { number: 1, symbol: "H", name: "هيدروجين", nameEn: "Hydrogen", mass: 1.008, category: "nonmetal", row: 1, col: 1, electrons: [1], discovery: "1766", config: "1s¹", state: "gas", use: "وقود الصواريخ وإنتاج الأمونيا" },
+      { number: 2, symbol: "He", name: "هيليوم", nameEn: "Helium", mass: 4.003, category: "noble", row: 1, col: 18, electrons: [2], discovery: "1868", config: "1s²", state: "gas", use: "ملء البالونات والمناطيد" },
+      { number: 3, symbol: "Li", name: "ليثيوم", nameEn: "Lithium", mass: 6.941, category: "alkali", row: 2, col: 1, electrons: [2, 1], discovery: "1817", config: "[He] 2s¹", state: "solid", use: "بطاريات الهواتف والسيارات الكهربائية" },
+      { number: 4, symbol: "Be", name: "بيريليوم", nameEn: "Beryllium", mass: 9.012, category: "alkaline", row: 2, col: 2, electrons: [2, 2], discovery: "1798", config: "[He] 2s²", state: "solid", use: "صناعة الطائرات والأقمار الصناعية" },
+      { number: 5, symbol: "B", name: "بورون", nameEn: "Boron", mass: 10.81, category: "metalloid", row: 2, col: 13, electrons: [2, 3], discovery: "1808", config: "[He] 2s² 2p¹", state: "solid", use: "الزجاج المقاوم للحرارة ومواد التنظيف" },
+      { number: 6, symbol: "C", name: "كربون", nameEn: "Carbon", mass: 12.01, category: "nonmetal", row: 2, col: 14, electrons: [2, 4], discovery: "قديم", config: "[He] 2s² 2p²", state: "solid", use: "أساس الحياة وصناعة الماس والفحم" },
+      { number: 7, symbol: "N", name: "نيتروجين", nameEn: "Nitrogen", mass: 14.01, category: "nonmetal", row: 2, col: 15, electrons: [2, 5], discovery: "1772", config: "[He] 2s² 2p³", state: "gas", use: "الأسمدة الزراعية والتبريد" },
+      { number: 8, symbol: "O", name: "أكسجين", nameEn: "Oxygen", mass: 16.00, category: "nonmetal", row: 2, col: 16, electrons: [2, 6], discovery: "1774", config: "[He] 2s² 2p⁴", state: "gas", use: "التنفس والاحتراق والطب" },
+      { number: 9, symbol: "F", name: "فلور", nameEn: "Fluorine", mass: 19.00, category: "halogen", row: 2, col: 17, electrons: [2, 7], discovery: "1886", config: "[He] 2s² 2p⁵", state: "gas", use: "معجون الأسنان ومواد التبريد" },
+      { number: 10, symbol: "Ne", name: "نيون", nameEn: "Neon", mass: 20.18, category: "noble", row: 2, col: 18, electrons: [2, 8], discovery: "1898", config: "[He] 2s² 2p⁶", state: "gas", use: "اللوحات الإعلانية المضيئة" },
+      { number: 11, symbol: "Na", name: "صوديوم", nameEn: "Sodium", mass: 22.99, category: "alkali", row: 3, col: 1, electrons: [2, 8, 1], discovery: "1807", config: "[Ne] 3s¹", state: "solid", use: "ملح الطعام والصابون" },
+      { number: 12, symbol: "Mg", name: "مغنيسيوم", nameEn: "Magnesium", mass: 24.31, category: "alkaline", row: 3, col: 2, electrons: [2, 8, 2], discovery: "1755", config: "[Ne] 3s²", state: "solid", use: "صناعة السيارات والمكملات الغذائية" },
+      { number: 13, symbol: "Al", name: "ألومنيوم", nameEn: "Aluminum", mass: 26.98, category: "post-transition", row: 3, col: 13, electrons: [2, 8, 3], discovery: "1825", config: "[Ne] 3s² 3p¹", state: "solid", use: "علب المشروبات وأواني الطبخ" },
+      { number: 14, symbol: "Si", name: "سيليكون", nameEn: "Silicon", mass: 28.09, category: "metalloid", row: 3, col: 14, electrons: [2, 8, 4], discovery: "1824", config: "[Ne] 3s² 3p²", state: "solid", use: "الرقائق الإلكترونية والزجاج" },
+      { number: 15, symbol: "P", name: "فوسفور", nameEn: "Phosphorus", mass: 30.97, category: "nonmetal", row: 3, col: 15, electrons: [2, 8, 5], discovery: "1669", config: "[Ne] 3s² 3p³", state: "solid", use: "الأسمدة وأعواد الكبريت" },
+      { number: 16, symbol: "S", name: "كبريت", nameEn: "Sulfur", mass: 32.07, category: "nonmetal", row: 3, col: 16, electrons: [2, 8, 6], discovery: "قديم", config: "[Ne] 3s² 3p⁴", state: "solid", use: "البطاريات والمطاط والأدوية" },
+      { number: 17, symbol: "Cl", name: "كلور", nameEn: "Chlorine", mass: 35.45, category: "halogen", row: 3, col: 17, electrons: [2, 8, 7], discovery: "1774", config: "[Ne] 3s² 3p⁵", state: "gas", use: "تعقيم المياه والمطهرات" },
+      { number: 18, symbol: "Ar", name: "أرغون", nameEn: "Argon", mass: 39.95, category: "noble", row: 3, col: 18, electrons: [2, 8, 8], discovery: "1894", config: "[Ne] 3s² 3p⁶", state: "gas", use: "اللحام وملء المصابيح الكهربائية" },
+      { number: 19, symbol: "K", name: "بوتاسيوم", nameEn: "Potassium", mass: 39.10, category: "alkali", row: 4, col: 1, electrons: [2, 8, 8, 1], discovery: "1807", config: "[Ar] 4s¹", state: "solid", use: "الأسمدة والصابون" },
+      { number: 20, symbol: "Ca", name: "كالسيوم", nameEn: "Calcium", mass: 40.08, category: "alkaline", row: 4, col: 2, electrons: [2, 8, 8, 2], discovery: "1808", config: "[Ar] 4s²", state: "solid", use: "العظام والأسنان والإسمنت" },
+      { number: 21, symbol: "Sc", name: "سكانديوم", nameEn: "Scandium", mass: 44.96, category: "transition", row: 4, col: 3, electrons: [2, 8, 9, 2], discovery: "1879", config: "[Ar] 3d¹ 4s²", state: "solid", use: "سبائك الطائرات الخفيفة" },
+      { number: 22, symbol: "Ti", name: "تيتانيوم", nameEn: "Titanium", mass: 47.87, category: "transition", row: 4, col: 4, electrons: [2, 8, 10, 2], discovery: "1791", config: "[Ar] 3d² 4s²", state: "solid", use: "الطائرات والمفاصل الطبية" },
+      { number: 23, symbol: "V", name: "فاناديوم", nameEn: "Vanadium", mass: 50.94, category: "transition", row: 4, col: 5, electrons: [2, 8, 11, 2], discovery: "1801", config: "[Ar] 3d³ 4s²", state: "solid", use: "صناعة الفولاذ المقاوم" },
+      { number: 24, symbol: "Cr", name: "كروم", nameEn: "Chromium", mass: 52.00, category: "transition", row: 4, col: 6, electrons: [2, 8, 13, 1], discovery: "1797", config: "[Ar] 3d⁵ 4s¹", state: "solid", use: "طلاء المعادن والصبغات" },
+      { number: 25, symbol: "Mn", name: "منغنيز", nameEn: "Manganese", mass: 54.94, category: "transition", row: 4, col: 7, electrons: [2, 8, 13, 2], discovery: "1774", config: "[Ar] 3d⁵ 4s²", state: "solid", use: "صناعة الفولاذ والبطاريات" },
+      { number: 26, symbol: "Fe", name: "حديد", nameEn: "Iron", mass: 55.85, category: "transition", row: 4, col: 8, electrons: [2, 8, 14, 2], discovery: "قديم", config: "[Ar] 3d⁶ 4s²", state: "solid", use: "البناء والأدوات والسيارات" },
+      { number: 27, symbol: "Co", name: "كوبالت", nameEn: "Cobalt", mass: 58.93, category: "transition", row: 4, col: 9, electrons: [2, 8, 15, 2], discovery: "1735", config: "[Ar] 3d⁷ 4s²", state: "solid", use: "البطاريات والصبغات الزرقاء" },
+      { number: 28, symbol: "Ni", name: "نيكل", nameEn: "Nickel", mass: 58.69, category: "transition", row: 4, col: 10, electrons: [2, 8, 16, 2], discovery: "1751", config: "[Ar] 3d⁸ 4s²", state: "solid", use: "العملات المعدنية والسبائك" },
+      { number: 29, symbol: "Cu", name: "نحاس", nameEn: "Copper", mass: 63.55, category: "transition", row: 4, col: 11, electrons: [2, 8, 18, 1], discovery: "قديم", config: "[Ar] 3d¹⁰ 4s¹", state: "solid", use: "الأسلاك الكهربائية والأنابيب" },
+      { number: 30, symbol: "Zn", name: "زنك", nameEn: "Zinc", mass: 65.38, category: "transition", row: 4, col: 12, electrons: [2, 8, 18, 2], discovery: "قديم", config: "[Ar] 3d¹⁰ 4s²", state: "solid", use: "طلاء الحديد والمكملات الغذائية" },
+      { number: 31, symbol: "Ga", name: "غاليوم", nameEn: "Gallium", mass: 69.72, category: "post-transition", row: 4, col: 13, electrons: [2, 8, 18, 3], discovery: "1875", config: "[Ar] 3d¹⁰ 4s² 4p¹", state: "solid", use: "الترمومترات والرقائق الإلكترونية" },
+      { number: 32, symbol: "Ge", name: "جرمانيوم", nameEn: "Germanium", mass: 72.63, category: "metalloid", row: 4, col: 14, electrons: [2, 8, 18, 4], discovery: "1886", config: "[Ar] 3d¹⁰ 4s² 4p²", state: "solid", use: "الألياف الضوئية والترانزستورات" },
+      { number: 33, symbol: "As", name: "زرنيخ", nameEn: "Arsenic", mass: 74.92, category: "metalloid", row: 4, col: 15, electrons: [2, 8, 18, 5], discovery: "قديم", config: "[Ar] 3d¹⁰ 4s² 4p³", state: "solid", use: "أشباه الموصلات (سام)" },
+      { number: 34, symbol: "Se", name: "سيلينيوم", nameEn: "Selenium", mass: 78.97, category: "nonmetal", row: 4, col: 16, electrons: [2, 8, 18, 6], discovery: "1817", config: "[Ar] 3d¹⁰ 4s² 4p⁴", state: "solid", use: "الخلايا الشمسية ومضادات الأكسدة" },
+      { number: 35, symbol: "Br", name: "بروم", nameEn: "Bromine", mass: 79.90, category: "halogen", row: 4, col: 17, electrons: [2, 8, 18, 7], discovery: "1826", config: "[Ar] 3d¹⁰ 4s² 4p⁵", state: "liquid", use: "مثبطات الحريق والأدوية" },
+      { number: 36, symbol: "Kr", name: "كريبتون", nameEn: "Krypton", mass: 83.80, category: "noble", row: 4, col: 18, electrons: [2, 8, 18, 8], discovery: "1898", config: "[Ar] 3d¹⁰ 4s² 4p⁶", state: "gas", use: "الليزر والإضاءة الفلورية" },
+      { number: 37, symbol: "Rb", name: "روبيديوم", nameEn: "Rubidium", mass: 85.47, category: "alkali", row: 5, col: 1, electrons: [2, 8, 18, 8, 1], discovery: "1861", config: "[Kr] 5s¹", state: "solid", use: "الساعات الذرية وأجهزة GPS" },
+      { number: 38, symbol: "Sr", name: "سترونشيوم", nameEn: "Strontium", mass: 87.62, category: "alkaline", row: 5, col: 2, electrons: [2, 8, 18, 8, 2], discovery: "1790", config: "[Kr] 5s²", state: "solid", use: "الألعاب النارية الحمراء وأنابيب التلفاز" },
+      { number: 39, symbol: "Y", name: "إيتريوم", nameEn: "Yttrium", mass: 88.91, category: "transition", row: 5, col: 3, electrons: [2, 8, 18, 9, 2], discovery: "1794", config: "[Kr] 4d¹ 5s²", state: "solid", use: "شاشات LED وكاميرات الهواتف" },
+      { number: 40, symbol: "Zr", name: "زركونيوم", nameEn: "Zirconium", mass: 91.22, category: "transition", row: 5, col: 4, electrons: [2, 8, 18, 10, 2], discovery: "1789", config: "[Kr] 4d² 5s²", state: "solid", use: "المجوهرات والمفاعلات النووية" },
+      { number: 41, symbol: "Nb", name: "نيوبيوم", nameEn: "Niobium", mass: 92.91, category: "transition", row: 5, col: 5, electrons: [2, 8, 18, 12, 1], discovery: "1801", config: "[Kr] 4d⁴ 5s¹", state: "solid", use: "المغناطيس الفائق وأنابيب النفط" },
+      { number: 42, symbol: "Mo", name: "موليبدنوم", nameEn: "Molybdenum", mass: 95.95, category: "transition", row: 5, col: 6, electrons: [2, 8, 18, 13, 1], discovery: "1781", config: "[Kr] 4d⁵ 5s¹", state: "solid", use: "الفولاذ المقاوم للصدأ والأسمدة" },
+      { number: 43, symbol: "Tc", name: "تكنيشيوم", nameEn: "Technetium", mass: 98, category: "transition", row: 5, col: 7, electrons: [2, 8, 18, 13, 2], discovery: "1937", config: "[Kr] 4d⁵ 5s²", state: "solid", use: "التصوير الطبي النووي" },
+      { number: 44, symbol: "Ru", name: "روثينيوم", nameEn: "Ruthenium", mass: 101.1, category: "transition", row: 5, col: 8, electrons: [2, 8, 18, 15, 1], discovery: "1844", config: "[Kr] 4d⁷ 5s¹", state: "solid", use: "أقراص التخزين والمحفزات" },
+      { number: 45, symbol: "Rh", name: "روديوم", nameEn: "Rhodium", mass: 102.9, category: "transition", row: 5, col: 9, electrons: [2, 8, 18, 16, 1], discovery: "1803", config: "[Kr] 4d⁸ 5s¹", state: "solid", use: "محولات عادم السيارات" },
+      { number: 46, symbol: "Pd", name: "بالاديوم", nameEn: "Palladium", mass: 106.4, category: "transition", row: 5, col: 10, electrons: [2, 8, 18, 18], discovery: "1803", config: "[Kr] 4d¹⁰", state: "solid", use: "خلايا الوقود والمجوهرات البيضاء" },
+      { number: 47, symbol: "Ag", name: "فضة", nameEn: "Silver", mass: 107.9, category: "transition", row: 5, col: 11, electrons: [2, 8, 18, 18, 1], discovery: "قديم", config: "[Kr] 4d¹⁰ 5s¹", state: "solid", use: "المجوهرات والعملات والمرايا" },
+      { number: 48, symbol: "Cd", name: "كادميوم", nameEn: "Cadmium", mass: 112.4, category: "transition", row: 5, col: 12, electrons: [2, 8, 18, 18, 2], discovery: "1817", config: "[Kr] 4d¹⁰ 5s²", state: "solid", use: "البطاريات القابلة لإعادة الشحن" },
+      { number: 49, symbol: "In", name: "إنديوم", nameEn: "Indium", mass: 114.8, category: "post-transition", row: 5, col: 13, electrons: [2, 8, 18, 18, 3], discovery: "1863", config: "[Kr] 4d¹⁰ 5s² 5p¹", state: "solid", use: "شاشات اللمس والألواح الشمسية" },
+      { number: 50, symbol: "Sn", name: "قصدير", nameEn: "Tin", mass: 118.7, category: "post-transition", row: 5, col: 14, electrons: [2, 8, 18, 18, 4], discovery: "قديم", config: "[Kr] 4d¹⁰ 5s² 5p²", state: "solid", use: "علب الطعام واللحام الإلكتروني" },
+      { number: 51, symbol: "Sb", name: "أنتيمون", nameEn: "Antimony", mass: 121.8, category: "metalloid", row: 5, col: 15, electrons: [2, 8, 18, 18, 5], discovery: "قديم", config: "[Kr] 4d¹⁰ 5s² 5p³", state: "solid", use: "مثبطات اللهب وأشباه الموصلات" },
+      { number: 52, symbol: "Te", name: "تيلوريوم", nameEn: "Tellurium", mass: 127.6, category: "metalloid", row: 5, col: 16, electrons: [2, 8, 18, 18, 6], discovery: "1782", config: "[Kr] 4d¹⁰ 5s² 5p⁴", state: "solid", use: "الألواح الشمسية وأقراص DVD" },
+      { number: 53, symbol: "I", name: "يود", nameEn: "Iodine", mass: 126.9, category: "halogen", row: 5, col: 17, electrons: [2, 8, 18, 18, 7], discovery: "1811", config: "[Kr] 4d¹⁰ 5s² 5p⁵", state: "solid", use: "المطهرات والمكملات الغذائية" },
+      { number: 54, symbol: "Xe", name: "زينون", nameEn: "Xenon", mass: 131.3, category: "noble", row: 5, col: 18, electrons: [2, 8, 18, 18, 8], discovery: "1898", config: "[Kr] 4d¹⁰ 5s² 5p⁶", state: "gas", use: "مصابيح السيارات والتخدير الطبي" },
+      { number: 55, symbol: "Cs", name: "سيزيوم", nameEn: "Cesium", mass: 132.9, category: "alkali", row: 6, col: 1, electrons: [2, 8, 18, 18, 8, 1], discovery: "1860", config: "[Xe] 6s¹", state: "solid", use: "الساعات الذرية والحفر النفطي" },
+      { number: 56, symbol: "Ba", name: "باريوم", nameEn: "Barium", mass: 137.3, category: "alkaline", row: 6, col: 2, electrons: [2, 8, 18, 18, 8, 2], discovery: "1808", config: "[Xe] 6s²", state: "solid", use: "الأشعة السينية والألعاب النارية الخضراء" },
+      { number: 57, symbol: "La", name: "لانثانوم", nameEn: "Lanthanum", mass: 138.9, category: "lanthanide", row: 9, col: 3, electrons: [2, 8, 18, 18, 9, 2], discovery: "1839", config: "[Xe] 5d¹ 6s²", state: "solid", use: "عدسات الكاميرات ومصابيح الاستوديو" },
+      { number: 58, symbol: "Ce", name: "سيريوم", nameEn: "Cerium", mass: 140.1, category: "lanthanide", row: 9, col: 4, electrons: [2, 8, 18, 19, 9, 2], discovery: "1803", config: "[Xe] 4f¹ 5d¹ 6s²", state: "solid", use: "الزجاج ذاتي التنظيف وولاعات الغاز" },
+      { number: 59, symbol: "Pr", name: "براسيوديميوم", nameEn: "Praseodymium", mass: 140.9, category: "lanthanide", row: 9, col: 5, electrons: [2, 8, 18, 21, 8, 2], discovery: "1885", config: "[Xe] 4f³ 6s²", state: "solid", use: "نظارات اللحام والمغناطيس" },
+      { number: 60, symbol: "Nd", name: "نيوديميوم", nameEn: "Neodymium", mass: 144.2, category: "lanthanide", row: 9, col: 6, electrons: [2, 8, 18, 22, 8, 2], discovery: "1885", config: "[Xe] 4f⁴ 6s²", state: "solid", use: "المغناطيس القوي في السماعات" },
+      { number: 61, symbol: "Pm", name: "بروميثيوم", nameEn: "Promethium", mass: 145, category: "lanthanide", row: 9, col: 7, electrons: [2, 8, 18, 23, 8, 2], discovery: "1945", config: "[Xe] 4f⁵ 6s²", state: "solid", use: "البطاريات النووية للمركبات الفضائية" },
+      { number: 62, symbol: "Sm", name: "ساماريوم", nameEn: "Samarium", mass: 150.4, category: "lanthanide", row: 9, col: 8, electrons: [2, 8, 18, 24, 8, 2], discovery: "1879", config: "[Xe] 4f⁶ 6s²", state: "solid", use: "المغناطيس المقاوم للحرارة" },
+      { number: 63, symbol: "Eu", name: "يوروبيوم", nameEn: "Europium", mass: 152.0, category: "lanthanide", row: 9, col: 9, electrons: [2, 8, 18, 25, 8, 2], discovery: "1901", config: "[Xe] 4f⁷ 6s²", state: "solid", use: "شاشات التلفاز الملونة وأوراق اليورو" },
+      { number: 64, symbol: "Gd", name: "غادولينيوم", nameEn: "Gadolinium", mass: 157.3, category: "lanthanide", row: 9, col: 10, electrons: [2, 8, 18, 25, 9, 2], discovery: "1880", config: "[Xe] 4f⁷ 5d¹ 6s²", state: "solid", use: "التصوير بالرنين المغناطيسي MRI" },
+      { number: 65, symbol: "Tb", name: "تيربيوم", nameEn: "Terbium", mass: 158.9, category: "lanthanide", row: 9, col: 11, electrons: [2, 8, 18, 27, 8, 2], discovery: "1843", config: "[Xe] 4f⁹ 6s²", state: "solid", use: "الإضاءة الموفرة للطاقة" },
+      { number: 66, symbol: "Dy", name: "ديسبروسيوم", nameEn: "Dysprosium", mass: 162.5, category: "lanthanide", row: 9, col: 12, electrons: [2, 8, 18, 28, 8, 2], discovery: "1886", config: "[Xe] 4f¹⁰ 6s²", state: "solid", use: "محركات السيارات الهجينة" },
+      { number: 67, symbol: "Ho", name: "هولميوم", nameEn: "Holmium", mass: 164.9, category: "lanthanide", row: 9, col: 13, electrons: [2, 8, 18, 29, 8, 2], discovery: "1878", config: "[Xe] 4f¹¹ 6s²", state: "solid", use: "ليزر الجراحة الطبية" },
+      { number: 68, symbol: "Er", name: "إربيوم", nameEn: "Erbium", mass: 167.3, category: "lanthanide", row: 9, col: 14, electrons: [2, 8, 18, 30, 8, 2], discovery: "1843", config: "[Xe] 4f¹² 6s²", state: "solid", use: "مكبرات الألياف الضوئية" },
+      { number: 69, symbol: "Tm", name: "ثوليوم", nameEn: "Thulium", mass: 168.9, category: "lanthanide", row: 9, col: 15, electrons: [2, 8, 18, 31, 8, 2], discovery: "1879", config: "[Xe] 4f¹³ 6s²", state: "solid", use: "الأشعة السينية المحمولة" },
+      { number: 70, symbol: "Yb", name: "إيتربيوم", nameEn: "Ytterbium", mass: 173.0, category: "lanthanide", row: 9, col: 16, electrons: [2, 8, 18, 32, 8, 2], discovery: "1878", config: "[Xe] 4f¹⁴ 6s²", state: "solid", use: "الساعات الذرية الدقيقة" },
+      { number: 71, symbol: "Lu", name: "لوتيتيوم", nameEn: "Lutetium", mass: 175.0, category: "lanthanide", row: 9, col: 17, electrons: [2, 8, 18, 32, 9, 2], discovery: "1907", config: "[Xe] 4f¹⁴ 5d¹ 6s²", state: "solid", use: "التصوير المقطعي PET" },
+      { number: 72, symbol: "Hf", name: "هافنيوم", nameEn: "Hafnium", mass: 178.5, category: "transition", row: 6, col: 4, electrons: [2, 8, 18, 32, 10, 2], discovery: "1923", config: "[Xe] 4f¹⁴ 5d² 6s²", state: "solid", use: "المفاعلات النووية ورقائق الحاسوب" },
+      { number: 73, symbol: "Ta", name: "تانتالوم", nameEn: "Tantalum", mass: 180.9, category: "transition", row: 6, col: 5, electrons: [2, 8, 18, 32, 11, 2], discovery: "1802", config: "[Xe] 4f¹⁴ 5d³ 6s²", state: "solid", use: "الهواتف المحمولة والمكثفات" },
+      { number: 74, symbol: "W", name: "تنغستن", nameEn: "Tungsten", mass: 183.8, category: "transition", row: 6, col: 6, electrons: [2, 8, 18, 32, 12, 2], discovery: "1783", config: "[Xe] 4f¹⁴ 5d⁴ 6s²", state: "solid", use: "فتائل المصابيح ولقم الثقب" },
+      { number: 75, symbol: "Re", name: "رينيوم", nameEn: "Rhenium", mass: 186.2, category: "transition", row: 6, col: 7, electrons: [2, 8, 18, 32, 13, 2], discovery: "1925", config: "[Xe] 4f¹⁴ 5d⁵ 6s²", state: "solid", use: "محركات الطائرات النفاثة" },
+      { number: 76, symbol: "Os", name: "أوزميوم", nameEn: "Osmium", mass: 190.2, category: "transition", row: 6, col: 8, electrons: [2, 8, 18, 32, 14, 2], discovery: "1803", config: "[Xe] 4f¹⁴ 5d⁶ 6s²", state: "solid", use: "أقلام الحبر الفاخرة والكهرباء" },
+      { number: 77, symbol: "Ir", name: "إريديوم", nameEn: "Iridium", mass: 192.2, category: "transition", row: 6, col: 9, electrons: [2, 8, 18, 32, 15, 2], discovery: "1803", config: "[Xe] 4f¹⁴ 5d⁷ 6s²", state: "solid", use: "شمعات الإشعال ومعدات المختبرات" },
+      { number: 78, symbol: "Pt", name: "بلاتين", nameEn: "Platinum", mass: 195.1, category: "transition", row: 6, col: 10, electrons: [2, 8, 18, 32, 17, 1], discovery: "1735", config: "[Xe] 4f¹⁴ 5d⁹ 6s¹", state: "solid", use: "المجوهرات ومحولات عادم السيارات" },
+      { number: 79, symbol: "Au", name: "ذهب", nameEn: "Gold", mass: 197.0, category: "transition", row: 6, col: 11, electrons: [2, 8, 18, 32, 18, 1], discovery: "قديم", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹", state: "solid", use: "المجوهرات والإلكترونيات والطب" },
+      { number: 80, symbol: "Hg", name: "زئبق", nameEn: "Mercury", mass: 200.6, category: "transition", row: 6, col: 12, electrons: [2, 8, 18, 32, 18, 2], discovery: "قديم", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s²", state: "liquid", use: "موازين الحرارة القديمة والمصابيح" },
+      { number: 81, symbol: "Tl", name: "ثاليوم", nameEn: "Thallium", mass: 204.4, category: "post-transition", row: 6, col: 13, electrons: [2, 8, 18, 32, 18, 3], discovery: "1861", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹", state: "solid", use: "كواشف الإشعاع الطبية" },
+      { number: 82, symbol: "Pb", name: "رصاص", nameEn: "Lead", mass: 207.2, category: "post-transition", row: 6, col: 14, electrons: [2, 8, 18, 32, 18, 4], discovery: "قديم", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²", state: "solid", use: "بطاريات السيارات والحماية من الإشعاع" },
+      { number: 83, symbol: "Bi", name: "بزموث", nameEn: "Bismuth", mass: 209.0, category: "post-transition", row: 6, col: 15, electrons: [2, 8, 18, 32, 18, 5], discovery: "1753", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³", state: "solid", use: "أدوية المعدة ومستحضرات التجميل" },
+      { number: 84, symbol: "Po", name: "بولونيوم", nameEn: "Polonium", mass: 209, category: "metalloid", row: 6, col: 16, electrons: [2, 8, 18, 32, 18, 6], discovery: "1898", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴", state: "solid", use: "مصادر حرارة المركبات الفضائية" },
+      { number: 85, symbol: "At", name: "أستاتين", nameEn: "Astatine", mass: 210, category: "halogen", row: 6, col: 17, electrons: [2, 8, 18, 32, 18, 7], discovery: "1940", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵", state: "solid", use: "البحث العلمي والعلاج الإشعاعي" },
+      { number: 86, symbol: "Rn", name: "رادون", nameEn: "Radon", mass: 222, category: "noble", row: 6, col: 18, electrons: [2, 8, 18, 32, 18, 8], discovery: "1900", config: "[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶", state: "gas", use: "الكشف عن الزلازل والعلاج الإشعاعي" },
+      { number: 87, symbol: "Fr", name: "فرانسيوم", nameEn: "Francium", mass: 223, category: "alkali", row: 7, col: 1, electrons: [2, 8, 18, 32, 18, 8, 1], discovery: "1939", config: "[Rn] 7s¹", state: "solid", use: "البحث العلمي فقط" },
+      { number: 88, symbol: "Ra", name: "راديوم", nameEn: "Radium", mass: 226, category: "alkaline", row: 7, col: 2, electrons: [2, 8, 18, 32, 18, 8, 2], discovery: "1898", config: "[Rn] 7s²", state: "solid", use: "علاج السرطان سابقاً" },
+      { number: 89, symbol: "Ac", name: "أكتينيوم", nameEn: "Actinium", mass: 227, category: "actinide", row: 10, col: 3, electrons: [2, 8, 18, 32, 18, 9, 2], discovery: "1899", config: "[Rn] 6d¹ 7s²", state: "solid", use: "مصدر إشعاع نيوترونات" },
+      { number: 90, symbol: "Th", name: "ثوريوم", nameEn: "Thorium", mass: 232.0, category: "actinide", row: 10, col: 4, electrons: [2, 8, 18, 32, 18, 10, 2], discovery: "1829", config: "[Rn] 6d² 7s²", state: "solid", use: "مصابيح الغاز والوقود النووي" },
+      { number: 91, symbol: "Pa", name: "بروتاكتينيوم", nameEn: "Protactinium", mass: 231.0, category: "actinide", row: 10, col: 5, electrons: [2, 8, 18, 32, 20, 9, 2], discovery: "1913", config: "[Rn] 5f² 6d¹ 7s²", state: "solid", use: "البحث العلمي النووي" },
+      { number: 92, symbol: "U", name: "يورانيوم", nameEn: "Uranium", mass: 238.0, category: "actinide", row: 10, col: 6, electrons: [2, 8, 18, 32, 21, 9, 2], discovery: "1789", config: "[Rn] 5f³ 6d¹ 7s²", state: "solid", use: "الوقود النووي والأسلحة" },
+      { number: 93, symbol: "Np", name: "نبتونيوم", nameEn: "Neptunium", mass: 237, category: "actinide", row: 10, col: 7, electrons: [2, 8, 18, 32, 22, 9, 2], discovery: "1940", config: "[Rn] 5f⁴ 6d¹ 7s²", state: "solid", use: "كواشف الدخان والنيوترونات" },
+      { number: 94, symbol: "Pu", name: "بلوتونيوم", nameEn: "Plutonium", mass: 244, category: "actinide", row: 10, col: 8, electrons: [2, 8, 18, 32, 24, 8, 2], discovery: "1940", config: "[Rn] 5f⁶ 7s²", state: "solid", use: "الأسلحة النووية وبطاريات الفضاء" },
+      { number: 95, symbol: "Am", name: "أمريسيوم", nameEn: "Americium", mass: 243, category: "actinide", row: 10, col: 9, electrons: [2, 8, 18, 32, 25, 8, 2], discovery: "1944", config: "[Rn] 5f⁷ 7s²", state: "solid", use: "كواشف الدخان المنزلية" },
+      { number: 96, symbol: "Cm", name: "كوريوم", nameEn: "Curium", mass: 247, category: "actinide", row: 10, col: 10, electrons: [2, 8, 18, 32, 25, 9, 2], discovery: "1944", config: "[Rn] 5f⁷ 6d¹ 7s²", state: "solid", use: "مصادر طاقة الأقمار الصناعية" },
+      { number: 97, symbol: "Bk", name: "بركيليوم", nameEn: "Berkelium", mass: 247, category: "actinide", row: 10, col: 11, electrons: [2, 8, 18, 32, 27, 8, 2], discovery: "1949", config: "[Rn] 5f⁹ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 98, symbol: "Cf", name: "كاليفورنيوم", nameEn: "Californium", mass: 251, category: "actinide", row: 10, col: 12, electrons: [2, 8, 18, 32, 28, 8, 2], discovery: "1950", config: "[Rn] 5f¹⁰ 7s²", state: "solid", use: "الكشف عن المعادن والمتفجرات" },
+      { number: 99, symbol: "Es", name: "أينشتاينيوم", nameEn: "Einsteinium", mass: 252, category: "actinide", row: 10, col: 13, electrons: [2, 8, 18, 32, 29, 8, 2], discovery: "1952", config: "[Rn] 5f¹¹ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 100, symbol: "Fm", name: "فرميوم", nameEn: "Fermium", mass: 257, category: "actinide", row: 10, col: 14, electrons: [2, 8, 18, 32, 30, 8, 2], discovery: "1952", config: "[Rn] 5f¹² 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 101, symbol: "Md", name: "مندليفيوم", nameEn: "Mendelevium", mass: 258, category: "actinide", row: 10, col: 15, electrons: [2, 8, 18, 32, 31, 8, 2], discovery: "1955", config: "[Rn] 5f¹³ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 102, symbol: "No", name: "نوبليوم", nameEn: "Nobelium", mass: 259, category: "actinide", row: 10, col: 16, electrons: [2, 8, 18, 32, 32, 8, 2], discovery: "1958", config: "[Rn] 5f¹⁴ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 103, symbol: "Lr", name: "لورنسيوم", nameEn: "Lawrencium", mass: 266, category: "actinide", row: 10, col: 17, electrons: [2, 8, 18, 32, 32, 8, 3], discovery: "1961", config: "[Rn] 5f¹⁴ 7s² 7p¹", state: "solid", use: "البحث العلمي فقط" },
+      { number: 104, symbol: "Rf", name: "رذرفورديوم", nameEn: "Rutherfordium", mass: 267, category: "transition", row: 7, col: 4, electrons: [2, 8, 18, 32, 32, 10, 2], discovery: "1969", config: "[Rn] 5f¹⁴ 6d² 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 105, symbol: "Db", name: "دوبنيوم", nameEn: "Dubnium", mass: 268, category: "transition", row: 7, col: 5, electrons: [2, 8, 18, 32, 32, 11, 2], discovery: "1970", config: "[Rn] 5f¹⁴ 6d³ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 106, symbol: "Sg", name: "سيبورغيوم", nameEn: "Seaborgium", mass: 269, category: "transition", row: 7, col: 6, electrons: [2, 8, 18, 32, 32, 12, 2], discovery: "1974", config: "[Rn] 5f¹⁴ 6d⁴ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 107, symbol: "Bh", name: "بوريوم", nameEn: "Bohrium", mass: 270, category: "transition", row: 7, col: 7, electrons: [2, 8, 18, 32, 32, 13, 2], discovery: "1981", config: "[Rn] 5f¹⁴ 6d⁵ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 108, symbol: "Hs", name: "هاسيوم", nameEn: "Hassium", mass: 277, category: "transition", row: 7, col: 8, electrons: [2, 8, 18, 32, 32, 14, 2], discovery: "1984", config: "[Rn] 5f¹⁴ 6d⁶ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 109, symbol: "Mt", name: "مايتنريوم", nameEn: "Meitnerium", mass: 278, category: "transition", row: 7, col: 9, electrons: [2, 8, 18, 32, 32, 15, 2], discovery: "1982", config: "[Rn] 5f¹⁴ 6d⁷ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 110, symbol: "Ds", name: "دارمشتاتيوم", nameEn: "Darmstadtium", mass: 281, category: "transition", row: 7, col: 10, electrons: [2, 8, 18, 32, 32, 16, 2], discovery: "1994", config: "[Rn] 5f¹⁴ 6d⁸ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 111, symbol: "Rg", name: "رونتجينيوم", nameEn: "Roentgenium", mass: 282, category: "transition", row: 7, col: 11, electrons: [2, 8, 18, 32, 32, 17, 2], discovery: "1994", config: "[Rn] 5f¹⁴ 6d⁹ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 112, symbol: "Cn", name: "كوبرنيسيوم", nameEn: "Copernicium", mass: 285, category: "transition", row: 7, col: 12, electrons: [2, 8, 18, 32, 32, 18, 2], discovery: "1996", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 113, symbol: "Nh", name: "نيهونيوم", nameEn: "Nihonium", mass: 286, category: "post-transition", row: 7, col: 13, electrons: [2, 8, 18, 32, 32, 18, 3], discovery: "2004", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹", state: "solid", use: "البحث العلمي فقط" },
+      { number: 114, symbol: "Fl", name: "فليروفيوم", nameEn: "Flerovium", mass: 289, category: "post-transition", row: 7, col: 14, electrons: [2, 8, 18, 32, 32, 18, 4], discovery: "1998", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²", state: "solid", use: "البحث العلمي فقط" },
+      { number: 115, symbol: "Mc", name: "موسكوفيوم", nameEn: "Moscovium", mass: 290, category: "post-transition", row: 7, col: 15, electrons: [2, 8, 18, 32, 32, 18, 5], discovery: "2003", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³", state: "solid", use: "البحث العلمي فقط" },
+      { number: 116, symbol: "Lv", name: "ليفرموريوم", nameEn: "Livermorium", mass: 293, category: "post-transition", row: 7, col: 16, electrons: [2, 8, 18, 32, 32, 18, 6], discovery: "2000", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴", state: "solid", use: "البحث العلمي فقط" },
+      { number: 117, symbol: "Ts", name: "تينيسين", nameEn: "Tennessine", mass: 294, category: "halogen", row: 7, col: 17, electrons: [2, 8, 18, 32, 32, 18, 7], discovery: "2010", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵", state: "solid", use: "البحث العلمي فقط" },
+      { number: 118, symbol: "Og", name: "أوغانيسون", nameEn: "Oganesson", mass: 294, category: "noble", row: 7, col: 18, electrons: [2, 8, 18, 32, 32, 18, 8], discovery: "2002", config: "[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶", state: "solid", use: "البحث العلمي فقط" }
+    ];
+
+    const categoryColors = {
+      alkali: { bg: '#ff6b6b', glow: '#ff6b6b' },
+      alkaline: { bg: '#ffa94d', glow: '#ffa94d' },
+      transition: { bg: '#ffd43b', glow: '#ffd43b' },
+      'post-transition': { bg: '#69db7c', glow: '#69db7c' },
+      metalloid: { bg: '#38d9a9', glow: '#38d9a9' },
+      nonmetal: { bg: '#4dabf7', glow: '#4dabf7' },
+      halogen: { bg: '#748ffc', glow: '#748ffc' },
+      noble: { bg: '#da77f2', glow: '#da77f2' },
+      lanthanide: { bg: '#f783ac', glow: '#f783ac' },
+      actinide: { bg: '#ff8787', glow: '#fa5252' }
+    };
+
+    const stateEmojis = {
+      solid: '🧊',
+      liquid: '💧',
+      gas: '☁️'
+    };
+
+    let selectedElement = null;
+    let currentFilter = 'all';
+
+    function buildPeriodicTable() {
+      const table = document.getElementById('periodic-table');
+      const grid = document.createElement('div');
+      grid.className = 'grid gap-0.5';
+      grid.style.gridTemplateColumns = 'repeat(18, minmax(36px, 1fr))';
+      grid.style.gridTemplateRows = 'repeat(10, auto)';
+
+      const placeholders = [
+        { row: 6, col: 3, text: '57-71', link: 'lanthanide' },
+        { row: 7, col: 3, text: '89-103', link: 'actinide' }
+      ];
+
+      for (let row = 1; row <= 10; row++) {
+        for (let col = 1; col <= 18; col++) {
+          const element = elements.find(e => e.row === row && e.col === col);
+          const placeholder = placeholders.find(p => p.row === row && p.col === col);
+          
+          if (element) {
+            const cell = createElementCell(element);
+            grid.appendChild(cell);
+          } else if (placeholder) {
+            const cell = document.createElement('div');
+            cell.className = 'element-cell rounded text-center p-1 flex flex-col items-center justify-center text-xs opacity-60';
+            cell.style.gridRow = row;
+            cell.style.gridColumn = col;
+            cell.style.background = 'rgba(100,100,150,0.2)';
+            cell.style.border = '1px dashed rgba(100,150,200,0.3)';
+            cell.innerHTML = '<span class="text-gray-400">' + placeholder.text + '</span>';
+            grid.appendChild(cell);
+          } else {
+            const emptyCell = document.createElement('div');
+            emptyCell.style.gridRow = row;
+            emptyCell.style.gridColumn = col;
+            
+            if (row === 8) {
+              emptyCell.style.height = '10px';
+            }
+            
+            grid.appendChild(emptyCell);
+          }
+        }
+      }
+
+      table.appendChild(grid);
+    }
+
+    function createElementCell(element) {
+      const cell = document.createElement('div');
+      cell.className = 'element-cell ' + element.category + ' rounded text-center p-1 flex flex-col items-center justify-center';
+      cell.style.gridRow = element.row;
+      cell.style.gridColumn = element.col;
+      cell.style.minWidth = '36px';
+      cell.style.minHeight = '40px';
+      cell.dataset.number = element.number;
+      
+      cell.innerHTML = '<span class="text-[8px] opacity-70 leading-none">' + element.number + '</span>' +
+        '<span class="text-sm font-bold leading-tight">' + element.symbol + '</span>' +
+        '<span class="text-[7px] opacity-80 leading-none truncate w-full">' + element.name + '</span>';
+      
+      cell.addEventListener('click', function() { selectElement(element); });
+      
+      return cell;
+    }
+
+    function selectElement(element) {
+      document.querySelectorAll('.element-cell.selected').forEach(function(el) {
+        el.classList.remove('selected');
+      });
+      
+      const cell = document.querySelector('[data-number="' + element.number + '"]');
+      if (cell) {
+        cell.classList.add('selected');
+      }
+      
+      selectedElement = element;
+      updateInfoBox(element);
+      drawAtom(element);
+    }
+
+    function updateInfoBox(element) {
+      const infoBox = document.getElementById('element-info');
+      const color = categoryColors[element.category];
+      const stateIcon = stateEmojis[element.state] || '';
+      const stateArabic = {solid: 'صلب', liquid: 'سائل', gas: 'غاز'}[element.state];
+      
+      infoBox.innerHTML = '<div class="grid grid-cols-2 gap-3">' +
+        '<div class="text-center col-span-2 mb-2">' +
+          '<span class="text-5xl font-bold glow-text" style="color: ' + color.bg + '">' + element.symbol + '</span>' +
+          '<h2 class="text-xl font-bold text-white mt-1">' + element.name + '</h2>' +
+          '<p class="text-sm text-gray-400">' + element.nameEn + '</p>' +
+        '</div>' +
+        '<div class="bg-black/40 rounded-lg p-3 border border-cyan-500/20">' +
+          '<p class="text-xs text-gray-400 mb-1">العدد الذري</p>' +
+          '<p class="text-lg font-bold text-cyan-400">' + element.number + '</p>' +
+        '</div>' +
+        '<div class="bg-black/40 rounded-lg p-3 border border-cyan-500/20">' +
+          '<p class="text-xs text-gray-400 mb-1">الكتلة الذرية</p>' +
+          '<p class="text-lg font-bold text-cyan-400">' + element.mass + '</p>' +
+        '</div>' +
+        '<div class="bg-black/40 rounded-lg p-3 border border-cyan-500/20 col-span-2">' +
+          '<p class="text-xs text-gray-400 mb-1">التوزيع الإلكتروني</p>' +
+          '<p class="text-base font-mono text-cyan-300" dir="ltr">' + element.config + '</p>' +
+        '</div>' +
+        '<div class="bg-black/40 rounded-lg p-3 border border-cyan-500/20">' +
+          '<p class="text-xs text-gray-400 mb-1">سنة الاكتشاف</p>' +
+          '<p class="text-lg font-bold text-cyan-400">' + element.discovery + '</p>' +
+        '</div>' +
+        '<div class="bg-black/40 rounded-lg p-3 border border-cyan-500/20">' +
+          '<p class="text-xs text-gray-400 mb-1">الحالة الفيزيائية</p>' +
+          '<p class="text-base font-bold text-cyan-400">' + stateIcon + ' ' + stateArabic + '</p>' +
+        '</div>' +
+        '<div class="bg-black/40 rounded-lg p-3 border border-cyan-500/20 col-span-2">' +
+          '<p class="text-xs text-gray-400 mb-1">💡 الاستخدام في الحياة اليومية</p>' +
+          '<p class="text-sm text-cyan-300 leading-relaxed">' + element.use + '</p>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function getCategoryName(category) {
+      const names = {
+        alkali: 'فلز قلوي',
+        alkaline: 'فلز قلوي ترابي',
+        transition: 'فلز انتقالي',
+        'post-transition': 'فلز ضعيف',
+        metalloid: 'شبه فلز',
+        nonmetal: 'لا فلز',
+        halogen: 'هالوجين',
+        noble: 'غاز نبيل',
+        lanthanide: 'لانثانيد',
+        actinide: 'أكتينيد'
+      };
+      return names[category] || category;
+    }
+
+    function drawAtom(element) {
+      const svg = document.getElementById('atom-svg');
+      const color = categoryColors[element.category];
+      const electrons = element.electrons;
+      const numShells = electrons.length;
+      
+      const centerX = 150;
+      const centerY = 150;
+      const maxRadius = 130;
+      const nucleusRadius = Math.max(12, 20 - numShells);
+      const shellSpacing = (maxRadius - nucleusRadius - 10) / numShells;
+      
+      let svgContent = '<defs>' +
+        '<radialGradient id="nucleusGrad" cx="30%" cy="30%">' +
+          '<stop offset="0%" stop-color="' + color.bg + '" />' +
+          '<stop offset="100%" stop-color="' + adjustColor(color.bg, -40) + '" />' +
+        '</radialGradient>' +
+        '<filter id="glow">' +
+          '<feGaussianBlur stdDeviation="3" result="coloredBlur"/>' +
+          '<feMerge>' +
+            '<feMergeNode in="coloredBlur"/>' +
+            '<feMergeNode in="SourceGraphic"/>' +
+          '</feMerge>' +
+        '</filter>' +
+      '</defs>' +
+      '<circle cx="' + centerX + '" cy="' + centerY + '" r="' + nucleusRadius + '" ' +
+              'fill="url(#nucleusGrad)" filter="url(#glow)" class="nucleus"/>' +
+      '<text x="' + centerX + '" y="' + (centerY + 4) + '" text-anchor="middle" ' +
+            'fill="white" font-size="12" font-weight="bold">' + element.symbol + '</text>';
+      
+      electrons.forEach(function(electronCount, shellIndex) {
+        const shellRadius = nucleusRadius + 15 + (shellIndex * shellSpacing);
+        const animationDuration = 8 + shellIndex * 4;
+        const direction = shellIndex % 2 === 0 ? 1 : -1;
+        
+        svgContent += '<circle cx="' + centerX + '" cy="' + centerY + '" r="' + shellRadius + '" ' +
+                'fill="none" stroke="' + color.bg + '" stroke-width="1" ' +
+                'stroke-dasharray="4 4" opacity="0.3"/>';
+        
+        const angleStep = (2 * Math.PI) / electronCount;
+        for (let i = 0; i < electronCount; i++) {
+          const startAngle = (i * angleStep) + (shellIndex * 0.5);
+          const electronSize = Math.max(3, 5 - shellIndex * 0.3);
+          
+          svgContent += '<g class="electron-shell" style="animation-duration: ' + animationDuration + 's; animation-direction: ' + (direction === 1 ? 'normal' : 'reverse') + '">' +
+            '<circle cx="' + (centerX + shellRadius * Math.cos(startAngle)) + '" ' +
+                    'cy="' + (centerY + shellRadius * Math.sin(startAngle)) + '" ' +
+                    'r="' + electronSize + '" fill="' + color.bg + '" class="electron"' +
+                    ' style="transform-origin: ' + centerX + 'px ' + centerY + 'px"/>' +
+          '</g>';
+        }
+      });
+      
+      electrons.forEach(function(electronCount, shellIndex) {
+        const shellRadius = nucleusRadius + 15 + (shellIndex * shellSpacing);
+        const shellNames = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+        if (shellIndex < shellNames.length) {
+          svgContent += '<text x="' + (centerX + shellRadius + 8) + '" y="' + (centerY - 5) + '" ' +
+                'fill="' + color.bg + '" font-size="9" opacity="0.7">' + shellNames[shellIndex] + ': ' + electronCount + '</text>';
+        }
+      });
+      
+      svg.innerHTML = svgContent;
+    }
+
+    function adjustColor(hex, amount) {
+      const num = parseInt(hex.replace('#', ''), 16);
+      const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+      const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+      const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+      return '#' + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+    }
+    
+    function filterByState(state) {
+      currentFilter = state;
+      const cells = document.querySelectorAll('.element-cell[data-number]');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      
+      filterBtns.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      cells.forEach(cell => {
+        const number = parseInt(cell.dataset.number);
+        const element = elements.find(el => el.number === number);
+        
+        if (element) {
+          if (state === 'all' || element.state === state) {
+            cell.classList.remove('dimmed');
+          } else {
+            cell.classList.add('dimmed');
+          }
+        }
+      });
+    }
+
+    async function initApp() {
+      buildPeriodicTable();
+      
+      const hydrogen = elements.find(function(e) { return e.number === 1; });
+      if (hydrogen) {
+        selectElement(hydrogen);
+      }
+      
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+          const searchTerm = e.target.value.trim().toLowerCase();
+          const cells = document.querySelectorAll('.element-cell[data-number]');
+          
+          if (searchTerm === '') {
+            cells.forEach(cell => {
+              cell.classList.remove('dimmed', 'highlighted');
+            });
+            return;
+          }
+          
+          cells.forEach(cell => {
+            const number = parseInt(cell.dataset.number);
+            const element = elements.find(el => el.number === number);
+            
+            if (element) {
+              const matches = element.name.includes(searchTerm) || 
+                             element.symbol.toLowerCase().includes(searchTerm) ||
+                             element.nameEn.toLowerCase().includes(searchTerm);
+              
+              if (matches) {
+                cell.classList.remove('dimmed');
+                cell.classList.add('highlighted');
+              } else {
+                cell.classList.add('dimmed');
+                cell.classList.remove('highlighted');
+              }
+            }
+          });
+        });
+      }
+    }
+
+    initApp();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a080392ce97665a8',t:'MTc4MDg0MTI0OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

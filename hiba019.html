@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحدي عبقري الرياضيات | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="19.png">
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Almarai', sans-serif;
+        }
+        
+        ::selection {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: fall 3s linear infinite;
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .timer-pulse {
+            animation: pulse-red 1s infinite alternate;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); border-color: #ef4444; }
+            100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); border-color: #dc2626; color: #ef4444; }
+        }
+  </style>
+ </head>
+ <body class="h-full bg-slate-900 text-white overflow-hidden relative flex flex-col justify-between">
+  
+  <div id="stars-container" class="absolute inset-0 pointer-events-none z-0"></div>
+  <div id="confetti-container" class="absolute inset-0 pointer-events-none z-10 hidden"></div>
+
+  <header class="w-full bg-slate-800/60 backdrop-blur-md border-b border-slate-700/50 p-4 flex justify-between items-center z-20 relative">
+   <div class="flex items-center gap-3">
+    <div class="p-2 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-500/30">
+     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 002-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+     </svg>
+    </div>
+    <h1 id="game-title-text" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">تحدي عبقري الرياضيات</h1>
+   </div>
+   <div class="text-sm font-semibold text-slate-400 border border-slate-700 bg-slate-900/50 px-4 py-1.5 rounded-full">
+     مدرسة إناث قلقيلية الشرعية الثانوية
+   </div>
+  </header>
+
+  <main class="flex-1 flex flex-col justify-center items-center p-4 z-20 relative w-full max-w-4xl mx-auto">
+   
+   <div id="start-screen" class="w-full max-w-md bg-slate-800/40 border border-slate-700/50 rounded-2xl p-8 backdrop-blur-xl shadow-2xl text-center">
+    <div class="w-20 h-20 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20">
+     <span class="text-4xl">💡</span>
+    </div>
+    <h2 class="text-2xl font-bold mb-3 text-white">مرحباً بكِ في تحدي الذكاء</h2>
+    <p class="text-slate-400 mb-8 text-sm leading-relaxed">اختبري سرعتك ومهاراتك الحسابية في حل المعادلات قبل انتهاء الوقت وحطمي الرقم القياسي!</p>
+    <button onclick="startGame()" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-blue-500/20 text-lg">
+      ابدأ التحدي الآن
+    </button>
+   </div>
+
+   <div id="game-screen" class="w-full hidden grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+    
+    <div class="md:col-span-1 flex flex-row md:flex-col gap-4 w-full">
+     <div class="flex-1 bg-slate-800/40 border border-slate-700/50 rounded-2xl p-4 backdrop-blur-md text-center">
+      <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">النقاط الحالية</p>
+      <p id="score-value" class="text-3xl font-bold text-emerald-400">0</p>
+     </div>
+     <div id="timer-box" class="flex-1 bg-slate-800/40 border border-slate-700/50 rounded-2xl p-4 backdrop-blur-md text-center transition-all duration-300">
+      <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">الوقت المتبقي</p>
+      <p id="timer-value" class="text-3xl font-bold text-blue-400">20s</p>
+     </div>
+    </div>
+
+    <div class="md:col-span-3 bg-slate-800/30 border border-slate-700/40 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl w-full">
+     <div class="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-10 text-center mb-8 shadow-inner relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
+      <p id="question-text" class="text-5xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300 drop-shadow-md">0 + 0 = ؟</p>
+     </div>
+
+     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="options-grid">
+      </div>
+
+     <div id="feedback-message" class="mt-6 text-center text-lg font-bold min-h-[28px] opacity-0 transition-opacity duration-200"></div>
+    </div>
+   </div>
+
+   <div id="end-screen" class="w-full max-w-md bg-slate-800/40 border border-slate-700/50 rounded-2xl p-8 backdrop-blur-xl shadow-2xl text-center hidden">
+    <div class="w-20 h-20 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+     </svg>
+    </div>
+    <h2 class="text-2xl font-bold mb-2">انتهى الوقت!</h2>
+    <p class="text-slate-400 mb-6" id="final-status-text">أداء ممتاز جداً!</p>
+    <div class="bg-slate-900/60 border border-slate-700/50 rounded-xl p-4 mb-8">
+     <p class="text-sm text-slate-400 mb-1">مجموع النقاط التي حصلتِ عليها</p>
+     <p id="final-score" class="text-4xl font-black text-emerald-400">0</p>
+    </div>
+    <button onclick="startGame()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 px-6 rounded-xl transition duration-200 border border-slate-600">
+      تجربة التحدي مرة أخرى
+    </button>
+   </div>
+
+  </main>
+
+  <footer class="w-full bg-slate-950/40 border-t border-slate-800/60 p-4 text-center z-20 relative">
+   <p id="footer-text" class="text-xs text-slate-500">جميع الحقوق محفوظة لـ هبة كتانة &copy; 2026 | اللجنة التكنولوجية بإدارة المعلمة صفاء جعيدي</p>
+  </footer>
+
+  <script>
+        const defaultConfig = {
+            game_title: "تحدي عبقري الرياضيات",
+            correct_message: "إجابة رائعة وصحيحة! ✨",
+            wrong_message_prefix: "للأسف، الإجابة الصحيحة هي: ",
+            footer_text: "جميع الحقوق محفوظة لـ هبة كتانة © 2026 | اللجنة التكنولوجية بإدارة المعلمة صفاء جعيدي"
+        };
+
+        let currentConfig = { ...defaultConfig };
+        let score = 0;
+        let timeLeft = 20;
+        let timerInterval = null;
+        let correctAnswer = 0;
+        let canAnswer = true;
+
+        // دالة توليد الخلفية النجمية المتلألئة
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            container.innerHTML = '';
+            const count = 40;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.styleFloat ? star.style.styleFloat : star.style.width;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // دالة بدء اللعبة وإعادة التعيين الكامل
+        function startGame() {
+            // إيقاف وتصفير أي مؤقت نشط سابقاً لمنع تداخل العدادات وتسارع الوقت
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+
+            score = 0;
+            timeLeft = 20;
+            canAnswer = true;
+            
+            document.getElementById('score-value').textContent = score;
+            document.getElementById('timer-value').textContent = timeLeft + 's';
+            
+            // إعادة التنسيق الطبيعي للمؤقت
+            const timerBox = document.getElementById('timer-box');
+            timerBox.classList.remove('timer-pulse');
+            document.getElementById('timer-value').className = "text-3xl font-bold text-blue-400";
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('confetti-container').classList.add('hidden');
+            document.getElementById('confetti-container').innerHTML = '';
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            const feedback = document.getElementById('feedback-message');
+            feedback.className = "mt-6 text-center text-lg font-bold min-h-[28px] opacity-0";
+
+            generateQuestion();
+            
+            // بدء المؤقت التنازلي الجديد بشكل مستقر
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // تحديث العداد في كل ثانية
+        function updateTimer() {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                document.getElementById('timer-value').textContent = '0s';
+                endGame();
+            } else {
+                document.getElementById('timer-value').textContent = timeLeft + 's';
+                
+                // تنبيه بصري نابض باللون الأحمر عندما يتبقى 5 ثوانٍ أو أقل
+                if (timeLeft <= 5) {
+                    const timerBox = document.getElementById('timer-box');
+                    timerBox.classList.add('timer-pulse');
+                    document.getElementById('timer-value').className = "text-3xl font-bold text-red-500";
+                }
+            }
+        }
+
+        // دالة توليد المسائل الحسابية الذكية والخيارات القريبة
+        function generateQuestion() {
+            canAnswer = true;
+            const feedback = document.getElementById('feedback-message');
+            feedback.classList.add('opacity-0');
+
+            // اختيار العملية الحسابية عشوائياً (جمع، طرح، ضرب)
+            const operations = ['+', '-', '*'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            let num1, num2;
+
+            if (operation === '+') {
+                num1 = Math.floor(Math.random() * 20) + 1;
+                num2 = Math.floor(Math.random() * 20) + 1;
+                correctAnswer = num1 + num2;
+            } else if (operation === '-') {
+                num1 = Math.floor(Math.random() * 20) + 10;
+                num2 = Math.floor(Math.random() * num1); // لضمان النتيجة دائماً موجبة وسهلة للطالبات
+                correctAnswer = num1 - num2;
+            } else if (operation === '*') {
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                correctAnswer = num1 * num2;
+            }
+
+            // عرض المسألة الحسابية في الواجهة
+            let opSymbol = operation === '*' ? '×' : (operation === '-' ? '−' : '+');
+            document.getElementById('question-text').textContent = `${num1} ${opSymbol} ${num2} = ؟`;
+
+            // توليد خيارات خاطئة ذكية وقريبة جداً من الإجابة الصحيحة لمنع التخمين العشوائي
+            let optionsSet = new Set();
+            optionsSet.add(correctAnswer);
+
+            while (optionsSet.size < 4) {
+                // توليد فوارق عشوائية صغيرة (مثل إضافة أو طرح 1، 2، 3، أو 10)
+                const offsets = [1, -1, 2, -2, 3, -3, 5, -5, 10, -10];
+                const randomOffset = offsets[Math.floor(Math.random() * offsets.length)];
+                let wrongOption = correctAnswer + randomOffset;
+                
+                // التأكد من عدم تكرار الإجابة الصحيحة أو توليد خيار سالب
+                if (wrongOption !== correctAnswer && wrongOption >= 0) {
+                    optionsSet.add(wrongOption);
+                }
+            }
+
+            // تحويل الـ Set إلى مصفوفة وخلط الترتيب عشوائياً
+            const optionsArray = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+            // بناء أزرار الخيارات في الصفحة
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            optionsArray.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-slate-800/80 hover:bg-slate-700/90 text-white font-bold py-4 px-6 border border-slate-700/60 rounded-xl transition duration-200 transform active:scale-95 text-xl shadow-md";
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        // دالة فحص الإجابة المختارة من قِبل المستخدمة
+        function checkAnswer(selected, selectedBtn) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const feedback = document.getElementById('feedback-message');
+            feedback.classList.remove('opacity-0');
+
+            if (selected === correctAnswer) {
+                score += 10;
+                timeLeft += 2; // مكافأة وقت إضافية عند الحل الصحيح لزيادة الحماس
+                document.getElementById('score-value').textContent = score;
+                document.getElementById('timer-value').textContent = timeLeft + 's';
+                
+                selectedBtn.className = "w-full bg-emerald-600 text-white font-bold py-4 px-6 border border-emerald-500 rounded-xl transition duration-200 text-xl shadow-lg shadow-emerald-500/20";
+                feedback.textContent = currentConfig.correct_message;
+                feedback.className = "mt-6 text-center text-lg font-bold min-h-[28px] text-emerald-400";
+            } else {
+                selectedBtn.className = "w-full bg-red-600 text-white font-bold py-4 px-6 border border-red-500 rounded-xl transition duration-200 text-xl shadow-lg shadow-red-500/20";
+                feedback.textContent = `${currentConfig.wrong_message_prefix}${correctAnswer}`;
+                feedback.className = "mt-6 text-center text-lg font-bold min-h-[28px] text-red-400";
+                
+                // إبراز الخيار الصحيح بلون أخضر هادئ لمساعدة الطالبة على التعلم
+                const buttons = document.getElementById('options-grid').getElementsByTagName('button');
+                for (let btn of buttons) {
+                    if (parseInt(btn.textContent) === correctAnswer) {
+                        btn.className = "w-full bg-emerald-700/50 text-emerald-300 font-bold py-4 px-6 border border-emerald-600/50 rounded-xl transition duration-200 text-xl";
+                    }
+                }
+            }
+
+            // الانتقال للسؤال التالي تلقائياً بعد ثانية واحدة لمنح وقت لقراءة التغذية الراجعة
+            setTimeout(generateQuestion, 1200);
+        }
+
+        // دالة انتهاء وقت اللعبة وعرض شاشة النتائج والقصاصات الورقية
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('final-score').textContent = score;
+
+            if (score >= 50) {
+                document.getElementById('final-status-text').textContent = "مذهل! أنتِ عبقرية رياضيات حقيقية! 🏆";
+                triggerConfetti();
+            } else if (score >= 20) {
+                document.getElementById('final-status-text').textContent = "أداء رائع جداً! استمري في التدريب المتواصل ✨";
+            } else {
+                document.getElementById('final-status-text').textContent = "حظاً موفقاً في المرة القادمة، يمكنكِ تحقيق الأفضل دائماً 💡";
+            }
+        }
+
+        // دالة إطلاق القصاصات الملونة (Confetti) احتفالاً بالفوز وحصد نقاط عالية
+        function triggerConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.classList.remove('hidden');
+            container.innerHTML = '';
+            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+            
+            for (let i = 0; i < 50; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = `${Math.random() * 100}%`;
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDelay = `${Math.random() * 2}s`;
+                conf.style.transform = `rotate(${Math.random() * 360}deg)`;
+                container.appendChild(conf);
+            }
+        }
+
+        // التكامل مع الـ SDK لتحديث الإعدادات والعناوين ديناميكياً
+        function onConfigChange(config) {
+            currentConfig = { ...defaultConfig, ...config };
+            document.getElementById('game-title-text').textContent = currentConfig.game_title;
+            document.getElementById('footer-text').innerHTML = currentConfig.footer_text;
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ['game_title', config.game_title || defaultConfig.game_title],
+                    ['correct_message', config.correct_message || defaultConfig.correct_message],
+                    ['wrong_message_prefix', config.wrong_message_prefix || defaultConfig.wrong_message_prefix],
+                    ['footer_text', config.footer_text || defaultConfig.footer_text]
+                ])
+            });
+        }
+
+        // تشغيل اللوحة النجمية عند تحميل الصفحة لأول مرة
+        createStars();
+  </script>
+ </body>
+</html>

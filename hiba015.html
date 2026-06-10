@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكاة الروابط الكيميائية | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="15.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    @keyframes electronTransfer {
+      0% { transform: translate(0, 0); opacity: 1; }
+      20% { transform: translate(-80px, 5px); opacity: 1; }
+      40% { transform: translate(-160px, 10px); opacity: 1; }
+      45% { transform: translate(-160px, 10px); opacity: 0; }
+      100% { transform: translate(-160px, 10px); opacity: 0; }
+    }
+    
+    @keyframes ionAttract {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(40px); }
+    }
+    
+    @keyframes ionAttractReverse {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-40px); }
+    }
+    
+    @keyframes orbitExpand {
+      0%, 45% { width: 160px; height: 160px; top: -24px; left: -24px; }
+      50%, 100% { width: 200px; height: 200px; top: -44px; left: -44px; }
+    }
+    
+    @keyframes electronExpand1 {
+      0%, 45% { top: -12px; left: 50%; transform: translateX(-50%); }
+      50%, 100% { top: -20px; left: 50%; transform: translateX(-50%); }
+    }
+    
+    @keyframes electronExpand2 {
+      0%, 45% { bottom: -12px; left: 50%; transform: translateX(-50%); }
+      50%, 100% { bottom: -20px; left: 50%; transform: translateX(-50%); }
+    }
+    
+    @keyframes electronExpand3 {
+      0%, 45% { top: 50%; left: -12px; transform: translateY(-50%); }
+      50%, 100% { top: 50%; left: -20px; transform: translateY(-50%); }
+    }
+    
+    @keyframes electronExpand4 {
+      0%, 45% { top: 50%; right: -12px; transform: translateY(-50%); }
+      50%, 100% { top: 50%; right: -20px; transform: translateY(-50%); }
+    }
+    
+    @keyframes electronExpand5 {
+      0%, 45% { top: 8%; left: 8%; }
+      50%, 100% { top: 0%; left: 0%; }
+    }
+    
+    @keyframes electronExpand6 {
+      0%, 45% { top: 8%; right: 8%; }
+      50%, 100% { top: 0%; right: 0%; }
+    }
+    
+    @keyframes electronExpand7 {
+      0%, 45% { bottom: 8%; left: 8%; }
+      50%, 100% { bottom: 0%; left: 0%; }
+    }
+    
+    @keyframes electron8Appear {
+      0%, 45% { opacity: 0; bottom: 8%; right: 8%; }
+      46% { opacity: 1; bottom: 8%; right: 8%; }
+      50%, 100% { opacity: 1; bottom: 0%; right: 0%; }
+    }
+    
+    @keyframes chargeAppear {
+      0%, 44% { opacity: 0; }
+      45%, 100% { opacity: 1; }
+    }
+    
+    @keyframes chargeDisappear {
+      0%, 44% { opacity: 1; }
+      45%, 100% { opacity: 0; }
+    }
+    
+    @keyframes electronShare {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(20px); }
+    }
+    
+    @keyframes electronShareReverse {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-20px); }
+    }
+    
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 8px currentColor); }
+      50% { filter: drop-shadow(0 0 20px currentColor); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .atom {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .electron {
+      animation: orbit var(--orbit-duration, 2s) linear infinite;
+    }
+    
+    .glow-effect {
+      animation: glow 2s ease-in-out infinite;
+    }
+    
+    .float-effect {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .neon-border {
+      box-shadow: 0 0 10px currentColor, inset 0 0 10px currentColor;
+    }
+    
+    .transfer-electron {
+      animation: electronTransfer 6s ease-in-out infinite;
+    }
+    
+    .ion-attract-na {
+      animation: ionAttract 6s ease-in-out infinite;
+    }
+    
+    .ion-attract-cl {
+      animation: ionAttractReverse 6s ease-in-out infinite;
+    }
+    
+    .share-electron-right {
+      animation: electronShare 2s ease-in-out infinite;
+    }
+    
+    .share-electron-left {
+      animation: electronShareReverse 2s ease-in-out infinite;
+    }
+    
+    .orbit-ring {
+      border: 2px dashed;
+      border-radius: 50%;
+      position: absolute;
+      opacity: 0.3;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <style>@view-transition { navigation: auto; }</style>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body class="h-full bg-gray-950 text-white overflow-auto">
+  <div id="app-wrapper" class="min-h-full w-full flex flex-col">
+   <!-- Return to Encyclopedia Button --> <a href="https://safa2.my.canva.site/hiba000" class="fixed top-4 left-4 px-4 py-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 text-white font-bold text-sm flex items-center gap-2 transition-all duration-300 hover:bg-[#1e90ff] z-[9999] shadow-lg md:px-6 md:py-3 md:text-base">
+    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+    </svg><span class="hidden md:inline">العودة للموسوعة الرئيسية</span> </a> <!-- Header -->
+   <header class="text-center py-6 px-4">
+    <h1 id="main-title" class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 glow-effect">محاكاة الروابط الكيميائية</h1>
+    <p class="text-gray-400 mt-2 text-lg">استكشف عالم الروابط الأيونية والتساهمية</p>
+   </header><!-- Toggle Buttons -->
+   <div class="flex justify-center gap-4 px-4 mb-6">
+    <button id="ionic-btn" onclick="switchMode('ionic')" class="px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/50 scale-105"> الرابطة الأيونية </button> <button id="covalent-btn" onclick="switchMode('covalent')" class="px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700"> الرابطة التساهمية </button>
+   </div><!-- Animation Container -->
+   <div class="flex-1 flex items-center justify-center px-4 py-8">
+    <div id="animation-container" class="relative w-full max-w-2xl h-80 bg-gray-900/50 rounded-3xl border border-gray-800 overflow-hidden">
+     <!-- Ionic Bond Animation -->
+     <div id="ionic-animation" class="absolute inset-0 flex items-center justify-center">
+      <!-- Sodium Atom -->
+      <div id="na-atom" class="relative ion-attract-na">
+       <div class="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-2xl font-bold text-gray-900 atom shadow-lg shadow-yellow-500/50">
+        Na
+       </div><!-- Outer electron (will transfer) - starts from outside Na atom -->
+       <div id="transfer-electron" class="absolute w-4 h-4 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/80 transfer-electron" style="top: 10%; left: -16px;">
+       </div><!-- Orbit ring -->
+       <div class="orbit-ring w-36 h-36 border-yellow-400/50" style="top: -24px; left: -24px;"></div><span id="na-charge" class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-yellow-400 font-bold text-xl" style="animation: chargeAppear 6s ease-in-out infinite;">Na⁺</span> <span id="na-neutral" class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-yellow-400 font-bold text-xl" style="animation: chargeDisappear 6s ease-in-out infinite;">Na</span>
+      </div><!-- Arrow -->
+      <div class="mx-8 text-4xl text-purple-400 glow-effect">
+       ←
+      </div><!-- Chlorine Atom -->
+      <div id="cl-atom" class="relative ion-attract-cl">
+       <div class="w-28 h-28 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-2xl font-bold text-gray-900 atom shadow-lg shadow-green-500/50">
+        Cl
+       </div><!-- Existing electrons - positioned OUTSIDE the nucleus on orbit -->
+       <div id="cl-electron-1" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand1 6s ease-in-out infinite;"></div>
+       <div id="cl-electron-2" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand2 6s ease-in-out infinite;"></div>
+       <div id="cl-electron-3" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand3 6s ease-in-out infinite;"></div>
+       <div id="cl-electron-4" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand4 6s ease-in-out infinite;"></div>
+       <div id="cl-electron-5" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand5 6s ease-in-out infinite;"></div>
+       <div id="cl-electron-6" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand6 6s ease-in-out infinite;"></div>
+       <div id="cl-electron-7" class="absolute w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" style="animation: electronExpand7 6s ease-in-out infinite;"></div><!-- New electron that appears after transfer -->
+       <div id="cl-electron-8" class="absolute w-3 h-3 rounded-full bg-yellow-300 shadow-lg shadow-yellow-300/80" style="animation: electron8Appear 6s ease-in-out infinite;"></div><!-- Orbit ring -->
+       <div id="cl-orbit-ring" class="orbit-ring border-green-400/50" style="animation: orbitExpand 6s ease-in-out infinite;"></div><span id="cl-charge" class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-green-400 font-bold text-xl" style="animation: chargeAppear 6s ease-in-out infinite;">Cl⁻</span> <span id="cl-neutral" class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-green-400 font-bold text-xl" style="animation: chargeDisappear 6s ease-in-out infinite;">Cl</span>
+      </div>
+     </div><!-- Covalent Bond Animation -->
+     <div id="covalent-animation" class="absolute inset-0 hidden flex items-center justify-center gap-4">
+      <!-- First Hydrogen -->
+      <div class="relative float-effect" style="animation-delay: 0s;">
+       <div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center text-xl font-bold text-white atom shadow-lg shadow-pink-500/50">
+        H
+       </div><!-- Orbiting electron 1 -->
+       <div class="electron w-4 h-4 rounded-full bg-yellow-300 shadow-lg shadow-yellow-300/80" style="--orbit-radius: 50px; --orbit-duration: 2s; position: absolute; top: 50%; left: 50%; margin: -8px 0 0 -8px;"></div><!-- Orbit ring -->
+       <div class="orbit-ring w-28 h-28 border-pink-400/50" style="top: -16px; left: -16px;"></div>
+      </div><!-- Second Hydrogen -->
+      <div class="relative float-effect" style="animation-delay: 0.5s;">
+       <div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center text-xl font-bold text-white atom shadow-lg shadow-pink-500/50">
+        H
+       </div><!-- Orbiting electron 2 -->
+       <div class="electron w-4 h-4 rounded-full bg-yellow-300 shadow-lg shadow-yellow-300/80" style="--orbit-radius: 50px; --orbit-duration: 2s; animation-delay: 1s; position: absolute; top: 50%; left: 50%; margin: -8px 0 0 -8px;"></div><!-- Orbit ring -->
+       <div class="orbit-ring w-28 h-28 border-pink-400/50" style="top: -16px; left: -16px;"></div>
+      </div>
+     </div><!-- Description Label -->
+     <div id="bond-description" class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-800/90 px-6 py-2 rounded-full border border-cyan-500/50">
+      <span class="text-cyan-400 font-bold">انتقال إلكترون من الصوديوم إلى الكلور</span>
+     </div>
+    </div>
+   </div><!-- Octet Rule Explainer -->
+   <div class="px-4 pb-6">
+    <div class="max-w-2xl mx-auto bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-2xl p-6 border border-purple-500/30">
+     <h3 id="octet-title" class="text-xl font-bold text-purple-300 mb-3 flex items-center gap-2"><span class="text-2xl">💡</span> قاعدة الثُمانية (Octet Rule)</h3>
+     <p class="text-gray-300 leading-relaxed text-lg">تنص قاعدة الثُمانية على أن الذرات تميل إلى اكتساب أو فقدان أو مشاركة الإلكترونات للوصول إلى <span class="text-cyan-400 font-bold">8 إلكترونات</span> في مستوى طاقتها الخارجي، مما يمنحها استقراراً كيميائياً مشابهاً للغازات النبيلة. في الرابطة الأيونية، تنتقل الإلكترونات بالكامل، بينما في الرابطة التساهمية، تتشارك الذرات في الإلكترونات.</p>
+    </div>
+   </div><!-- Footer -->
+   <footer class="py-4 px-4 text-center border-t border-gray-800 bg-gray-900/50">
+    <p id="footer-text" class="text-gray-400 text-sm">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+   </footer>
+  </div>
+  <script>
+    let currentMode = 'ionic';
+    
+    const defaultConfig = {
+      main_title: 'محاكاة الروابط الكيميائية',
+      octet_title: 'قاعدة الثُمانية (Octet Rule)',
+      footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين',
+      background_color: '#030712',
+      surface_color: '#111827',
+      text_color: '#e5e7eb',
+      primary_action_color: '#06b6d4',
+      secondary_action_color: '#a855f7'
+    };
+    
+    function switchMode(mode) {
+      currentMode = mode;
+      const ionicBtn = document.getElementById('ionic-btn');
+      const covalentBtn = document.getElementById('covalent-btn');
+      const ionicAnim = document.getElementById('ionic-animation');
+      const covalentAnim = document.getElementById('covalent-animation');
+      const description = document.getElementById('bond-description');
+      
+      if (mode === 'ionic') {
+        ionicBtn.className = 'px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/50 scale-105';
+        covalentBtn.className = 'px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700';
+        ionicAnim.classList.remove('hidden');
+        ionicAnim.classList.add('flex');
+        covalentAnim.classList.add('hidden');
+        covalentAnim.classList.remove('flex');
+        description.innerHTML = '<span class="text-cyan-400 font-bold">انتقال إلكترون من الصوديوم إلى الكلور</span>';
+      } else {
+        covalentBtn.className = 'px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/50 scale-105';
+        ionicBtn.className = 'px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700';
+        covalentAnim.classList.remove('hidden');
+        covalentAnim.classList.add('flex');
+        ionicAnim.classList.add('hidden');
+        ionicAnim.classList.remove('flex');
+        description.innerHTML = '<span class="text-pink-400 font-bold">مشاركة الإلكترونات بين ذرتي هيدروجين (H₂)</span>';
+      }
+    }
+    
+    async function onConfigChange(config) {
+      const mainTitle = document.getElementById('main-title');
+      const octetTitle = document.getElementById('octet-title');
+      const footerText = document.getElementById('footer-text');
+      
+      if (mainTitle) {
+        mainTitle.textContent = config.main_title || defaultConfig.main_title;
+      }
+      
+      if (octetTitle) {
+        octetTitle.innerHTML = `<span class="text-2xl">💡</span> ${config.octet_title || defaultConfig.octet_title}`;
+      }
+      
+      if (footerText) {
+        footerText.textContent = config.footer_text || defaultConfig.footer_text;
+      }
+      
+      // Apply colors
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+    }
+    
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || 'Tajawal',
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || 16,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+    
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['main_title', config.main_title || defaultConfig.main_title],
+        ['octet_title', config.octet_title || defaultConfig.octet_title],
+        ['footer_text', config.footer_text || defaultConfig.footer_text]
+      ]);
+    }
+    
+    // Initialize SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c79ca5c63a2997d',t:'MTc3MDAzNjM3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a08077296e3ab09c',t:'MTc4MDg0Mzc4Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

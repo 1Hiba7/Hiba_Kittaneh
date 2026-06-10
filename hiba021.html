@@ -1,0 +1,1296 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head><script src="/_sdk/telemetry_sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مختبر فصائل الدم | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="21.png">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        ::selection {
+            background-color: #991b1b !important;
+            color: white !important;
+        }
+        
+        ::-moz-selection {
+            background-color: #991b1b !important;
+            color: white !important;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0a0a14 0%, #1a1a2e 50%, #0a0a14 100%);
+            color: #e8eaf6;
+        }
+        
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: transparent;
+            padding: 2rem 1.5rem;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 60px rgba(220, 38, 38, 0.5);
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+        
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .lab-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .test-controls {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .start-test-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 1.3rem 3.5rem;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+        
+        .start-test-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.7);
+        }
+        
+        .start-test-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .patient-info {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            margin-bottom: 2.5rem;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        .patient-info.active {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .patient-info h3 {
+            font-size: 1.5rem;
+            color: #4ade80;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .patient-id {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+        }
+        
+        .slides-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .slide {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border: 2px solid;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .slide:first-child {
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .slide:first-child:hover {
+            border-color: rgba(59, 130, 246, 0.8);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            transform: translateY(-5px);
+        }
+        
+        .slide:nth-child(2) {
+            border-color: rgba(234, 179, 8, 0.5);
+        }
+        
+        .slide:nth-child(2):hover {
+            border-color: rgba(234, 179, 8, 0.8);
+            box-shadow: 0 8px 25px rgba(234, 179, 8, 0.4);
+            transform: translateY(-5px);
+        }
+        
+        .slide:last-child {
+            border-color: rgba(148, 163, 184, 0.5);
+        }
+        
+        .slide:last-child:hover {
+            border-color: rgba(148, 163, 184, 0.8);
+            box-shadow: 0 8px 25px rgba(148, 163, 184, 0.4);
+            transform: translateY(-5px);
+        }
+        
+        .slide-label {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+        }
+        
+        .slide:first-child .slide-label {
+            color: #60a5fa;
+        }
+        
+        .slide:nth-child(2) .slide-label {
+            color: #fbbf24;
+        }
+        
+        .slide:last-child .slide-label {
+            color: #94a3b8;
+        }
+        
+        .slide-circle {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 1.5rem;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.98) 0%, rgba(240, 243, 255, 0.95) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .slide-circle:hover {
+            transform: scale(1.08);
+        }
+        
+        .slide:first-child .slide-circle:hover {
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .slide:nth-child(2) .slide-circle:hover {
+            box-shadow: 0 12px 40px rgba(234, 179, 8, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .slide:last-child .slide-circle:hover {
+            box-shadow: 0 12px 40px rgba(148, 163, 184, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .slide-circle.tested {
+            cursor: default;
+        }
+        
+        .blood-drop {
+            width: 85px;
+            height: 85px;
+            background: #c62828;
+            border-radius: 50%;
+            display: none;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        
+        .blood-drop.visible {
+            display: block;
+            animation: dropIn 0.6s ease;
+        }
+        
+        @keyframes dropIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .blood-drop.agglutinated {
+            background: radial-gradient(circle at 30% 30%, #8b0000 0%, #5a0000 50%, #3a0000 100%);
+            border-radius: 40% 60% 50% 50% / 60% 40% 60% 40%;
+            animation: agglutinate 1.2s ease forwards;
+        }
+        
+        .blood-drop.agglutinated::before,
+        .blood-drop.agglutinated::after {
+            content: '';
+            position: absolute;
+            background: #5a0000;
+            border-radius: 50%;
+        }
+        
+        .blood-drop.agglutinated::before {
+            width: 28px;
+            height: 28px;
+            top: 10px;
+            left: 15px;
+        }
+        
+        .blood-drop.agglutinated::after {
+            width: 22px;
+            height: 22px;
+            bottom: 15px;
+            right: 12px;
+        }
+        
+        @keyframes agglutinate {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.15) rotate(8deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        .blood-drop.smooth {
+            background: radial-gradient(circle at 30% 30%, #e53935 0%, #c62828 50%, #b71c1c 100%);
+            animation: pulse 2s ease infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .test-btn {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            color: white;
+            border: none;
+            padding: 0.9rem 2.2rem;
+            border-radius: 30px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.6);
+        }
+        
+        .test-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .result-indicator {
+            margin-top: 1rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            min-height: 30px;
+        }
+        
+        .result-positive {
+            color: #ef5350;
+        }
+        
+        .result-negative {
+            color: #4ade80;
+        }
+        
+        .answer-section {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .answer-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ef4444;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .blood-types-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .blood-type-option {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #e8eaf6;
+        }
+        
+        .blood-type-option:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .blood-type-option.selected {
+            background: #991b1b;
+            color: #ffffff;
+            border-color: #dc2626;
+            box-shadow: 0 8px 25px rgba(153, 27, 27, 0.7);
+            font-weight: 900;
+            transform: scale(1.08);
+        }
+        
+        .submit-answer-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            border: none;
+            padding: 1.3rem;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .submit-answer-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(22, 163, 74, 0.6);
+        }
+        
+        .submit-answer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .info-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100% - 4rem);
+            overflow-y: auto;
+        }
+        
+        .info-title {
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #ef4444;
+            margin-bottom: 1.8rem;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-card {
+            background: rgba(15, 23, 42, 0.4);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-right: 5px solid #60a5fa;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .info-card:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 25px rgba(96, 165, 250, 0.3);
+        }
+        
+        .info-card h4 {
+            font-size: 1.2rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+        
+        .info-card p {
+            font-size: 1rem;
+            color: #ffffff;
+            line-height: 1.8;
+        }
+        
+        .info-card strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+        
+        .compatibility-section {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .compatibility-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ef4444;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        
+        .compatibility-table {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .compatibility-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        .compatibility-table th {
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            padding: 0.7rem 0.4rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .compatibility-table td {
+            padding: 0.7rem 0.4rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e8eaf6;
+        }
+        
+        .compatibility-table .row-header {
+            background: rgba(255, 255, 255, 0.08);
+            font-weight: 700;
+            color: #94a3b8;
+        }
+        
+        .compatibility-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .donor-universal {
+            background: rgba(251, 191, 36, 0.15) !important;
+        }
+        
+        .donor-universal .row-header {
+            color: #fbbf24 !important;
+            font-weight: 900;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+        }
+        
+        .recipient-universal {
+            background: rgba(251, 191, 36, 0.15) !important;
+        }
+        
+        .recipient-universal .row-header {
+            color: #fbbf24 !important;
+            font-weight: 900;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+        }
+        
+        .compatibility-notes {
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            border-right: 4px solid #fbbf24;
+            font-size: 0.95rem;
+            color: #e8eaf6;
+        }
+        
+        .compatibility-notes p {
+            margin-bottom: 0.6rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 2rem;
+            backdrop-filter: blur(20px);
+        }
+        
+        .footer p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .return-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 50px;
+            padding: 12px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .return-button:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .return-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal {
+            background: linear-gradient(135deg, #0f1729 0%, #0a0e1a 100%);
+            border-radius: 25px;
+            padding: 3rem;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            border: 3px solid;
+            animation: slideUp 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal.success {
+            border-color: #4ade80;
+        }
+        
+        .modal.error {
+            border-color: #ef5350;
+        }
+        
+        .modal-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .modal.success .modal-title {
+            color: #4ade80;
+        }
+        
+        .modal.error .modal-title {
+            color: #ef5350;
+        }
+        
+        .modal-message {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-explanation {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: right;
+            border-right: 4px solid #3b82f6;
+        }
+        
+        .modal-explanation strong {
+            color: #60a5fa;
+            display: block;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        
+        .modal-explanation p {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .modal-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .modal-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(59, 130, 246, 0.5);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-panel {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .slides-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .blood-types-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .return-button span {
+                display: none;
+            }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(96, 165, 250, 0.3);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(96, 165, 250, 0.5);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" class="return-button">
+   <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+   </svg><span>العودة للموسوعة الرئيسية</span> </a>
+  <div class="app-wrapper">
+   <div class="main-container">
+    <div class="header">
+     <h1 id="lab-title">🔬 مختبر تمييز فصائل الدم التفاعلي</h1>
+     <p id="lab-subtitle">تعلم كيفية تحديد فصيلة الدم عمليا باستخدام الكواشف المضادة</p>
+    </div>
+    <div class="main-layout">
+     <div class="lab-section">
+      <div class="test-controls"><button class="start-test-btn" id="start-test-btn"> <span id="start-test-text">🩸 ابدأ فحص مريض جديد</span> </button>
+      </div>
+      <div class="patient-info" id="patient-info">
+       <h3>🧑‍⚕️ المريض الحالي</h3>
+       <p class="patient-id" id="patient-id">رقم المريض: #0000</p>
+      </div>
+      <div class="slides-container">
+       <div class="slide">
+        <div class="slide-label">
+         Anti-A
+        </div>
+        <div class="slide-circle" data-antigen="A">
+         <div class="blood-drop"></div>
+        </div><button class="test-btn" data-test="A">أضف الكاشف</button>
+        <div class="result-indicator" id="result-A"></div>
+       </div>
+       <div class="slide">
+        <div class="slide-label">
+         Anti-B
+        </div>
+        <div class="slide-circle" data-antigen="B">
+         <div class="blood-drop"></div>
+        </div><button class="test-btn" data-test="B">أضف الكاشف</button>
+        <div class="result-indicator" id="result-B"></div>
+       </div>
+       <div class="slide">
+        <div class="slide-label">
+         Anti-D (Rh)
+        </div>
+        <div class="slide-circle" data-antigen="D">
+         <div class="blood-drop"></div>
+        </div><button class="test-btn" data-test="D">أضف الكاشف</button>
+        <div class="result-indicator" id="result-D"></div>
+       </div>
+      </div>
+      <div class="answer-section">
+       <h3 class="answer-title">ما هي فصيلة دم المريض؟</h3>
+       <div class="blood-types-grid" id="blood-types-grid">
+        <div class="blood-type-option" data-type="O-">
+         O-
+        </div>
+        <div class="blood-type-option" data-type="O+">
+         O+
+        </div>
+        <div class="blood-type-option" data-type="A-">
+         A-
+        </div>
+        <div class="blood-type-option" data-type="A+">
+         A+
+        </div>
+        <div class="blood-type-option" data-type="B-">
+         B-
+        </div>
+        <div class="blood-type-option" data-type="B+">
+         B+
+        </div>
+        <div class="blood-type-option" data-type="AB-">
+         AB-
+        </div>
+        <div class="blood-type-option" data-type="AB+">
+         AB+
+        </div>
+       </div><button class="submit-answer-btn" id="submit-answer-btn" disabled> <span id="submit-answer-text">✓ تأكيد الإجابة</span> </button>
+      </div>
+     </div>
+     <div class="info-panel">
+      <h2 class="info-title" id="info-title">📚 دليل التمييز العلمي</h2>
+      <div class="info-cards">
+       <div class="info-card">
+        <h4 id="card1-title">1️⃣ كيفية التمييز</h4>
+        <p><strong>التخثر = وجود البروتين (المستضد)</strong></p>
+        <p style="margin-top: 0.8rem; font-size: 0.95rem; line-height: 1.8;">• تخثر في Anti-A فقط ← الفصيلة A<br>
+          • تخثر في Anti-B فقط ← الفصيلة B<br>
+          • تخثر في الاثنين معا ← الفصيلة AB<br>
+          • لا تخثر في أي منهما ← الفصيلة O</p>
+       </div>
+       <div class="info-card">
+        <h4 id="card2-title">2️⃣ العامل الرايزيسي (Rh Factor)</h4>
+        <p><strong>يحدد ما إذا كانت الفصيلة موجبة أو سالبة</strong></p>
+        <p style="margin-top: 0.8rem; font-size: 0.95rem; line-height: 1.8;">• تخثر في Anti-D ← العامل موجب (+)<br>
+          • لا تخثر في Anti-D ← العامل سالب (-)</p>
+       </div>
+       <div class="info-card">
+        <h4 id="card3-title">3️⃣ خطوات إجراء الفحص</h4>
+        <p style="margin-top: 0.8rem; font-size: 0.95rem; line-height: 1.8;"><strong>الخطوة 1:</strong> ضع قطرة دم على كل دائرة<br><strong>الخطوة 2:</strong> أضف الكاشف (المصل) المناسب<br><strong>الخطوة 3:</strong> لاحظ حدوث التخثر من عدمه<br><strong>الخطوة 4:</strong> استنتج الفصيلة بناء على النتائج</p>
+       </div>
+      </div>
+      <div class="compatibility-section">
+       <h3 class="compatibility-title">🩸 جدول التوافق بين الفصائل</h3>
+       <div class="compatibility-table">
+        <table>
+         <thead>
+          <tr>
+           <th>المتبرع ← المتلقي</th>
+           <th>O-</th>
+           <th>O+</th>
+           <th>A-</th>
+           <th>A+</th>
+           <th>B-</th>
+           <th>B+</th>
+           <th>AB-</th>
+           <th>AB+</th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr class="donor-universal">
+           <td class="row-header">O-</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+          </tr>
+          <tr>
+           <td class="row-header">O+</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>❌</td>
+           <td>✅</td>
+          </tr>
+          <tr>
+           <td class="row-header">A-</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>✅</td>
+          </tr>
+          <tr>
+           <td class="row-header">A+</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+          </tr>
+          <tr>
+           <td class="row-header">B-</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+          </tr>
+          <tr>
+           <td class="row-header">B+</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>❌</td>
+           <td>✅</td>
+          </tr>
+          <tr>
+           <td class="row-header">AB-</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>❌</td>
+           <td>✅</td>
+           <td>✅</td>
+          </tr>
+          <tr class="recipient-universal">
+           <td class="row-header">AB+</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="compatibility-notes">
+        <p style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;"><span style="color: #fbbf24; font-size: 1.2rem;">⭐</span> <strong style="color: #fbbf24;">O-</strong> المتبرع العام (يمكنه التبرع لجميع الفصائل)</p>
+        <p style="display: flex; align-items: center; gap: 0.5rem;"><span style="color: #fbbf24; font-size: 1.2rem;">⭐</span> <strong style="color: #fbbf24;">AB+</strong> المستقبل العام (يمكنه استقبال من جميع الفصائل)</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <footer class="footer">
+   <p id="footer-text">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+  </footer>
+  <div class="modal-overlay" id="modal-overlay">
+   <div class="modal" id="modal">
+    <div class="modal-icon" id="modal-icon">
+     ✓
+    </div>
+    <div class="modal-title" id="modal-title">
+     نجاح!
+    </div>
+    <div class="modal-message" id="modal-message"></div>
+    <div class="modal-explanation" id="modal-explanation"></div><button class="modal-button" id="modal-button">فحص مريض جديد</button>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            lab_title: "🔬 مختبر تمييز فصائل الدم التفاعلي",
+            lab_subtitle: "تعلم كيفية تحديد فصيلة الدم عمليا باستخدام الكواشف المضادة",
+            start_test_button: "🩸 ابدأ فحص مريض جديد",
+            info_title: "📚 دليل التمييز العلمي",
+            card1_title: "1️⃣ كيفية التمييز",
+            card2_title: "2️⃣ العامل الرايزيسي (Rh Factor)",
+            card3_title: "3️⃣ خطوات إجراء الفحص",
+            submit_answer_button: "✓ تأكيد الإجابة",
+            footer_text: "جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين"
+        };
+
+        const bloodTypes = {
+            "O-": { A: false, B: false, D: false },
+            "O+": { A: false, B: false, D: true },
+            "A-": { A: true, B: false, D: false },
+            "A+": { A: true, B: false, D: true },
+            "B-": { A: false, B: true, D: false },
+            "B+": { A: false, B: true, D: true },
+            "AB-": { A: true, B: true, D: false },
+            "AB+": { A: true, B: true, D: true }
+        };
+
+        let currentBloodType = null;
+        let testResults = { A: null, B: null, D: null };
+        let selectedAnswer = null;
+        let patientNumber = 1;
+
+        const startTestBtn = document.getElementById('start-test-btn');
+        const patientInfo = document.getElementById('patient-info');
+        const patientId = document.getElementById('patient-id');
+        const testButtons = document.querySelectorAll('.test-btn');
+        const bloodTypeOptions = document.querySelectorAll('.blood-type-option');
+        const submitAnswerBtn = document.getElementById('submit-answer-btn');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modal = document.getElementById('modal');
+
+        function startNewTest() {
+            const bloodTypeKeys = Object.keys(bloodTypes);
+            currentBloodType = bloodTypeKeys[Math.floor(Math.random() * bloodTypeKeys.length)];
+            testResults = { A: null, B: null, D: null };
+            selectedAnswer = null;
+            
+            patientId.textContent = 'رقم المريض: #' + String(patientNumber).padStart(4, '0');
+            patientNumber++;
+            
+            patientInfo.classList.add('active');
+            startTestBtn.disabled = true;
+            
+            document.querySelectorAll('.blood-drop').forEach(drop => {
+                drop.className = 'blood-drop';
+            });
+            
+            document.querySelectorAll('.slide-circle').forEach(circle => {
+                circle.classList.remove('tested');
+            });
+            
+            document.querySelectorAll('.result-indicator').forEach(indicator => {
+                indicator.textContent = '';
+                indicator.className = 'result-indicator';
+            });
+            
+            testButtons.forEach(btn => {
+                btn.disabled = false;
+            });
+            
+            bloodTypeOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            submitAnswerBtn.disabled = true;
+        }
+
+        function performTest(antigen) {
+            const circle = document.querySelector('[data-antigen="' + antigen + '"]');
+            const drop = circle.querySelector('.blood-drop');
+            const button = document.querySelector('[data-test="' + antigen + '"]');
+            const resultDiv = document.getElementById('result-' + antigen);
+            
+            drop.classList.add('visible');
+            button.disabled = true;
+            circle.classList.add('tested');
+            
+            setTimeout(() => {
+                const shouldAgglutinate = bloodTypes[currentBloodType][antigen];
+                testResults[antigen] = shouldAgglutinate;
+                
+                if (shouldAgglutinate) {
+                    drop.classList.add('agglutinated');
+                    resultDiv.textContent = '✓ تخثر موجب';
+                    resultDiv.className = 'result-indicator result-positive';
+                } else {
+                    drop.classList.add('smooth');
+                    resultDiv.textContent = '✗ لا يوجد تخثر';
+                    resultDiv.className = 'result-indicator result-negative';
+                }
+                
+                checkIfAllTestsDone();
+            }, 1000);
+        }
+
+        function checkIfAllTestsDone() {
+            const allDone = testResults.A !== null && testResults.B !== null && testResults.D !== null;
+            if (allDone) {
+                startTestBtn.disabled = false;
+            }
+        }
+
+        bloodTypeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                bloodTypeOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedAnswer = option.dataset.type;
+                submitAnswerBtn.disabled = false;
+            });
+        });
+
+        function submitAnswer() {
+            if (!selectedAnswer || !currentBloodType) return;
+            
+            const isCorrect = selectedAnswer === currentBloodType;
+            const modalIcon = document.getElementById('modal-icon');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalExplanation = document.getElementById('modal-explanation');
+            
+            if (isCorrect) {
+                modal.className = 'modal success';
+                modalIcon.textContent = '✓';
+                modalTitle.textContent = 'إجابة صحيحة! 🎉';
+                modalMessage.textContent = 'أحسنت! الفصيلة الصحيحة هي ' + currentBloodType;
+                
+                const explanation = generateExplanation(currentBloodType);
+                modalExplanation.innerHTML = '<strong>التفسير العلمي:</strong><p>' + explanation + '</p>';
+            } else {
+                modal.className = 'modal error';
+                modalIcon.textContent = '✗';
+                modalTitle.textContent = 'إجابة خاطئة';
+                modalMessage.textContent = 'للأسف، الإجابة الصحيحة هي ' + currentBloodType + ' وليس ' + selectedAnswer;
+                
+                const explanation = generateExplanation(currentBloodType);
+                modalExplanation.innerHTML = '<strong>التفسير الصحيح:</strong><p>' + explanation + '</p>';
+            }
+            
+            modalOverlay.classList.add('active');
+        }
+
+        function generateExplanation(bloodType) {
+            const reactions = bloodTypes[bloodType];
+            let explanation = '';
+            
+            if (reactions.A && !reactions.B) {
+                explanation = 'حدث تخثر في Anti-A فقط، مما يعني وجود مستضد A على سطح خلايا الدم';
+            } else if (!reactions.A && reactions.B) {
+                explanation = 'حدث تخثر في Anti-B فقط، مما يعني وجود مستضد B على سطح خلايا الدم';
+            } else if (reactions.A && reactions.B) {
+                explanation = 'حدث تخثر في كل من Anti-A و Anti-B، مما يعني وجود كلا المستضدين A و B';
+            } else if (!reactions.A && !reactions.B) {
+                explanation = 'لم يحدث تخثر في Anti-A ولا Anti-B، مما يعني عدم وجود مستضدات A أو B (فصيلة O)';
+            }
+            
+            if (reactions.D) {
+                explanation += '. حدث تخثر في Anti-D مما يعني أن العامل الرايزيسي موجب (+)';
+            } else {
+                explanation += '. لم يحدث تخثر في Anti-D مما يعني أن العامل الرايزيسي سالب (-)';
+            }
+            
+            return explanation;
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            startNewTest();
+        }
+
+        startTestBtn.addEventListener('click', startNewTest);
+        
+        testButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (!currentBloodType) {
+                    return;
+                }
+                const testType = button.dataset.test;
+                performTest(testType);
+            });
+        });
+        
+        submitAnswerBtn.addEventListener('click', submitAnswer);
+        
+        document.getElementById('modal-button').addEventListener('click', closeModal);
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        async function onConfigChange(config) {
+            document.getElementById('lab-title').textContent = config.lab_title || defaultConfig.lab_title;
+            document.getElementById('lab-subtitle').textContent = config.lab_subtitle || defaultConfig.lab_subtitle;
+            document.getElementById('start-test-text').textContent = config.start_test_button || defaultConfig.start_test_button;
+            document.getElementById('info-title').textContent = config.info_title || defaultConfig.info_title;
+            document.getElementById('card1-title').textContent = config.card1_title || defaultConfig.card1_title;
+            document.getElementById('card2-title').textContent = config.card2_title || defaultConfig.card2_title;
+            document.getElementById('card3-title').textContent = config.card3_title || defaultConfig.card3_title;
+            document.getElementById('submit-answer-text').textContent = config.submit_answer_button || defaultConfig.submit_answer_button;
+            document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["lab_title", config.lab_title || defaultConfig.lab_title],
+                    ["lab_subtitle", config.lab_subtitle || defaultConfig.lab_subtitle],
+                    ["start_test_button", config.start_test_button || defaultConfig.start_test_button],
+                    ["info_title", config.info_title || defaultConfig.info_title],
+                    ["card1_title", config.card1_title || defaultConfig.card1_title],
+                    ["card2_title", config.card2_title || defaultConfig.card2_title],
+                    ["card3_title", config.card3_title || defaultConfig.card3_title],
+                    ["submit_answer_button", config.submit_answer_button || defaultConfig.submit_answer_button],
+                    ["footer_text", config.footer_text || defaultConfig.footer_text]
+                ])
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a098bc388d929214',t:'MTc4MTA5ODI3NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

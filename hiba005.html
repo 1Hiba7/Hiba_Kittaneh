@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مستكشف الفضاء التفاعلي | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="5.png">
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&amp;family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet">
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+            z-index: 20;
+        }
+
+        .planet:hover {
+            box-shadow: 0 0 30px currentColor;
+            z-index: 30;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        @keyframes orbit {
+            from { 
+                transform: translate(-50%, -50%) rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); 
+            }
+            to { 
+                transform: translate(-50%, -50%) rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); 
+            }
+        }
+
+        .sun {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #FDB813, #FF6B00);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 60px #FDB813, 0 0 100px rgba(253, 184, 19, 0.5);
+            animation: pulse 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 60px #FDB813, 0 0 100px rgba(253, 184, 19, 0.5); }
+            50% { box-shadow: 0 0 80px #FDB813, 0 0 120px rgba(253, 184, 19, 0.7); }
+        }
+
+        .data-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            border-color: rgba(100, 200, 255, 0.5);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .menu-item {
+            transition: all 0.3s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-right-color: #3B82F6;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+
+        .galaxy {
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .galaxy:hover {
+            transform: scale(1.05);
+        }
+
+        .galaxy-glow {
+            animation: galaxyPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes galaxyPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .page-transition {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .stat-bar {
+            transition: width 1s ease-out;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/telemetry_sdk.js"></script>
+ </head>
+ <body class="h-full overflow-hidden" style="background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 50%, #2a2f45 100%);">
+  
+  <div class="stars" id="starsContainer"></div>
+  
+  <div class="h-full w-full relative" style="z-index: 1;">
+   
+   <div id="galaxyMapPage" class="h-full w-full page-transition hidden">
+    <div class="h-full flex flex-col">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-blue-500 border-opacity-20 p-6">
+      <h1 id="galaxyMapTitle" class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-purple-400 to-blue-400">خريطة المجرات</h1>
+      <p class="text-blue-200 mt-2">اختر مجرة لاستكشافها من القائمة المتاحة</p>
+     </header>
+     <div class="flex-1 overflow-y-auto p-8 pb-28">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+       <div class="galaxy data-card p-6 rounded-xl" onclick="navigateToPage('solarSystem')">
+        <div class="relative h-48 mb-4 flex items-center justify-center">
+         <div class="absolute w-40 h-40 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full opacity-30 galaxy-glow"></div>
+         <svg class="w-32 h-32" viewbox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#60A5FA" stroke-width="1" opacity="0.6" /> <ellipse cx="50" cy="50" rx="35" ry="12" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.8" /> <ellipse cx="50" cy="50" rx="25" ry="9" fill="none" stroke="#EC4899" stroke-width="2" opacity="1" /> <circle cx="50" cy="50" r="5" fill="#FDB813" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-blue-300 mb-2">مجرة درب التبانة</h3>
+        <p class="text-blue-100">مجرتنا الأم، تحتوي على نظامنا الشمسي وأكثر من 200 مليار نجم</p>
+       </div>
+       <div class="galaxy data-card p-6 rounded-xl" onclick="navigateToPage('andromeda')">
+        <div class="relative h-48 mb-4 flex items-center justify-center">
+         <div class="absolute w-40 h-40 bg-gradient-to-br from-green-400 via-cyan-500 to-blue-500 rounded-full opacity-30 galaxy-glow"></div>
+         <svg class="w-32 h-32" viewbox="0 0 100 100"><ellipse cx="50" cy="50" rx="40" ry="20" fill="none" stroke="#34D399" stroke-width="1" opacity="0.6" transform="rotate(30 50 50)" /> <ellipse cx="50" cy="50" rx="30" ry="15" fill="none" stroke="#06B6D4" stroke-width="1.5" opacity="0.8" transform="rotate(30 50 50)" /> <circle cx="50" cy="50" r="4" fill="#34D399" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-cyan-300 mb-2">مجرة أندروميدا</h3>
+        <p class="text-blue-100">أقرب مجرة كبيرة إلينا، تحتوي على تريليون نجم متوهج</p>
+       </div>
+       <div class="galaxy data-card p-6 rounded-xl" onclick="navigateToPage('triangulum')">
+        <div class="relative h-48 mb-4 flex items-center justify-center">
+         <div class="absolute w-40 h-40 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-full opacity-30 galaxy-glow"></div>
+         <svg class="w-32 h-32" viewbox="0 0 100 100"><path d="M 50 30 L 65 60 L 35 60 Z" fill="none" stroke="#FBBF24" stroke-width="2" opacity="0.6" /> <circle cx="50" cy="45" r="3" fill="#F59E0B" /> <circle cx="60" cy="55" r="2" fill="#F59E0B" /> <circle cx="40" cy="55" r="2" fill="#F59E0B" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-yellow-300 mb-2">مجرة المثلث</h3>
+        <p class="text-blue-100">ثالث أكبر مجرة في مجموعتنا المحلية، تضم 40 مليار نجم</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="solarSystemPage" class="h-full w-full flex page-transition">
+    <div class="w-64 bg-slate-900 bg-opacity-80 backdrop-blur-lg border-l border-blue-500 border-opacity-20 p-6 overflow-y-auto pb-28">
+     <h2 id="menuTitle" class="text-2xl font-bold text-blue-400 mb-6">الكواكب</h2>
+     <div id="menuContainer"></div>
+     <div class="mt-6 pt-6 border-t border-blue-500 border-opacity-20 space-y-3">
+       <button onclick="navigateToPage('comparison')" class="w-full px-4 py-3 bg-gradient-to-l from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-lg font-bold transition-all btn-primary" id="comparisonNavBtn"> مقارنة الكواكب 🎮 </button> 
+       <button onclick="navigateToPage('spaceTravel')" class="w-full px-4 py-3 bg-gradient-to-l from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-lg font-bold transition-all btn-primary" id="spaceTravelNavBtn"> رحلة فضائية 🚀 </button> 
+       <button onclick="navigateToPage('whatIf')" class="w-full px-4 py-3 bg-gradient-to-l from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-lg font-bold transition-all btn-primary" id="whatIfNavBtn"> ماذا لو؟ 🌠 </button>
+     </div>
+    </div>
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-blue-500 border-opacity-20 p-6 flex justify-between items-center">
+      <div>
+        <h1 id="mainTitle" class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-blue-400 to-cyan-300">النظام الشمسي التفاعلي</h1>
+        <p id="subtitle" class="text-blue-200 mt-2">استكشف كواكب المجموعة الشمسية</p>
+      </div>
+     </header>
+     <div class="flex-1 flex overflow-hidden">
+      <div id="solarSystemView" class="flex-1 relative">
+       <div class="sun"></div>
+       <div id="orbitsContainer"></div>
+      </div>
+      <div id="detailPanel" class="w-96 bg-slate-900 bg-opacity-80 backdrop-blur-lg border-l border-blue-500 border-opacity-20 p-6 overflow-y-auto pb-28 hidden">
+       <button id="closeDetail" class="mb-4 text-blue-400 hover:text-blue-300 transition-colors">إغلاق ✕</button>
+       <div id="detailContent"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="comparisonPage" class="h-full w-full page-transition hidden">
+    <div class="h-full flex flex-col">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-cyan-500 border-opacity-20 p-6 flex justify-between items-center">
+      <div>
+        <h1 id="comparisonTitle" class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-cyan-400 to-blue-400">مقارنة الكواكب</h1>
+        <p class="text-cyan-200 mt-2">اختر كوكبين من القائمة بالأسفل لبدء المقارنة الرسومية</p>
+      </div>
+      <button onclick="navigateToPage('solarSystem')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-blue-300 font-bold rounded-xl border border-blue-500/30 text-sm transition-all shadow-md">← العودة للنظام الشمسي</button>
+     </header>
+     <div class="flex-1 overflow-y-auto p-8 pb-28 max-w-6xl w-full mx-auto space-y-6">
+       <div class="data-card p-6 rounded-xl">
+          <h3 class="text-lg font-bold text-cyan-300 mb-3 text-center">اضغط لتحديد الكوكبين:</h3>
+          <div id="comparisonSelector" class="flex flex-wrap gap-2 justify-center"></div>
+       </div>
+       <div id="comparisonResults" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+         <div class="data-card p-8 rounded-xl text-center text-blue-300 col-span-2">يرجى اختيار كوكبين أعلاه لعرض لوحة البيانات المقارنة.</div>
+       </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="spaceTravelPage" class="h-full w-full page-transition hidden">
+    <div class="h-full flex flex-col">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-green-500 border-opacity-20 p-6 flex justify-between items-center">
+      <div>
+        <h1 id="spaceTravelTitle" class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-green-400 to-teal-400">رحلة فضائية</h1>
+        <p class="text-green-200 mt-2">احسب مسافة وزمن السفر الفعلي بين الكواكب</p>
+      </div>
+      <button onclick="navigateToPage('solarSystem')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-blue-300 font-bold rounded-xl border border-blue-500/30 text-sm transition-all shadow-md">← العودة للنظام الشمسي</button>
+     </header>
+     <div class="flex-1 overflow-y-auto p-8 pb-28 grid grid-cols-1 lg:grid-cols-3 gap-8">
+       <div class="data-card p-6 rounded-xl h-fit">
+        <h3 class="text-2xl font-bold text-green-300 mb-4">تخطيط الرحلة</h3>
+        <div class="space-y-4">
+         <div>
+          <label class="block text-green-200 mb-2">نقطة الانطلاق</label>
+          <select id="travelFrom" class="w-full bg-slate-800 text-white p-3 rounded-lg border border-green-500 border-opacity-30"></select>
+         </div>
+         <div>
+          <label class="block text-green-200 mb-2">الوجهة المقصودة</label>
+          <select id="travelTo" class="w-full bg-slate-800 text-white p-3 rounded-lg border border-green-500 border-opacity-30"></select>
+         </div>
+         <button onclick="startSpaceTravel()" class="w-full px-6 py-4 bg-gradient-to-l from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-lg font-bold transition-all btn-primary">حساب مسار الرحلة 🚀</button>
+        </div>
+       </div>
+       <div class="lg:col-span-2 data-card p-6 rounded-xl relative overflow-hidden flex flex-col items-center justify-center min-h-[300px]" id="travelSimulationView">
+         <p class="text-blue-300 text-lg">حدد نقطة الانطلاق والوجهة الفضائية لبدء المحاكاة واستخراج تقرير الرحلة</p>
+       </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="andromedaPage" class="h-full w-full flex page-transition hidden">
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-cyan-500 border-opacity-20 p-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-4xl font-bold text-cyan-400">مجرة أندروميدا (المرأة المسلسلة)</h1>
+        <p class="text-cyan-200 mt-2">اضغط على النجوم لاستكشاف الأجرام التابعة للمجرة</p>
+      </div>
+     </header>
+     <div class="flex-1 flex overflow-hidden">
+      <div id="andromedaSystemView" class="flex-1 relative">
+       <div class="absolute w-24 h-24 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="background: radial-gradient(circle, #34D399, #059669); box-shadow: 0 0 80px #34D399, 0 0 120px rgba(52, 211, 153, 0.5); animation: pulse 3s ease-in-out infinite; z-index: 15;"></div>
+       <div id="andromedaOrbitsContainer"></div>
+      </div>
+      <div id="andromedaDetailPanel" class="w-96 bg-slate-900 bg-opacity-80 backdrop-blur-lg border-l border-cyan-500 border-opacity-20 p-6 overflow-y-auto pb-28 hidden">
+       <button onclick="document.getElementById('andromedaDetailPanel').classList.add('hidden')" class="mb-4 text-cyan-400 hover:text-cyan-300">إغلاق ✕</button>
+       <div id="andromedaDetailContent"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="triangulumPage" class="h-full w-full flex page-transition hidden">
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-yellow-500 border-opacity-20 p-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-4xl font-bold text-yellow-400">مجرة المثلث (Triangulum)</h1>
+        <p class="text-yellow-100 mt-2">انقر على الأجرام المحيطة بنواة المجرة اللامعة</p>
+      </div>
+     </header>
+     <div class="flex-1 flex overflow-hidden">
+      <div id="triangulumSystemView" class="flex-1 relative">
+       <div class="absolute w-20 h-20 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="background: radial-gradient(circle, #FBBF24, #D97706); box-shadow: 0 0 80px #FBBF24, 0 0 120px rgba(251, 191, 36, 0.5); animation: pulse 3s ease-in-out infinite; z-index: 15;"></div>
+       <div id="triangulumOrbitsContainer"></div>
+      </div>
+      <div id="triangulumDetailPanel" class="w-96 bg-slate-900 bg-opacity-80 backdrop-blur-lg border-l border-yellow-500 border-opacity-20 p-6 overflow-y-auto pb-28 hidden">
+       <button onclick="document.getElementById('triangulumDetailPanel').classList.add('hidden')" class="mb-4 text-yellow-400 hover:text-yellow-300">إغلاق ✕</button>
+       <div id="triangulumDetailContent"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="whatIfPage" class="h-full w-full page-transition hidden">
+    <div class="h-full flex flex-col">
+     <header class="bg-slate-900 bg-opacity-60 backdrop-blur-lg border-b border-orange-500 border-opacity-20 p-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-l from-orange-400 to-red-400">مختبر المحاكاة الفرضية: ماذا لو؟</h1>
+        <p class="text-orange-200 mt-1">تأثير السيناريوهات الكونية الكارثية على مجموعتنا الشمسية</p>
+      </div>
+      <button onclick="navigateToPage('solarSystem')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-blue-300 font-bold rounded-xl border border-blue-500/30 text-sm transition-all shadow-md">← العودة للنظام الشمسي</button>
+     </header>
+     <div class="flex-1 overflow-y-auto p-8 pb-28 grid grid-cols-1 md:grid-cols-2 gap-8">
+       <div class="data-card p-6 rounded-xl">
+        <h3 class="text-3xl font-bold text-orange-400 mb-4">اصطدام مذنب عملاق ☄️</h3>
+        <p class="text-blue-100 mb-4">ماذا لو اصطدم مذنب بقطر 50 كم بكوكب الأرض?</p>
+        <div class="flex flex-col gap-3">
+          <p class="text-slate-300">• دمار شامل فوري لمنطقة الاصطدام الكبرى وتسونامي عارم يعم البحار.</p>
+          <p class="text-slate-300">• حجب كامل لأشعة الشمس لسنوات بسبب الغبار الكثيف العالق بالهواء ودخول الأرض في شتاء بركاني طويل.</p>
+        </div>
+       </div>
+       <div class="data-card p-6 rounded-xl">
+        <h3 class="text-3xl font-bold text-purple-300 mb-4">التحول الجذبي 🌀</h3>
+        <p class="text-blue-100 mb-4">ماذا لو اختفت جاذبية الشمس فجأة؟</p>
+        <div class="flex flex-col gap-3">
+          <p class="text-slate-300">• ستندفع جميع الكواكب، بما فيها الأرض، في خطوط مستقيمة منطلقة نحو الفضاء الخارجي المظلم نتيجة غياب قوى الجذب المركزية.</p>
+          <p class="text-slate-300">• تتجمد محيطات الكوكب بالكامل وينتهي النهار للأبد لتضيع الأرض وحيدة في غياهب المجرة الفسيحة.</p>
+        </div>
+       </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="deepDivePage" class="h-full w-full page-transition hidden">
+     <div class="h-full flex flex-col p-8 pb-28 text-white overflow-y-auto">
+       <h1 class="text-4xl font-bold text-blue-400 mb-4" id="deepDiveTitle">بيانات المدار العميقة</h1>
+       <div id="orbitalData" class="max-w-xl bg-slate-900/60 p-6 rounded-xl border border-blue-500/30"></div>
+     </div>
+   </div>
+
+  </div>
+
+  <footer class="fixed bottom-0 left-0 w-full bg-slate-950/85 backdrop-blur-md border-t border-blue-500/30 py-3 px-6 z-50 flex flex-col lg:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2 text-slate-300 text-sm md:text-base font-medium text-center lg:text-right">
+        <span class="text-blue-400 text-xl">©</span>
+        <span>جميع الحقوق محفوظة لـ <strong class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-bold">هبة كتانة</strong> / قلقيلية الشرعية / وزارة الأوقاف / فلسطين</span>
+    </div>
+    
+    <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold rounded-xl text-sm transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20 border border-emerald-400/20">
+            <span>الموسوعة الرئيسية 🌐</span>
+        </a>
+
+        <button onclick="navigateToPage('galaxyMap')" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl text-sm transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-purple-500/20 border border-purple-400/20">
+            <span>خريطة المجرات 🌌</span>
+        </button>
+    </div>
+  </footer>
+
+  <script>
+        const planets = [
+            { name: "عطارد", nameEn: "Mercury", color: "#888888", size: 12, orbitRadius: 100, orbitDuration: 8, orbitalPeriod: "88 يوم أرضي", sunDistance: 58, description: "أقرب الكواكب إلى الشمس وأصغرها حجماً بسطح مليء بالفوهات الصخرية." },
+            { name: "الزهرة", nameEn: "Venus", color: "#FFC649", size: 18, orbitRadius: 140, orbitDuration: 12, orbitalPeriod: "225 يوم أرضي", sunDistance: 108, description: "الكوكب الأكثر حرارة غلافه الجوي سميك جداً ويحبس الحرارة بشكل شديد." },
+            { name: "الأرض", nameEn: "Earth", color: "#3B82F6", size: 20, orbitRadius: 190, orbitDuration: 16, orbitalPeriod: "365.25 يوم", sunDistance: 150, description: "كوكبنا الأزرق المعطاء، الحاضن والبيئة المثالية الوحيدة المعلومة للحياة." },
+            { name: "المريخ", nameEn: "Mars", color: "#EF4444", size: 16, orbitRadius: 240, orbitDuration: 20, orbitalPeriod: "687 يوم أرضي", sunDistance: 228, description: "الكوكب الأحمر المغطى بأكسيد الحديد، يحتوي على قمم جليدية وجبال بركانية شاهقة." },
+            { name: "المشتري", nameEn: "Jupiter", color: "#F59E0B", size: 34, orbitRadius: 300, orbitDuration: 28, orbitalPeriod: "12 سنة أرضية", sunDistance: 778, description: "العملاق الغازي المهيب وأضخم كواكب نظامنا الشمسي، وله عواصف عاتية." },
+            { name: "زحل", nameEn: "Saturn", color: "#FBBF24", size: 30, orbitRadius: 360, orbitDuration: 36, orbitalPeriod: "29 سنة أرضية", sunDistance: 1430, description: "كوكب غازي ساحر يحيط به نظام حلقي مذهل وممتد من الجليد والصخور المعلقة." },
+            { name: "أورانوس", nameEn: "Uranus", color: "#22D3EE", size: 26, orbitRadius: 410, orbitDuration: 44, orbitalPeriod: "84 سنة أرضية", sunDistance: 2870, description: "عملاق جليدي يمتاز بلونه الفيروزي الهادئ ومحور دورانه الأفقي الغريب." },
+            { name: "نبتون", nameEn: "Neptune", color: "#4169E1", size: 26, orbitRadius: 460, orbitDuration: 52, orbitalPeriod: "165 سنة أرضية", sunDistance: 4500, description: "الكوكب الأزرق الداكن الأبعد، يعاني من رياح عاصفة هي الأسرع بالنظام كله." }
+        ];
+
+        const andromedaStars = [
+            { name: "سيرام الفائق", color: "#A78BFA", size: 22, orbitRadius: 110, orbitDuration: 11, period: "450 يوم", desc: "عملاق غازي ذو لون بنفسجي غني يمتلك ثلاثة أقمار صخرية صغيرة." },
+            { name: "ميرش الساطع", color: "#FFA500", size: 28, orbitRadius: 180, orbitDuration: 19, period: "3 سنوات", desc: "نجم فائق الضخامة برتقالي يشع طاقة وحرارة تعادل أضعاف شمسنا." },
+            { name: "أوميكرون الثلجي", color: "#60A5FA", size: 16, orbitRadius: 260, orbitDuration: 26, period: "9 سنوات", desc: "كوكب جليدي متجمد يقع في أطراف المجرة البعيدة ويكتسي بالميثان السائل." }
+        ];
+
+        const triangulumStars = [
+            { name: "نجم المثلث ألفا", color: "#FBBF24", size: 24, orbitRadius: 130, orbitDuration: 13, period: "1.2 سنة", desc: "مركز الثقل الضوئي المحلي للنظام النجمي الفرعي داخل مجرة المثلث." },
+            { name: "بيتا البركاني", color: "#F43F5E", size: 18, orbitRadius: 230, orbitDuration: 22, period: "5 سنوات", desc: "كوكب مغطى بالكامل بالصهارة البركانية النشطة والتدفقات البازلتية المستمرة." }
+        ];
+
+        let currentPage = 'galaxyMap';
+        let selectedPlanetsForComparison = [];
+
+        function navigateToPage(page) {
+            document.getElementById('galaxyMapPage').classList.add('hidden');
+            document.getElementById('solarSystemPage').classList.add('hidden');
+            document.getElementById('deepDivePage').classList.add('hidden');
+            document.getElementById('whatIfPage').classList.add('hidden');
+            document.getElementById('andromedaPage').classList.add('hidden');
+            document.getElementById('triangulumPage').classList.add('hidden');
+            document.getElementById('comparisonPage').classList.add('hidden');
+            document.getElementById('spaceTravelPage').classList.add('hidden');
+            
+            currentPage = page;
+            if (page === 'galaxyMap') {
+                document.getElementById('galaxyMapPage').classList.remove('hidden');
+            } else if (page === 'solarSystem') {
+                document.getElementById('solarSystemPage').classList.remove('hidden');
+            } else if (page === 'deepDive') {
+                document.getElementById('deepDivePage').classList.remove('hidden');
+            } else if (page === 'whatIf') {
+                document.getElementById('whatIfPage').classList.remove('hidden');
+            } else if (page === 'andromeda') {
+                document.getElementById('andromedaPage').classList.remove('hidden');
+            } else if (page === 'triangulum') {
+                document.getElementById('triangulumPage').classList.remove('hidden');
+            } else if (page === 'comparison') {
+                document.getElementById('comparisonPage').classList.remove('hidden');
+                initComparisonSelector();
+            } else if (page === 'spaceTravel') {
+                document.getElementById('spaceTravelPage').classList.remove('hidden');
+                populateTravelOptions();
+            }
+        }
+
+        function createStars() {
+            const container = document.getElementById('starsContainer');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        function createOrbitsAndPlanets() {
+            const container = document.getElementById('orbitsContainer');
+            container.innerHTML = '';
+            
+            planets.forEach((planet) => {
+                const orbit = document.createElement('div');
+                orbit.style.position = 'absolute';
+                orbit.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+                orbit.style.borderRadius = '50%';
+                orbit.style.width = (planet.orbitRadius * 2) + 'px';
+                orbit.style.height = (planet.orbitRadius * 2) + 'px';
+                orbit.style.top = '50%';
+                orbit.style.left = '50%';
+                orbit.style.transform = 'translate(-50%, -50%)';
+                orbit.style.pointerEvents = 'none'; // منع المدار من حجب الكليكات
+                container.appendChild(orbit);
+
+                const planetEl = document.createElement('div');
+                planetEl.className = 'planet';
+                planetEl.style.width = planet.size + 'px';
+                planetEl.style.height = planet.size + 'px';
+                planetEl.style.backgroundColor = planet.color;
+                planetEl.style.setProperty('--orbit-radius', planet.orbitRadius + 'px');
+                planetEl.style.animation = `orbit ${planet.orbitDuration}s linear infinite`;
+                planetEl.onclick = () => showPlanetDetails(planet);
+                
+                container.appendChild(planetEl);
+            });
+        }
+
+        function createOtherGalaxies() {
+            // 1. مجرة أندروميدا
+            const andromedaContainer = document.getElementById('andromedaOrbitsContainer');
+            if(andromedaContainer) {
+                andromedaContainer.innerHTML = '';
+                andromedaStars.forEach(star => {
+                    const orbit = document.createElement('div');
+                    orbit.style.position = 'absolute';
+                    orbit.style.border = '1px solid rgba(52, 211, 153, 0.1)';
+                    orbit.style.borderRadius = '50%';
+                    orbit.style.width = (star.orbitRadius * 2) + 'px';
+                    orbit.style.height = (star.orbitRadius * 2) + 'px';
+                    orbit.style.top = '50%';
+                    orbit.style.left = '50%';
+                    orbit.style.transform = 'translate(-50%, -50%)';
+                    orbit.style.pointerEvents = 'none';
+                    andromedaContainer.appendChild(orbit);
+
+                    const starEl = document.createElement('div');
+                    starEl.className = 'planet';
+                    starEl.style.width = star.size + 'px';
+                    starEl.style.height = star.size + 'px';
+                    starEl.style.backgroundColor = star.color;
+                    starEl.style.setProperty('--orbit-radius', star.orbitRadius + 'px');
+                    starEl.style.animation = `orbit ${star.orbitDuration}s linear infinite`;
+                    starEl.onclick = () => {
+                        const panel = document.getElementById('andromedaDetailPanel');
+                        const content = document.getElementById('andromedaDetailContent');
+                        content.innerHTML = `
+                            <h3 class="text-3xl font-bold text-cyan-400 mb-2">${star.name}</h3>
+                            <p class="text-white text-base leading-relaxed mb-6">${star.desc}</p>
+                            <p class="text-sm text-slate-300"><strong>دورة المدار الفلكي:</strong> ${star.period}</p>
+                        `;
+                        panel.classList.remove('hidden');
+                    };
+                    andromedaContainer.appendChild(starEl);
+                });
+            }
+
+            // 2. مجرة المثلث
+            const triangulumContainer = document.getElementById('triangulumOrbitsContainer');
+            if(triangulumContainer) {
+                triangulumContainer.innerHTML = '';
+                triangulumStars.forEach(star => {
+                    const orbit = document.createElement('div');
+                    orbit.style.position = 'absolute';
+                    orbit.style.border = '1px solid rgba(251, 191, 36, 0.1)';
+                    orbit.style.borderRadius = '50%';
+                    orbit.style.width = (star.orbitRadius * 2) + 'px';
+                    orbit.style.height = (star.orbitRadius * 2) + 'px';
+                    orbit.style.top = '50%';
+                    orbit.style.left = '50%';
+                    orbit.style.transform = 'translate(-50%, -50%)';
+                    orbit.style.pointerEvents = 'none'; // منع حجب الكليكات هنا أيضاً
+                    triangulumContainer.appendChild(orbit);
+
+                    const starEl = document.createElement('div');
+                    starEl.className = 'planet';
+                    starEl.style.width = star.size + 'px';
+                    starEl.style.height = star.size + 'px';
+                    starEl.style.backgroundColor = star.color;
+                    starEl.style.setProperty('--orbit-radius', star.orbitRadius + 'px');
+                    starEl.style.animation = `orbit ${star.orbitDuration}s linear infinite`;
+                    starEl.onclick = () => {
+                        const panel = document.getElementById('triangulumDetailPanel');
+                        const content = document.getElementById('triangulumDetailContent');
+                        content.innerHTML = `
+                            <h3 class="text-3xl font-bold text-yellow-400 mb-2">${star.name}</h3>
+                            <p class="text-white text-base leading-relaxed mb-6">${star.desc}</p>
+                            <p class="text-sm text-slate-300"><strong>دورة المدار الفلكي:</strong> ${star.period}</p>
+                        `;
+                        panel.classList.remove('hidden');
+                    };
+                    triangulumContainer.appendChild(starEl);
+                });
+            }
+        }
+
+        function createMenu() {
+            const container = document.getElementById('menuContainer');
+            container.innerHTML = '';
+            planets.forEach(planet => {
+                const item = document.createElement('div');
+                item.className = 'menu-item p-3 text-white cursor-pointer rounded mb-1 flex justify-between items-center bg-slate-800/40 hover:bg-slate-700/50';
+                item.innerHTML = `<span>${planet.name}</span><span class="text-xs text-slate-400">${planet.nameEn}</span>`;
+                item.onclick = () => showPlanetDetails(planet);
+                container.appendChild(item);
+            });
+        }
+
+        function showPlanetDetails(planet) {
+            const panel = document.getElementById('detailPanel');
+            const content = document.getElementById('detailContent');
+            
+            content.innerHTML = `
+                <h3 class="text-3xl font-bold text-blue-400 mb-2">${planet.name}</h3>
+                <h4 class="text-sm text-slate-400 mb-4">${planet.nameEn}</h4>
+                <p class="text-white text-base leading-relaxed mb-6">${planet.description}</p>
+                <div class="space-y-3 border-t border-slate-700 pt-4">
+                    <p class="text-sm text-slate-300"><strong>مدة السنة المدارية:</strong> ${planet.orbitalPeriod}</p>
+                    <p class="text-sm text-slate-300"><strong>المسافة من الشمس:</strong> ${planet.sunDistance} مليون كم</p>
+                </div>
+                <button onclick="viewDeepDive('${planet.name}')" class="mt-6 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">تحليل البيانات المعمق 📊</button>
+            `;
+            panel.classList.remove('hidden');
+        }
+
+        function viewDeepDive(planetName) {
+            const planet = planets.find(p => p.name === planetName);
+            if(planet) {
+                document.getElementById('deepDiveTitle').innerText = `البيانات الفلكية العميقة لكوكب ${planet.name}`;
+                document.getElementById('orbitalData').innerHTML = `
+                    <table class="w-full text-right text-sm border-collapse">
+                        <tr class="border-b border-slate-700"><td class="py-3 text-blue-300 font-bold">اسم الكوكب:</td><td class="py-3 text-white">${planet.name} (${planet.nameEn})</td></tr>
+                        <tr class="border-b border-slate-700"><td class="py-3 text-blue-300 font-bold">فترة الدوران حول الشمس:</td><td class="py-3 text-white">${planet.orbitalPeriod}</td></tr>
+                        <tr class="border-b border-slate-700"><td class="py-3 text-blue-300 font-bold">المسافة من المركز النجمي:</td><td class="py-3 text-white">${planet.sunDistance} مليون كيلومتر</td></tr>
+                        <tr class="border-b border-slate-700"><td class="py-3 text-blue-300 font-bold">خصائص الكوكب:</td><td class="py-3 text-white">${planet.description}</td></tr>
+                    </table>
+                `;
+                navigateToPage('deepDive');
+            }
+        }
+
+        function initComparisonSelector() {
+            const container = document.getElementById('comparisonSelector');
+            container.innerHTML = '';
+            selectedPlanetsForComparison = [];
+            document.getElementById('comparisonResults').innerHTML = `<div class="data-card p-8 rounded-xl text-center text-blue-300 col-span-2">يرجى اختيار كوكبين أعلاه لعرض لوحة البيانات المقارنة.</div>`;
+            
+            planets.forEach(planet => {
+                const btn = document.createElement('button');
+                btn.className = 'px-4 py-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:border-cyan-500 transition-all text-sm font-medium';
+                btn.innerText = planet.name;
+                btn.id = `comp-btn-${planet.name}`;
+                btn.onclick = () => togglePlanetComparison(planet.name);
+                container.appendChild(btn);
+            });
+        }
+
+        function togglePlanetComparison(name) {
+            const index = selectedPlanetsForComparison.indexOf(name);
+            if (index > -1) {
+                selectedPlanetsForComparison.splice(index, 1);
+                document.getElementById(`comp-btn-${name}`).classList.remove('bg-cyan-600', 'text-white', 'border-cyan-400');
+            } else {
+                if (selectedPlanetsForComparison.length >= 2) {
+                    const removedPlanet = selectedPlanetsForComparison.shift();
+                    document.getElementById(`comp-btn-${removedPlanet}`).classList.remove('bg-cyan-600', 'text-white', 'border-cyan-400');
+                }
+                selectedPlanetsForComparison.push(name);
+                document.getElementById(`comp-btn-${name}`).classList.add('bg-cyan-600', 'text-white', 'border-cyan-400');
+            }
+            updateComparisonResults();
+        }
+
+        function updateComparisonResults() {
+            const resultsContainer = document.getElementById('comparisonResults');
+            if (selectedPlanetsForComparison.length < 2) {
+                resultsContainer.innerHTML = `<div class="data-card p-8 rounded-xl text-center text-blue-300 col-span-2">يرجى اختيار كوكبين أعلاه لعرض لوحة البيانات المقارنة.</div>`;
+                return;
+            }
+            
+            const p1 = planets.find(p => p.name === selectedPlanetsForComparison[0]);
+            const p2 = planets.find(p => p.name === selectedPlanetsForComparison[1]);
+            const maxRadius = 460; 
+
+            resultsContainer.innerHTML = `
+                <div class="data-card p-6 rounded-xl space-y-4 page-transition">
+                    <h4 class="text-2xl font-bold text-cyan-400 border-b border-slate-700 pb-2">${p1.name}</h4>
+                    <p class="text-sm text-slate-200 leading-relaxed">${p1.description}</p>
+                    <div class="space-y-2">
+                        <span class="text-xs text-slate-400">البُعد النسبي عن المركز النجمي</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-cyan-500 h-full stat-bar" style="width: ${(p1.orbitRadius / maxRadius * 100)}%"></div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-300 space-y-1">
+                        <p><strong>اسم الكوكب بالإنجليزية:</strong> ${p1.nameEn}</p>
+                        <p><strong>السنة المدارية:</strong> ${p1.orbitalPeriod}</p>
+                        <p><strong>المسافة من الشمس:</strong> ${p1.sunDistance} مليون كم</p>
+                    </div>
+                </div>
+                
+                <div class="data-card p-6 rounded-xl space-y-4 page-transition">
+                    <h4 class="text-2xl font-bold text-blue-400 border-b border-slate-700 pb-2">${p2.name}</h4>
+                    <p class="text-sm text-slate-200 leading-relaxed">${p2.description}</p>
+                    <div class="space-y-2">
+                        <span class="text-xs text-slate-400">البُعد النسبي عن المركز النجمي</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-blue-500 h-full stat-bar" style="width: ${(p2.orbitRadius / maxRadius * 100)}%"></div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-300 space-y-1">
+                        <p><strong>اسم الكوكب بالإنجليزية:</strong> ${p2.nameEn}</p>
+                        <p><strong>السنة المدارية:</strong> ${p2.orbitalPeriod}</p>
+                        <p><strong>المسافة من الشمس:</strong> ${p2.sunDistance} مليون كم</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateTravelOptions() {
+            const fromSelect = document.getElementById('travelFrom');
+            const toSelect = document.getElementById('travelTo');
+            fromSelect.innerHTML = '<option value="">اختر كوكب الانطلاق</option>';
+            toSelect.innerHTML = '<option value="">اختر كوكب الوجهة</option>';
+            
+            planets.forEach(p => {
+                fromSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+                toSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+            });
+            document.getElementById('travelSimulationView').innerHTML = `<p class="text-blue-300 text-lg">حدد نقطة الانطلاق والوجهة الفضائية لبدء المحاكاة واستخراج تقرير الرحلة</p>`;
+        }
+
+        function startSpaceTravel() {
+            const fromName = document.getElementById('travelFrom').value;
+            const toName = document.getElementById('travelTo').value;
+            const view = document.getElementById('travelSimulationView');
+            
+            if(!fromName || !toName || fromName === toName) {
+                view.innerHTML = `<p class="text-red-400 font-bold bg-red-950/40 p-4 rounded-xl border border-red-500/30">خطأ: يرجى تحديد كوكب انطلاق وكوكب وجهة مختلفين تماماً لحساب المسار!</p>`;
+                return;
+            }
+
+            const p1 = planets.find(p => p.name === fromName);
+            const p2 = planets.find(p => p.name === toName);
+            
+            const travelDistance = Math.abs(p1.sunDistance - p2.sunDistance);
+            const speedKmh = 55000;
+            const totalHours = (travelDistance * 1000000) / speedKmh;
+            const totalDays = totalHours / 24;
+            
+            let travelTimeText = "";
+            if (totalDays > 365) {
+                travelTimeText = `${(totalDays / 365).toFixed(1)} سنة أرضية`;
+            } else {
+                travelTimeText = `${(totalDays / 30).toFixed(1)} أشهر أرضية`;
+            }
+
+            view.innerHTML = `
+                <div class="text-center space-y-6 w-full page-transition p-4">
+                    <h4 class="text-2xl font-bold text-green-400 animate-pulse">⚙️ تم احتساب مسار الرحلة وتحليل المسافة والزمن الفعلي:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto">
+                        <div class="bg-slate-900/90 p-4 rounded-xl border border-green-500/30">
+                            <p class="text-xs text-slate-400 mb-1">المسافة المستهدفة الفاصلة</p>
+                            <p class="text-2xl font-bold text-white">${travelDistance} مليون كم</p>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-xl border border-green-500/30">
+                            <p class="text-xs text-slate-400 mb-1">مدة الرحلة الفضائية المتوقعة</p>
+                            <p class="text-2xl font-bold text-white">${travelTimeText}</p>
+                        </div>
+                    </div>
+                    <div class="text-6xl animate-bounce my-4">🚀</div>
+                    <div class="relative w-full h-3 bg-slate-900 rounded-full overflow-hidden max-w-xl mx-auto border border-slate-700">
+                        <div class="absolute top-0 right-0 h-full bg-gradient-to-l from-green-500 to-teal-400 stat-bar" style="width: 100%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('closeDetail').onclick = () => {
+            document.getElementById('detailPanel').classList.add('hidden');
+        };
+
+        createStars();
+        createOrbitsAndPlanets();
+        createOtherGalaxies();
+        createMenu();
+        navigateToPage('galaxyMap');
+  </script>
+ </body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>فيزياء الصوت | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="8.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/telemetry_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    .medium-btn, .data-row { transition: all 0.2s ease; }
+    .wave-particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: right, opacity, box-shadow;
+    }
+    .steel-flash {
+      animation: flash 0.05s infinite alternate;
+    }
+    @keyframes flash {
+      from { background-color: rgba(148, 163, 184, 0.3); }
+      to { background-color: rgba(148, 163, 184, 0.8); }
+    }
+    .water-ripple {
+      filter: blur(0.5px);
+    }
+  </style>
+</head>
+<body class="h-full overflow-auto bg-slate-900">
+<div id="app-container" class="min-h-full w-full p-3 md:p-6 relative">
+  <a href="https://safa2.my.canva.site/hiba000" target="_blank" class="fixed top-3 left-3 z-50 group">
+    <div class="flex items-center gap-2 px-3 py-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 hover:bg-blue-500 transition-all">
+      <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="text-white font-semibold hidden sm:inline text-sm">العودة للموسوعة</span>
+    </div>
+  </a>
+
+  <div class="relative max-w-5xl mx-auto">
+    <header class="text-center mb-6">
+      <div class="inline-flex items-center gap-3 mb-2">
+        <svg class="w-10 h-10 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+        <h1 id="main-title" class="text-3xl md:text-4xl font-extrabold text-white">فيزياء الصوت</h1>
+      </div>
+      <p id="subtitle" class="text-cyan-300 text-lg">استكشف سرعة الصوت - درجة الحرارة تؤثر فقط على الهواء</p>
+    </header>
+
+    <div class="bg-slate-800/80 backdrop-blur rounded-2xl p-5 mb-5 border border-slate-700">
+      <h2 class="text-white text-xl font-bold mb-4 flex items-center gap-2"><svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> اختر الوسط الناقل</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button id="btn-air" data-medium="air" class="medium-btn group bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-xl p-4 flex flex-col items-center gap-2 border-2 border-sky-400 shadow-lg shadow-sky-500/30">
+          <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" fill="currentColor" fill-opacity="0.2"/><path d="M20 32c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="32" r="2" fill="currentColor"/></svg>
+          <span class="font-bold text-lg">الهواء</span>
+          <span class="text-xs bg-black/30 px-2 rounded-full">343 م/ث</span>
+        </button>
+        <button id="btn-water" data-medium="water" class="medium-btn group bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-xl p-4 flex flex-col items-center gap-2 border-2 border-transparent">
+          <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="36" rx="24" ry="16" fill="currentColor" fill-opacity="0.3"/><path d="M32 12c-8 10-16 18-16 26a16 16 0 0 0 32 0c0-8-8-16-16-26Z" stroke="currentColor" stroke-width="3"/></svg>
+          <span class="font-bold text-lg">الماء</span>
+          <span class="text-xs bg-black/30 px-2 rounded-full">1480 م/ث</span>
+        </button>
+        <button id="btn-steel" data-medium="steel" class="medium-btn group bg-gradient-to-br from-slate-500 to-slate-600 text-white rounded-xl p-4 flex flex-col items-center gap-2 border-2 border-transparent">
+          <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none"><rect x="12" y="20" width="40" height="24" rx="2" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="3"/><line x1="20" y1="20" x2="20" y2="44" stroke="currentColor" stroke-width="2"/></svg>
+          <span class="font-bold text-lg">الفولاذ</span>
+          <span class="text-xs bg-black/30 px-2 rounded-full">5960 م/ث</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-slate-800/80 backdrop-blur rounded-2xl p-5 mb-5 border border-slate-700">
+      <h2 class="text-white text-xl font-bold mb-3 flex items-center gap-2"><svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> 🌡️ تأثير درجة الحرارة على سرعة الصوت</h2>
+      <div id="temp-control-container" class="p-4 rounded-xl transition-all duration-300" style="background-color: #1e293b;">
+        <div class="flex justify-between items-center mb-2">
+          <span id="temp-status-text" class="text-slate-300">درجة الحرارة (تؤثر فقط على الهواء):</span>
+          <span id="temp-value" class="text-2xl font-bold text-amber-400">20 °C</span>
+        </div>
+        <input type="range" id="temp-slider" min="0" max="50" value="20" step="1" class="w-full h-2 rounded-lg appearance-none cursor-pointer">
+        <div class="mt-3 text-center">
+          <div class="text-sm text-slate-400">سرعة الصوت في الهواء عند هذه الدرجة</div>
+          <div class="text-xl font-bold text-cyan-300"><span id="air-current-speed">343</span> <span id="air-speed-unit">م/ث</span></div>
+          <div class="text-xs text-slate-500 mt-1">المعادلة: v = 331.3 + 0.6 × T</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-800/80 backdrop-blur rounded-2xl p-5 mb-5 border border-slate-700">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-white text-xl font-bold flex items-center gap-2"><svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h2"/></svg> محاكاة انتشار الموجة</h2>
+        <div class="flex bg-slate-700 rounded-full p-1 text-sm">
+          <button id="unit-ms" class="px-3 py-1 rounded-full bg-cyan-500 text-white">م/ث</button>
+          <button id="unit-kmh" class="px-3 py-1 rounded-full text-slate-300">كم/ساعة</button>
+        </div>
+      </div>
+      <div class="relative bg-slate-900 rounded-xl overflow-hidden h-56 md:h-64 border border-slate-600">
+        <div id="medium-label" class="absolute top-3 right-3 bg-sky-500/20 text-sky-400 px-3 py-1.5 rounded-full text-sm font-bold z-10">الهواء - 343 م/ث</div>
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+          <div class="w-12 h-16 bg-gradient-to-l from-slate-600 to-slate-700 rounded-l-lg flex items-center justify-center border-2 border-slate-500">
+            <svg class="w-7 h-7 text-cyan-400" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          </div>
+        </div>
+        <div id="wave-particles-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+        <div id="steel-overlay" class="absolute inset-0 pointer-events-none hidden"></div>
+        <div class="absolute bottom-3 left-3 flex items-center gap-2 z-10">
+          <span class="text-slate-300 text-sm">السرعة:</span>
+          <div class="flex gap-1"><div id="speed-bar-1" class="w-3 h-6 bg-cyan-400 rounded opacity-100"></div><div id="speed-bar-2" class="w-3 h-6 bg-cyan-400 rounded opacity-30"></div><div id="speed-bar-3" class="w-3 h-6 bg-cyan-400 rounded opacity-30"></div><div id="speed-bar-4" class="w-3 h-6 bg-cyan-400 rounded opacity-30"></div><div id="speed-bar-5" class="w-3 h-6 bg-cyan-400 rounded opacity-30"></div></div>
+        </div>
+        <div class="absolute bottom-3 right-3 bg-black/40 rounded-lg px-2 py-1 text-xs text-slate-200"><span id="distance-time-info">⏱️ يقطع 1 كم في 2.9 ث</span></div>
+      </div>
+      <div class="mt-4 p-3 bg-slate-900/50 rounded-xl">
+        <div class="flex justify-between text-sm text-slate-300"><span>🎵 تردد الموجة (تأثير بصري)</span><span id="freq-value" class="text-cyan-300">440 Hz</span></div>
+        <input type="range" id="freq-slider" min="100" max="1000" step="10" value="440" class="w-full accent-cyan-400">
+      </div>
+    </div>
+
+    <div class="bg-slate-800/80 backdrop-blur rounded-2xl p-5 border border-slate-700">
+      <h2 class="text-white text-xl font-bold mb-3">📊 جدول مقارنة سرعة الصوت</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm md:text-base">
+          <thead><tr class="border-b border-slate-600"><th class="text-right text-cyan-400 py-3 px-2">الوسط</th><th class="text-center text-cyan-400 py-3 px-2">الحالة</th><th class="text-center text-cyan-400 py-3 px-2">السرعة</th><th class="text-center text-cyan-400 py-3 px-2 hidden md:table-cell">الكثافة</th><th class="text-center text-cyan-400 py-3 px-2">زمن قطع 1 كم (ث)</th></tr></thead>
+          <tbody>
+            <tr id="row-air" class="data-row active bg-sky-500/10"><td class="py-3 px-2"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-sky-400"></div><span class="text-white font-semibold">الهواء</span><span class="text-xs bg-amber-500/30 text-amber-300 px-1 mr-2 rounded">يتأثر بالحرارة</span></div></td><td class="text-center text-slate-300">غازي</td><td class="text-center"><span class="speed-value text-xl font-bold text-sky-400" data-medium="air">343</span> م/ث</td><td class="text-center text-slate-400 hidden md:table-cell">منخفضة</td><td class="text-center text-slate-300 time-cell" data-medium="air">2.92</td></tr>
+            <tr id="row-water" class="data-row"><td class="py-3 px-2"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-blue-500"></div><span class="text-white font-semibold">الماء</span></div></td><td class="text-center text-slate-300">سائل</td><td class="text-center"><span class="speed-value text-xl font-bold text-blue-400" data-medium="water">1480</span> م/ث</td><td class="text-center text-slate-400 hidden md:table-cell">متوسطة</td><td class="text-center text-slate-300 time-cell" data-medium="water">0.68</td></tr>
+            <tr id="row-steel" class="data-row"><td class="py-3 px-2"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-slate-400"></div><span class="text-white font-semibold">الفولاذ</span></div></td><td class="text-center text-slate-300">صلب</td><td class="text-center"><span class="speed-value text-xl font-bold text-slate-300" data-medium="steel">5960</span> م/ث</td><td class="text-center text-slate-400 hidden md:table-cell">عالية</td><td class="text-center text-slate-300 time-cell" data-medium="steel">0.17</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <footer class="text-center mt-6 pb-4 text-slate-500 text-sm">جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية / وزارة الأوقاف / فلسطين</footer>
+  </div>
+</div>
+
+<script>
+  const mediumData = {
+    air:   { baseSpeedRef: 343, bars: 1, color: '#0ea5e9', bgColor: 'sky', tempCoeff: 0.6 },
+    water: { baseSpeed: 1480, bars: 3, color: '#3b82f6', bgColor: 'blue' },
+    steel: { baseSpeed: 5960, bars: 5, color: '#94a3b8', bgColor: 'slate' }
+  };
+
+  let currentMedium = 'air';
+  let currentUnit = 'ms';
+  let currentTemp = 20;
+  let animationId = null;
+  let particlesContainer = document.getElementById('wave-particles-container');
+  let steelOverlay = document.getElementById('steel-overlay');
+
+  function getAirSpeed(temp) { return Math.round(331.3 + 0.6 * temp); }
+  function getCurrentSpeed() {
+    if (currentMedium === 'air') return getAirSpeed(currentTemp);
+    return mediumData[currentMedium].baseSpeed;
+  }
+
+  function updateUI() {
+    const airSpeed = getAirSpeed(currentTemp);
+    const mediumSpeed = getCurrentSpeed();
+    const displaySpeed = (currentUnit === 'kmh') ? Math.round(mediumSpeed * 3.6) : mediumSpeed;
+    const unitText = (currentUnit === 'kmh') ? 'كم/ساعة' : 'م/ث';
+    const color = mediumData[currentMedium].color;
+    const label = document.getElementById('medium-label');
+    label.textContent = `${currentMedium === 'air' ? 'الهواء' : (currentMedium === 'water' ? 'الماء' : 'الفولاذ')} - ${displaySpeed} ${unitText}`;
+    label.style.backgroundColor = `${color}20`;
+    label.style.color = color;
+    const barsCount = mediumData[currentMedium].bars;
+    for (let i=1; i<=5; i++) {
+      let bar = document.getElementById(`speed-bar-${i}`);
+      bar.style.opacity = i <= barsCount ? '1' : '0.3';
+      bar.style.backgroundColor = color;
+    }
+    ['air', 'water', 'steel'].forEach(m => {
+      let sp = (m === 'air') ? getAirSpeed(currentTemp) : mediumData[m].baseSpeed;
+      let disp = (currentUnit === 'kmh') ? Math.round(sp * 3.6) : sp;
+      let speedSpan = document.querySelector(`.speed-value[data-medium="${m}"]`);
+      if (speedSpan) speedSpan.textContent = disp;
+      let timeSpan = document.querySelector(`.time-cell[data-medium="${m}"]`);
+      if (timeSpan) timeSpan.textContent = (1000 / sp).toFixed(2);
+    });
+    document.getElementById('distance-time-info').innerHTML = `📏 يقطع 1 كم في ${(1000 / mediumSpeed).toFixed(2)} ثانية`;
+    let airDisplay = (currentUnit === 'kmh') ? Math.round(airSpeed * 3.6) : airSpeed;
+    document.getElementById('air-current-speed').textContent = airDisplay;
+    document.getElementById('air-speed-unit').textContent = unitText;
+    document.querySelectorAll('.data-row').forEach(row => row.classList.remove('active', 'bg-sky-500/10', 'bg-blue-500/10', 'bg-slate-500/10'));
+    let activeRow = document.getElementById(`row-${currentMedium}`);
+    activeRow.classList.add('active');
+    activeRow.classList.add(currentMedium === 'air' ? 'bg-sky-500/10' : (currentMedium === 'water' ? 'bg-blue-500/10' : 'bg-slate-500/10'));
+    const tempContainer = document.getElementById('temp-control-container');
+    const tempSlider = document.getElementById('temp-slider');
+    const tempStatus = document.getElementById('temp-status-text');
+    if (currentMedium === 'air') {
+      tempContainer.style.backgroundColor = '#1e293b';
+      tempContainer.style.border = '1px solid #f59e0b';
+      tempSlider.disabled = false;
+      tempSlider.classList.remove('opacity-50');
+      tempStatus.textContent = '🌡️ درجة الحرارة (تؤثر على الهواء):';
+      document.getElementById('temp-value').classList.add('text-amber-400');
+      document.getElementById('temp-value').classList.remove('text-slate-400');
+    } else {
+      tempContainer.style.backgroundColor = '#2d3748';
+      tempContainer.style.border = '1px solid #4a5568';
+      tempSlider.disabled = true;
+      tempSlider.classList.add('opacity-50');
+      tempStatus.textContent = '❄️ درجة الحرارة تؤثر فقط على الهواء (اختر الهواء أولاً)';
+      document.getElementById('temp-value').classList.remove('text-amber-400');
+      document.getElementById('temp-value').classList.add('text-slate-400');
+    }
+  }
+
+  function startVisualSimulation() {
+    if (animationId) cancelAnimationFrame(animationId);
+    particlesContainer.innerHTML = '';
+    if (steelOverlay) steelOverlay.classList.add('hidden');
+    const speed = getCurrentSpeed();
+    const containerWidth = particlesContainer.clientWidth || 600;
+    let durationSec = containerWidth / (speed * 2.2);
+    durationSec = Math.min(Math.max(durationSec, 0.12), 2.8);
+    const color = mediumData[currentMedium].color;
+    const freq = parseInt(document.getElementById('freq-slider').value) || 440;
+    let particleDensityFactor = speed / 1000; // 0.343 للهواء، 1.48 للماء، 5.96 للفولاذ
+    let intervalMs = Math.max(20, 1000 / (freq * (0.5 + particleDensityFactor)));
+
+    if (currentMedium === 'steel') {
+      if (steelOverlay) {
+        steelOverlay.classList.remove('hidden');
+        steelOverlay.style.animation = 'flash 0.03s infinite alternate';
+        steelOverlay.style.backgroundColor = 'rgba(148,163,184,0.2)';
+      }
+    } else if (currentMedium === 'water') {
+      particlesContainer.classList.add('water-ripple');
+    } else {
+      particlesContainer.classList.remove('water-ripple');
+    }
+
+    function createParticle() {
+      const particle = document.createElement('div');
+      const size = (currentMedium === 'steel') ? 3 + Math.random() * 5 : 4 + Math.random() * 7;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      const r = parseInt(color.slice(1,3),16), g = parseInt(color.slice(3,5),16), b = parseInt(color.slice(5,7),16);
+      particle.style.backgroundColor = `rgba(${r},${g},${b},0.9)`;
+      particle.style.boxShadow = `0 0 ${currentMedium === 'steel' ? '12px' : '6px'} ${color}`;
+      particle.style.position = 'absolute';
+      particle.style.top = `${15 + Math.random() * 70}%`;
+      particle.style.right = '-15px';
+      particle.style.opacity = 0.8;
+      particlesContainer.appendChild(particle);
+      const start = performance.now();
+      function move(now) {
+        let progress = Math.min(1, (now - start) / (durationSec * 1000));
+        particle.style.right = `calc(${progress * 115}% - 15px)`;
+        if (progress < 1) requestAnimationFrame(move);
+        else particle.remove();
+      }
+      requestAnimationFrame(move);
+    }
+
+    let lastGen = 0;
+    function generator(t) {
+      if (!particlesContainer.isConnected) return;
+      if (!lastGen || (t - lastGen) >= intervalMs) {
+        createParticle();
+        if (currentMedium === 'steel' && Math.random() < 0.6) createParticle();
+        lastGen = t;
+      }
+      animationId = requestAnimationFrame(generator);
+    }
+    animationId = requestAnimationFrame(generator);
+  }
+
+  function refreshAll() {
+    updateUI();
+    startVisualSimulation();
+  }
+
+  document.getElementById('btn-air').addEventListener('click', () => { currentMedium = 'air'; refreshAll(); });
+  document.getElementById('btn-water').addEventListener('click', () => { currentMedium = 'water'; refreshAll(); });
+  document.getElementById('btn-steel').addEventListener('click', () => { currentMedium = 'steel'; refreshAll(); });
+  document.getElementById('temp-slider').addEventListener('input', (e) => {
+    if (currentMedium !== 'air') return;
+    currentTemp = parseInt(e.target.value);
+    document.getElementById('temp-value').textContent = `${currentTemp} °C`;
+    refreshAll();
+  });
+  document.getElementById('freq-slider').addEventListener('input', () => { startVisualSimulation(); });
+  document.getElementById('unit-ms').addEventListener('click', () => { currentUnit = 'ms'; refreshAll(); });
+  document.getElementById('unit-kmh').addEventListener('click', () => { currentUnit = 'kmh'; refreshAll(); });
+
+  refreshAll();
+  window.addEventListener('resize', () => startVisualSimulation());
+</script>
+</body>
+</html>

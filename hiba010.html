@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكاة انكسار الضوء | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="10.png">
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    .light-beam {
+      filter: blur(2px);
+      opacity: 0.9;
+    }
+    
+    .spectrum-beam {
+      filter: blur(3px);
+      opacity: 0.85;
+    }
+    
+    .prism {
+      filter: drop-shadow(0 0 25px rgba(200, 225, 255, 0.4));
+      backdrop-filter: blur(5px);
+    }
+    
+    .glow {
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes glow {
+      from {
+        filter: drop-shadow(0 0 5px currentColor);
+      }
+      to {
+        filter: drop-shadow(0 0 15px currentColor);
+      }
+    }
+    
+    .color-card {
+      transition: all 0.3s ease;
+    }
+    
+    .color-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    ::selection {
+      background-color: #9333ea !important;
+      color: white !important;
+    }
+    
+    ::-moz-selection {
+      background-color: #9333ea !important;
+      color: white !important;
+    }
+    
+    .return-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      z-index: 9999;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .return-btn:hover {
+      background: #1e90ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 144, 255, 0.4);
+    }
+    
+    .return-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .return-btn {
+        padding: 10px;
+        border-radius: 50%;
+      }
+      
+      .return-btn .btn-text {
+        display: none;
+      }
+      
+      .return-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/telemetry_sdk.js"></script>
+ </head>
+ <body class="h-full bg-gray-900 text-white overflow-auto">
+  <a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" class="return-btn">
+   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+   </svg><span class="btn-text">العودة للموسوعة الرئيسية</span> 
+  </a>
+
+  <div class="app-wrapper w-full h-full">
+   <div class="min-h-full flex flex-col">
+    <header class="text-center py-8 px-4">
+     <h1 id="main-title" class="text-5xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">علم البصريات الضوئية</h1>
+     <p id="subtitle" class="text-xl text-gray-300">محاكاة انكسار الضوء عبر المنشور الزجاجي</p>
+    </header>
+
+    <main class="flex-1 px-4 pb-8">
+     <div class="max-w-6xl mx-auto mb-12">
+      <div class="bg-gray-800 rounded-2xl p-8 shadow-2xl">
+       <svg id="prism-svg" viewbox="0 0 800 400" class="w-full h-auto">
+        <line id="white-beam" x1="50" y1="200" x2="300" y2="200" stroke="white" stroke-width="8" class="light-beam glow" /> 
+        <polygon id="prism" points="300,150 450,200 300,250" fill="rgba(220, 235, 255, 0.25)" stroke="rgba(255, 255, 255, 0.7)" stroke-width="2" class="prism" /> 
+        <g id="spectrum">
+         <line class="spectrum-beam glow" stroke="#ff0000" stroke-width="4" style="color: #ff0000;" />
+         <line class="spectrum-beam glow" stroke="#ff7f00" stroke-width="4" style="color: #ff7f00;" />
+         <line class="spectrum-beam glow" stroke="#ffff00" stroke-width="4" style="color: #ffff00;" />
+         <line class="spectrum-beam glow" stroke="#00ff00" stroke-width="4" style="color: #00ff00;" />
+         <line class="spectrum-beam glow" stroke="#4d94ff" stroke-width="4" style="color: #4d94ff;" />
+         <line class="spectrum-beam glow" stroke="#1a4d99" stroke-width="4" style="color: #1a4d99;" />
+         <line class="spectrum-beam glow" stroke="#9400d3" stroke-width="4" style="color: #9400d3;" />
+        </g>
+       </svg>
+      </div>
+
+      <div class="max-w-4xl mx-auto mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
+        <label class="block text-center mb-4 text-lg font-semibold">زاوية السقوط: <span id="angle-display" class="text-purple-400">30°</span></label>
+        <div class="flex items-center gap-4">
+         <button id="decrease-angle" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all"> − </button> 
+         <input type="range" id="angle-slider" min="0" max="80" value="30" class="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" style="accent-color: #9333ea;"> 
+         <button id="increase-angle" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all"> + </button>
+        </div>
+        <div class="mt-4 text-center">
+         <span class="text-sm text-gray-400">زاوية الانحراف التقريبية: </span> 
+         <span id="deviation-display" class="text-lg font-bold text-pink-400">23.5°</span>
+        </div>
+       </div>
+
+       <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
+        <label class="block text-center mb-4 text-lg font-semibold">مادة المنشور</label>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+         <button class="material-btn bg-purple-600 text-white py-2 px-3 rounded-lg text-sm font-semibold transition-all hover:bg-purple-700" data-material="glass"> زجاج </button> 
+         <button class="material-btn bg-gray-700 text-white py-2 px-3 rounded-lg text-sm font-semibold transition-all hover:bg-gray-600" data-material="water"> ماء </button> 
+         <button class="material-btn bg-gray-700 text-white py-2 px-3 rounded-lg text-sm font-semibold transition-all hover:bg-gray-600" data-material="diamond"> ألماس </button>
+        </div>
+        <div class="text-center">
+         <span class="text-sm text-gray-400">معامل الانكسار: </span> 
+         <span id="refractive-display" class="text-lg font-bold text-cyan-400">1.52</span>
+        </div>
+       </div>
+
+       <div class="bg-gray-800 rounded-xl p-6 shadow-xl md:col-span-2">
+        <label class="block text-center mb-4 text-lg font-semibold">معامل الانكسار اليدوي (n)</label>
+        <div class="flex items-center gap-4">
+         <span class="text-sm text-gray-400 min-w-[40px]">1.00</span> 
+         <input type="range" id="refractive-slider" min="1.00" max="2.50" step="0.01" value="1.52" class="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" style="accent-color: #06b6d4;"> 
+         <span class="text-sm text-gray-400 min-w-[40px]">2.50</span>
+        </div>
+        <p class="text-xs text-gray-500 text-center mt-2">اسحب لتغيير معامل الانكسار وشاهد التأثير على انتشار الضوء</p>
+       </div>
+      </div>
+     </div>
+
+     <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-8 text-purple-300">ألوان الطيف المرئي</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #ff0000;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #ff0000; box-shadow: 0 0 20px #ff0000;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">الأحمر</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 620-750 نانومتر. أطول موجة في الطيف المرئي.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~700 nm</span></div>
+         <div>التردد: <span class="font-bold">~4.3 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #ff7f00;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #ff7f00; box-shadow: 0 0 20px #ff7f00;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">البرتقالي</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 590-620 نانومتر. لون الغروب والشروق.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~605 nm</span></div>
+         <div>التردد: <span class="font-bold">~4.95 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #ffff00;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #ffff00; box-shadow: 0 0 20px #ffff00;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">الأصفر</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 570-590 نانومتر. من أكثر الألوان سطوعاً للعين البشرية.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~580 nm</span></div>
+         <div>التردد: <span class="font-bold">~5.17 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #00ff00;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #00ff00; box-shadow: 0 0 20px #00ff00;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">الأخضر</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 495-570 نانومتر. العين البشرية أكثر حساسية لهذا اللون.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~530 nm</span></div>
+         <div>التردد: <span class="font-bold">~5.66 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #4d94ff;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #4d94ff; box-shadow: 0 0 20px #4d94ff;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">الأزرق</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 450-495 نانومتر. لون السماء والمحيطات.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~470 nm</span></div>
+         <div>التردد: <span class="font-bold">~6.38 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #1a4d99;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #1a4d99; box-shadow: 0 0 20px #1a4d99;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">النيلي</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 420-450 نانومتر. بين الأزرق والبنفسجي.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~435 nm</span></div>
+         <div>التردد: <span class="font-bold">~6.89 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+       <div class="color-card bg-gray-800 rounded-xl p-5 border-t-4" style="border-color: #9400d3;">
+        <div class="w-12 h-12 rounded-full mb-3 mx-auto" style="background: #9400d3; box-shadow: 0 0 20px #9400d3;"></div>
+        <h3 class="text-xl font-bold text-center mb-2">البنفسجي</h3>
+        <p class="text-sm text-gray-300 text-center mb-2">الطول الموجي: 380-420 نانومتر. أقصر موجة في الطيف المرئي.</p>
+        <div class="text-xs text-cyan-300 text-center mt-2 space-y-1">
+         <div>الطول الموجي: <span class="font-bold">~400 nm</span></div>
+         <div>التردد: <span class="font-bold">~7.5 × 10¹⁴ Hz</span></div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <section class="max-w-6xl mx-auto mt-12 p-6 bg-gray-800 rounded-xl border border-gray-700 shadow-xl">
+      <div class="space-y-6">
+        <h3 class="text-2xl text-purple-400 font-bold mb-4 flex items-center gap-2">
+          <span>📚 مقالة علمية: تشتت الضوء وظاهرة الانكسار عبر المنشور</span>
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-300 leading-relaxed">
+         <div class="p-4 bg-gray-950/40 rounded-lg border-r-4 border-purple-500">
+          <h4 class="text-purple-300 font-bold mb-2">🔬 ما هو تشتت الضوء (Dispersion)؟</h4>
+          <p>تشتت الضوء هو ظاهرة فيزيائية تظهر عندما ينفصل الضوء الأبيض المرئي إلى ألوانه السبعة الأساسية (ألوان الطيف). الضوء الأبيض ليس لوناً مفرداً، بل هو مزيج من جميع ألوان الطيف التي تسير معاً في الفراغ بنفس السرعة.</p>
+         </div>
+         <div class="p-4 bg-gray-950/40 rounded-lg border-r-4 border-pink-500">
+          <h4 class="text-pink-300 font-bold mb-2">📐 كيف يعمل المنشور الزجاجي؟</h4>
+          <p>عندما ينتقل الضوء من الهواء إلى الزجاج، تقل سرعته وينحني (ينكسر). وبما أن كل لون له طول موجي وتردد خاص به، فإن كل لون يتأثر بالزجاج بدرجة مختلفة؛ الأطوال الموجية القصيرة تبطئ وتنكسر بشكل أكبر من الأطوال الموجية الطويلة.</p>
+         </div>
+         <div class="p-4 bg-gray-950/40 rounded-lg border-r-4 border-cyan-500">
+          <h4 class="text-cyan-300 font-bold mb-2">🌈 ألوان الطيف وزوايا الانحراف</h4>
+          <p>بناءً على اختلاف معامل الانكسار لكل طول موجي، نلاحظ أن:</p>
+          <ul class="list-disc list-inside mt-2 space-y-1 text-sm text-gray-400">
+           <li><span class="text-red-400 font-semibold">اللون الأحمر:</span> صاحب أطول موجة وأقل تردد، لذا فهو الأقل انكساراً وانحرافاً ويظهر في أعلى الطيف.</li>
+           <li><span class="text-purple-400 font-semibold">اللون البنفسجي:</span> صاحب أقصر موجة وأعلى تردد، لذا فهو الأكثر انكساراً وانحرافاً ويظهر في أسفل الطيف.</li>
+          </ul>
+         </div>
+         <div class="p-4 bg-gray-950/40 rounded-lg border-r-4 border-green-500">
+          <h4 class="text-green-300 font-bold mb-2">💧 تطبيقات في الطبيعة والحياة</h4>
+          <p>أشهر تطبيق طبيعي لهذه الظاهرة هو <strong>قوس قزح</strong>، حيث تعمل قطرات المطر المعلقة في الهواء كمنشورات طبيعية صغيرة تشتت ضوء الشمس. كما تُستخدم هذه الظاهرة في أجهزة "المطياف" لتحليل المواد ومعرفة مكونات النجوم البعيدة.</p>
+         </div>
+        </div>
+        <div class="p-4 bg-purple-950/20 rounded-lg border border-purple-500/30 text-center">
+          <p class="text-purple-300 text-sm"><strong>💡 معلومة ذكية:</strong> إسحاق نيوتن هو أول من أثبت أن المنشور لا يلوّن الضوء، بل إن الضوء الأبيض هو الذي يحتوي على الألوان أصلاً، وذلك بإعادة دمج الألوان السبعة بواسطة منشور مقلوب ليعود ضوءاً أبيض!</p>
+        </div>
+      </div>
+     </section>
+    </main>
+
+    <footer class="bg-gray-950 py-6 px-4 mt-12 border-t border-gray-800">
+     <p id="footer-text" class="text-center text-gray-400 text-sm">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
+    </footer>
+   </div>
+  </div>
+
+  <script>
+    const defaultConfig = {
+      main_title: 'علم البصريات الضوئية',
+      subtitle: 'محاكاة انكسار الضوء عبر المنشور الزجاجي',
+      footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين',
+      background_color: '#111827',
+      surface_color: '#1f2937',
+      text_color: '#ffffff',
+      primary_action_color: '#9333ea',
+      secondary_action_color: '#a855f7'
+    };
+
+    let currentAngle = 30;
+    let currentRefractiveIndex = 1.52;
+    
+    const materials = {
+      glass: { name: 'زجاج', index: 1.52 },
+      water: { name: 'ماء', index: 1.33 },
+      diamond: { name: 'ألماس', index: 2.42 }
+    };
+
+    function calculateDeviation(angle, refractiveIndex) {
+      const rad = (angle * Math.PI) / 180;
+      // حساب زاوية انحراف تقريبية تتناسب مع النطاقات الجديدة لتظل منطقية فيزيائياً
+      const deviation = angle * (refractiveIndex - 1) * 0.8;
+      return Math.max(0, deviation).toFixed(1);
+    }
+
+    function updatePrismSimulation(angle, refractiveIndex) {
+      const spectrum = document.getElementById('spectrum');
+      const lines = spectrum.querySelectorAll('line');
+      const baseX = 300; 
+      const baseY = 200;
+      const endX = 750;
+      
+      // معامل انتشار الألوان يتأثر بمعامل الانكسار والزاوية الحالية لضمان استقرار الأنميشن
+      const spreadFactor = (refractiveIndex - 1) * 15 * (1 + angle/45);
+      
+      const colors = [
+        { angle: angle - spreadFactor, color: '#ff0000' },
+        { angle: angle - spreadFactor * 0.7, color: '#ff7f00' },
+        { angle: angle - spreadFactor * 0.4, color: '#ffff00' },
+        { angle: angle, color: '#00ff00' },
+        { angle: angle + spreadFactor * 0.4, color: '#4d94ff' },
+        { angle: angle + spreadFactor * 0.7, color: '#1a4d99' },
+        { angle: angle + spreadFactor, color: '#9400d3' }
+      ];
+
+      lines.forEach((line, index) => {
+        const color = colors[index];
+        const rad = (color.angle * Math.PI) / 180;
+        const endY = baseY + (endX - baseX) * Math.tan(rad);
+        
+        line.setAttribute('x1', baseX);
+        line.setAttribute('y1', baseY);
+        line.setAttribute('x2', endX);
+        line.setAttribute('y2', endY);
+      });
+
+      // ضبط انسيابية وحركة الشعاع الساقط الأبيض ليتطابق هندسياً مع كل الزوايا من 0 لـ 80
+      const whiteBeam = document.getElementById('white-beam');
+      const incomingRad = (angle * Math.PI) / 180;
+      const incomingY = 200 - (300 - 50) * Math.tan(incomingRad * 0.4);
+      whiteBeam.setAttribute('y1', incomingY);
+      
+      const deviation = calculateDeviation(angle, refractiveIndex);
+      document.getElementById('deviation-display').textContent = deviation + '°';
+    }
+
+    function updateAngle(newAngle) {
+      // تحديث الحدود البرمجية هنا لتصبح بين 0 و 80 بدلاً من 15 و 60
+      currentAngle = Math.max(0, Math.min(80, newAngle));
+      document.getElementById('angle-slider').value = currentAngle;
+      document.getElementById('angle-display').textContent = currentAngle + '°';
+      updatePrismSimulation(currentAngle, currentRefractiveIndex);
+    }
+    
+    function updateRefractiveIndex(newIndex) {
+      currentRefractiveIndex = parseFloat(newIndex);
+      document.getElementById('refractive-slider').value = currentRefractiveIndex;
+      document.getElementById('refractive-display').textContent = currentRefractiveIndex.toFixed(2);
+      updateMaterialButtonsHighlight(currentRefractiveIndex);
+      updatePrismSimulation(currentAngle, currentRefractiveIndex);
+    }
+    
+    function updateMaterialButtonsHighlight(index) {
+      document.querySelectorAll('.material-btn').forEach(btn => {
+        const mat = btn.dataset.material;
+        if (materials[mat].index === parseFloat(index)) {
+          btn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+          btn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+        } else {
+          btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+          btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+        }
+      });
+    }
+    
+    function selectMaterial(material) {
+      const materialData = materials[material];
+      updateRefractiveIndex(materialData.index);
+    }
+
+    document.getElementById('angle-slider').addEventListener('input', (e) => {
+      updateAngle(parseInt(e.target.value));
+    });
+
+    document.getElementById('increase-angle').addEventListener('click', () => {
+      updateAngle(currentAngle + 5);
+    });
+
+    document.getElementById('decrease-angle').addEventListener('click', () => {
+      updateAngle(currentAngle - 5);
+    });
+    
+    document.getElementById('refractive-slider').addEventListener('input', (e) => {
+      updateRefractiveIndex(parseFloat(e.target.value));
+    });
+    
+    document.querySelectorAll('.material-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectMaterial(btn.dataset.material);
+      });
+    });
+
+    async function onConfigChange(config) {
+      document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+      document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+      
+      document.body.style.backgroundColor = config.background_color || defaultConfig.background_color;
+      document.body.style.color = config.text_color || defaultConfig.text_color;
+      
+      const surfaces = document.querySelectorAll('.bg-gray-800');
+      surfaces.forEach(el => el.style.backgroundColor = config.surface_color || defaultConfig.surface_color);
+      
+      const primaryButtons = document.querySelectorAll('#increase-angle, #decrease-angle');
+      primaryButtons.forEach(btn => {
+        btn.style.backgroundColor = config.primary_action_color || defaultConfig.primary_action_color;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['main_title', config.main_title || defaultConfig.main_title],
+          ['subtitle', config.subtitle || defaultConfig.subtitle],
+          ['footer_text', config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
+
+    updatePrismSimulation(30, 1.52);
+  </script>
+ </body>
+</html>

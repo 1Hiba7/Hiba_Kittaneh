@@ -1,0 +1,1951 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكي إمكانية الوصول إلى الألوان المتقدم</title>
+  <link rel="icon" type="image/png" href="1.png">
+  <link rel="icon" type="image/png" href="1.png">
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        .color-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .color-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .simulation-box {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .simulation-box:hover {
+            border-color: #9ca3af;
+        }
+
+        .wcag-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .wcag-pass {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .wcag-fail {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%) !important;
+        }
+
+        .dark-mode .bg-white {
+            background-color: #1f2937 !important;
+            color: #f9fafb !important;
+        }
+
+        .dark-mode .text-gray-800 {
+            color: #f9fafb !important;
+        }
+
+        .dark-mode .text-gray-600 {
+            color: #d1d5db !important;
+        }
+
+        .dark-mode .text-gray-700 {
+            color: #e5e7eb !important;
+        }
+
+        .dark-mode .border-gray-200 {
+            border-color: #374151 !important;
+        }
+
+        .dark-mode .bg-gray-50 {
+            background-color: #2d3748 !important;
+        }
+
+        .dark-mode .bg-gray-100 {
+            background-color: #2d3748 !important;
+        }
+
+        .dark-mode .simulation-box {
+            border-color: #4b5563;
+            background-color: #374151 !important;
+        }
+
+        .dark-mode .bg-gradient-to-br.from-blue-50 {
+            background: linear-gradient(to bottom right, #1e3a8a, #1e40af) !important;
+        }
+
+        .dark-mode .bg-gradient-to-br.from-green-50 {
+            background: linear-gradient(to bottom right, #065f46, #047857) !important;
+        }
+
+        .dark-mode .bg-gradient-to-br.from-purple-50 {
+            background: linear-gradient(to bottom right, #6b21a8, #7c3aed) !important;
+        }
+
+        .dark-mode .bg-gradient-to-br.from-orange-50 {
+            background: linear-gradient(to bottom right, #c2410c, #ea580c) !important;
+        }
+
+        .dark-mode .border-blue-200,
+        .dark-mode .border-green-200,
+        .dark-mode .border-purple-200,
+        .dark-mode .border-orange-200 {
+            border-color: #4b5563 !important;
+        }
+
+        .color-picker-container {
+            position: relative;
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+        }
+
+        .dark-mode input[type="color"] {
+            border-color: #4b5563;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .lang-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .lang-btn:not(.active) {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .lang-btn:not(.active):hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .dark-mode .lang-btn:not(.active) {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-mode .lang-btn:not(.active):hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark-mode .modal-content {
+            background-color: #1f2937;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background-color: white;
+            color: #3b82f6;
+        }
+
+        .dark-mode .tab-btn.active {
+            background-color: #374151;
+            color: #60a5fa;
+        }
+
+        .tab-btn:not(.active) {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .dark-mode .tab-btn:not(.active) {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .gradient-preview {
+            height: 100px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .saved-palette-item {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .saved-palette-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .dark-mode .saved-palette-item {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        .dark-mode .saved-palette-item:hover {
+            border-color: #60a5fa;
+        }
+
+        .comparison-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .dark-mode .comparison-card {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .file-upload-btn:hover {
+            background: #2563eb;
+        }
+
+        .feature-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .dark-mode .feature-card {
+            background: #374151;
+            border-color: #4b5563;
+        }
+
+        .dark-mode .feature-card:hover {
+            border-color: #60a5fa;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="main-container" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+   <div class="min-h-full p-8">
+    <div class="max-w-7xl mx-auto"><!-- Header with Controls -->
+     <header class="text-center mb-8">
+      <div class="flex justify-between items-center mb-4 flex-wrap gap-4"><!-- Language Selector -->
+       <div class="flex gap-2 flex-wrap"><button class="lang-btn active" onclick="changeLanguage('ar')" data-lang="ar">🇸🇦 العربية</button> <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">🇬🇧 English</button> <button class="lang-btn" onclick="changeLanguage('fr')" data-lang="fr">🇫🇷 Français</button> <button class="lang-btn" onclick="changeLanguage('es')" data-lang="es">🇪🇸 Español</button>
+       </div><!-- Dark Mode Toggle --> <button onclick="toggleDarkMode()" id="dark-mode-btn" class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg font-semibold text-white transition-colors flex items-center gap-2"> <span id="mode-icon">🌙</span> <span id="mode-text" data-key="darkMode">الوضع الليلي</span> </button>
+      </div>
+      <h1 id="app-title" class="text-4xl font-bold text-white mb-3" data-key="title">محاكي إمكانية الوصول إلى الألوان المتقدم</h1>
+      <p id="instructions" class="text-xl text-white opacity-90" data-key="instructions">انقر على أي لون لرؤية محاكاة أنواع عمى الألوان</p>
+     </header><!-- Advanced Features Section -->
+     <div class="bg-white rounded-lg shadow-2xl p-6 mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4" data-key="advancedFeatures">🚀 ميزات متقدمة</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+       <div class="feature-card" onclick="openModal('save-load')">
+        <div class="text-4xl mb-2">
+         ���
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="savePalette">حفظ وتحميل</h3>
+        <p class="text-sm text-gray-600" data-key="saveLoadDesc">إدارة اللوحات المحفوظة</p>
+       </div>
+       <div class="feature-card" onclick="openModal('extract-image')">
+        <div class="text-4xl mb-2">
+         📸
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="extractFromImage">استخراج من صورة</h3>
+        <p class="text-sm text-gray-600" data-key="extractDesc">استخراج الألوان من صور</p>
+       </div>
+       <div class="feature-card" onclick="openModal('generate-palette')">
+        <div class="text-4xl mb-2">
+         🎨
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="generatePalette">مولد لوحات ذكي</h3>
+        <p class="text-sm text-gray-600" data-key="generateDesc">توليد لوحات متناسقة</p>
+       </div>
+       <div class="feature-card" onclick="openModal('gradient')">
+        <div class="text-4xl mb-2">
+         ✨
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="gradientGenerator">مولد التدرجات</h3>
+        <p class="text-sm text-gray-600" data-key="gradientDesc">إنشاء تدرجات لونية</p>
+       </div>
+       <div class="feature-card" onclick="openModal('compare')">
+        <div class="text-4xl mb-2">
+         ⚖️
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="compareColors">مقارنة الألوان</h3>
+        <p class="text-sm text-gray-600" data-key="compareDesc">مقارنة متقدمة للألوان</p>
+       </div>
+       <div class="feature-card" onclick="openModal('library')">
+        <div class="text-4xl mb-2">
+         📚
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="libraryTitle">مكتبة الأمثلة</h3>
+        <p class="text-sm text-gray-600" data-key="libraryDesc">لوحات جاهزة ومع��وفة</p>
+       </div>
+       <div class="feature-card" onclick="openModal('report')">
+        <div class="text-4xl mb-2">
+         📊
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="reportTitle">تقرير شامل</h3>
+        <p class="text-sm text-gray-600" data-key="reportDesc">تحليل إمكانية الوصول</p>
+       </div>
+       <div class="feature-card" onclick="openModal('contrast')">
+        <div class="text-4xl mb-2">
+         🎯
+        </div>
+        <h3 class="font-bold text-gray-800 mb-1" data-key="contrastChecker">فاحص التباين</h3>
+        <p class="text-sm text-gray-600" data-key="contrastDesc">معاينة مباشرة للتباين</p>
+       </div>
+      </div>
+     </div><!-- Color Input Section -->
+     <main>
+      <div class="bg-white rounded-lg shadow-2xl p-6 mb-6">
+       <h2 class="text-2xl font-bold text-gray-800 mb-4" data-key="addColorTitle">➕ إضافة لون مخصص</h2>
+       <div class="color-input-wrapper flex-wrap"><input type="color" id="color-picker" value="#FF5733" class="cursor-pointer"> <input type="text" id="color-input" placeholder="#FF5733 أو red" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none font-mono" data-key-placeholder="colorInputPlaceholder"> <button onclick="addCustomColor()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors" data-key="addColorBtn">إضافة اللون</button>
+       </div>
+       <p class="text-sm text-gray-600 mt-2" data-key="colorInputHint">يمكنك إدخال اللون بصيغة HEX (#FF5733) أو اسم اللون (red, blue)</p>
+      </div><!-- Color Palette Section -->
+      <div class="bg-white rounded-lg shadow-2xl p-6 mb-6">
+       <h2 class="text-2xl font-bold text-gray-800 mb-4" data-key="paletteTitle">�� لوحة الألوان</h2>
+       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="color-palette"><!-- Colors will be generated here -->
+       </div>
+      </div><!-- Simulation Results -->
+      <div id="simulation-results" class="hidden bg-white rounded-lg shadow-2xl p-6">
+       <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+        <h2 class="text-2xl font-bold text-gray-800" data-key="simulationTitle">👁️ محاكاة أنواع عمى الألوان</h2><button onclick="closeSimulation()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold transition-colors" data-key="closeBtn">إغلاق</button>
+       </div>
+       <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div class="flex items-center gap-4 flex-wrap">
+         <div id="selected-color-preview" class="w-16 h-16 rounded-lg shadow-md"></div>
+         <div>
+          <p class="text-sm text-gray-600" data-key="selectedColor">اللون المختار</p>
+          <p id="selected-color-name" class="text-xl font-bold text-gray-800"></p>
+          <p id="selected-color-hex" class="text-sm text-gray-600 font-mono"></p>
+         </div>
+        </div>
+       </div>
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="simulations-grid"><!-- Simulations will be generated here -->
+       </div><!-- WCAG Compliance Section -->
+       <div class="mt-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
+        <h3 class="text-xl font-bold text-gray-800 mb-4" data-key="wcagTitle">✅ معايير WCAG للتباين</h3>
+        <div id="wcag-results" class="space-y-3"><!-- WCAG results will be generated here -->
+        </div>
+       </div><!-- Alternative Colors Section -->
+       <div class="mt-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
+        <h3 class="text-xl font-bold text-gray-800 mb-4" data-key="alternativesTitle">💡 اقتراحات الألوان البديلة</h3>
+        <p class="text-gray-600 mb-4" data-key="alternativesDesc">ألوان بديلة تحسن إمكانية الوصول للأشخاص الذين يعانون من عمى الألوان:</p>
+        <div id="alternative-colors" class="grid grid-cols-2 md:grid-cols-4 gap-3"><!-- Alternative colors will be generated here -->
+        </div>
+       </div>
+      </div>
+     </main>
+    </div>
+   </div>
+  </div><!-- Modals --> <!-- Save/Load Modal -->
+  <div id="save-load-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="savePalette">💾 حفظ وتحميل اللوحات</h2><button onclick="closeModal('save-load')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <div class="mb-6"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="paletteName">اسم اللوحة:</label> <input type="text" id="palette-name" placeholder="اس�� اللوحة..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+    </div>
+    <div class="flex gap-3 mb-6 flex-wrap"><button onclick="savePalette()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors" data-key="savePalette">💾 حفظ</button> <button onclick="exportPalette()" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors" data-key="exportPalette">📤 تصدير JSON</button> <label for="import-file" class="file-upload-btn" data-key="importPalette">📥 استيراد JSON</label> <input type="file" id="import-file" accept=".json" onchange="importPalette(event)">
+    </div>
+    <h3 class="text-lg font-bold text-gray-800 mb-3" data-key="savedPalettes">اللوحات المحفوظة:</h3>
+    <div id="saved-palettes-list" class="max-h-96 overflow-y-auto"><!-- Saved palettes will be listed here -->
+    </div>
+   </div>
+  </div><!-- Extract from Image Modal -->
+  <div id="extract-image-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="extractFromImage">📸 استخراج الألوان من صورة</h2><button onclick="closeModal('extract-image')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div><label for="image-upload" class="file-upload-btn w-full text-center block mb-4" data-key="uploadImage">اختر صورة</label> <input type="file" id="image-upload" accept="image/*" onchange="extractColorsFromImage(event)">
+    <canvas id="image-canvas" class="hidden"></canvas>
+    <div id="extracted-colors-preview" class="mt-6"><!-- Extracted colors will be shown here -->
+    </div>
+   </div>
+  </div><!-- Generate Palette Modal -->
+  <div id="generate-palette-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="generatePalette">🎨 مولد لوحات ذكي</h2><button onclick="closeModal('generate-palette')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="baseColor">اللون الأساسي:</label>
+     <div class="flex gap-3"><input type="color" id="base-color" value="#3b82f6" class="cursor-pointer"> <input type="text" id="base-color-text" value="#3b82f6" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none font-mono">
+     </div>
+    </div>
+    <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="paletteType">نوع اللوحة:</label> <select id="palette-type" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"> <option value="complementary" data-key="complementary">متكاملة (Complementary)</option> <option value="analogous" data-key="analogous">متشابهة (Analogous)</option> <option value="triadic" data-key="triadic">ثلاثية (Triadic)</option> <option value="tetradic" data-key="tetradic">رباعية (Tetradic)</option> <option value="monochromatic" data-key="monochromatic">أحادية (Monochromatic)</option> </select>
+    </div><button onclick="generateSmartPalette()" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors mb-4" data-key="generateBtn">✨ توليد</button>
+    <div id="generated-palette-preview" class="grid grid-cols-2 md:grid-cols-5 gap-3"><!-- Generated palette will be shown here -->
+    </div>
+   </div>
+  </div><!-- Gradient Modal -->
+  <div id="gradient-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="gradientGenerator">🌈 مولد التدرجات</h2><button onclick="closeModal('gradient')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="color1">اللون 1:</label>
+     <div class="flex gap-3"><input type="color" id="gradient-color1" value="#667eea" onchange="updateGradientPreview()"> <input type="text" id="gradient-color1-text" value="#667eea" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-mono" onchange="updateGradientPreview()">
+     </div>
+    </div>
+    <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="color2">����للون 2:</label>
+     <div class="flex gap-3"><input type="color" id="gradient-color2" value="#764ba2" onchange="updateGradientPreview()"> <input type="text" id="gradient-color2-text" value="#764ba2" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-mono" onchange="updateGradientPreview()">
+     </div>
+    </div>
+    <div class="gradient-preview" id="gradient-preview"></div>
+    <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2">CSS Code:</label> <textarea id="gradient-css" readonly class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono text-sm h-24"></textarea>
+    </div><button onclick="addGradientColors()" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors" data-key="addToCompare">إضافة الألوان للوحة</button>
+   </div>
+  </div><!-- Compare Modal -->
+  <div id="compare-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="compareColors">⚖️ مقارنة الألوان</h2><button onclick="closeModal('compare')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <p class="text-gray-600 mb-4" data-key="compareDesc">قارن بين لونين أو أكثر لمعرفة الفروقات في جميع أنواع عمى الألوان</p>
+    <div id="comparison-container" class="space-y-4"><!-- Comparison will be shown here -->
+    </div>
+   </div>
+  </div><!-- Library Modal -->
+  <div id="library-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="libraryTitle">📚 مكتبة الأمثلة</h2><button onclick="closeModal('library')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <div class="mb-4">
+     <div class="flex gap-2 mb-4 border-b border-gray-200 pb-2"><button class="tab-btn active" onclick="switchLibraryTab('material')" data-tab="material" data-key="materialDesign">Material Design</button> <button class="tab-btn" onclick="switchLibraryTab('flat')" data-tab="flat" data-key="flatUI">Flat UI</button> <button class="tab-btn" onclick="switchLibraryTab('seasonal')" data-tab="seasonal" data-key="seasonal">موسمية</button>
+     </div>
+     <div id="library-material" class="tab-content active">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="material-palettes"></div>
+     </div>
+     <div id="library-flat" class="tab-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="flat-palettes"></div>
+     </div>
+     <div id="library-seasonal" class="tab-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="seasonal-palettes"></div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Report Modal -->
+  <div id="report-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="reportTitle">📊 تقرير إمكانية الوصول</h2><button onclick="closeModal('report')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <div id="report-content" class="space-y-6"><!-- Report will be generated here -->
+    </div>
+   </div>
+  </div><!-- Contrast Checker Modal -->
+  <div id="contrast-modal" class="modal">
+   <div class="modal-content p-6">
+    <div class="flex justify-between items-center mb-6">
+     <h2 class="text-2xl font-bold text-gray-800" data-key="contrastChecker">🎯 فاحص التباين المباشر</h2><button onclick="closeModal('contrast')" class="text-2xl text-gray-600 hover:text-gray-800">×</button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+     <div><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="textColor">لون النص:</label>
+      <div class="flex gap-3"><input type="color" id="contrast-text-color" value="#000000" onchange="updateContrastPreview()"> <input type="text" id="contrast-text-color-text" value="#000000" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-mono" onchange="updateContrastPreview()">
+      </div>
+     </div>
+     <div><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="backgroundColor">لون ال����لفية:</label>
+      <div class="flex gap-3"><input type="color" id="contrast-bg-color" value="#FFFFFF" onchange="updateContrastPreview()"> <input type="text" id="contrast-bg-color-text" value="#FFFFFF" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-mono" onchange="updateContrastPreview()">
+      </div>
+     </div>
+    </div>
+    <div class="mb-4"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="textSize">حجم النص:</label> <input type="range" id="contrast-text-size" min="12" max="48" value="16" class="w-full" onchange="updateContrastPreview()"> <span id="contrast-text-size-value" class="text-sm text-gray-600">16px</span>
+    </div>
+    <div class="mb-6"><label class="block text-sm font-semibold text-gray-700 mb-2" data-key="textWeight">وزن النص:</label> <select id="contrast-text-weight" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg" onchange="updateContrastPreview()"> <option value="300" data-key="light">خفيف (Light)</option> <option value="400" selected data-key="normal">عادي (Normal)</option> <option value="700" data-key="bold">عريض (Bold)</option> </select>
+    </div>
+    <div id="contrast-preview-box" class="p-8 rounded-lg mb-4 text-center" style="background: #FFFFFF;">
+     <p id="contrast-preview-text" style="color: #000000; font-size: 16px; font-weight: 400;" data-key="previewText">نص تجريبي للمعاينة - Sample Preview Text</p>
+    </div>
+    <div id="contrast-results" class="bg-gray-50 p-4 rounded-lg"><!-- Contrast results will be shown here -->
+    </div>
+   </div>
+  </div><!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+  <script>
+        const defaultConfig = {
+            app_title: "محاكي إمكانية الوصول إلى الألوان المتقدم",
+            instructions_text: "انقر على أي لون لرؤية محاكاة أنوا�� عمى ال��لوان",
+            background_color: "#667eea",
+            card_background: "#ffffff",
+            text_color: "#1f2937",
+            primary_action: "#3b82f6"
+        };
+
+        const translations = {
+            ar: {
+                title: "محاكي إمكانية الوصول إلى الألوان المتقدم",
+                instructions: "انقر على أي لون لرؤية محاكاة أنواع عمى الألوان",
+                darkMode: "الوضع الليلي",
+                lightMode: "الوضع النهاري",
+                addColorTitle: "➕ إضافة لون مخصص",
+                colorInputPlaceholder: "#FF5733 أو red",
+                addColorBtn: "إضافة اللون",
+                colorInputHint: "يمكنك إدخال اللون بصيغة HEX (#FF5733) أو اسم اللون (red, blue)",
+                paletteTitle: "🎨 لوحة الألوان",
+                simulationTitle: "���️ محا��اة أنواع عمى الألوان",
+                closeBtn: "إغلاق",
+                selectedColor: "اللون المختار",
+                wcagTitle: "✅ معايي���� WCAG للتباين",
+                alternativesTitle: "💡 اقتراحات الألوان البديلة",
+                alternativesDesc: "ألوان بديلة تحسن إمكانية الوصول للأشخاص الذين يعانون من عمى الألوان:",
+                contrastWithWhite: "التباين مع الأبيض:",
+                contrastWithBlack: "التباين مع الأسود:",
+                normalText: "نص عادي",
+                largeText: "نص ��بير",
+                darkerVersion: "نسخة أغمق",
+                lighterVersion: "نسخة أ��تح",
+                highContrast: "تباين عالي",
+                complementary: "لون مكمل",
+                savePalette: "💾 حفظ اللوحة",
+                loadPalette: "📂 تحميل لوحة",
+                exportPalette: "📤 تصدير JSON",
+                importPalette: "📥 استيراد JSON",
+                extractFromImage: "📸 استخراج من صورة",
+                uploadImage: "اختر صورة",
+                generatePalette: "🎨 ��ولد لوحات ذكي",
+                paletteType: "نوع اللوحة:",
+                analogous: "متشابهة",
+                triadic: "ثلاثية",
+                tetradic: "رباعية",
+                monochromatic: "أحادية",
+                generateBtn: "✨ تول��د",
+                gradientGenerator: "✨ مولد الت��رجات",
+                createGradient: "إنشاء تدرج",
+                compareColors: "⚖��� مقارنة الألوان",
+                addToCompare: "إضافة الأ��وان للوحة",
+                clearComparison: "مسح المقارنة",
+                libraryTitle: "📚 مكتبة الأمثلة",
+                materialDesign: "Material Design",
+                flatUI: "Flat UI",
+                seasonal: "موسمية",
+                popular: "شائعة",
+                reportTitle: "📊 تقرير إمكانية الوصول",
+                generateReport: "توليد تقرير",
+                accessibilityScore: "درجة إمكانية الوصول:",
+                wcagCompliant: "مت��افق مع WCAG:",
+                recommendations: "توصيات:",
+                contrastChecker: "🎯 فاحص التباين المباشر",
+                textSize: "حجم النص:",
+                textWeight: "و��ن النص:",
+                normal: "عادي",
+                bold: "عريض",
+                light: "خفيف",
+                previewText: "نص ��جريبي للمعاينة - Sample Preview Text",
+                savedPalettes: "اللوحات المحفوظة:",
+                deletePalette: "��ذف",
+                applyPalette: "تطبيق",
+                paletteName: "اسم اللوحة:",
+                saveSuccess: "✅ تم الحفظ ب��جاح!",
+                loadSuccess: "✅ تم ال��حميل بنجاح!",
+                exportSuccess: "✅ تم التصدير بنج��ح!",
+                importSuccess: "✅ تم الاستيراد بنج��ح!",
+                error: "❌ حدث خطأ!",
+                extractedColors: "الألوان المستخرجة:",
+                extractColors: "استخراج الألوان",
+                colorDistance: "المسافة اللونية:",
+                compareTitle: "مقارنة الألوان",
+                color1: "اللون 1:",
+                color2: "اللون 2:",
+                advancedFeatures: "��� ميزات متقدمة",
+                saveLoadDesc: "إدارة اللوحات المحفوظة",
+                extractDesc: "استخراج الألوان من صور",
+                generateDesc: "توليد لوحات متناسقة",
+                gradientDesc: "إنشاء تدرجات لونية",
+                compareDesc: "مقارنة متقدمة للألوان",
+                libraryDesc: "لوحات جاهزة ومعروفة",
+                reportDesc: "تحليل إمكانية الوصول",
+                contrastDesc: "معاينة مباشرة للتباين",
+                baseColor: "اللون الأساسي:",
+                textColor: "لون النص:",
+                backgroundColor: "لون الخلفية:"
+            },
+            en: {
+                title: "Advanced Color Accessibility Simulator",
+                instructions: "Click any color to see color blindness simulations",
+                darkMode: "Dark Mode",
+                lightMode: "Light Mode",
+                addColorTitle: "➕ Add Custom Color",
+                colorInputPlaceholder: "#FF5733 or red",
+                addColorBtn: "Add Color",
+                colorInputHint: "You can enter color in HEX format (#FF5733) or color name (red, blue)",
+                paletteTitle: "🎨 Color Palette",
+                simulationTitle: "👁️ Color Blindness Simulations",
+                closeBtn: "Close",
+                selectedColor: "Selected Color",
+                wcagTitle: "✅ WCAG Contrast Standards",
+                alternativesTitle: "💡 Alternative Color Suggestions",
+                alternativesDesc: "Alternative colors that improve accessibility for people with color blindness:",
+                contrastWithWhite: "Contrast with White:",
+                contrastWithBlack: "Contrast with Black:",
+                normalText: "Normal Text",
+                largeText: "Large Text",
+                darkerVersion: "Darker Version",
+                lighterVersion: "Lighter Version",
+                highContrast: "High Contrast",
+                complementary: "Complementary",
+                savePalette: "💾 Save Palette",
+                exportPalette: "📤 Export JSON",
+                importPalette: "📥 Import JSON",
+                extractFromImage: "📸 Extract from Image",
+                uploadImage: "Choose Image",
+                generatePalette: "🎨 Smart Palette Generator",
+                paletteType: "Palette Type:",
+                analogous: "Analogous",
+                triadic: "Triadic",
+                tetradic: "Tetradic",
+                monochromatic: "Monochromatic",
+                generateBtn: "✨ Generate",
+                gradientGenerator: "✨ Gradient Generator",
+                compareColors: "⚖️ Compare Colors",
+                addToCompare: "Add Colors to Palette",
+                libraryTitle: "��� Examples Library",
+                materialDesign: "Material Design",
+                flatUI: "Flat UI",
+                seasonal: "Seasonal",
+                reportTitle: "📊 Accessibility Report",
+                contrastChecker: "🎯 Direct Contrast Checker",
+                textSize: "Text Size:",
+                textWeight: "Text Weight:",
+                normal: "Normal",
+                bold: "Bold",
+                light: "Light",
+                previewText: "Sample Preview Text - نص تجريبي للمعاينة",
+                savedPalettes: "Saved Palettes:",
+                deletePalette: "Delete",
+                applyPalette: "Apply",
+                paletteName: "Palette Name:",
+                saveSuccess: "✅ Saved successfully!",
+                exportSuccess: "✅ Exported successfully!",
+                importSuccess: "✅ Imported successfully!",
+                error: "❌ An error occurred!",
+                extractedColors: "Extracted Colors:",
+                advancedFeatures: "🚀 Advanced Features",
+                saveLoadDesc: "Manage saved palettes",
+                extractDesc: "Extract colors from images",
+                generateDesc: "Generate harmonious palettes",
+                gradientDesc: "Create color gradients",
+                compareDesc: "Advanced color comparison",
+                libraryDesc: "Ready-made famous palettes",
+                reportDesc: "Accessibility analysis",
+                contrastDesc: "Live contrast preview",
+                baseColor: "Base Color:",
+                textColor: "Text Color:",
+                backgroundColor: "Background Color:",
+                color1: "Color 1:",
+                color2: "Color 2:"
+            },
+            fr: {
+                title: "Simulateur Avancé d'Accessibilité des Couleurs",
+                instructions: "Cliquez sur n'importe quelle couleur pour voir les simulations",
+                darkMode: "Mode Sombre",
+                lightMode: "Mode Clair",
+                addColorTitle: "➕ Ajouter Couleur Personnalis��e",
+                colorInputPlaceholder: "#FF5733 ou red",
+                addColorBtn: "Ajouter",
+                colorInputHint: "Format HEX (#FF5733) ou nom (red, blue)",
+                paletteTitle: "🎨 Palette de Couleurs",
+                simulationTitle: "����️ Simulations de Daltonisme",
+                closeBtn: "Fermer",
+                selectedColor: "Couleur Sélectionnée",
+                wcagTitle: "✅ Normes WCAG",
+                alternativesTitle: "💡 Suggestions Alternatives",
+                alternativesDesc: "Couleurs alternatives pour meilleure accessibilité:",
+                contrastWithWhite: "Contraste avec Blanc:",
+                contrastWithBlack: "Contraste avec Noir:",
+                normalText: "Texte Normal",
+                largeText: "Texte Large",
+                darkerVersion: "Version Foncée",
+                lighterVersion: "Version Claire",
+                highContrast: "Contraste Élevé",
+                complementary: "Complémentaire",
+                savePalette: "💾 Sauvegarder",
+                exportPalette: "📤 Exporter JSON",
+                importPalette: "📥 Importer JSON",
+                extractFromImage: "📸 Extraire d'Image",
+                uploadImage: "Choisir Image",
+                generatePalette: "🎨 Générateur Intelligent",
+                paletteType: "Type de Palette:",
+                analogous: "Analogue",
+                triadic: "Triadique",
+                tetradic: "Tétradique",
+                monochromatic: "Monochromatique",
+                generateBtn: "✨ Générer",
+                gradientGenerator: "✨ Générateur de Dégradés",
+                compareColors: "⚖️ Comparer Couleurs",
+                addToCompare: "Ajouter à la Palette",
+                libraryTitle: "�� Bibliothèque",
+                materialDesign: "Material Design",
+                flatUI: "Flat UI",
+                seasonal: "Saisonnier",
+                reportTitle: "📊 Rapport d'Accessibilité",
+                contrastChecker: "🎯 Vérificateur de Contraste",
+                textSize: "Taille du Texte:",
+                textWeight: "Poids du Texte:",
+                normal: "Normal",
+                bold: "Gras",
+                light: "Léger",
+                previewText: "Texte d'aperçu - Sample Preview Text",
+                savedPalettes: "Palettes Sauvegardées:",
+                deletePalette: "Supprimer",
+                applyPalette: "Appliquer",
+                paletteName: "Nom de la Palette:",
+                saveSuccess: "✅ Sauvegardé!",
+                exportSuccess: "✅ Exporté!",
+                importSuccess: "✅ Importé!",
+                error: "❌ Erreur!",
+                advancedFeatures: "🚀 Fonctionnalités Avancées",
+                baseColor: "Couleur de Base:",
+                textColor: "Couleur du Texte:",
+                backgroundColor: "Couleur de Fond:",
+                color1: "Couleur 1:",
+                color2: "Couleur 2:"
+            },
+            es: {
+                title: "Simulador Avanzado de Accesibilidad de Colores",
+                instructions: "Haz clic en cualquier color para ver simulaciones",
+                darkMode: "Modo Oscuro",
+                lightMode: "Modo Claro",
+                addColorTitle: "➕ Agregar Color Personalizado",
+                colorInputPlaceholder: "#FF5733 o red",
+                addColorBtn: "Agregar",
+                colorInputHint: "Formato HEX (#FF5733) o nombre (red, blue)",
+                paletteTitle: "🎨 Paleta de Colores",
+                simulationTitle: "👁️ Simulaciones de Daltonismo",
+                closeBtn: "Cerrar",
+                selectedColor: "Color Seleccionado",
+                wcagTitle: "✅ Estándares WCAG",
+                alternativesTitle: "💡 Sugerencias Alternativas",
+                alternativesDesc: "Colores alternativos para mejor accesibilidad:",
+                contrastWithWhite: "Contraste con Blanco:",
+                contrastWithBlack: "Contraste con Negro:",
+                normalText: "Texto Normal",
+                largeText: "Texto Grande",
+                darkerVersion: "Versión Oscura",
+                lighterVersion: "Versión Clara",
+                highContrast: "Alto Contraste",
+                complementary: "Complementario",
+                savePalette: "💾 Guardar",
+                exportPalette: "📤 Exportar JSON",
+                importPalette: "📥 Importar JSON",
+                extractFromImage: "📸 Extraer de Imagen",
+                uploadImage: "Elegir Imagen",
+                generatePalette: "🎨 Generador Inteligente",
+                paletteType: "Tipo de Paleta:",
+                analogous: "Análogo",
+                triadic: "Triádico",
+                tetradic: "Tetrádico",
+                monochromatic: "Monocromático",
+                generateBtn: "✨ Generar",
+                gradientGenerator: "✨ Generador de Degradados",
+                compareColors: "⚖️ Comparar Colores",
+                addToCompare: "Agregar a Paleta",
+                libraryTitle: "📚 Biblioteca",
+                materialDesign: "Material Design",
+                flatUI: "Flat UI",
+                seasonal: "Estacional",
+                reportTitle: "📊 Informe de Accesibilidad",
+                contrastChecker: "🎯 Verificador de Contraste",
+                textSize: "Tamaño del Texto:",
+                textWeight: "Peso del Texto:",
+                normal: "Normal",
+                bold: "Negrita",
+                light: "Ligero",
+                previewText: "Texto de vista previa - Sample Preview Text",
+                savedPalettes: "Paletas Guardadas:",
+                deletePalette: "Eliminar",
+                applyPalette: "Aplicar",
+                paletteName: "Nombre de la Paleta:",
+                saveSuccess: "✅ Guardado!",
+                exportSuccess: "✅ Exportado!",
+                importSuccess: "✅ Importado!",
+                error: "❌ Error!",
+                advancedFeatures: "🚀 Características Avanzadas",
+                baseColor: "Color Base:",
+                textColor: "Color del Texto:",
+                backgroundColor: "Color de Fondo:",
+                color1: "Color 1:",
+                color2: "Color 2:"
+            }
+        };
+
+        let currentLanguage = 'ar';
+        let isDarkMode = false;
+        let comparisonColors = [];
+
+        let colorPalette = [
+            { name: "Red", hex: "#FF0000" },
+            { name: "Blue", hex: "#0000FF" },
+            { name: "Green", hex: "#00FF00" },
+            { name: "Yellow", hex: "#FFFF00" },
+            { name: "Purple", hex: "#800080" },
+            { name: "Orange", hex: "#FF9900" },
+            { name: "Pink", hex: "#FF69B4" },
+            { name: "Teal", hex: "#008080" },
+            { name: "Brown", hex: "#8B4513" },
+            { name: "Navy", hex: "#000080" },
+            { name: "Lime", hex: "#66CC33" },
+            { name: "Coral", hex: "#FF7F50" },
+            { name: "Indigo", hex: "#4B0082" },
+            { name: "Gold", hex: "#FFD700" },
+            { name: "Cyan", hex: "#00FFFF" }
+        ];
+
+        const visionTypes = [
+            { id: "normal", nameAr: "رؤية طبيعية", nameEn: "Normal Vision", nameFr: "Vision Normale", nameEs: "Visión Normal", emoji: "👁️", descriptionAr: "لا توجد إعاقة بصرية", descriptionEn: "No visual impairment", descriptionFr: "Aucune déficience visuelle", descriptionEs: "Sin discapacidad visual" },
+            { id: "protanopia", nameAr: "عمى الاحمر", nameEn: "Protanopia", nameFr: "Protanopie", nameEs: "Protanopía", emoji: "🔴", descriptionAr: "غياب مستقبلات الاحمر", descriptionEn: "Absence of red receptors", descriptionFr: "Absence de récepteurs rouges", descriptionEs: "Ausencia de receptores rojos" },
+            { id: "protanomaly", nameAr: "ضعف الاحمر", nameEn: "Protanomaly", nameFr: "Protanomalie", nameEs: "Protanomalía", emoji: "🔴", descriptionAr: "ضعف مستقبلات الاحمر", descriptionEn: "Weak red receptors", descriptionFr: "Récepteurs rouges faibles", descriptionEs: "Receptores rojos débiles" },
+            { id: "deuteranopia", nameAr: "عمى الاخضر", nameEn: "Deuteranopia", nameFr: "Deutéranopie", nameEs: "Deuteranopía", emoji: "🟢", descriptionAr: "غياب مستقبلات الاخضر", descriptionEn: "Absence of green receptors", descriptionFr: "Absence de récepteurs verts", descriptionEs: "Ausencia de receptores verdes" },
+            { id: "deuteranomaly", nameAr: "ضعف الاخضر", nameEn: "Deuteranomaly", nameFr: "Deutéranomalie", nameEs: "Deuteranomalía", emoji: "🟢", descriptionAr: "ضعف مستقبلات الاخضر", descriptionEn: "Weak green receptors", descriptionFr: "Récepteurs verts faibles", descriptionEs: "Receptores verdes débiles" },
+            { id: "tritanopia", nameAr: "عمى الازرق", nameEn: "Tritanopia", nameFr: "Tritanopie", nameEs: "Tritanopía", emoji: "🔵", descriptionAr: "غياب مستقبلات الازرق", descriptionEn: "Absence of blue receptors", descriptionFr: "Absence de récepteurs bleus", descriptionEs: "Ausencia de receptores azules" },
+            { id: "tritanomaly", nameAr: "ضعف الازرق", nameEn: "Tritanomaly", nameFr: "Tritanomalie", nameEs: "Tritanomalía", emoji: "🔵", descriptionAr: "ضعف مستقبلات الازرق", descriptionEn: "Weak blue receptors", descriptionFr: "Récepteurs bleus faibles", descriptionEs: "Receptores azules débiles" },
+            { id: "achromatopsia", nameAr: "عمى الالوان الكامل", nameEn: "Achromatopsia", nameFr: "Achromatopsie", nameEs: "Acromatopsia", emoji: "⚫", descriptionAr: "رؤية بالابيض والاسود", descriptionEn: "Black and white vision", descriptionFr: "Vision noir et blanc", descriptionEs: "Visión blanco y negro" },
+            { id: "achromatomaly", nameAr: "ضعف رؤية الالوان", nameEn: "Achromatomaly", nameFr: "Achromatomalie", nameEs: "Acromatomalía", emoji: "⚪", descriptionAr: "ضعف عام في رؤية الالوان", descriptionEn: "General color weakness", descriptionFr: "Faiblesse générale", descriptionEs: "Debilidad general" }
+        ];
+
+        // Library Palettes
+        const libraryPalettes = {
+            material: [
+                { name: "Material Red", colors: ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5"] },
+                { name: "Material Blue", colors: ["#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50"] },
+                { name: "Material Warm", colors: ["#FF9800", "#FF5722", "#795548", "#9E9E9E", "#607D8B"] },
+                { name: "Material Cool", colors: ["#00BCD4", "#009688", "#4CAF50", "#8BC34A", "#CDDC39"] }
+            ],
+            flat: [
+                { name: "Flat UI 1", colors: ["#1ABC9C", "#2ECC71", "#3498DB", "#9B59B6", "#34495E"] },
+                { name: "Flat UI 2", colors: ["#16A085", "#27AE60", "#2980B9", "#8E44AD", "#2C3E50"] },
+                { name: "Flat UI 3", colors: ["#F39C12", "#E67E22", "#E74C3C", "#ECF0F1", "#95A5A6"] },
+                { name: "Flat UI 4", colors: ["#F1C40F", "#E67E22", "#E74C3C", "#BDC3C7", "#7F8C8D"] }
+            ],
+            seasonal: [
+                { name: "Spring", colors: ["#FFB7C5", "#FFDAB9", "#98FB98", "#87CEEB", "#DDA0DD"] },
+                { name: "Summer", colors: ["#FFD700", "#FF6347", "#00CED1", "#FF69B4", "#ADFF2F"] },
+                { name: "Autumn", colors: ["#FF8C00", "#DC143C", "#8B4513", "#DAA520", "#CD853F"] },
+                { name: "Winter", colors: ["#4682B4", "#B0C4DE", "#E0FFFF", "#F0F8FF", "#708090"] }
+            ]
+        };
+
+        // Color Functions
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + [r, g, b].map(x => {
+                const hex = Math.round(Math.max(0, Math.min(255, x))).toString(16);
+                return hex.length === 1 ? "0" + hex : hex;
+            }).join("");
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return { h: h * 360, s: s * 100, l: l * 100 };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return { r: r * 255, g: g * 255, b: b * 255 };
+        }
+
+        function simulateColorBlindness(hex, type) {
+            const rgb = hexToRgb(hex);
+            if (!rgb) return hex;
+
+            let r = rgb.r / 255;
+            let g = rgb.g / 255;
+            let b = rgb.b / 255;
+
+            if (type === "protanopia") {
+                const newR = 0.567 * r + 0.433 * g;
+                const newG = 0.558 * r + 0.442 * g;
+                const newB = 0.242 * g + 0.758 * b;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            } else if (type === "protanomaly") {
+                const newR = 0.817 * r + 0.183 * g;
+                const newG = 0.333 * r + 0.667 * g;
+                const newB = 0.125 * g + 0.875 * b;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            } else if (type === "deuteranopia") {
+                const newR = 0.625 * r + 0.375 * g;
+                const newG = 0.7 * r + 0.3 * g;
+                const newB = 0.3 * g + 0.7 * b;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            } else if (type === "deuteranomaly") {
+                const newR = 0.8 * r + 0.2 * g;
+                const newG = 0.258 * r + 0.742 * g;
+                const newB = 0.142 * g + 0.858 * b;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            } else if (type === "tritanopia") {
+                const newR = 0.95 * r + 0.05 * g;
+                const newG = 0.433 * g + 0.567 * b;
+                const newB = 0.475 * g + 0.525 * b;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            } else if (type === "tritanomaly") {
+                const newR = 0.967 * r + 0.033 * g;
+                const newG = 0.733 * g + 0.267 * b;
+                const newB = 0.183 * g + 0.817 * b;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            } else if (type === "achromatopsia") {
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                return rgbToHex(gray * 255, gray * 255, gray * 255);
+            } else if (type === "achromatomaly") {
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                const newR = r * 0.618 + gray * 0.382;
+                const newG = g * 0.618 + gray * 0.382;
+                const newB = b * 0.618 + gray * 0.382;
+                return rgbToHex(newR * 255, newG * 255, newB * 255);
+            }
+            
+            return hex;
+        }
+
+        function getLuminance(hex) {
+            const rgb = hexToRgb(hex);
+            if (!rgb) return 0;
+
+            const r = rgb.r / 255;
+            const g = rgb.g / 255;
+            const b = rgb.b / 255;
+
+            const rLum = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+            const gLum = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+            const bLum = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+
+            return 0.2126 * rLum + 0.7152 * gLum + 0.0722 * bLum;
+        }
+
+        function getContrastRatio(color1, color2) {
+            const lum1 = getLuminance(color1);
+            const lum2 = getLuminance(color2);
+            const lighter = Math.max(lum1, lum2);
+            const darker = Math.min(lum1, lum2);
+            return (lighter + 0.05) / (darker + 0.05);
+        }
+
+        function generateAlternativeColors(baseColor) {
+            const alternatives = [];
+            const baseRgb = hexToRgb(baseColor);
+            
+            alternatives.push({
+                nameKey: "darkerVersion",
+                hex: rgbToHex(baseRgb.r * 0.6, baseRgb.g * 0.6, baseRgb.b * 0.6)
+            });
+            
+            alternatives.push({
+                nameKey: "lighterVersion",
+                hex: rgbToHex(
+                    baseRgb.r + (255 - baseRgb.r) * 0.5,
+                    baseRgb.g + (255 - baseRgb.g) * 0.5,
+                    baseRgb.b + (255 - baseRgb.b) * 0.5
+                )
+            });
+            
+            const lum = getLuminance(baseColor);
+            if (lum > 0.5) {
+                alternatives.push({ nameKey: "highContrast", hex: "#1a1a1a" });
+            } else {
+                alternatives.push({ nameKey: "highContrast", hex: "#f0f0f0" });
+            }
+            
+            alternatives.push({
+                nameKey: "complementary",
+                hex: rgbToHex(255 - baseRgb.r, 255 - baseRgb.g, 255 - baseRgb.b)
+            });
+
+            return alternatives;
+        }
+
+        function colorNameToHex(colorName) {
+            const colors = {
+                red: "#FF0000", blue: "#0000FF", green: "#00FF00", yellow: "#FFFF00",
+                purple: "#800080", orange: "#FFA500", pink: "#FFC0CB", black: "#000000",
+                white: "#FFFFFF", gray: "#808080", brown: "#A52A2A", cyan: "#00FFFF",
+                magenta: "#FF00FF", lime: "#00FF00", navy: "#000080", teal: "#008080",
+                olive: "#808000", maroon: "#800000", aqua: "#00FFFF", silver: "#C0C0C0"
+            };
+            
+            return colors[colorName.toLowerCase()] || null;
+        }
+
+        // Smart Palette Generation
+        function generateColorHarmony(baseHex, type) {
+            const rgb = hexToRgb(baseHex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            const colors = [baseHex];
+
+            switch(type) {
+                case 'complementary':
+                    const comp = hslToRgb((hsl.h + 180) % 360, hsl.s, hsl.l);
+                    colors.push(rgbToHex(comp.r, comp.g, comp.b));
+                    break;
+                case 'analogous':
+                    for (let i = 1; i <= 4; i++) {
+                        const angle = (hsl.h + (i * 30)) % 360;
+                        const analogRgb = hslToRgb(angle, hsl.s, hsl.l);
+                        colors.push(rgbToHex(analogRgb.r, analogRgb.g, analogRgb.b));
+                    }
+                    break;
+                case 'triadic':
+                    for (let i = 1; i < 3; i++) {
+                        const angle = (hsl.h + (i * 120)) % 360;
+                        const triadRgb = hslToRgb(angle, hsl.s, hsl.l);
+                        colors.push(rgbToHex(triadRgb.r, triadRgb.g, triadRgb.b));
+                    }
+                    break;
+                case 'tetradic':
+                    for (let i = 1; i < 4; i++) {
+                        const angle = (hsl.h + (i * 90)) % 360;
+                        const tetradRgb = hslToRgb(angle, hsl.s, hsl.l);
+                        colors.push(rgbToHex(tetradRgb.r, tetradRgb.g, tetradRgb.b));
+                    }
+                    break;
+                case 'monochromatic':
+                    for (let i = 1; i <= 4; i++) {
+                        const newL = Math.max(10, Math.min(90, hsl.l + (i * 15) - 30));
+                        const monoRgb = hslToRgb(hsl.h, hsl.s, newL);
+                        colors.push(rgbToHex(monoRgb.r, monoRgb.g, monoRgb.b));
+                    }
+                    break;
+            }
+
+            return colors;
+        }
+
+        // UI Functions
+        function addCustomColor() {
+            const colorInput = document.getElementById("color-input");
+            let colorValue = colorInput.value.trim();
+            
+            if (!colorValue) return;
+            
+            let hexColor = colorValue.startsWith("#") ? colorValue : colorNameToHex(colorValue);
+            
+            if (!hexColor || !hexToRgb(hexColor)) {
+                const tempDiv = document.createElement('div');
+                tempDiv.style.color = colorValue;
+                document.body.appendChild(tempDiv);
+                const computed = window.getComputedStyle(tempDiv).color;
+                document.body.removeChild(tempDiv);
+                
+                const rgb = computed.match(/\d+/g);
+                if (rgb) {
+                    hexColor = rgbToHex(parseInt(rgb[0]), parseInt(rgb[1]), parseInt(rgb[2]));
+                }
+            }
+            
+            if (hexColor && hexToRgb(hexColor)) {
+                const colorName = colorValue.startsWith("#") ? colorValue : colorValue.charAt(0).toUpperCase() + colorValue.slice(1);
+                colorPalette.push({ name: colorName, hex: hexColor.toUpperCase() });
+                renderColorPalette();
+                colorInput.value = "";
+                document.getElementById("color-picker").value = hexColor;
+                showToast(translations[currentLanguage].saveSuccess);
+            }
+        }
+
+        document.getElementById("color-picker").addEventListener("input", (e) => {
+            document.getElementById("color-input").value = e.target.value;
+        });
+
+        document.getElementById("color-input").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                addCustomColor();
+            }
+        });
+
+        // Sync base color inputs in generate palette modal
+        document.getElementById("base-color").addEventListener("input", (e) => {
+            document.getElementById("base-color-text").value = e.target.value;
+        });
+
+        document.getElementById("base-color-text").addEventListener("input", (e) => {
+            if (hexToRgb(e.target.value)) {
+                document.getElementById("base-color").value = e.target.value;
+            }
+        });
+
+        // Sync gradient color inputs
+        document.getElementById("gradient-color1").addEventListener("input", (e) => {
+            document.getElementById("gradient-color1-text").value = e.target.value;
+        });
+
+        document.getElementById("gradient-color1-text").addEventListener("input", (e) => {
+            if (hexToRgb(e.target.value)) {
+                document.getElementById("gradient-color1").value = e.target.value;
+            }
+        });
+
+        document.getElementById("gradient-color2").addEventListener("input", (e) => {
+            document.getElementById("gradient-color2-text").value = e.target.value;
+        });
+
+        document.getElementById("gradient-color2-text").addEventListener("input", (e) => {
+            if (hexToRgb(e.target.value)) {
+                document.getElementById("gradient-color2").value = e.target.value;
+            }
+        });
+
+        // Sync contrast checker inputs
+        document.getElementById("contrast-text-color").addEventListener("input", (e) => {
+            document.getElementById("contrast-text-color-text").value = e.target.value;
+        });
+
+        document.getElementById("contrast-text-color-text").addEventListener("input", (e) => {
+            if (hexToRgb(e.target.value)) {
+                document.getElementById("contrast-text-color").value = e.target.value;
+            }
+        });
+
+        document.getElementById("contrast-bg-color").addEventListener("input", (e) => {
+            document.getElementById("contrast-bg-color-text").value = e.target.value;
+        });
+
+        document.getElementById("contrast-bg-color-text").addEventListener("input", (e) => {
+            if (hexToRgb(e.target.value)) {
+                document.getElementById("contrast-bg-color").value = e.target.value;
+            }
+        });
+
+        function renderColorPalette() {
+            const palette = document.getElementById("color-palette");
+            palette.innerHTML = colorPalette.map((color, index) => `
+                <div class="color-card bg-white border-2 border-gray-200 rounded-lg p-3 cursor-pointer hover:shadow-lg relative"
+                     onclick="showSimulation('${color.hex}', '${color.name}')">
+                    ${index >= 15 ? `<button onclick="event.stopPropagation(); removeColor(${index})" class="absolute top-2 ${currentLanguage === 'ar' ? 'left-2' : 'right-2'} bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">×</button>` : ''}
+                    <div class="w-full h-24 rounded-lg mb-2 shadow-md" style="background-color: ${color.hex};"></div>
+                    <h3 class="text-sm font-bold text-gray-800 truncate">${color.name}</h3>
+                    <p class="text-xs text-gray-600 font-mono">${color.hex}</p>
+                </div>
+            `).join("");
+        }
+
+        function removeColor(index) {
+            colorPalette.splice(index, 1);
+            renderColorPalette();
+        }
+
+        function showSimulation(hex, name) {
+            const resultsSection = document.getElementById("simulation-results");
+            const simulationsGrid = document.getElementById("simulations-grid");
+            const wcagResults = document.getElementById("wcag-results");
+            const alternativeColors = document.getElementById("alternative-colors");
+            
+            document.getElementById("selected-color-preview").style.backgroundColor = hex;
+            document.getElementById("selected-color-name").textContent = name;
+            document.getElementById("selected-color-hex").textContent = hex;
+
+            const lang = currentLanguage;
+            simulationsGrid.innerHTML = visionTypes.map(vision => {
+                const simulatedColor = vision.id === "normal" ? hex : simulateColorBlindness(hex, vision.id);
+                const visionName = vision[`name${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || vision.nameEn;
+                const visionDesc = vision[`description${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || vision.descriptionEn;
+                
+                return `
+                    <div class="simulation-box p-4 bg-gray-50">
+                        <div class="text-center mb-3">
+                            <span class="text-3xl">${vision.emoji}</span>
+                            <h4 class="font-bold text-gray-800 mt-2 text-sm">${visionName}</h4>
+                            <p class="text-xs text-gray-600">${visionDesc}</p>
+                        </div>
+                        <div class="w-full h-20 rounded-lg shadow-md" style="background-color: ${simulatedColor};"></div>
+                        <p class="text-center text-xs text-gray-600 font-mono mt-2">${simulatedColor}</p>
+                    </div>
+                `;
+            }).join("");
+
+            const whiteContrast = getContrastRatio(hex, "#FFFFFF");
+            const blackContrast = getContrastRatio(hex, "#000000");
+            
+            const t = translations[currentLanguage];
+            wcagResults.innerHTML = `
+                <div class="bg-white p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold text-gray-700">${t.contrastWithWhite}</span>
+                        <span class="font-mono text-gray-900">${whiteContrast.toFixed(2)}:1</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="wcag-badge ${whiteContrast >= 4.5 ? 'wcag-pass' : 'wcag-fail'}">
+                            ${whiteContrast >= 4.5 ? '✓' : '✗'} AA ${t.normalText} (4.5:1)
+                        </span>
+                        <span class="wcag-badge ${whiteContrast >= 7 ? 'wcag-pass' : 'wcag-fail'}">
+                            ${whiteContrast >= 7 ? '✓' : '✗'} AAA ${t.normalText} (7:1)
+                        </span>
+                        <span class="wcag-badge ${whiteContrast >= 3 ? 'wcag-pass' : 'wcag-fail'}">
+                            ${whiteContrast >= 3 ? '✓' : '✗'} AA ${t.largeText} (3:1)
+                        </span>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold text-gray-700">${t.contrastWithBlack}</span>
+                        <span class="font-mono text-gray-900">${blackContrast.toFixed(2)}:1</span>
+                    </div>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="wcag-badge ${blackContrast >= 4.5 ? 'wcag-pass' : 'wcag-fail'}">
+                            ${blackContrast >= 4.5 ? '✓' : '✗'} AA ${t.normalText} (4.5:1)
+                        </span>
+                        <span class="wcag-badge ${blackContrast >= 7 ? 'wcag-pass' : 'wcag-fail'}">
+                            ${blackContrast >= 7 ? '✓' : '✗'} AAA ${t.normalText} (7:1)
+                        </span>
+                        <span class="wcag-badge ${blackContrast >= 3 ? 'wcag-pass' : 'wcag-fail'}">
+                            ${blackContrast >= 3 ? '✓' : '✗'} AA ${t.largeText} (3:1)
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            const alternatives = generateAlternativeColors(hex);
+            alternativeColors.innerHTML = alternatives.map(alt => `
+                <div class="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+                     onclick="showSimulation('${alt.hex}', '${t[alt.nameKey]}')">
+                    <div class="w-full h-16 rounded-md mb-2" style="background-color: ${alt.hex};"></div>
+                    <p class="text-xs font-semibold text-gray-700 text-center">${t[alt.nameKey]}</p>
+                    <p class="text-xs text-gray-500 font-mono text-center">${alt.hex}</p>
+                </div>
+            `).join("");
+
+            resultsSection.classList.remove("hidden");
+            resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function closeSimulation() {
+            document.getElementById("simulation-results").classList.add("hidden");
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            const container = document.getElementById("main-container");
+            const icon = document.getElementById("mode-icon");
+            const modeText = document.getElementById("mode-text");
+            
+            if (isDarkMode) {
+                container.classList.add("dark-mode");
+                icon.textContent = "☀️";
+                modeText.textContent = translations[currentLanguage].lightMode;
+            } else {
+                container.classList.remove("dark-mode");
+                icon.textContent = "🌙";
+                modeText.textContent = translations[currentLanguage].darkMode;
+            }
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const html = document.documentElement;
+            
+            if (lang === 'ar') {
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+            } else {
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', lang);
+            }
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const t = translations[lang];
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (t[key]) {
+                    el.textContent = t[key];
+                }
+            });
+
+            document.querySelectorAll('[data-key-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-key-placeholder');
+                if (t[key]) {
+                    el.setAttribute('placeholder', t[key]);
+                }
+            });
+
+            const modeText = document.getElementById("mode-text");
+            modeText.textContent = isDarkMode ? t.lightMode : t.darkMode;
+
+            // Reset simulation to close any open views
+            closeSimulation();
+            
+            // Reload library if modal is open
+            const libraryModal = document.getElementById('library-modal');
+            if (libraryModal.classList.contains('show')) {
+                loadLibraryPalettes();
+            }
+        }
+
+        // Modal Functions
+        function openModal(modalName) {
+            const modal = document.getElementById(`${modalName}-modal`);
+            if (modal) {
+                modal.classList.add('show');
+                
+                // Initialize specific modal content
+                if (modalName === 'save-load') {
+                    loadSavedPalettesList();
+                } else if (modalName === 'library') {
+                    loadLibraryPalettes();
+                } else if (modalName === 'report') {
+                    generateAccessibilityReport();
+                } else if (modalName === 'gradient') {
+                    updateGradientPreview();
+                } else if (modalName === 'contrast') {
+                    updateContrastPreview();
+                }
+            }
+        }
+
+        function closeModal(modalName) {
+            const modal = document.getElementById(`${modalName}-modal`);
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+
+        // Toast Notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            if (isError) {
+                toast.classList.add('error');
+            } else {
+                toast.classList.remove('error');
+            }
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Save/Load Functions
+        function savePalette() {
+            const name = document.getElementById('palette-name').value.trim();
+            if (!name) {
+                showToast(translations[currentLanguage].error, true);
+                return;
+            }
+
+            const savedPalettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+            savedPalettes.push({
+                name: name,
+                colors: colorPalette,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('colorPalettes', JSON.stringify(savedPalettes));
+            
+            document.getElementById('palette-name').value = '';
+            loadSavedPalettesList();
+            showToast(translations[currentLanguage].saveSuccess);
+        }
+
+        function loadSavedPalettesList() {
+            const savedPalettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+            const container = document.getElementById('saved-palettes-list');
+            const t = translations[currentLanguage];
+            
+            if (savedPalettes.length === 0) {
+                container.innerHTML = `<p class="text-gray-600 text-center py-8">${t.savedPalettes} (0)</p>`;
+                return;
+            }
+
+            container.innerHTML = savedPalettes.map((palette, index) => `
+                <div class="saved-palette-item">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-gray-800">${palette.name}</h3>
+                        <div class="flex gap-2">
+                            <button onclick="applyPalette(${index})" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded" data-key="applyPalette">${t.applyPalette}</button>
+                            <button onclick="deleteSavedPalette(${index})" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded" data-key="deletePalette">${t.deletePalette}</button>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        ${palette.colors.slice(0, 10).map(c => `<div class="w-8 h-8 rounded" style="background-color: ${c.hex}"></div>`).join('')}
+                        ${palette.colors.length > 10 ? `<div class="flex items-center text-xs text-gray-600">+${palette.colors.length - 10}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function applyPalette(index) {
+            const savedPalettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+            if (savedPalettes[index]) {
+                colorPalette = savedPalettes[index].colors;
+                renderColorPalette();
+                closeModal('save-load');
+                showToast(translations[currentLanguage].loadSuccess);
+            }
+        }
+
+        function deleteSavedPalette(index) {
+            const savedPalettes = JSON.parse(localStorage.getItem('colorPalettes') || '[]');
+            savedPalettes.splice(index, 1);
+            localStorage.setItem('colorPalettes', JSON.stringify(savedPalettes));
+            loadSavedPalettesList();
+        }
+
+        function exportPalette() {
+            const data = {
+                name: document.getElementById('palette-name').value.trim() || 'Unnamed Palette',
+                colors: colorPalette,
+                exported: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${data.name.replace(/\s+/g, '_')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast(translations[currentLanguage].exportSuccess);
+        }
+
+        function importPalette(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.colors && Array.isArray(data.colors)) {
+                        colorPalette = data.colors;
+                        renderColorPalette();
+                        showToast(translations[currentLanguage].importSuccess);
+                    }
+                } catch (error) {
+                    showToast(translations[currentLanguage].error, true);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Extract Colors from Image
+        function extractColorsFromImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.getElementById('image-canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pixels = imageData.data;
+                    const colorMap = {};
+
+                    // Sample every 10th pixel for performance
+                    for (let i = 0; i < pixels.length; i += 40) {
+                        const r = pixels[i];
+                        const g = pixels[i + 1];
+                        const b = pixels[i + 2];
+                        const hex = rgbToHex(r, g, b);
+                        colorMap[hex] = (colorMap[hex] || 0) + 1;
+                    }
+
+                    // Get top 10 colors
+                    const sortedColors = Object.entries(colorMap)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 10)
+                        .map(([hex]) => hex);
+
+                    const t = translations[currentLanguage];
+                    const preview = document.getElementById('extracted-colors-preview');
+                    preview.innerHTML = `
+                        <h3 class="text-lg font-bold text-gray-800 mb-3">${t.extractedColors}</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                            ${sortedColors.map(hex => `
+                                <div class="cursor-pointer hover:scale-105 transition-transform" onclick="addExtractedColor('${hex}')">
+                                    <div class="w-full h-20 rounded-lg shadow-md mb-2" style="background-color: ${hex}"></div>
+                                    <p class="text-xs text-gray-600 font-mono text-center">${hex}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="addAllExtractedColors(${JSON.stringify(sortedColors).replace(/"/g, '&quot;')})" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
+                            ${t.addColorBtn}
+                        </button>
+                    `;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addExtractedColor(hex) {
+            colorPalette.push({ name: hex, hex: hex });
+            renderColorPalette();
+            showToast(translations[currentLanguage].saveSuccess);
+        }
+
+        function addAllExtractedColors(colors) {
+            colors.forEach(hex => {
+                colorPalette.push({ name: hex, hex: hex });
+            });
+            renderColorPalette();
+            closeModal('extract-image');
+            showToast(translations[currentLanguage].saveSuccess);
+        }
+
+        // Smart Palette Generator
+        function generateSmartPalette() {
+            const baseColor = document.getElementById('base-color').value;
+            const type = document.getElementById('palette-type').value;
+            const colors = generateColorHarmony(baseColor, type);
+            
+            const preview = document.getElementById('generated-palette-preview');
+            preview.innerHTML = colors.map((hex, index) => `
+                <div class="cursor-pointer hover:scale-105 transition-transform" onclick="addGeneratedColor('${hex}', '${type} ${index + 1}')">
+                    <div class="w-full h-24 rounded-lg shadow-md mb-2" style="background-color: ${hex}"></div>
+                    <p class="text-xs text-gray-600 font-mono text-center">${hex}</p>
+                </div>
+            `).join('');
+        }
+
+        function addGeneratedColor(hex, name) {
+            colorPalette.push({ name: name, hex: hex });
+            renderColorPalette();
+            showToast(translations[currentLanguage].saveSuccess);
+        }
+
+        // Gradient Generator
+        function updateGradientPreview() {
+            const color1 = document.getElementById('gradient-color1').value;
+            const color2 = document.getElementById('gradient-color2').value;
+            const preview = document.getElementById('gradient-preview');
+            const cssCode = document.getElementById('gradient-css');
+            
+            const gradient = `linear-gradient(135deg, ${color1}, ${color2})`;
+            preview.style.background = gradient;
+            cssCode.value = `background: ${gradient};`;
+        }
+
+        function addGradientColors() {
+            const color1 = document.getElementById('gradient-color1').value;
+            const color2 = document.getElementById('gradient-color2').value;
+            
+            colorPalette.push({ name: 'Gradient Start', hex: color1 });
+            colorPalette.push({ name: 'Gradient End', hex: color2 });
+            renderColorPalette();
+            closeModal('gradient');
+            showToast(translations[currentLanguage].saveSuccess);
+        }
+
+        // Library Palettes
+        function loadLibraryPalettes() {
+            const t = translations[currentLanguage];
+            
+            ['material', 'flat', 'seasonal'].forEach(category => {
+                const container = document.getElementById(`${category}-palettes`);
+                container.innerHTML = libraryPalettes[category].map(palette => `
+                    <div class="saved-palette-item" onclick="applyLibraryPalette('${category}', '${palette.name}')">
+                        <h3 class="font-bold text-gray-800 mb-2">${palette.name}</h3>
+                        <div class="flex gap-1">
+                            ${palette.colors.map(hex => `<div class="flex-1 h-12 rounded" style="background-color: ${hex}"></div>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        function switchLibraryTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`library-${tabName}`).classList.add('active');
+        }
+
+        function applyLibraryPalette(category, name) {
+            const palette = libraryPalettes[category].find(p => p.name === name);
+            if (palette) {
+                colorPalette = palette.colors.map((hex, i) => ({
+                    name: `${name} ${i + 1}`,
+                    hex: hex
+                }));
+                renderColorPalette();
+                closeModal('library');
+                showToast(translations[currentLanguage].loadSuccess);
+            }
+        }
+
+        // Accessibility Report
+        function generateAccessibilityReport() {
+            const t = translations[currentLanguage];
+            const reportContent = document.getElementById('report-content');
+            
+            let totalPairs = 0;
+            let passingPairs = 0;
+            const issues = [];
+
+            // Calculate accessibility for all color pairs
+            colorPalette.forEach((color1, i) => {
+                colorPalette.forEach((color2, j) => {
+                    if (i < j) {
+                        totalPairs++;
+                        const contrast = getContrastRatio(color1.hex, color2.hex);
+                        if (contrast >= 4.5) passingPairs++;
+                        else {
+                            issues.push(`${color1.name} & ${color2.name}: ${contrast.toFixed(2)}:1`);
+                        }
+                    }
+                });
+            });
+
+            const score = totalPairs > 0 ? Math.round((passingPairs / totalPairs) * 100) : 0;
+
+            reportContent.innerHTML = `
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border-2 border-blue-200 mb-4">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">${t.accessibilityScore}</h3>
+                    <div class="text-5xl font-bold text-blue-600 mb-2">${score}%</div>
+                    <p class="text-gray-700">${passingPairs} / ${totalPairs} ${t.wcagCompliant}</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-lg border-2 border-orange-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">${t.recommendations}</h3>
+                    ${issues.length === 0 ? 
+                        `<p class="text-green-700 font-semibold">✅ ${t.wcagCompliant}</p>` :
+                        `<ul class="space-y-2">
+                            ${issues.slice(0, 10).map(issue => `<li class="text-gray-700">⚠️ ${issue}</li>`).join('')}
+                            ${issues.length > 10 ? `<li class="text-gray-600">... +${issues.length - 10} more</li>` : ''}
+                        </ul>`
+                    }
+                </div>
+            `;
+        }
+
+        // Contrast Checker
+        function updateContrastPreview() {
+            const textColor = document.getElementById('contrast-text-color').value;
+            const bgColor = document.getElementById('contrast-bg-color').value;
+            const textSize = document.getElementById('contrast-text-size').value;
+            const textWeight = document.getElementById('contrast-text-weight').value;
+            
+            const previewBox = document.getElementById('contrast-preview-box');
+            const previewText = document.getElementById('contrast-preview-text');
+            const results = document.getElementById('contrast-results');
+            const sizeValue = document.getElementById('contrast-text-size-value');
+            
+            previewBox.style.backgroundColor = bgColor;
+            previewText.style.color = textColor;
+            previewText.style.fontSize = `${textSize}px`;
+            previewText.style.fontWeight = textWeight;
+            sizeValue.textContent = `${textSize}px`;
+            
+            const contrast = getContrastRatio(textColor, bgColor);
+            const isLargeText = parseInt(textSize) >= 18 || (parseInt(textSize) >= 14 && parseInt(textWeight) >= 700);
+            const t = translations[currentLanguage];
+            
+            results.innerHTML = `
+                <div class="text-center mb-4">
+                    <div class="text-3xl font-bold text-gray-800 mb-1">${contrast.toFixed(2)}:1</div>
+                    <p class="text-sm text-gray-600">${t.contrastWithWhite}</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="text-center">
+                        <div class="wcag-badge ${contrast >= (isLargeText ? 3 : 4.5) ? 'wcag-pass' : 'wcag-fail'} w-full">
+                            ${contrast >= (isLargeText ? 3 : 4.5) ? '✓' : '✗'} AA
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="wcag-badge ${contrast >= (isLargeText ? 4.5 : 7) ? 'wcag-pass' : 'wcag-fail'} w-full">
+                            ${contrast >= (isLargeText ? 4.5 : 7) ? '✓' : '✗'} AAA
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkTimeAndSetMode() {
+            const hour = new Date().getHours();
+            if (hour >= 18 || hour < 6) {
+                isDarkMode = true;
+                document.getElementById("main-container").classList.add("dark-mode");
+                document.getElementById("mode-icon").textContent = "☀️";
+                document.getElementById("mode-text").textContent = translations[currentLanguage].lightMode;
+            }
+        }
+
+        async function onConfigChange(config) {
+            const titleElement = document.getElementById("app-title");
+            const instructionsElement = document.getElementById("instructions");
+            
+            if (titleElement) {
+                titleElement.textContent = config.app_title || defaultConfig.app_title;
+            }
+            if (instructionsElement) {
+                instructionsElement.textContent = config.instructions_text || defaultConfig.instructions_text;
+            }
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [
+                    {
+                        get: () => config.background_color || defaultConfig.background_color,
+                        set: (value) => {
+                            config.background_color = value;
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ background_color: value });
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.card_background || defaultConfig.card_background,
+                        set: (value) => {
+                            config.card_background = value;
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ card_background: value });
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.text_color || defaultConfig.text_color,
+                        set: (value) => {
+                            config.text_color = value;
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ text_color: value });
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.primary_action || defaultConfig.primary_action,
+                        set: (value) => {
+                            config.primary_action = value;
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ primary_action: value });
+                            }
+                        }
+                    }
+                ],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["app_title", config.app_title || defaultConfig.app_title],
+                ["instructions_text", config.instructions_text || defaultConfig.instructions_text]
+            ]);
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+
+        checkTimeAndSetMode();
+        renderColorPalette();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ed2cf1334315daa',t:'MTc3NjMzODUxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
