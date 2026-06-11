@@ -7,28 +7,25 @@
   <link rel="icon" type="image/png" href="6.png">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
+  <!-- استدعاء مكتبة Supabase الرسمية السحابية بدلاً من الحزم القديمة -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
         body {
             box-sizing: border-box;
             font-family: 'Tajawal', sans-serif;
         }
-        
         .glass {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
         .glass-dark {
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
         .btn-gold {
             background: linear-gradient(135deg, #D4AF37 0%, #C5A028 50%, #B8960F 100%);
             color: #1a1a2e;
@@ -36,464 +33,182 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
         }
-        
         .btn-gold:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
-        
         .btn-gold:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-        
         .emerald-gradient {
             background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%);
         }
-        
-        .status-pending {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-            color: white;
-        }
-        
-        .status-review {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-        }
-        
-        .status-complete {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-        
-        .notification-badge {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .calendar-day:hover {
-            background: rgba(212, 175, 55, 0.3);
-            cursor: pointer;
-        }
-        
-        .calendar-day.has-task {
-            background: rgba(212, 175, 55, 0.5);
-            font-weight: bold;
-        }
-        
-        .calendar-day.selected {
-            background: #D4AF37;
-            color: #1a1a2e;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.5);
-            border-radius: 4px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 175, 55, 0.7);
-        }
-        
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        .confirm-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9998;
-        }
-        
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: #D4AF37;
-            cursor: pointer;
-        }
-        
-        ::selection {
-            background-color: #308069 !important;
-            color: white !important;
-        }
-    </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
- <script src="/_sdk/telemetry_sdk.js"></script></head>
+        .status-pending { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
+        .status-review { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+        .status-complete { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .notification-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        .calendar-day:hover { background: rgba(212, 175, 55, 0.3); cursor: pointer; }
+        .calendar-day.has-task { background: rgba(212, 175, 55, 0.5); font-weight: bold; }
+        .calendar-day.selected { background: #D4AF37; color: #1a1a2e; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.7); }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; animation: slideIn 0.3s ease-out; }
+        .confirm-modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 9998; }
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: #D4AF37; cursor: pointer; }
+        ::selection { background-color: #308069 !important; color: white !important; }
+  </style>
+ </head>
  <body class="h-full emerald-gradient text-white overflow-auto">
-  <div id="app" class="min-h-full w-full flex flex-col"><!-- Toast Container -->
-   <div id="toast-container"></div><!-- Confirm Modal Container -->
-   <div id="confirm-modal-container"></div><!-- Login/Register View -->
+  <div id="app" class="min-h-full w-full flex flex-col">
+   <div id="toast-container"></div>
+   <div id="confirm-modal-container"></div>
+   
+   <!-- واجهة تسجيل الدخول -->
    <div id="auth-view" class="flex-1 flex items-center justify-center p-4">
     <div class="glass rounded-3xl p-8 w-full max-w-md slide-in">
      <div class="text-center mb-8">
-      <div class="text-6xl mb-4">
-       ✅
-      </div>
+      <div class="text-6xl mb-4">✅</div>
       <h1 id="auth-title" class="text-3xl font-bold text-amber-300">مساعد التركيز</h1>
       <p class="text-emerald-200 mt-2">نظم مهامك وحقق أهدافك</p>
      </div>
-     <div id="auth-tabs" class="flex mb-6 glass-dark rounded-xl p-1"><button id="login-tab" class="flex-1 py-3 rounded-lg btn-gold" onclick="switchAuthTab('login')">تسجيل الدخول</button> <button id="register-tab" class="flex-1 py-3 rounded-lg text-white" onclick="switchAuthTab('register')">حساب جديد</button>
-     </div><!-- Login Form -->
+     <div id="auth-tabs" class="flex mb-6 glass-dark rounded-xl p-1">
+      <button id="login-tab" class="flex-1 py-3 rounded-lg btn-gold" onclick="switchAuthTab('login')">تسجيل الدخول</button> 
+      <button id="register-tab" class="flex-1 py-3 rounded-lg text-white" onclick="switchAuthTab('register')">حساب جديد</button>
+     </div>
      <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
-      <div><label class="block text-emerald-200 mb-2 font-medium">اسم المستخدم</label> <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أدخل اسم المستخدم">
-      </div>
-      <div><label class="block text-emerald-200 mb-2 font-medium">كلمة المرور</label> <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أدخل كلمة المرور">
-      </div>
+      <div><label class="block text-emerald-200 mb-2 font-medium">اسم المستخدم</label> <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أدخل اسم المستخدم"></div>
+      <div><label class="block text-emerald-200 mb-2 font-medium">كلمة المرور</label> <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أدخل كلمة المرور"></div>
       <div id="login-error" class="text-red-400 text-sm hidden"></div><button type="submit" id="login-btn" class="w-full py-3 rounded-xl btn-gold text-lg"> دخول </button>
-     </form><!-- Register Form -->
+     </form>
      <form id="register-form" class="space-y-4 hidden" onsubmit="handleRegister(event)">
-      <div><label class="block text-emerald-200 mb-2 font-medium">اسم المستخدم</label> <input type="text" id="register-username" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="اختر اسم مستخدم">
-      </div>
-      <div><label class="block text-emerald-200 mb-2 font-medium">كلمة المرور</label> <input type="password" id="register-password" required minlength="4" class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="اختر كلمة مرور (4 أحرف على الأقل)">
-      </div>
-      <div><label class="block text-emerald-200 mb-2 font-medium">تأكيد كلمة المرور</label> <input type="password" id="register-confirm" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أعد إدخال كلمة المرور">
-      </div>
+      <div><label class="block text-emerald-200 mb-2 font-medium">اسم المستخدم</label> <input type="text" id="register-username" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="اختر اسم مستخدم"></div>
+      <div><label class="block text-emerald-200 mb-2 font-medium">كلمة المرور</label> <input type="password" id="register-password" required minlength="4" class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="اختر كلمة مرور (4 أحرف على الأقل)"></div>
+      <div><label class="block text-emerald-200 mb-2 font-medium">تأكيد كلمة المرور</label> <input type="password" id="register-confirm" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أعد إدخال كلمة المرور"></div>
       <div id="register-error" class="text-red-400 text-sm hidden"></div><button type="submit" id="register-btn" class="w-full py-3 rounded-xl btn-gold text-lg"> إنشاء حساب </button>
      </form>
     </div>
-   </div><!-- Main Dashboard View -->
-   <div id="dashboard-view" class="flex-1 flex flex-col hidden"><!-- Header -->
+   </div>
+
+   <!-- واجهة اللوحة الرئيسية -->
+   <div id="dashboard-view" class="flex-1 flex flex-col hidden">
     <header class="glass-dark p-4 sticky top-0 z-50">
      <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
-      <div class="flex items-center gap-3"><span class="text-3xl">✅</span>
-       <h1 id="dashboard-title" class="text-xl md:text-2xl font-bold text-amber-300">مساعد التركيز</h1>
-      </div>
-      <div class="flex items-center gap-4"><!-- Notification Bell -->
+      <div class="flex items-center gap-3"><span class="text-3xl">✅</span><h1 id="dashboard-title" class="text-xl md:text-2xl font-bold text-amber-300">مساعد التركيز</h1></div>
+      <div class="flex items-center gap-4">
        <div class="relative cursor-pointer" onclick="toggleNotifications()">
-        <svg class="w-7 h-7 text-amber-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-        </svg><span id="notification-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center notification-badge hidden">0</span>
-       </div><!-- Notifications Dropdown -->
+        <svg class="w-7 h-7 text-amber-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+        <span id="notification-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center notification-badge hidden">0</span>
+       </div>
        <div id="notifications-dropdown" class="absolute top-16 left-4 right-4 md:left-auto md:right-20 md:w-80 glass rounded-xl p-4 hidden z-50 slide-in">
         <h3 class="font-bold text-amber-300 mb-3">التنبيهات</h3>
-        <div id="notifications-list" class="space-y-2 max-h-60 overflow-auto custom-scrollbar">
-         <p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p>
-        </div>
-       </div><!-- User Info -->
-       <div class="flex items-center gap-2 glass rounded-full px-4 py-2"><span class="text-emerald-200">مرحباً،</span> <span id="user-display-name" class="font-bold text-amber-300">المستخدم</span>
-       </div><!-- Admin Button --> <button id="admin-btn" onclick="toggleAdminPanel()" class="glass rounded-full p-2 hover:bg-white/10 transition hidden">
-        <svg class="w-6 h-6 text-amber-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-        </svg></button> <!-- Logout --> <button onclick="handleLogout()" class="glass rounded-full p-2 hover:bg-white/10 transition">
-        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-        </svg></button>
+        <div id="notifications-list" class="space-y-2 max-h-60 overflow-auto custom-scrollbar"><p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p></div>
+       </div>
+       <div class="flex items-center gap-2 glass rounded-full px-4 py-2"><span class="text-emerald-200">مرحباً،</span> <span id="user-display-name" class="font-bold text-amber-300">المستخدم</span></div>
+       <button id="admin-btn" onclick="toggleAdminPanel()" class="glass rounded-full p-2 hover:bg-white/10 transition hidden">
+        <svg class="w-6 h-6 text-amber-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+       </button> 
+       <button onclick="handleLogout()" class="glass rounded-full p-2 hover:bg-white/10 transition">
+        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+       </button>
       </div>
      </div>
-    </header><!-- Main Content -->
-    <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full"><!-- Admin Panel -->
+    </header>
+    <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
      <div id="admin-panel" class="glass rounded-2xl p-6 mb-6 hidden slide-in">
-      <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-       </svg> إدارة المستخدمين</h2>
-      <div id="users-list" class="grid gap-3 max-h-60 overflow-auto custom-scrollbar">
-       <p class="text-emerald-200">جاري التحميل...</p>
-      </div>
-     </div><!-- Add Task Section -->
+      <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">إدارة المستخدمين</h2>
+      <div id="users-list" class="grid gap-3 max-h-60 overflow-auto custom-scrollbar"><p class="text-emerald-200">جاري التحميل...</p></div>
+     </div>
      <div class="glass rounded-2xl p-6 mb-6">
-      <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-       </svg> إضافة مهمة جديدة</h2>
+      <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">إضافة مهمة جديدة</h2>
       <form id="task-form" onsubmit="handleAddTask(event)" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-       <div><label class="block text-emerald-200 mb-2 font-medium">عنوان المهمة</label> <input type="text" id="task-title" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أدخل عنوان المهمة">
-       </div>
-       <div><label class="block text-emerald-200 mb-2 font-medium">التاريخ</label> <input type="date" id="task-date" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-       </div>
-       <div><label class="block text-emerald-200 mb-2 font-medium">الوقت</label> <input type="time" id="task-time" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-       </div>
-       <div><label class="block text-emerald-200 mb-2 font-medium">التصنيف</label> <select id="task-category" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="personal">مهام ذاتية</option> <option value="home">مهام منزلية</option> <option value="school">مهام مدرسية</option> </select>
-       </div>
-       <div><label class="block text-emerald-200 mb-2 font-medium">الحالة</label> <select id="task-status" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="pending">قيد التنفيذ</option> <option value="review">تمت المراجعة</option> <option value="complete">مكتمل</option> </select>
-       </div>
-       <div class="flex items-end"><button type="submit" id="add-task-btn" class="w-full py-3 rounded-xl btn-gold"> إضافة المهمة </button>
-       </div>
+       <div><label class="block text-emerald-200 mb-2 font-medium">عنوان المهمة</label> <input type="text" id="task-title" required class="w-full px-4 py-3 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="أدخل عنوان المهمة"></div>
+       <div><label class="block text-emerald-200 mb-2 font-medium">التاريخ</label> <input type="date" id="task-date" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"></div>
+       <div><label class="block text-emerald-200 mb-2 font-medium">الوقت</label> <input type="time" id="task-time" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"></div>
+       <div><label class="block text-emerald-200 mb-2 font-medium">التصنيف</label> <select id="task-category" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="personal">مهام ذاتية</option> <option value="home">مهام منزلية</option> <option value="school">مهام مدرسية</option> </select></div>
+       <div><label class="block text-emerald-200 mb-2 font-medium">الحالة</label> <select id="task-status" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="pending">قيد التنفيذ</option> <option value="review">تمت المراجعة</option> <option value="complete">مكتمل</option> </select></div>
+       <div class="flex items-end"><button type="submit" id="add-task-btn" class="w-full py-3 rounded-xl btn-gold"> إضافة المهمة </button></div>
       </form>
-     </div><!-- Calendar and Tasks Grid -->
-     <div class="grid lg:grid-cols-3 gap-6"><!-- Calendar -->
+     </div>
+     <div class="grid lg:grid-cols-3 gap-6">
       <div class="glass rounded-2xl p-6">
-       <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg> الرزنامة</h2><!-- Year/Month Selector -->
-       <div class="flex items-center justify-between mb-4"><button onclick="changeMonth(-1)" class="glass rounded-lg p-2 hover:bg-white/10 transition">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-         </svg></button>
-        <div class="flex gap-2"><select id="calendar-year" onchange="renderCalendar()" class="px-3 py-1 rounded-lg glass-dark text-white focus:outline-none"> </select> <select id="calendar-month" onchange="renderCalendar()" class="px-3 py-1 rounded-lg glass-dark text-white focus:outline-none"> <option value="0">يناير</option> <option value="1">فبراير</option> <option value="2">مارس</option> <option value="3">أبريل</option> <option value="4">مايو</option> <option value="5">يونيو</option> <option value="6">يوليو</option> <option value="7">أغسطس</option> <option value="8">سبتمبر</option> <option value="9">أكتوبر</option> <option value="10">نوفمبر</option> <option value="11">ديسمبر</option> </select>
-        </div><button onclick="changeMonth(1)" class="glass rounded-lg p-2 hover:bg-white/10 transition">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-         </svg></button>
-       </div><!-- Calendar Grid -->
+       <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">الرزنامة</h2>
+       <div class="flex items-center justify-between mb-4">
+        <button onclick="changeMonth(-1)" class="glass rounded-lg p-2 hover:bg-white/10 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+        <div class="flex gap-2"><select id="calendar-year" onchange="renderCalendar()" class="px-3 py-1 rounded-lg glass-dark text-white focus:outline-none"></select> <select id="calendar-month" onchange="renderCalendar()" class="px-3 py-1 rounded-lg glass-dark text-white focus:outline-none"> <option value="0">يناير</option> <option value="1">فبراير</option> <option value="2">مارس</option> <option value="3">أبريل</option> <option value="4">مايو</option> <option value="5">يونيو</option> <option value="6">يوليو</option> <option value="7">أغسطس</option> <option value="8">سبتمبر</option> <option value="9">أكتوبر</option> <option value="10">نوفمبر</option> <option value="11">ديسمبر</option> </select></div>
+        <button onclick="changeMonth(1)" class="glass rounded-lg p-2 hover:bg-white/10 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+       </div>
        <div class="grid grid-cols-7 gap-1 text-center text-sm">
-        <div class="text-amber-300 font-bold py-2">
-         أحد
-        </div>
-        <div class="text-amber-300 font-bold py-2">
-         إثن
-        </div>
-        <div class="text-amber-300 font-bold py-2">
-         ثلا
-        </div>
-        <div class="text-amber-300 font-bold py-2">
-         أرب
-        </div>
-        <div class="text-amber-300 font-bold py-2">
-         خمي
-        </div>
-        <div class="text-amber-300 font-bold py-2">
-         جمع
-        </div>
-        <div class="text-amber-300 font-bold py-2">
-         سبت
-        </div>
+        <div class="text-amber-300 font-bold py-2">أحد</div><div class="text-amber-300 font-bold py-2">إثن</div><div class="text-amber-300 font-bold py-2">ثلا</div><div class="text-amber-300 font-bold py-2">أرب</div><div class="text-amber-300 font-bold py-2">خمي</div><div class="text-amber-300 font-bold py-2">جمع</div><div class="text-amber-300 font-bold py-2">سبت</div>
        </div>
-       <div id="calendar-days" class="grid grid-cols-7 gap-1 text-center">
-       </div>
-      </div><!-- Tasks List -->
+       <div id="calendar-days" class="grid grid-cols-7 gap-1 text-center"></div>
+      </div>
       <div class="lg:col-span-2 glass rounded-2xl p-6">
        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-        <h2 class="text-xl font-bold text-amber-300 flex items-center gap-2">
-         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-         </svg> قائمة المهام <span id="tasks-count" class="text-sm font-normal text-emerald-200">(0)</span></h2><!-- Bulk Actions -->
-        <div id="bulk-actions" class="hidden items-center gap-2"><span id="selected-count" class="text-emerald-200 text-sm">0 محدد</span> <button onclick="confirmBulkDelete()" class="px-4 py-2 rounded-lg bg-red-500/80 hover:bg-red-500 transition text-sm"> حذف المحدد </button>
-        </div>
-       </div><!-- Filters -->
-       <div class="grid md:grid-cols-4 gap-3 mb-4"><input type="text" id="search-input" oninput="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="بحث..."> <select id="filter-category" onchange="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="">كل التصنيفات</option> <option value="personal">مهام ذاتية</option> <option value="home">مهام منزلية</option> <option value="school">مهام مدرسية</option> </select> <select id="filter-status" onchange="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="">كل الحالات</option> <option value="pending">قيد التنفيذ</option> <option value="review">تمت المراجعة</option> <option value="complete">مكتمل</option> </select> <input type="date" id="filter-date" onchange="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-       </div><!-- Select All -->
-       <div class="flex items-center gap-2 mb-3 text-sm"><input type="checkbox" id="select-all" onchange="toggleSelectAll()"> <label for="select-all" class="text-emerald-200 cursor-pointer">تحديد الكل</label> <button onclick="clearFilters()" class="mr-auto text-amber-300 hover:text-amber-200 transition"> مسح الفلاتر </button>
-       </div><!-- Tasks Container -->
-       <div id="tasks-container" class="space-y-3 max-h-96 overflow-auto custom-scrollbar">
-        <p class="text-emerald-200 text-center py-8">لا توجد مهام بعد. أضف مهمتك الأولى!</p>
+        <h2 class="text-xl font-bold text-amber-300 flex items-center gap-2">قائمة المهام <span id="tasks-count" class="text-sm font-normal text-emerald-200">(0)</span></h2>
+        <div id="bulk-actions" class="hidden items-center gap-2"><span id="selected-count" class="text-emerald-200 text-sm">0 محدد</span> <button onclick="confirmBulkDelete()" class="px-4 py-2 rounded-lg bg-red-500/80 hover:bg-red-500 transition text-sm"> حذف المحدد </button></div>
        </div>
-      </div>
-     </div><!-- Educational Links -->
-     <div class="glass rounded-2xl p-6 mt-6">
-      <h2 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-       </svg> روابط تعليمية</h2>
-      <div class="grid md:grid-cols-2 gap-4"><a href="https://1hiba7.github.io/Hiba-Kittaneh/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 glass-dark rounded-xl p-4 hover:bg-white/10 transition group">
-        <div class="w-12 h-12 rounded-full btn-gold flex items-center justify-center">
-         <svg class="w-6 h-6 text-emerald-900" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
-         </svg>
-        </div>
-        <div>
-         <h3 class="font-bold text-white group-hover:text-amber-300 transition">الموقع الإلكتروني</h3>
-         <p class="text-emerald-200 text-sm">زيارة الموقع الرسمي</p>
-        </div>
-        <svg class="w-5 h-5 text-amber-300 mr-auto" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-        </svg></a> <a href="https://www.youtube.com/@1Hiba7" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 glass-dark rounded-xl p-4 hover:bg-white/10 transition group">
-        <div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
-         <svg class="w-6 h-6 text-white" fill="currentColor" viewbox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
-         </svg>
-        </div>
-        <div>
-         <h3 class="font-bold text-white group-hover:text-amber-300 transition">قناة اليوتيوب</h3>
-         <p class="text-emerald-200 text-sm">مشاهدة الفيديوهات التعليمية</p>
-        </div>
-        <svg class="w-5 h-5 text-amber-300 mr-auto" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-        </svg></a>
+       <div class="grid md:grid-cols-4 gap-3 mb-4"><input type="text" id="search-input" oninput="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white placeholder-emerald-300 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="بحث..."><select id="filter-category" onchange="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="">كل التصنيفات</option> <option value="personal">مهام ذاتية</option> <option value="home">مهام منزلية</option> <option value="school">مهام مدرسية</option> </select> <select id="filter-status" onchange="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="">كل الحالات</option> <option value="pending">قيد التنفيذ</option> <option value="review">تمت المراجعة</option> <option value="complete">مكتمل</option> </select> <input type="date" id="filter-date" onchange="filterTasks()" class="px-4 py-2 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"></div>
+       <div class="flex items-center gap-2 mb-3 text-sm"><input type="checkbox" id="select-all" onchange="toggleSelectAll()"> <label for="select-all" class="text-emerald-200 cursor-pointer">تحديد الكل</label> <button onclick="clearFilters()" class="mr-auto text-amber-300 hover:text-amber-200 transition"> مسح الفلاتر </button></div>
+       <div id="tasks-container" class="space-y-3 max-h-96 overflow-auto custom-scrollbar"><p class="text-emerald-200 text-center py-8">لا توجد مهام بعد. أضف مهمتك الأولى!</p></div>
       </div>
      </div>
-    </main><!-- Footer -->
+    </main>
     <footer class="glass-dark p-4 mt-auto">
      <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-      <p id="footer-text" class="text-center text-emerald-200 text-sm">الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p><a href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass hover:bg-blue-500/30 transition text-white font-medium text-sm group border border-white/20 hover:border-blue-400/50">
-       <svg class="w-5 h-5 text-amber-300 group-hover:text-blue-300 transition" fill="currentColor" viewbox="0 0 24 24">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
-       </svg><span class="md:inline hidden">العودة للموسوعة الرئيسية</span> <span class="md:hidden">الموسوعة</span> </a>
+      <p id="footer-text" class="text-center text-emerald-200 text-sm">الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p>
      </div>
     </footer>
    </div>
-  </div><!-- Edit Task Modal -->
+  </div>
+
+  <!-- نافذة تعديل المهام -->
   <div id="edit-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden p-4">
    <div class="glass rounded-2xl p-6 w-full max-w-md slide-in">
     <h2 class="text-xl font-bold text-amber-300 mb-4">تعديل المهمة</h2>
     <form id="edit-form" onsubmit="handleEditTask(event)" class="space-y-4"><input type="hidden" id="edit-task-id">
-     <div><label class="block text-emerald-200 mb-2 font-medium">عنوان المهمة</label> <input type="text" id="edit-title" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-     </div>
-     <div><label class="block text-emerald-200 mb-2 font-medium">التاريخ</label> <input type="date" id="edit-date" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-     </div>
-     <div><label class="block text-emerald-200 mb-2 font-medium">الوقت</label> <input type="time" id="edit-time" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-     </div>
-     <div><label class="block text-emerald-200 mb-2 font-medium">التصنيف</label> <select id="edit-category" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="personal">مهام ذاتية</option> <option value="home">مهام منزلية</option> <option value="school">مهام مدرسية</option> </select>
-     </div>
-     <div><label class="block text-emerald-200 mb-2 font-medium">الحالة</label> <select id="edit-status" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="pending">قيد التنفيذ</option> <option value="review">تمت المراجعة</option> <option value="complete">مكتمل</option> </select>
-     </div>
-     <div class="flex gap-3"><button type="submit" class="flex-1 py-3 rounded-xl btn-gold">حفظ التغييرات</button> <button type="button" onclick="closeEditModal()" class="flex-1 py-3 rounded-xl glass-dark hover:bg-white/10 transition">إلغاء</button>
-     </div>
+     <div><label class="block text-emerald-200 mb-2 font-medium">عنوان المهمة</label> <input type="text" id="edit-title" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"></div>
+     <div><label class="block text-emerald-200 mb-2 font-medium">التاريخ</label> <input type="date" id="edit-date" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"></div>
+     <div><label class="block text-emerald-200 mb-2 font-medium">الوقت</label> <input type="time" id="edit-time" required class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"></div>
+     <div><label class="block text-emerald-200 mb-2 font-medium">التصنيف</label> <select id="edit-category" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="personal">مهام ذاتية</option> <option value="home">مهام منزلية</option> <option value="school">مهام مدرسية</option> </select></div>
+     <div><label class="block text-emerald-200 mb-2 font-medium">الحالة</label> <select id="edit-status" class="w-full px-4 py-3 rounded-xl glass-dark text-white focus:outline-none focus:ring-2 focus:ring-amber-400"> <option value="pending">قيد التنفيذ</option> <option value="review">تمت المراجعة</option> <option value="complete">مكتمل</option> </select></div>
+     <div class="flex gap-3"><button type="submit" class="flex-1 py-3 rounded-xl btn-gold">حفظ التغييرات</button> <button type="button" onclick="closeEditModal()" class="flex-1 py-3 rounded-xl glass-dark hover:bg-white/10 transition">إلغاء</button></div>
     </form>
    </div>
   </div>
+
   <script>
+        // إعدادات الاتصال بـ Supabase الخاصة بكِ
+        const SUPABASE_URL = "https://tezlzdgerlycboeswzeg.supabase.co";
+        // ضعّي مفتاح الـ API العام (anon / public) الخاص بمشروعكِ بين القوسين بالأسفل
+        const SUPABASE_ANON_KEY = "اكتبي_مفتاح_الـ_anon_هنا";
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
-        let allData = [];
+        let allTasks = [];
         let selectedTasks = new Set();
         let notificationInterval = null;
         
-        const defaultConfig = {
-            app_title: 'مساعد التركيز',
-            footer_text: 'الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين',
-            background_color: '#064e3b',
-            surface_color: 'rgba(255, 255, 255, 0.15)',
-            text_color: '#ffffff',
-            primary_color: '#D4AF37',
-            secondary_color: '#10b981'
-        };
-        
-        // Initialize SDKs
         async function initApp() {
-            // Initialize Element SDK
-            if (window.elementSdk) {
-                window.elementSdk.init({
-                    defaultConfig,
-                    onConfigChange: async (config) => {
-                        const appTitle = config.app_title || defaultConfig.app_title;
-                        const footerText = config.footer_text || defaultConfig.footer_text;
-                        
-                        document.getElementById('auth-title').textContent = appTitle;
-                        document.getElementById('dashboard-title').textContent = appTitle;
-                        document.getElementById('footer-text').textContent = footerText;
-                        document.title = appTitle;
-                        
-                        // Apply colors
-                        const primaryColor = config.primary_color || defaultConfig.primary_color;
-                        const bgColor = config.background_color || defaultConfig.background_color;
-                        
-                        document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${adjustColor(bgColor, 20)} 50%, ${adjustColor(bgColor, 40)} 100%)`;
-                        
-                        document.querySelectorAll('.btn-gold').forEach(el => {
-                            el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${adjustColor(primaryColor, -10)} 50%, ${adjustColor(primaryColor, -20)} 100%)`;
-                        });
-                        
-                        document.querySelectorAll('.text-amber-300').forEach(el => {
-                            el.style.color = primaryColor;
-                        });
-                    },
-                    mapToCapabilities: (config) => ({
-                        recolorables: [
-                            {
-                                get: () => config.background_color || defaultConfig.background_color,
-                                set: (value) => window.elementSdk.setConfig({ background_color: value })
-                            },
-                            {
-                                get: () => config.surface_color || defaultConfig.surface_color,
-                                set: (value) => window.elementSdk.setConfig({ surface_color: value })
-                            },
-                            {
-                                get: () => config.text_color || defaultConfig.text_color,
-                                set: (value) => window.elementSdk.setConfig({ text_color: value })
-                            },
-                            {
-                                get: () => config.primary_color || defaultConfig.primary_color,
-                                set: (value) => window.elementSdk.setConfig({ primary_color: value })
-                            },
-                            {
-                                get: () => config.secondary_color || defaultConfig.secondary_color,
-                                set: (value) => window.elementSdk.setConfig({ secondary_color: value })
-                            }
-                        ],
-                        borderables: [],
-                        fontEditable: {
-                            get: () => config.font_family || 'Tajawal',
-                            set: (value) => {
-                                window.elementSdk.setConfig({ font_family: value });
-                                document.body.style.fontFamily = `${value}, 'Tajawal', sans-serif`;
-                            }
-                        },
-                        fontSizeable: {
-                            get: () => config.font_size || 16,
-                            set: (value) => {
-                                window.elementSdk.setConfig({ font_size: value });
-                                document.body.style.fontSize = `${value}px`;
-                            }
-                        }
-                    }),
-                    mapToEditPanelValues: (config) => new Map([
-                        ['app_title', config.app_title || defaultConfig.app_title],
-                        ['footer_text', config.footer_text || defaultConfig.footer_text]
-                    ])
-                });
-            }
-            
-            // Initialize Data SDK
-            if (window.dataSdk) {
-                const result = await window.dataSdk.init({
-                    onDataChanged: (data) => {
-                        allData = data;
-                        if (currentUser) {
-                            renderTasks();
-                            renderCalendar();
-                            renderUsersList();
-                            checkNotifications();
-                        }
-                    }
-                });
-                
-                if (!result.isOk) {
-                    showToast('خطأ في تحميل البيانات', 'error');
-                }
-            }
-            
-            // Initialize calendar year selector
             initCalendarYears();
             renderCalendar();
         }
         
-        function adjustColor(hex, percent) {
-            if (hex.startsWith('rgba')) return hex;
-            const num = parseInt(hex.replace('#', ''), 16);
-            const r = Math.min(255, Math.max(0, (num >> 16) + percent));
-            const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percent));
-            const b = Math.min(255, Math.max(0, (num & 0x0000FF) + percent));
-            return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
-        }
-        
-        // Toast Notifications
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast px-6 py-3 rounded-xl ${type === 'error' ? 'bg-red-500' : type === 'warning' ? 'bg-orange-500' : 'bg-emerald-500'} text-white font-medium shadow-lg`;
             toast.textContent = message;
             container.appendChild(toast);
-            
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transition = 'opacity 0.3s';
@@ -501,7 +216,6 @@
             }, 3000);
         }
         
-        // Confirm Modal
         function showConfirmModal(message, onConfirm) {
             const container = document.getElementById('confirm-modal-container');
             container.innerHTML = `
@@ -515,47 +229,33 @@
                     </div>
                 </div>
             `;
-            container.dataset.callback = 'pending';
             window.confirmCallback = onConfirm;
         }
         
-        function closeConfirmModal(e) {
+        function closeConfirmModal() {
             document.getElementById('confirm-modal-container').innerHTML = '';
             window.confirmCallback = null;
         }
         
         function executeConfirm() {
-            if (window.confirmCallback) {
-                window.confirmCallback();
-            }
+            if (window.confirmCallback) window.confirmCallback();
             closeConfirmModal();
         }
         
-        // Auth Functions
         function switchAuthTab(tab) {
             const loginTab = document.getElementById('login-tab');
             const registerTab = document.getElementById('register-tab');
             const loginForm = document.getElementById('login-form');
             const registerForm = document.getElementById('register-form');
-            
             if (tab === 'login') {
-                loginTab.classList.add('btn-gold');
-                loginTab.classList.remove('text-white');
-                registerTab.classList.remove('btn-gold');
-                registerTab.classList.add('text-white');
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
+                loginTab.classList.add('btn-gold'); loginTab.classList.remove('text-white');
+                registerTab.classList.remove('btn-gold'); registerTab.classList.add('text-white');
+                loginForm.classList.remove('hidden'); registerForm.classList.add('hidden');
             } else {
-                registerTab.classList.add('btn-gold');
-                registerTab.classList.remove('text-white');
-                loginTab.classList.remove('btn-gold');
-                loginTab.classList.add('text-white');
-                registerForm.classList.remove('hidden');
-                loginForm.classList.add('hidden');
+                registerTab.classList.add('btn-gold'); registerTab.classList.remove('text-white');
+                loginTab.classList.remove('btn-gold'); loginTab.classList.add('text-white');
+                registerForm.classList.remove('hidden'); loginForm.classList.add('hidden');
             }
-            
-            document.getElementById('login-error').classList.add('hidden');
-            document.getElementById('register-error').classList.add('hidden');
         }
         
         async function handleRegister(e) {
@@ -572,33 +272,24 @@
                 return;
             }
             
-            const users = allData.filter(d => d.type === 'user');
-            if (users.some(u => u.username === username)) {
-                errorEl.textContent = 'اسم المستخدم موجود مسبقاً';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            if (allData.length >= 999) {
-                errorEl.textContent = 'تم الوصول للحد الأقصى من البيانات';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
             btn.disabled = true;
             btn.textContent = 'جاري الإنشاء...';
             
-            const result = await window.dataSdk.create({
-                type: 'user',
-                username: username,
-                password: password,
-                createdAt: new Date().toISOString()
-            });
+            // التحقق من وجود المستخدم سحابياً
+            const { data: existingUser } = await _supabase.from('users').select('*').eq('username', username);
+            if (existingUser && existingUser.length > 0) {
+                errorEl.textContent = 'اسم المستخدم موجود مسبقاً';
+                errorEl.classList.remove('hidden');
+                btn.disabled = false; btn.textContent = 'إنشاء حساب';
+                return;
+            }
             
+            // الإدخال السحابي في Supabase
+            const { error } = await _supabase.from('users').insert([{ username, password }]);
             btn.disabled = false;
             btn.textContent = 'إنشاء حساب';
             
-            if (result.isOk) {
+            if (!error) {
                 showToast('تم إنشاء الحساب بنجاح!');
                 switchAuthTab('login');
                 document.getElementById('login-username').value = username;
@@ -614,29 +305,27 @@
             const password = document.getElementById('login-password').value;
             const errorEl = document.getElementById('login-error');
             
-            const users = allData.filter(d => d.type === 'user');
-            const user = users.find(u => u.username === username && u.password === password);
+            const { data: users, error } = await _supabase.from('users').select('*').eq('username', username).eq('password', password);
             
-            if (!user) {
+            if (error || !users || users.length === 0) {
                 errorEl.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
                 errorEl.classList.remove('hidden');
                 return;
             }
             
-            currentUser = user;
+            currentUser = users[0];
             document.getElementById('user-display-name').textContent = username;
             
-            // Show admin button for first user (admin)
-            const allUsers = users.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            if (allUsers[0] && allUsers[0].__backendId === user.__backendId) {
+            // إظهار لوحة الإدارة لأول مستخدم في النظام
+            const { data: allRegisteredUsers } = await _supabase.from('users').select('*').order('created_at', { ascending: true });
+            if (allRegisteredUsers && allRegisteredUsers[0].id === currentUser.id) {
                 document.getElementById('admin-btn').classList.remove('hidden');
             }
             
             document.getElementById('auth-view').classList.add('hidden');
             document.getElementById('dashboard-view').classList.remove('hidden');
             
-            renderTasks();
-            renderCalendar();
+            await fetchAndRenderTasks();
             startNotificationCheck();
             showToast(`مرحباً ${username}!`);
         }
@@ -645,7 +334,6 @@
             currentUser = null;
             selectedTasks.clear();
             if (notificationInterval) clearInterval(notificationInterval);
-            
             document.getElementById('auth-view').classList.remove('hidden');
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('admin-btn').classList.add('hidden');
@@ -654,48 +342,44 @@
             document.getElementById('register-form').reset();
         }
         
-        function toggleAdminPanel() {
+        async function toggleAdminPanel() {
             const panel = document.getElementById('admin-panel');
             panel.classList.toggle('hidden');
             if (!panel.classList.contains('hidden')) {
-                renderUsersList();
+                const container = document.getElementById('users-list');
+                const { data: users } = await _supabase.from('users').select('*').order('created_at', { ascending: true });
+                if (!users || users.length === 0) {
+                    container.innerHTML = '<p class="text-emerald-200">لا يوجد مستخدمين مسجلين</p>';
+                    return;
+                }
+                container.innerHTML = users.map((u, index) => `
+                    <div class="flex items-center justify-between glass-dark rounded-xl p-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full btn-gold flex items-center justify-center font-bold text-emerald-900">
+                                ${u.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p class="font-bold">${u.username}</p>
+                                <p class="text-emerald-200 text-xs">${index === 0 ? 'مدير' : 'مستخدم'}</p>
+                            </div>
+                        </div>
+                        <p class="text-emerald-200 text-sm">${new Date(u.created_at).toLocaleDateString('ar')}</p>
+                    </div>
+                `).join('');
             }
         }
         
-        function renderUsersList() {
-            const container = document.getElementById('users-list');
-            const users = allData.filter(d => d.type === 'user');
-            
-            if (users.length === 0) {
-                container.innerHTML = '<p class="text-emerald-200">لا يوجد مستخدمين مسجلين</p>';
-                return;
-            }
-            
-            container.innerHTML = users.map((user, index) => `
-                <div class="flex items-center justify-between glass-dark rounded-xl p-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full btn-gold flex items-center justify-center font-bold text-emerald-900">
-                            ${user.username.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <p class="font-bold">${user.username}</p>
-                            <p class="text-emerald-200 text-xs">${index === 0 ? 'مدير' : 'مستخدم'}</p>
-                        </div>
-                    </div>
-                    <p class="text-emerald-200 text-sm">${new Date(user.createdAt).toLocaleDateString('ar')}</p>
-                </div>
-            `).join('');
+        async function fetchAndRenderTasks() {
+            if (!currentUser) return;
+            const { data: tasks } = await _supabase.from('tasks').select('*').eq('username', currentUser.username);
+            allTasks = tasks || [];
+            renderTasks();
+            renderCalendar();
         }
         
         async function handleAddTask(e) {
             e.preventDefault();
-            
             if (!currentUser) return;
-            
-            if (allData.length >= 999) {
-                showToast('تم الوصول للحد الأقصى من البيانات (999)', 'warning');
-                return;
-            }
             
             const title = document.getElementById('task-title').value.trim();
             const date = document.getElementById('task-date').value;
@@ -704,40 +388,23 @@
             const status = document.getElementById('task-status').value;
             const btn = document.getElementById('add-task-btn');
             
-            btn.disabled = true;
-            btn.textContent = 'جاري الإضافة...';
+            btn.disabled = true; btn.textContent = 'جاري الإضافة...';
             
-            const result = await window.dataSdk.create({
-                type: 'task',
-                username: currentUser.username,
-                title: title,
-                date: date,
-                time: time,
-                category: category,
-                status: status,
-                createdAt: new Date().toISOString()
-            });
+            const { error } = await _supabase.from('tasks').insert([{
+                username: currentUser.username, title, date, time, category, status
+            }]);
             
-            btn.disabled = false;
-            btn.textContent = 'إضافة المهمة';
-            
-            if (result.isOk) {
+            btn.disabled = false; btn.textContent = 'إضافة المهمة';
+            if (!error) {
                 showToast('تم إضافة المهمة بنجاح!');
                 document.getElementById('task-form').reset();
+                await fetchAndRenderTasks();
             } else {
                 showToast('حدث خطأ أثناء إضافة المهمة', 'error');
             }
         }
         
-        function getUserTasks() {
-            if (!currentUser) return [];
-            return allData.filter(d => d.type === 'task' && d.username === currentUser.username);
-        }
-        
-        function filterTasks() {
-            renderTasks();
-        }
-        
+        function filterTasks() { renderTasks(); }
         function clearFilters() {
             document.getElementById('search-input').value = '';
             document.getElementById('filter-category').value = '';
@@ -748,34 +415,19 @@
         
         function renderTasks() {
             const container = document.getElementById('tasks-container');
-            let tasks = getUserTasks();
+            let tasks = [...allTasks];
             
-            // Apply filters
             const search = document.getElementById('search-input').value.toLowerCase();
             const category = document.getElementById('filter-category').value;
             const status = document.getElementById('filter-status').value;
             const date = document.getElementById('filter-date').value;
             
-            if (search) {
-                tasks = tasks.filter(t => t.title.toLowerCase().includes(search));
-            }
-            if (category) {
-                tasks = tasks.filter(t => t.category === category);
-            }
-            if (status) {
-                tasks = tasks.filter(t => t.status === status);
-            }
-            if (date) {
-                tasks = tasks.filter(t => t.date === date);
-            }
+            if (search) tasks = tasks.filter(t => t.title.toLowerCase().includes(search));
+            if (category) tasks = tasks.filter(t => t.category === category);
+            if (status) tasks = tasks.filter(t => t.status === status);
+            if (date) tasks = tasks.filter(t => t.date === date);
             
-            // Sort by date and time
-            tasks.sort((a, b) => {
-                const dateA = new Date(`${a.date}T${a.time}`);
-                const dateB = new Date(`${b.date}T${b.time}`);
-                return dateA - dateB;
-            });
-            
+            tasks.sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
             document.getElementById('tasks-count').textContent = `(${tasks.length})`;
             
             if (tasks.length === 0) {
@@ -783,356 +435,146 @@
                 return;
             }
             
-            const categoryNames = {
-                personal: 'ذاتية',
-                home: 'منزلية',
-                school: 'مدرسية'
-            };
-            
-            const statusNames = {
-                pending: 'قيد التنفيذ',
-                review: 'تمت المراجعة',
-                complete: 'مكتمل'
-            };
+            const categoryNames = { personal: 'ذاتية', home: 'منزلية', school: 'مدرسية' };
+            const statusNames = { pending: 'قيد التنفيذ', review: 'تمت المراجعة', complete: 'مكتمل' };
             
             container.innerHTML = tasks.map(task => `
-                <div class="glass-dark rounded-xl p-4 flex items-start gap-3 fade-in" data-task-id="${task.__backendId}">
-                    <input type="checkbox" 
-                           ${selectedTasks.has(task.__backendId) ? 'checked' : ''} 
-                           onchange="toggleTaskSelection('${task.__backendId}')"
-                           class="mt-1">
+                <div class="glass-dark rounded-xl p-4 flex items-start gap-3 fade-in">
+                    <input type="checkbox" ${selectedTasks.has(task.id) ? 'checked' : ''} onchange="toggleTaskSelection(${task.id})" class="mt-1">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-start justify-between gap-2 mb-2">
                             <h3 class="font-bold text-lg break-words">${escapeHtml(task.title)}</h3>
-                            <span class="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap status-${task.status}">
-                                ${statusNames[task.status]}
-                            </span>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap status-${task.status}">${statusNames[task.status]}</span>
                         </div>
                         <div class="flex flex-wrap gap-3 text-sm text-emerald-200">
-                            <span class="flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                ${formatDate(task.date)}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                ${task.time}
-                            </span>
-                            <span class="flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                </svg>
-                                ${categoryNames[task.category]}
-                            </span>
+                            <span class="flex items-center gap-1">${formatDate(task.date)}</span>
+                            <span class="flex items-center gap-1">${task.time}</span>
+                            <span class="flex items-center gap-1">${categoryNames[task.category]}</span>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="openEditModal('${task.__backendId}')" 
-                                class="p-2 rounded-lg glass hover:bg-white/10 transition" title="تعديل">
-                            <svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                        </button>
-                        <button onclick="confirmDeleteTask('${task.__backendId}')" 
-                                class="p-2 rounded-lg glass hover:bg-red-500/30 transition" title="حذف">
-                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
+                        <button onclick="openEditModal(${task.id})" class="p-2 rounded-lg glass hover:bg-white/10 transition"><svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                        <button onclick="confirmDeleteTask(${task.id})" class="p-2 rounded-lg glass hover:bg-red-500/30 transition"><svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                     </div>
                 </div>
             `).join('');
-            
             updateBulkActions();
         }
         
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('ar', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
-        }
-        
-        function toggleTaskSelection(taskId) {
-            if (selectedTasks.has(taskId)) {
-                selectedTasks.delete(taskId);
-            } else {
-                selectedTasks.add(taskId);
-            }
-            updateBulkActions();
-        }
+        function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function formatDate(dateStr) { return new Date(dateStr).toLocaleDateString('ar', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }); }
+        function toggleTaskSelection(taskId) { if (selectedTasks.has(taskId)) selectedTasks.delete(taskId); else selectedTasks.add(taskId); updateBulkActions(); }
         
         function toggleSelectAll() {
             const selectAll = document.getElementById('select-all').checked;
-            const tasks = getUserTasks();
-            
-            if (selectAll) {
-                tasks.forEach(t => selectedTasks.add(t.__backendId));
-            } else {
-                selectedTasks.clear();
-            }
-            
+            if (selectAll) allTasks.forEach(t => selectedTasks.add(t.id)); else selectedTasks.clear();
             renderTasks();
         }
         
         function updateBulkActions() {
             const bulkActions = document.getElementById('bulk-actions');
             const selectedCount = document.getElementById('selected-count');
-            
             if (selectedTasks.size > 0) {
-                bulkActions.classList.remove('hidden');
-                bulkActions.classList.add('flex');
-                selectedCount.textContent = `${selectedTasks.size} محدد`;
+                bulkActions.classList.replace('hidden', 'flex'); selectedCount.textContent = `${selectedTasks.size} محدد`;
             } else {
-                bulkActions.classList.add('hidden');
-                bulkActions.classList.remove('flex');
+                bulkActions.classList.replace('flex', 'hidden');
             }
         }
         
-        function confirmDeleteTask(taskId) {
-            showConfirmModal('هل أنت متأكد من حذف هذه المهمة؟', () => deleteTask(taskId));
-        }
+        function confirmDeleteTask(taskId) { showConfirmModal('هل أنت متأكد من حذف هذه المهمة؟', async () => {
+            const { error } = await _supabase.from('tasks').delete().eq('id', taskId);
+            if (!error) { showToast('تم حذف المهمة'); await fetchAndRenderTasks(); }
+        }); }
         
-        async function deleteTask(taskId) {
-            const task = allData.find(d => d.__backendId === taskId);
-            if (!task) return;
-            
-            const result = await window.dataSdk.delete(task);
-            if (result.isOk) {
-                selectedTasks.delete(taskId);
-                showToast('تم حذف المهمة');
-            } else {
-                showToast('حدث خطأ أثناء الحذف', 'error');
-            }
-        }
+        function confirmBulkDelete() { showConfirmModal(`هل أنت متأكد من حذف ${selectedTasks.size} مهمة؟`, async () => {
+            const ids = Array.from(selectedTasks);
+            const { error } = await _supabase.from('tasks').delete().in('id', ids);
+            if (!error) { showToast(`تم الحذف بنجاح`); selectedTasks.clear(); await fetchAndRenderTasks(); }
+        }); }
         
-        function confirmBulkDelete() {
-            showConfirmModal(`هل أنت متأكد من حذف ${selectedTasks.size} مهمة؟`, bulkDeleteTasks);
-        }
-        
-        async function bulkDeleteTasks() {
-            const tasksToDelete = Array.from(selectedTasks);
-            let deleted = 0;
-            
-            for (const taskId of tasksToDelete) {
-                const task = allData.find(d => d.__backendId === taskId);
-                if (task) {
-                    const result = await window.dataSdk.delete(task);
-                    if (result.isOk) {
-                        deleted++;
-                        selectedTasks.delete(taskId);
-                    }
-                }
-            }
-            
-            showToast(`تم حذف ${deleted} مهمة`);
-        }
-        
-        // Edit Modal Functions
         function openEditModal(taskId) {
-            const task = allData.find(d => d.__backendId === taskId);
+            const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
-            
             document.getElementById('edit-task-id').value = taskId;
             document.getElementById('edit-title').value = task.title;
             document.getElementById('edit-date').value = task.date;
             document.getElementById('edit-time').value = task.time;
             document.getElementById('edit-category').value = task.category;
             document.getElementById('edit-status').value = task.status;
-            
             document.getElementById('edit-modal').classList.remove('hidden');
         }
         
-        function closeEditModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
-        }
+        function closeEditModal() { document.getElementById('edit-modal').classList.add('hidden'); }
         
         async function handleEditTask(e) {
             e.preventDefault();
+            const id = document.getElementById('edit-task-id').value;
+            const title = document.getElementById('edit-title').value.trim();
+            const date = document.getElementById('edit-date').value;
+            const time = document.getElementById('edit-time').value;
+            const category = document.getElementById('edit-category').value;
+            const status = document.getElementById('edit-status').value;
             
-            const taskId = document.getElementById('edit-task-id').value;
-            const task = allData.find(d => d.__backendId === taskId);
-            if (!task) return;
-            
-            const updatedTask = {
-                ...task,
-                title: document.getElementById('edit-title').value.trim(),
-                date: document.getElementById('edit-date').value,
-                time: document.getElementById('edit-time').value,
-                category: document.getElementById('edit-category').value,
-                status: document.getElementById('edit-status').value
-            };
-            
-            const result = await window.dataSdk.update(updatedTask);
-            
-            if (result.isOk) {
-                closeEditModal();
-                showToast('تم تحديث المهمة');
-            } else {
-                showToast('حدث خطأ أثناء التحديث', 'error');
-            }
+            const { error } = await _supabase.from('tasks').update({ title, date, time, category, status }).eq('id', id);
+            if (!error) { closeEditModal(); showToast('تم تحديث المهمة'); await fetchAndRenderTasks(); }
         }
         
-        // Calendar Functions
         function initCalendarYears() {
             const yearSelect = document.getElementById('calendar-year');
             yearSelect.innerHTML = '';
             for (let year = 2026; year <= 2030; year++) {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearSelect.appendChild(option);
+                const opt = document.createElement('option'); opt.value = year; opt.textContent = year; yearSelect.appendChild(opt);
             }
-            
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            if (currentYear >= 2026 && currentYear <= 2030) {
-                yearSelect.value = currentYear;
-            } else {
-                yearSelect.value = 2026;
-            }
-            document.getElementById('calendar-month').value = now.getMonth();
+            yearSelect.value = new Date().getFullYear();
+            document.getElementById('calendar-month').value = new Date().getMonth();
         }
         
         function changeMonth(delta) {
-            const monthSelect = document.getElementById('calendar-month');
-            const yearSelect = document.getElementById('calendar-year');
-            
-            let month = parseInt(monthSelect.value) + delta;
-            let year = parseInt(yearSelect.value);
-            
-            if (month > 11) {
-                month = 0;
-                year++;
-            } else if (month < 0) {
-                month = 11;
-                year--;
-            }
-            
-            if (year >= 2026 && year <= 2030) {
-                monthSelect.value = month;
-                yearSelect.value = year;
-                renderCalendar();
-            }
+            const mSelect = document.getElementById('calendar-month');
+            const ySelect = document.getElementById('calendar-year');
+            let m = parseInt(mSelect.value) + delta; let y = parseInt(ySelect.value);
+            if (m > 11) { m = 0; y++; } else if (m < 0) { m = 11; y--; }
+            if (y >= 2026 && y <= 2030) { mSelect.value = m; ySelect.value = y; renderCalendar(); }
         }
         
         function renderCalendar() {
             const container = document.getElementById('calendar-days');
             const year = parseInt(document.getElementById('calendar-year').value);
             const month = parseInt(document.getElementById('calendar-month').value);
-            
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const startDay = firstDay.getDay();
-            const daysInMonth = lastDay.getDate();
-            
-            const tasks = getUserTasks();
-            const taskDates = new Set(tasks.map(t => t.date));
-            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const taskDates = new Set(allTasks.map(t => t.date));
             const filterDate = document.getElementById('filter-date')?.value || '';
             
             let html = '';
-            
-            // Empty cells for days before start
-            for (let i = 0; i < startDay; i++) {
-                html += '<div class="py-2"></div>';
-            }
-            
-            // Days of month
+            for (let i = 0; i < firstDay; i++) html += '<div class="py-2"></div>';
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const hasTask = taskDates.has(dateStr);
-                const isSelected = dateStr === filterDate;
-                
-                html += `
-                    <div class="py-2 rounded-lg cursor-pointer calendar-day ${hasTask ? 'has-task' : ''} ${isSelected ? 'selected' : ''}"
-                         onclick="selectCalendarDate('${dateStr}')">
-                        ${day}
-                    </div>
-                `;
+                html += `<div class="py-2 rounded-lg cursor-pointer calendar-day ${taskDates.has(dateStr) ? 'has-task' : ''} ${dateStr === filterDate ? 'selected' : ''}" onclick="selectCalendarDate('${dateStr}')">${day}</div>`;
             }
-            
             container.innerHTML = html;
         }
         
-        function selectCalendarDate(dateStr) {
-            document.getElementById('filter-date').value = dateStr;
-            filterTasks();
-            renderCalendar();
-        }
+        function selectCalendarDate(dateStr) { document.getElementById('filter-date').value = dateStr; filterTasks(); renderCalendar(); }
         
-        // Notifications
-        function startNotificationCheck() {
-            checkNotifications();
-            notificationInterval = setInterval(checkNotifications, 60000); // Check every minute
-        }
-        
+        function startNotificationCheck() { checkNotifications(); setInterval(checkNotifications, 60000); }
         function checkNotifications() {
-            const tasks = getUserTasks();
             const now = new Date();
-            const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
-            
-            const upcomingTasks = tasks.filter(task => {
-                if (task.status === 'complete') return false;
-                const taskDateTime = new Date(`${task.date}T${task.time}`);
-                return taskDateTime > now && taskDateTime <= twoHoursFromNow;
-            });
-            
+            const twoHours = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+            const upcoming = allTasks.filter(t => t.status !== 'complete' && new Date(`${t.date}T${t.time}`) > now && new Date(`${t.date}T${t.time}`) <= twoHours);
             const badge = document.getElementById('notification-badge');
             const list = document.getElementById('notifications-list');
             
-            if (upcomingTasks.length > 0) {
-                badge.classList.remove('hidden');
-                badge.textContent = upcomingTasks.length;
-                
-                list.innerHTML = upcomingTasks.map(task => {
-                    const taskDateTime = new Date(`${task.date}T${task.time}`);
-                    const diffMinutes = Math.round((taskDateTime - now) / (1000 * 60));
-                    const timeText = diffMinutes < 60 ? `${diffMinutes} دقيقة` : `${Math.round(diffMinutes / 60)} ساعة`;
-                    
-                    return `
-                        <div class="glass-dark rounded-lg p-3">
-                            <p class="font-bold text-amber-300">${escapeHtml(task.title)}</p>
-                            <p class="text-emerald-200 text-sm">متبقي ${timeText}</p>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Show toast for first upcoming task
-                if (upcomingTasks.length > 0) {
-                    const firstTask = upcomingTasks[0];
-                    showToast(`تذكير: ${firstTask.title} خلال ساعتين أو أقل!`, 'warning');
-                }
+            if (upcoming.length > 0) {
+                badge.classList.remove('hidden'); badge.textContent = upcoming.length;
+                list.innerHTML = upcoming.map(t => `<div class="glass-dark rounded-lg p-3"><p class="font-bold text-amber-300">${escapeHtml(t.title)}</p></div>`).join('');
             } else {
-                badge.classList.add('hidden');
-                list.innerHTML = '<p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p>';
+                badge.classList.add('hidden'); list.innerHTML = '<p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p>';
             }
         }
+        function toggleNotifications() { document.getElementById('notifications-dropdown').classList.toggle('hidden'); }
         
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notifications-dropdown');
-            dropdown.classList.toggle('hidden');
-        }
-        
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', (e) => {
-            const notifDropdown = document.getElementById('notifications-dropdown');
-            const notifBtn = e.target.closest('[onclick="toggleNotifications()"]');
-            
-            if (!notifBtn && !e.target.closest('#notifications-dropdown')) {
-                notifDropdown.classList.add('hidden');
-            }
-        });
-        
-        // Initialize app
         initApp();
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0687b8a4f87e75e',t:'MTc4MDU5MjMwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  </script>
+ </body>
 </html>
