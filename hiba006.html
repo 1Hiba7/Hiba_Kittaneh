@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl" class="h-full">
  <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>مساعد التركيز | هبة كتانة</title>
   <link rel="icon" type="image/png" href="6.png">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
@@ -108,14 +108,18 @@
      <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
       <div class="flex items-center gap-3"><span class="text-3xl">✅</span><h1 id="dashboard-title" class="text-xl md:text-2xl font-bold text-amber-300">مساعد التركيز</h1></div>
       <div class="flex items-center gap-4">
+       <!-- زر التنبيهات مع القائمة المدمجة داخله -->
        <div class="relative cursor-pointer" onclick="toggleNotifications()">
         <svg class="w-7 h-7 text-amber-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
         <span id="notification-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center notification-badge hidden">0</span>
+        
+        <!-- نافذة التنبيهات - موضوعة داخل نفس الزر (مرتبطة به) وتظهر أسفله تماماً ومحاذية لليمين -->
+        <div id="notifications-dropdown" class="absolute top-full left-auto right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-xs glass rounded-xl p-4 hidden z-50 slide-in shadow-xl">
+         <h3 class="font-bold text-amber-300 mb-3">التنبيهات</h3>
+         <div id="notifications-list" class="space-y-2 max-h-60 overflow-auto custom-scrollbar"><p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p></div>
+        </div>
        </div>
-        <div id="notifications-dropdown" class="absolute top-16 left-4 right-4 md:right-auto md:left-0 md:w-80 glass rounded-xl p-4 hidden z-50 slide-in">
-        <h3 class="font-bold text-amber-300 mb-3">التنبيهات</h3>
-        <div id="notifications-list" class="space-y-2 max-h-60 overflow-auto custom-scrollbar"><p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p></div>
-       </div>
+       
        <div class="flex items-center gap-2 glass rounded-full px-4 py-2"><span class="text-emerald-200">مرحباً،</span> <span id="user-display-name" class="font-bold text-amber-300">المستخدم</span></div>
        <button id="admin-btn" onclick="toggleAdminPanel()" class="glass rounded-full p-2 hover:bg-white/10 transition hidden">
         <svg class="w-6 h-6 text-amber-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -196,7 +200,6 @@
   <script>
         // إعدادات الاتصال بـ Supabase الخاصة بكِ
         const SUPABASE_URL = "https://tezlzdgerlycboeswzeg.supabase.co";
-        // ضعّي مفتاح الـ API العام (anon / public) الخاص بمشروعكِ بين القوسين بالأسفل
         const SUPABASE_ANON_KEY = "sb_publishable_0Jg7JXYahXrhDI5_PglBDw_-UCHvn2k";
 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -283,7 +286,6 @@
             btn.disabled = true;
             btn.textContent = 'جاري الإنشاء...';
             
-            // التحقق من وجود المستخدم سحابياً
             const { data: existingUser } = await _supabase.from('users').select('*').eq('username', username);
             if (existingUser && existingUser.length > 0) {
                 errorEl.textContent = 'اسم المستخدم موجود مسبقاً';
@@ -292,7 +294,6 @@
                 return;
             }
             
-            // الإدخال السحابي في Supabase
             const { error } = await _supabase.from('users').insert([{ username, password }]);
             btn.disabled = false;
             btn.textContent = 'إنشاء حساب';
@@ -324,7 +325,6 @@
             currentUser = users[0];
             document.getElementById('user-display-name').textContent = username;
             
-            // إظهار لوحة الإدارة لأول مستخدم في النظام
             const { data: allRegisteredUsers } = await _supabase.from('users').select('*').order('created_at', { ascending: true });
             if (allRegisteredUsers && allRegisteredUsers[0].id === currentUser.id) {
                 document.getElementById('admin-btn').classList.remove('hidden');
@@ -348,6 +348,9 @@
             document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById('login-form').reset();
             document.getElementById('register-form').reset();
+            // إغلاق التنبيهات إذا كانت مفتوحة
+            const notifDropdown = document.getElementById('notifications-dropdown');
+            if (notifDropdown) notifDropdown.classList.add('hidden');
         }
         
         async function toggleAdminPanel() {
@@ -488,7 +491,7 @@
             }
         }
         
-        function confirmDeleteTask(taskId) { showConfirmModal('هل أنت متأكد من حذف هذه謀مة؟', async () => {
+        function confirmDeleteTask(taskId) { showConfirmModal('هل أنت متأكد من حذف هذه المهمة؟', async () => {
             const { error } = await _supabase.from('tasks').delete().eq('id', taskId);
             if (!error) { showToast('تم حذف المهمة'); await fetchAndRenderTasks(); }
         }); }
@@ -579,15 +582,18 @@
                 badge.classList.add('hidden'); list.innerHTML = '<p class="text-emerald-200 text-sm">لا توجد تنبيهات حالياً</p>';
             }
         }
-        function toggleNotifications() { document.getElementById('notifications-dropdown').classList.toggle('hidden'); }
+        function toggleNotifications() { 
+            const dropdown = document.getElementById('notifications-dropdown');
+            if (dropdown) dropdown.classList.toggle('hidden');
+        }
         
         function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 
-        // Close dropdowns when clicking outside
+        // إغلاق قائمة التنبيهات عند النقر خارجها (مع تحسين التوافق)
         document.addEventListener('click', (e) => {
             const notifDropdown = document.getElementById('notifications-dropdown');
-            const notifBtn = e.target.closest('[onclick="toggleNotifications()"]');
-            if (notifDropdown && !notifBtn && !e.target.closest('#notifications-dropdown')) {
+            const notifBtn = e.target.closest('.relative.cursor-pointer'); // الزر الذي يحتوي على الجرس
+            if (notifDropdown && !notifDropdown.classList.contains('hidden') && !notifBtn && !notifDropdown.contains(e.target)) {
                 notifDropdown.classList.add('hidden');
             }
         });
