@@ -19,10 +19,6 @@
             overflow-x: hidden;
             user-select: none;
         }
-        /* حل مشكلة المستطيل الذهبي عند التصدير كصورة */
-        .gold-text {
-            color: #b89047;
-        }
         .toast {
             position: fixed;
             bottom: 30px;
@@ -34,12 +30,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             z-index: 10000;
         }
-        
-        .theme-gold { background: #fdfbf7; border-color: #d4af37; color: #85581A; }
-        .theme-royal { background: #f4f6fa; border-color: #1e3a8a; color: #1e3a8a; }
-        .theme-emerald { background: #f3f9f6; border-color: #065f46; color: #065f46; }
-        .theme-sky { background: #f0f9ff; border-color: #0369a1; color: #0369a1; }
-        .theme-rose { background: #fff5f5; border-color: #9d174d; color: #9d174d; }
 
         /* ستايل الصورة القابلة للسحب والتحريك */
         .draggable-image {
@@ -47,11 +37,15 @@
             cursor: move;
             touch-action: none;
             display: inline-block;
+            z-index: 50;
         }
-        .frame-none { border: none; }
-        .frame-circle { border-radius: 50%; }
-        .frame-gold { border: 4px double #d4af37; padding: 2px; }
-        .frame-royal { border: 3px solid #1e3a8a; padding: 2px; }
+        
+        /* تحسين جودة الخطوط العربية عند التنزيل كمحرك صور */
+        .fix-arabic-render {
+            letter-spacing: 0px !important;
+            word-spacing: 0px !important;
+            transform: translateZ(0);
+        }
   </style>
  </head>
  <body class="h-full bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50">
@@ -70,9 +64,17 @@
         // متغيرات الصورة المرفوعة والتحكم بها
         let uploadedImageSrc = '';
         let imageSize = 100;
-        let imageFrame = 'frame-none';
         let isDragging = false;
-        let startX, startY, initialLeft = 50, initialTop = 50;
+        let startX, startY;
+        let initialLeft = 50, initialTop = 50;
+
+        // الألوان المخصصة عبر نافذة الألوان HEX
+        let customColors = {
+            bgColor: '#fdfbf7',
+            borderColor: '#d4af37',
+            textColor: '#85581A',
+            frameColor: '#d4af37'
+        };
 
         let formData = {
             introText: 'تتقدم إدارة المدرسة بالامتنان والتقدير لـ',
@@ -80,7 +82,6 @@
             message: 'لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته للجنة التكنولوجية',
             senderName: 'إدارة المدرسة الشرعية',
             certificateType: 'appreciation',
-            theme: 'theme-gold',
             fontFamily: 'Amiri'
         };
 
@@ -152,14 +153,14 @@
                 <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-8">
                     <span class="font-bold text-amber-900">مرحباً بكِ في نظام التصميم الذكي المطور</span>
                     <div class="flex gap-2">
-                        <button onclick="switchView('gallery')" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي السحابي</button>
+                        <button onclick="goToGallery()" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي السحابي</button>
                         <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">خروج</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- لوحة التحكم بالتصميم والألوان والصور -->
-                    <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4 lg:col-span-1">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4 lg:col-span-1 overflow-y-auto max-h-[80vh]">
                         <h3 class="text-xl font-bold text-gray-800 border-b pb-2">لوحة تخصيص الشهادة</h3>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">النص الافتتاحي للشهادة</label>
@@ -178,36 +179,43 @@
                             <input type="text" id="senderName" value="${formData.senderName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl">
                         </div>
                         
-                        <!-- إضافة أدوات الصورة المرفوعة -->
+                        <!-- إضافة أدوات الصورة المرفوعة المحدثة تمنع الالتصاق -->
                         <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
                             <label class="block text-xs font-bold text-amber-800">✨ إضافة شعار أو صورة للشهادة</label>
                             <input type="file" id="imageUploader" accept="image/*" onchange="handleImageUpload(event)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
                             
                             <div>
                                 <label class="block text-xs text-gray-600 mb-1">حجم الصورة المرفوعة</label>
-                                <input type="range" id="imageSizeSlider" min="40" max="200" value="${imageSize}" oninput="changeImageSize(this.value)" class="w-full accent-amber-600">
+                                <input type="range" id="imageSizeSlider" min="40" max="250" value="${imageSize}" oninput="changeImageSize(this.value)" class="w-full accent-amber-600">
                             </div>
 
+                            <!-- لوحة ألوان HEX لإطار الصورة الشخصية -->
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">إطار الصورة</label>
-                                <select id="imageFrameSelect" onchange="changeImageFrame(this.value)" class="w-full p-1.5 text-xs border rounded-lg bg-white">
-                                    <option value="frame-none">بدون إطار</option>
-                                    <option value="frame-circle">شكل دائري</option>
-                                    <option value="frame-gold">إطار ذهبي ملكي</option>
-                                    <option value="frame-royal">إطار كحلي مدرسي</option>
-                                </select>
+                                <label class="block text-xs text-gray-600 mb-1">لون إطار الصورة (HEX)</label>
+                                <div class="flex gap-2 items-center">
+                                    <input type="color" id="frameColorPicker" value="${customColors.frameColor}" oninput="updateCustomColors('frameColor', this.value)" class="w-10 h-8 border rounded cursor-pointer">
+                                    <input type="text" id="frameColorText" value="${customColors.frameColor}" oninput="updateCustomColors('frameColor', this.value)" class="w-full p-1 text-xs border rounded-lg text-center">
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">لون وقالب الشهادة</label>
-                            <select id="certificateTheme" onchange="updatePreview()" class="w-full p-3 border rounded-xl">
-                                <option value="theme-gold" ${formData.theme === 'theme-gold' ? 'selected' : ''}>الملكي الذهبي الكلاسيكي</option>
-                                <option value="theme-royal" ${formData.theme === 'theme-royal' ? 'selected' : ''}>الأزرق الملوكي الفاخر</option>
-                                <option value="theme-emerald" ${formData.theme === 'theme-emerald' ? 'selected' : ''}>الزمردي الأخضر التعليمي</option>
-                                <option value="theme-sky" ${formData.theme === 'theme-sky' ? 'selected' : ''}>السماوي الهادئ المتميز</option>
-                                <option value="theme-rose" ${formData.theme === 'theme-rose' ? 'selected' : ''}>الوردي المخملي المبدع</option>
-                            </select>
+                        <!-- التخصيص الكامل للألوان عبر لوحة HEX للشهادة -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                            <label class="block text-xs font-bold text-slate-800">🎨 تخصيص ألوان الشهادة بالكامل (HEX)</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="text-center">
+                                    <label class="block text-[11px] text-gray-600 mb-1">الخلفية</label>
+                                    <input type="color" value="${customColors.bgColor}" oninput="updateCustomColors('bgColor', this.value)" class="w-full h-8 border rounded cursor-pointer">
+                                </div>
+                                <div class="text-center">
+                                    <label class="block text-[11px] text-gray-600 mb-1">الإطار الداخلي</label>
+                                    <input type="color" value="${customColors.borderColor}" oninput="updateCustomColors('borderColor', this.value)" class="w-full h-8 border rounded cursor-pointer">
+                                </div>
+                                <div class="text-center">
+                                    <label class="block text-[11px] text-gray-600 mb-1">النصوص</label>
+                                    <input type="color" value="${customColors.textColor}" oninput="updateCustomColors('textColor', this.value)" class="w-full h-8 border rounded cursor-pointer">
+                                </div>
+                            </div>
                         </div>
 
                         <div>
@@ -226,25 +234,25 @@
                     </div>
 
                     <!-- صندوق المعاينة الحية للشهادة الجمالية والتفاعلية -->
-                    <div class="flex items-center justify-center lg:col-span-2">
-                        <div id="certificate-capture-area" class="w-full max-w-2xl border-[12px] p-12 rounded-xl shadow-2xl relative text-center min-h-[480px] flex flex-col justify-between theme-gold overflow-hidden" style="font-family: 'Amiri', serif;">
+                    <div class="flex items-center justify-center lg:col-span-2 select-none relative">
+                        <div id="certificate-capture-area" class="w-full max-w-2xl border-[12px] p-12 rounded-xl shadow-2xl relative text-center min-h-[480px] flex flex-col justify-between overflow-hidden" style="font-family: 'Amiri', serif; background-color: ${customColors.bgColor}; border-color: ${customColors.borderColor}; color: ${customColors.textColor};">
                             
-                            <!-- حاوية الصورة المرفوعة التفاعلية داخل الشهادة -->
-                            <div id="imageContainer" class="draggable-image ${imageFrame}" style="left: ${initialLeft}px; top: ${initialTop}px; display: ${uploadedImageSrc ? 'block' : 'none'};">
-                                <img id="certCustomImage" src="${uploadedImageSrc}" style="width: ${imageSize}px; height: auto;" class="${imageFrame === 'frame-circle' ? 'rounded-full' : ''}">
+                            <!-- حاوية الصورة المرفوعة التفاعلية قابلة للتثبيت التام -->
+                            <div id="imageContainer" class="draggable-image" style="left: ${initialLeft}px; top: ${initialTop}px; display: ${uploadedImageSrc ? 'block' : 'none'}; border: 4px double ${customColors.frameColor}; padding: 2px;">
+                                <img id="certCustomImage" src="${uploadedImageSrc}" style="width: ${imageSize}px; height: auto;">
                             </div>
 
-                            <div class="font-bold text-2xl tracking-widest border-b border-opacity-20 pb-3 mb-6" id="view-cert-title" style="color: inherit;">شهادة تقدير وعرفان</div>
+                            <div class="font-bold text-3xl tracking-widest border-b border-opacity-20 pb-3 mb-6 fix-arabic-render" id="view-cert-title" style="color: ${customColors.textColor};">شهادة تقدير وعرفان</div>
                             
                             <div class="my-auto space-y-6 z-10">
-                                <p class="opacity-80 text-base" id="view-intro">${formData.introText}</p>
-                                <h2 class="text-4xl font-bold gold-text" id="view-recipient" style="text-shadow: 0px 1px 1px rgba(0,0,0,0.1);">${formData.recipientName}</h2>
-                                <p class="leading-relaxed px-8 text-lg" id="view-message">${formData.message}</p>
+                                <p class="opacity-80 text-base fix-arabic-render" id="view-intro">${formData.introText}</p>
+                                <h2 class="text-4xl font-bold fix-arabic-render" id="view-recipient" style="color: ${customColors.textColor}; text-shadow: 0px 1px 1px rgba(0,0,0,0.1);">${formData.recipientName}</h2>
+                                <p class="leading-relaxed px-8 text-lg fix-arabic-render" id="view-message">${formData.message}</p>
                             </div>
                             
                             <div class="flex justify-between items-center mt-8 pt-4 border-t border-opacity-20 text-sm z-10">
                                 <div class="opacity-70">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</div>
-                                <div class="font-bold text-lg" id="view-sender">${formData.senderName}</div>
+                                <div class="font-bold text-lg fix-arabic-render" id="view-sender">${formData.senderName}</div>
                             </div>
                         </div>
                     </div>
@@ -258,14 +266,18 @@
                 recordsHTML = '<p class="col-span-full text-center text-gray-500 py-12">لم تقم بحفظ أي شهادات سحابياً حتى الآن.</p>';
             } else {
                 currentRecords.forEach(cert => {
+                    // استخدام الألوان المخزنة سحابياً أو الألوان الافتراضية إذا كانت قديمة
+                    const bg = cert.theme && cert.theme.startsWith('#') ? cert.theme : '#fdfbf7';
+                    const txt = cert.font_family && cert.font_family.startsWith('#') ? cert.font_family : '#85581A';
+                    
                     recordsHTML += `
-                    <div class="p-6 rounded-xl shadow border flex flex-col justify-between ${cert.theme || 'theme-gold'}" style="font-family: ${cert.font_family || 'Amiri'}, sans-serif;">
+                    <div class="p-6 rounded-xl shadow border flex flex-col justify-between" style="background-color: ${bg}; color: ${txt}; font-family: 'Amiri', sans-serif;">
                         <div>
-                            <h4 class="text-lg font-bold">${cert.recipient_name}</h4>
-                            <p class="text-sm my-2 line-clamp-2 opacity-90">${cert.message}</p>
-                            <small class="opacity-70">بواسطة: ${cert.sender_name}</small>
+                            <h4 class="text-lg font-bold">${cert.recipient_name || 'طالب'}</h4>
+                            <p class="text-sm my-2 line-clamp-2 opacity-90">${cert.message || ''}</p>
+                            <small class="opacity-70">بواسطة: ${cert.sender_name || 'الإدارة'}</small>
                         </div>
-                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-600 bg-opacity-10 text-red-700 text-sm font-semibold rounded-lg hover:bg-opacity-20 transition">🗑️ حذف سحابياً</button>
+                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-600 bg-opacity-20 text-red-700 text-sm font-semibold rounded-lg hover:bg-opacity-30 transition">🗑️ حذف سحابياً</button>
                     </div>`;
                 });
             }
@@ -282,7 +294,27 @@
             </div>`;
         }
 
-        // معالجة رفع وتحميل الصورة من جهاز المستخدم
+        // تحديث مخصص للألوان من النوافذ الـ HEX حياً وتلقائياً
+        function updateCustomColors(key, value) {
+            customColors[key] = value;
+            
+            const previewArea = document.getElementById('certificate-capture-area');
+            const titleArea = document.getElementById('view-cert-title');
+            const recipientArea = document.getElementById('view-recipient');
+            const imgContainer = document.getElementById('imageContainer');
+            const colorTextEl = document.getElementById('frameColorText');
+
+            if (previewArea) {
+                previewArea.style.backgroundColor = customColors.bgColor;
+                previewArea.style.borderColor = customColors.borderColor;
+                previewArea.style.color = customColors.textColor;
+            }
+            if (titleArea) titleArea.style.color = customColors.textColor;
+            if (recipientArea) recipientArea.style.color = customColors.textColor;
+            if (imgContainer) imgContainer.style.borderColor = customColors.frameColor;
+            if (colorTextEl && key === 'frameColor') colorTextEl.value = value;
+        }
+
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -306,29 +338,18 @@
             if (imgEl) imgEl.style.width = `${size}px`;
         }
 
-        function changeImageFrame(frame) {
-            imageFrame = frame;
-            const containerEl = document.getElementById('imageContainer');
-            const imgEl = document.getElementById('certCustomImage');
-            if (containerEl && imgEl) {
-                containerEl.className = `draggable-image ${frame}`;
-                if (frame === 'frame-circle') imgEl.classList.add('rounded-full');
-                else imgEl.classList.remove('rounded-full');
-            }
-        }
-
-        // برمجة عملية السحب والإفلات للماوس واللمس للهواتف
+        // حل مشكلة التصاق الصورة بمؤشر الماوس بإنشاء تثبيت كامل (Pointer Up Global)
         function setupDraggable() {
             const container = document.getElementById('imageContainer');
             const area = document.getElementById('certificate-capture-area');
             if (!container || !area) return;
 
             container.addEventListener('mousedown', dragStart);
-            area.addEventListener('mousemove', dragMove);
+            window.addEventListener('mousemove', dragMove);
             window.addEventListener('mouseup', dragEnd);
 
             container.addEventListener('touchstart', dragStart, { passive: false });
-            area.addEventListener('touchmove', dragMove, { passive: false });
+            window.addEventListener('touchmove', dragMove, { passive: false });
             window.addEventListener('touchend', dragEnd);
 
             function dragStart(e) {
@@ -341,14 +362,13 @@
 
             function dragMove(e) {
                 if (!isDragging) return;
-                e.preventDefault();
                 const clientX = e.clientX || (e.touches && e.touches[0].clientX);
                 const clientY = e.clientY || (e.touches && e.touches[0].clientY);
                 
                 let x = clientX - startX;
                 let y = clientY - startY;
 
-                // إبقاء الصورة داخل حدود الشهادة
+                // إبقاء الصورة داخل حدود الشهادة الفنية
                 x = Math.max(0, Math.min(x, area.clientWidth - container.clientWidth));
                 y = Math.max(0, Math.min(y, area.clientHeight - container.clientHeight));
 
@@ -358,10 +378,8 @@
                 initialTop = y;
             }
 
-            if (typeof dragEnd !== 'function') {
-                window.dragEnd = function() { isDragging = false; };
-            } else {
-                dragEnd = function() { isDragging = false; };
+            function dragEnd() {
+                isDragging = false; // فك الارتباط التام فور ترك زر الفأرة أو اللمس
             }
         }
 
@@ -370,12 +388,17 @@
             renderApp();
         }
 
+        async function goToGallery() {
+            showToast('⏳ جاري تحديث وجلب بيانات المعرض من السحابة...');
+            await loadUserCertificates();
+            switchView('gallery');
+        }
+
         function updatePreview() {
             formData.introText = document.getElementById('introText').value;
             formData.recipientName = document.getElementById('recipientName').value;
             formData.message = document.getElementById('message').value;
             formData.senderName = document.getElementById('senderName').value;
-            formData.theme = document.getElementById('certificateTheme').value;
             formData.fontFamily = document.getElementById('certificateFont').value;
 
             document.getElementById('view-intro').textContent = formData.introText;
@@ -384,8 +407,7 @@
             document.getElementById('view-sender').textContent = formData.senderName;
             
             const previewArea = document.getElementById('certificate-capture-area');
-            previewArea.className = `w-full max-w-2xl border-[12px] p-12 rounded-xl shadow-2xl relative text-center min-h-[480px] flex flex-col justify-between ${formData.theme} overflow-hidden`;
-            previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
+            if (previewArea) previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
         }
 
         async function handleRegister() {
@@ -407,10 +429,10 @@
             if (!email || !password) return showToast('⚠️ يرجى إدخال البيانات');
 
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) showToast('❌ خطأ: تأكد من تفعيل الحساب من الجيميل أولاً.');
+            if (error) showToast('❌ خطأ: تأكد من بياناتك وتفعيل الحساب سحابياً.');
             else {
                 currentUser = data.user;
-                showToast('👋 أهلاً بكِ في السحابة!');
+                showToast('👋 أهلاً بكِ في سحابتكِ الرقمية!');
                 currentView = 'dashboard';
                 await loadUserCertificates();
                 renderApp();
@@ -427,6 +449,7 @@
         async function saveCertificateToSupabase() {
             if (!currentUser) return showToast('⚠️ سجل الدخول أولاً');
             
+            // تخزين بيانات الألوان الـ HEX المخصصة في قاعدة البيانات
             const { error } = await supabaseClient.from('certificates').insert([
                 {
                     user_id: currentUser.id,
@@ -434,14 +457,14 @@
                     message: formData.message,
                     sender_name: formData.senderName,
                     certificate_type: formData.certificateType,
-                    theme: formData.theme,
-                    font_family: formData.fontFamily
+                    theme: customColors.bgColor, // نرفع كود لون الخلفية
+                    font_family: customColors.textColor // نرفع كود لون النص
                 }
             ]);
 
             if (error) showToast('❌ فشل الحفظ: ' + error.message);
             else {
-                showToast('💾 تم حفظ الشهادة وقالبها اللوني في السحابة بنجاح!');
+                showToast('💾 تم حفظ الشهادة بتصميمها وألوانها الخاصة في السحابة!');
                 await loadUserCertificates();
             }
         }
@@ -460,39 +483,32 @@
         async function deleteCertificate(id) {
             const { error } = await supabaseClient.from('certificates').delete().eq('id', id);
             if (!error) {
-                showToast('🗑️ تم الحذف بنجاح من السحابة');
+                showToast('🗑 Block تم الحذف السحابي بنجاح');
                 await loadUserCertificates();
                 renderApp();
             }
         }
 
-        // تعديل كود استخراج الصور لمنع التداخل وحل مشكلة المستطيل الذهبي تماماً
+        // تحسين شامل لمنع تقطيع الكلمات والخطوط العربية الملتصقة أثناء التحميل
         async function downloadCertificateAsPNG() {
             const area = document.getElementById('certificate-capture-area');
             if (!area) return;
-            showToast('⏳ جاري استخراج الصورة الحية بدون أي تداخلات أو مشاكل بصرية...');
+            showToast('⏳ جاري دمج الخطوط العربية وحفظ الصورة بدقة فائقة...');
             
+            // تهيئة إضافية لحل مشاكل تكسر الخطوط العربية في html2canvas
             const canvas = await html2canvas(area, { 
-                scale: 2, 
+                scale: 3, // جودة أعلى ووضوح ممتاز للطباعة للمدرسة
                 useCORS: true,
                 logging: false,
+                letterRendering: false, // يمنع تكسر وتجزئة الحروف العربية المتصلة
                 backgroundColor: null
             });
+            
             const link = document.createElement('a');
-            link.download = `${formData.recipientName}-شهادة_تقدير.png`;
+            link.download = `${formData.recipientName}-شهادة_شكر.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('✅ تم تحميل الصورة بنجاح وتصحيح الألوان المتداخلة!');
-        }
-
-        function showToast(msg) {
-            const existing = document.querySelector('.toast');
-            if (existing) existing.remove();
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 4500);
+            showToast('✅ تم تحميل شهادتكِ بجودة 4K صافية!');
         }
 
         window.addEventListener('DOMContentLoaded', () => { initApp(); });
