@@ -7,31 +7,22 @@
   <title>منصة شهادات التقدير التفاعلية | هبة كتانة</title>
   <link rel="icon" type="image/png" href="3.png">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+        
         body {
             box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Tajawal', sans-serif;
             overflow-x: hidden;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;900&display=swap');
-        
-        .glass {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .certificate-container { perspective: 1500px; }
         .gold-text {
             background: linear-gradient(135deg, #C9A961 0%, #F4E4BA 25%, #D4AF37 50%, #F4E4BA 75%, #C9A961 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         .toast {
             position: fixed;
@@ -44,9 +35,15 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             z-index: 10000;
         }
+        /* ستايلات قوالب الألوان للشهادة */
+        .theme-gold { background: #fdfbf7; border-color: #d4af37; color: #85581A; }
+        .theme-royal { background: #f4f6fa; border-color: #1e3a8a; color: #1e3a8a; }
+        .theme-emerald { background: #f3f9f6; border-color: #065f46; color: #065f46; }
+        .theme-sky { background: #f0f9ff; border-color: #0369a1; color: #0369a1; }
+        .theme-rose { background: #fff5f5; border-color: #9d174d; color: #9d174d; }
   </style>
  </head>
- <body class="h-full bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+ <body class="h-full bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50">
 
   <div id="app" class="w-full h-full overflow-auto p-4 md:p-8"></div>
 
@@ -54,66 +51,46 @@
         // --- إعدادات الاتصال بـ Supabase ---
         const SUPABASE_URL = "https://lxyyrdhvcaqqdvuucnua.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_Y-_Th8vqG4IWIg2JouB5cg_cvzL2vA6";
-        
-        // تم تغيير اسم المتغير هنا إلى supabaseClient لمنع التعارض البرمجي وتوقف الصفحة
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // حالة التطبيق العامة
         let currentUser = null;
-        let currentView = 'login'; // الإطلالات المتاحة: login, register, dashboard, gallery
+        let currentView = 'login'; 
         let currentRecords = [];
-        let isLoading = false;
 
-        // بيانات النموذج الافتراضية لإنشاء الشهادة
+        // بيانات النموذج الافتراضية للشهادة تشمل التخصيصات الجديدة
         let formData = {
             recipientName: 'الطالب المتميز',
-            message: 'لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته',
+            message: 'لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته للجنة التكنولوجية',
             senderName: 'إدارة المدرسة الشرعية',
-            certificateType: 'appreciation'
+            certificateType: 'appreciation',
+            theme: 'theme-gold',
+            fontFamily: 'Amiri'
         };
 
-        // دالة بدء تشغيل التطبيق وفحص الجلسة الحالية
         async function initApp() {
-            try {
-                showLoading(true);
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-                if (session) {
-                    currentUser = session.user;
-                    currentView = 'dashboard';
-                    await loadUserCertificates();
-                } else {
-                    currentView = 'login';
-                }
-            } catch (err) {
-                console.error("خطأ أثناء الاتصال بسوبابيز:", err);
-                currentView = 'login'; // لضمان ظهور واجهة الدخول حتى لو فشل الاتصال الأولي
-            } finally {
-                showLoading(false);
-                renderApp();
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                currentView = 'dashboard';
+                await loadUserCertificates();
+            } else {
+                currentView = 'login';
             }
+            renderApp();
         }
 
-        // رندر الواجهة بناءً على الصفحة الحالية
         function renderApp() {
             const app = document.getElementById('app');
-            if (!app) return;
-            
-            if (currentView === 'login') {
-                app.innerHTML = renderLoginView();
-            } else if (currentView === 'register') {
-                app.innerHTML = renderRegisterView();
-            } else if (currentView === 'dashboard') {
-                app.innerHTML = renderDashboardView();
-            } else if (currentView === 'gallery') {
-                app.innerHTML = renderGalleryView();
-            }
+            if (currentView === 'login') app.innerHTML = renderLoginView();
+            else if (currentView === 'register') app.innerHTML = renderRegisterView();
+            else if (currentView === 'dashboard') app.innerHTML = renderDashboardView();
+            else if (currentView === 'gallery') app.innerHTML = renderGalleryView();
         }
 
-        // واجهة تسجيل الدخول
         function renderLoginView() {
             return `
             <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
-                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">مرحباً بك في منصة الشهادات التفاعلية</h2>
+                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">منصة الشهادات التفاعلية السحابية</h2>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
@@ -124,16 +101,15 @@
                         <input type="password" id="login-password" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="••••••••">
                     </div>
                     <button onclick="handleLogin()" class="w-full py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 transition">تسجيل الدخول</button>
-                    <p class="text-center text-sm text-gray-600 mt-4">ليس لديك حساب؟ <span onclick="switchView('register')" class="text-amber-600 cursor-pointer underline">أنشئ حساباً جديداً</span></p>
+                    <p class="text-center text-sm text-gray-600 mt-4">ليس لديك حساب؟ <span onclick="switchView('register')" class="text-amber-600 cursor-pointer underline">أنشئ حساباً مجانياً</span></p>
                 </div>
             </div>`;
         }
 
-        // واجهة إنشاء حساب جديد
         function renderRegisterView() {
             return `
             <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
-                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">إنشاء حساب جديد</h2>
+                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">إنشاء حساب جديد وتفعيل مجاني</h2>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
@@ -143,64 +119,76 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-1">كلمة المرور</label>
                         <input type="password" id="reg-password" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="لا تقل عن 6 خانات">
                     </div>
-                    <button onclick="handleRegister()" class="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">تسجيل حساب جديد</button>
+                    <button onclick="handleRegister()" class="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">إرسال رابط التحقق للجيميل</button>
                     <p class="text-center text-sm text-gray-600 mt-4">لديك حساب بالفعل؟ <span onclick="switchView('login')" class="text-amber-600 cursor-pointer underline">تسجيل الدخول</span></p>
                 </div>
             </div>`;
         }
 
-        // واجهة لوحة التحكم وتصميم الشهادة
         function renderDashboardView() {
             return `
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-8">
-                    <div class="flex items-center gap-4">
-                        <span class="font-bold text-amber-900">مرحباً: ${currentUser ? currentUser.email : ''}</span>
-                        <button onclick="switchView('gallery')" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي</button>
+                    <span class="font-bold text-amber-900">مرحباً بكِ في نظام التصميم الذكي</span>
+                    <div class="flex gap-2">
+                        <button onclick="switchView('gallery')" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي السحابي</button>
+                        <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">خروج</button>
                     </div>
-                    <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">تسجيل الخروج</button>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4">
-                        <h3 class="text-xl font-bold text-gray-800 border-b pb-2">أدخل بيانات الشهادة</h3>
+                        <h3 class="text-xl font-bold text-gray-800 border-b pb-2">لوحة تخصيص الشهادة</h3>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم المستلم (الطالب/ة)</label>
-                            <input type="text" id="recipientName" value="${formData.recipientName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-amber-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم الطالب/ة</label>
+                            <input type="text" id="recipientName" value="${formData.recipientName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">نص التقدير والثناء</label>
-                            <textarea id="message" rows="3" oninput="updatePreview()" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-amber-500">${formData.message}</textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">نص الثناء</label>
+                            <textarea id="message" rows="3" oninput="updatePreview()" class="w-full p-3 border rounded-xl">${formData.message}</textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم المعلم/ة أو الجهة المصدرة</label>
-                            <input type="text" id="senderName" value="${formData.senderName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-amber-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم المعلمة أو الإدارة</label>
+                            <input type="text" id="senderName" value="${formData.senderName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl">
                         </div>
+                        
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">نوع الشهادة</label>
-                            <select id="certificateType" onchange="updatePreview()" class="w-full p-3 border rounded-xl">
-                                <option value="appreciation" ${formData.certificateType === 'appreciation' ? 'selected' : ''}>شهادة تقدير وعرفان</option>
-                                <option value="excellence" ${formData.certificateType === 'excellence' ? 'selected' : ''}>شهادة تفوق وتميز</option>
-                                <option value="thanks" ${formData.certificateType === 'thanks' ? 'selected' : ''}>شهادة شكر وامتنان</option>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">قالب ولون الشهادة</label>
+                            <select id="certificateTheme" onchange="updatePreview()" class="w-full p-3 border rounded-xl">
+                                <option value="theme-gold" ${formData.theme === 'theme-gold' ? 'selected' : ''}>الملكي الذهبي الكلاسيكي</option>
+                                <option value="theme-royal" ${formData.theme === 'theme-royal' ? 'selected' : ''}>الأزرق الملوكي الفاخر</option>
+                                <option value="theme-emerald" ${formData.theme === 'theme-emerald' ? 'selected' : ''}>الزمردي الأخضر التعليمي</option>
+                                <option value="theme-sky" ${formData.theme === 'theme-sky' ? 'selected' : ''}>السماوي الهادئ المتميز</option>
+                                <option value="theme-rose" ${formData.theme === 'theme-rose' ? 'selected' : ''}>الوردي المخملي المبدع</option>
                             </select>
                         </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">نوع الخط العربي</label>
+                            <select id="certificateFont" onchange="updatePreview()" class="w-full p-3 border rounded-xl">
+                                <option value="Amiri" ${formData.fontFamily === 'Amiri' ? 'selected' : ''}>خط أميري (عريق ومزخرف)</option>
+                                <option value="Tajawal" ${formData.fontFamily === 'Tajawal' ? 'selected' : ''}>خط تجوال (حديث وأنيق)</option>
+                                <option value="Cairo" ${formData.fontFamily === 'Cairo' ? 'selected' : ''}>خط القاهرة (هندسي وجذاب)</option>
+                            </select>
+                        </div>
+
                         <div class="pt-4 flex gap-4">
-                            <button onclick="saveCertificateToSupabase()" class="flex-1 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 shadow-md">💾 حفظ سحابياً</button>
+                            <button onclick="saveCertificateToSupabase()" class="flex-1 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 shadow-md">💾 حفظ في السحابة</button>
                             <button onclick="downloadCertificateAsPNG()" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-md">🖼️ تحميل كصورة</button>
                         </div>
                     </div>
 
                     <div class="flex items-center justify-center">
-                        <div id="certificate-capture-area" class="w-full max-w-lg bg-amber-50 border-8 border-amber-300 p-8 rounded-xl shadow-2xl relative text-center min-h-[400px] flex flex-col justify-between">
-                            <div class="text-amber-700 font-bold text-lg tracking-widest border-b border-amber-200 pb-2 mb-4" id="view-cert-title">شهادة تقدير وعرفان</div>
+                        <div id="certificate-capture-area" class="w-full max-w-lg border-8 p-8 rounded-xl shadow-2xl relative text-center min-h-[420px] flex flex-col justify-between theme-gold" style="font-family: 'Amiri', serif;">
+                            <div class="font-bold text-xl tracking-widest border-b border-opacity-20 pb-2 mb-4" id="view-cert-title" style="color: inherit;">شهادة تقدير وعرفان</div>
                             <div class="my-auto space-y-4">
-                                <p class="text-gray-600 text-sm">تتقدم إدارة المدرسة بالامتنان والتقدير لـ</p>
-                                <h2 class="text-3xl font-bold text-amber-800 gold-text" id="view-recipient">${formData.recipientName}</h2>
-                                <p class="text-gray-700 leading-relaxed px-4 text-sm" id="view-message">${formData.message}</p>
+                                <p class="opacity-80 text-sm">تتقدم إدارة المدرسة بالامتنان والتقدير لـ</p>
+                                <h2 class="text-3xl font-bold gold-text" id="view-recipient">${formData.recipientName}</h2>
+                                <p class="leading-relaxed px-4 text-base" id="view-message">${formData.message}</p>
                             </div>
-                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-amber-200 text-sm">
-                                <div class="text-right text-gray-600">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</div>
-                                <div class="text-left font-bold text-amber-900" id="view-sender">${formData.senderName}</div>
+                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-opacity-20 text-sm">
+                                <div class="opacity-70">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</div>
+                                <div class="font-bold text-base" id="view-sender">${formData.senderName}</div>
                             </div>
                         </div>
                     </div>
@@ -208,7 +196,6 @@
             </div>`;
         }
 
-        // واجهة المعرض السحابي
         function renderGalleryView() {
             let recordsHTML = '';
             if (currentRecords.length === 0) {
@@ -216,14 +203,13 @@
             } else {
                 currentRecords.forEach(cert => {
                     recordsHTML += `
-                    <div class="bg-amber-50 p-6 rounded-xl shadow border border-amber-200 flex flex-col justify-between">
+                    <div class="p-6 rounded-xl shadow border flex flex-col justify-between ${cert.theme || 'theme-gold'}" style="font-family: ${cert.font_family || 'Amiri'}, sans-serif;">
                         <div>
-                            <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded font-bold">${cert.certificate_type === 'excellence' ? 'تفوق' : 'تقدير'}</span>
-                            <h4 class="text-lg font-bold text-amber-900 mt-2">${cert.recipient_name}</h4>
-                            <p class="text-gray-700 text-xs my-2 line-clamp-2">${cert.message}</p>
-                            <small class="text-gray-400">بواسطة: ${cert.sender_name}</small>
+                            <h4 class="text-lg font-bold">${cert.recipient_name}</h4>
+                            <p class="text-sm my-2 line-clamp-2 opacity-90">${cert.message}</p>
+                            <small class="opacity-70">بواسطة: ${cert.sender_name}</small>
                         </div>
-                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-100 text-red-700 text-sm font-semibold rounded-lg hover:bg-red-200 transition">🗑️ حذف من السحابة</button>
+                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-600 bg-opacity-10 text-red-700 text-sm font-semibold rounded-lg hover:bg-opacity-20 transition">🗑️ حذف سحابياً</button>
                     </div>`;
                 });
             }
@@ -231,16 +217,14 @@
             return `
             <div class="max-w-5xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-amber-900">📂 معرض شهاداتي السحابي</h2>
-                    <button onclick="switchView('dashboard')" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700">➕ تصميم شهادة جديدة</button>
+                    <h2 class="text-2xl font-bold text-amber-900">📂 معرض شهاداتي السحابي المميز</h2>
+                    <button onclick="switchView('dashboard')" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700">➕ صمم شهادة جديدة</button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     ${recordsHTML}
                 </div>
             </div>`;
         }
-
-        // --- العمليات والتحكم بالفروع والبيانات ---
 
         function switchView(view) {
             currentView = view;
@@ -251,90 +235,79 @@
             formData.recipientName = document.getElementById('recipientName').value;
             formData.message = document.getElementById('message').value;
             formData.senderName = document.getElementById('senderName').value;
-            formData.certificateType = document.getElementById('certificateType').value;
+            formData.theme = document.getElementById('certificateTheme').value;
+            formData.fontFamily = document.getElementById('certificateFont').value;
 
-            // تحديث العرض الحي
+            // تحديث النصوص
             document.getElementById('view-recipient').textContent = formData.recipientName;
             document.getElementById('view-message').textContent = formData.message;
             document.getElementById('view-sender').textContent = formData.senderName;
             
-            const typeLabels = { appreciation: 'شهادة تقدير وعرفان', excellence: 'شهادة تفوق وتميز', thanks: 'شهادة شكر وامتنان' };
-            document.getElementById('view-cert-title').textContent = typeLabels[formData.certificateType] || 'شهادة تقدير';
+            // تحديث القالب البصري والخطوط بشكل فوري وحي
+            const previewArea = document.getElementById('certificate-capture-area');
+            previewArea.className = `w-full max-w-lg border-8 p-8 rounded-xl shadow-2xl relative text-center min-h-[420px] flex flex-col justify-between ${formData.theme}`;
+            previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
         }
 
-        // تسجيل حساب جديد في السحابة
         async function handleRegister() {
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
             if (!email || !password) return showToast('⚠️ يرجى ملء كافة الحقول');
 
-            showLoading(true);
-            const { data, error } = await supabaseClient.auth.signUp({ email, password });
-            showLoading(false);
-
-            if (error) {
-                showToast('❌ خطأ: ' + error.message);
-            } else {
-                showToast('🎉 تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+            const { error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) showToast('❌ خطأ: ' + error.message);
+            else {
+                showToast('🎉 تفقد بريدك الإلكتروني الآن واضغط على رابط التحقق للتفعيل!');
                 switchView('login');
             }
         }
 
-        // تسجيل الدخول
         async function handleLogin() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-            if (!email || !password) return showToast('⚠️ يرجى إدخال البريد وكلمة المرور');
+            if (!email || !password) return showToast('⚠️ يرجى إدخال البيانات');
 
-            showLoading(true);
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            showLoading(false);
-
-            if (error) {
-                showToast('❌ فشل تسجيل الدخول: ' + error.message);
-            } else {
+            if (error) showToast('❌ خطأ: تأكد من تفعيل الحساب من الجيميل أولاً.');
+            else {
                 currentUser = data.user;
-                showToast('👋 مرحباً بك مجدداً!');
+                showToast('👋 أهلاً بكِ في السحابة!');
                 currentView = 'dashboard';
                 await loadUserCertificates();
                 renderApp();
             }
         }
 
-        // تسجيل الخروج
         async function handleLogout() {
             await supabaseClient.auth.signOut();
             currentUser = null;
-            currentRecords = [];
             currentView = 'login';
             renderApp();
         }
 
-        // حفظ الشهادة في جدول Supabase
         async function saveCertificateToSupabase() {
-            if (!currentUser) return showToast('⚠️ يجب تسجيل الدخول أولاً');
+            if (!currentUser) return showToast('⚠️ سجل الدخول أولاً');
             
-            showLoading(true);
-            const { data, error } = await supabaseClient.from('certificates').insert([
+            // حفظ البيانات مع الثيمات والخطوط المختارة في السحابة
+            const { error } = await supabaseClient.from('certificates').insert([
                 {
                     user_id: currentUser.id,
                     recipient_name: formData.recipientName,
                     message: formData.message,
                     sender_name: formData.senderName,
-                    certificate_type: formData.certificateType
+                    certificate_type: formData.certificateType,
+                    theme: formData.theme,
+                    font_family: formData.fontFamily
                 }
             ]);
-            showLoading(false);
 
-            if (error) {
-                showToast('❌ خطأ أثناء الحفظ السحابي: ' + error.message);
-            } else {
-                showToast('💾 تم حفظ الشهادة في قاعدة البيانات السحابية بنجاح!');
+            if (error) showToast('❌ فشل الحفظ: ' + error.message);
+            else {
+                showToast('💾 تم حفظ الشهادة وقالبها اللوني في السحابة بنجاح!');
                 await loadUserCertificates();
             }
         }
 
-        // جلب الشهادات المخزنة للمستخدم الحالي
         async function loadUserCertificates() {
             if (!currentUser) return;
             const { data, error } = await supabaseClient
@@ -343,41 +316,29 @@
                 .eq('user_id', currentUser.id)
                 .order('created_at', { ascending: false });
 
-            if (!error && data) {
-                currentRecords = data;
-            }
+            if (!error && data) currentRecords = data;
         }
 
-        // حذف شهادة من السحابة
         async function deleteCertificate(id) {
-            showLoading(true);
             const { error } = await supabaseClient.from('certificates').delete().eq('id', id);
-            showLoading(false);
-
-            if (error) {
-                showToast('❌ لم يتم الحذف: ' + error.message);
-            } else {
+            if (!error) {
                 showToast('🗑️ تم الحذف بنجاح من السحابة');
                 await loadUserCertificates();
                 renderApp();
             }
         }
 
-        // تحميل كصورة PNG عبر المتصفح
         async function downloadCertificateAsPNG() {
             const area = document.getElementById('certificate-capture-area');
             if (!area) return;
-            showToast('⏳ جاري إنشاء ملف الصورة الخاص بك...');
-            
+            showToast('⏳ جاري استخراج الصورة الحية الفخمة للشهادة...');
             const canvas = await html2canvas(area, { scale: 2, useCORS: true });
             const link = document.createElement('a');
-            link.download = `${formData.recipientName}-شهادة.png`;
+            link.download = `${formData.recipientName}-متميز.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('✅ تم تحميل الصورة بنجاح!');
         }
 
-        // أدوات مساعدة للـ UI
         function showToast(msg) {
             const existing = document.querySelector('.toast');
             if (existing) existing.remove();
@@ -385,17 +346,10 @@
             toast.className = 'toast';
             toast.textContent = msg;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+            setTimeout(() => toast.remove(), 4500);
         }
 
-        function showLoading(state) {
-            isLoading = state;
-        }
-
-        // بدء تشغيل التطبيق بالكامل عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            initApp();
-        });
+        window.addEventListener('DOMContentLoaded', () => { initApp(); });
   </script>
  </body>
 </html>
