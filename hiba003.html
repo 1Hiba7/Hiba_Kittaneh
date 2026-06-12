@@ -4,3186 +4,400 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>شهادة تقدير تفاعلية</title>
+  <title>منصة شهادات التقدير التفاعلية | هبة كتانة</title>
   <link rel="icon" type="image/png" href="3.png">
-  <script src="/_sdk/data_sdk.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
         body {
             box-sizing: border-box;
-        }
-        
-        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;900&family=Lalezar&family=Harmattan:wght@400;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
             font-family: 'Cairo', sans-serif;
             overflow-x: hidden;
         }
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;900&display=swap');
         
-        .certificate-container {
-            perspective: 1500px;
-            transition: transform 0.1s ease-out;
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
-        .certificate {
-            transform-style: preserve-3d;
-            transition: transform 0.3s ease-out;
-            will-change: transform;
-        }
-        
-        .confetti {
-            position: fixed;
-            width: 15px;
-            height: 15px;
-            pointer-events: none;
-            z-index: 1;
-            animation: fall linear infinite;
-        }
-        
-        @keyframes fall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100%) rotate(720deg);
-                opacity: 0.5;
-            }
-        }
-        
-        .ornament-corner {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-        }
-        
-        .ornament-top-right {
-            top: -10px;
-            right: -10px;
-        }
-        
-        .ornament-top-left {
-            top: -10px;
-            left: -10px;
-            transform: scaleX(-1);
-        }
-        
-        .ornament-bottom-right {
-            bottom: -10px;
-            right: -10px;
-            transform: scaleY(-1);
-        }
-        
-        .ornament-bottom-left {
-            bottom: -10px;
-            left: -10px;
-            transform: scale(-1);
-        }
-        
+        .certificate-container { perspective: 1500px; }
         .gold-text {
             background: linear-gradient(135deg, #C9A961 0%, #F4E4BA 25%, #D4AF37 50%, #F4E4BA 75%, #C9A961 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shimmer 3s infinite;
-            background-size: 200% 100%;
         }
-        
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .seal {
-            position: absolute;
-            bottom: 50px;
-            left: 50px;
-            width: 100px;
-            height: 100px;
-            animation: sealPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes sealPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .ribbon {
-            position: absolute;
-            top: 50%;
-            right: -30px;
-            width: 60px;
-            height: 200px;
-            background: linear-gradient(135deg, #C9A961, #F4E4BA, #D4AF37);
-            transform: translateY(-50%) rotateZ(15deg);
-            box-shadow: -3px 3px 10px rgba(0,0,0,0.2);
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
-        }
-        
-        .burst-confetti {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            animation: burstFade 1.5s ease-out forwards;
-        }
-        
-        @keyframes burstFade {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0.5);
-            }
-        }
-        
-        .input-field {
-            transition: all 0.3s ease;
-        }
-        
-        .input-field:focus {
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(201, 169, 97, 0.3);
-        }
-        
-        .save-button {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .save-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .save-button:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
         .toast {
             position: fixed;
             bottom: 30px;
             right: 30px;
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             z-index: 10000;
-            animation: slideIn 0.5s ease-out;
-            font-weight: 600;
         }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
         .loading-spinner {
             border: 3px solid rgba(201, 169, 97, 0.3);
             border-top: 3px solid #C9A961;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .color-picker-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            border: 3px solid #fff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        
-        .color-picker-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        
-        .color-picker-button.active {
-            border-color: #D4AF37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
-        }
-        
-        .certificate-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .certificate-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        
-        .dark-mode {
-            background: linear-gradient(to bottom right, #1a1a2e, #16213e) !important;
-        }
-        
-        .dark-mode .bg-white {
-            background: #0f3460 !important;
-            color: #e8e8e8 !important;
-        }
-        
-        .dark-mode .input-field {
-            background: #1a1a2e !important;
-            color: #e8e8e8 !important;
-            border-color: #D4AF37 !important;
-        }
-        
-        .dark-mode .nav-tab {
-            color: #e8e8e8 !important;
-        }
-        
-        .dark-mode .preview-text {
-            color: inherit !important;
-        }
-        
-        .dark-mode .text-gray-700 {
-            color: #e8e8e8 !important;
-        }
-        
-        .dark-mode .bg-gray-50 {
-            background: #1a1a2e !important;
-        }
-        
-        .dark-mode .bg-gray-100 {
-            background: #16213e !important;
-        }
-        
-        .dark-mode .border-gray-200 {
-            border-color: #3a3a5a !important;
-        }
-        
-        .profile-stat:hover {
-            transform: translateY(-5px) rotate(2deg);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-        }
-        
-        .gallery-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-        }
-        
-        .gallery-card:hover .certificate-preview {
-            transform: scale(1.05);
-        }
-        
-        .password-toggle {
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.3s ease;
-        }
-        
-        .password-toggle:hover {
-            transform: scale(1.1);
-        }
-        
-        .undo-redo-btn {
-            transition: all 0.3s ease;
-        }
-        
-        .undo-redo-btn:hover:not(:disabled) {
-            transform: scale(1.1) rotate(10deg);
-        }
-        
-        .undo-redo-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        
-        .size-selector {
-            transition: all 0.3s ease;
-        }
-        
-        .size-selector:hover {
-            transform: scale(1.05);
-        }
-        
-        .size-selector.active {
-            border: 3px solid #D4AF37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
-        }
-        
-        .visibility-toggle {
-            transition: all 0.3s ease;
-        }
-        
-        .visibility-toggle:hover {
-            transform: scale(1.05);
-        }
-        
-        .visibility-toggle.active {
-            background: linear-gradient(135deg, #D4AF37, #C9A961) !important;
-            color: white !important;
-        }
-        
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 9998;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .modal-content {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 20px;
-            z-index: 9999;
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-            animation: scaleIn 0.3s ease-out;
-            padding: 40px;
-        }
-        
-        .dark-mode .modal-content {
-            background: #0f3460 !important;
-            color: #e8e8e8 !important;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes scaleIn {
-            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        
-        .nav-tab {
-            padding: 12px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        
-        .nav-tab:hover {
-            background: rgba(212, 175, 55, 0.1);
-        }
-        
-        .nav-tab.active {
-            background: linear-gradient(135deg, #D4AF37, #C9A961);
-            color: white;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            padding: 24px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .delete-confirm {
-            background: rgba(239, 68, 68, 0.1);
-            border: 2px solid #ef4444;
-            padding: 8px 16px;
-            border-radius: 8px;
-            animation: shake 0.5s ease-in-out;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        .char-counter {
-            transition: color 0.3s ease;
-        }
-        
-        .char-counter.warning {
-            color: #f97316 !important;
-        }
-        
-        .char-counter.danger {
-            color: #ef4444 !important;
-        }
-        
-        .favorite-star {
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 24px;
-        }
-        
-        .favorite-star:hover {
-            transform: scale(1.2) rotate(72deg);
-        }
-        
-        .template-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 3px solid transparent;
-        }
-        
-        .template-card:hover {
-            transform: scale(1.05);
-            border-color: #D4AF37;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
-        }
-        
-        .template-card.selected {
-            border-color: #D4AF37;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
-        }
-        
-        .search-input {
-            transition: all 0.3s ease;
-        }
-        
-        .search-input:focus {
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
-        }
-        
-        .filter-chip {
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid #D4AF37;
-        }
-        
-        .filter-chip:hover {
-            transform: scale(1.05);
-        }
-        
-        .filter-chip.active {
-            background: linear-gradient(135deg, #D4AF37, #C9A961);
-            color: white;
-        }
-        
-        .fullscreen-preview {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        .autosave-indicator {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            z-index: 9999;
-            animation: slideDown 0.3s ease-out;
-            font-size: 14px;
-        }
-        
-        @keyframes slideDown {
-            from {
-                transform: translate(-50%, -100px);
-                opacity: 0;
-            }
-            to {
-                transform: translate(-50%, 0);
-                opacity: 1;
-            }
-        }
-    </style>
-  <style>@view-transition { navigation: auto; }</style>
- <script src="/_sdk/telemetry_sdk.js"></script></head>
- <body class="h-full">
-  <div id="app" class="w-full h-full overflow-auto bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50"></div>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+ </head>
+ <body class="h-full bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+
+  <div id="app" class="w-full h-full overflow-auto p-4 md:p-8">
+      </div>
+
   <script>
-        // Default configuration
-        const defaultConfig = {
-            certificate_title: "شهادة تقدير وعرفان",
-            subtitle_text: "تُمنح هذه الشهادة تقديراً للجهود المميزة",
-            default_message: "لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته",
-            button_text: "احفظ الشهادة",
-            login_title: "مرحباً بك في منصة الشهادات",
-            gallery_title: "معرض شهاداتي",
-            background_color: "#FEF3C7",
-            certificate_bg: "#FFFBEB",
-            gold_color: "#D4AF37",
-            text_color: "#78350F",
-            accent_color: "#C9A961",
-            font_family: "Cairo",
-            font_size: 16
-        };
-        
-        // 20 Certificate Templates
-        const certificateTemplates = {
-            classic: {
-                name: "ذهبي كلاسيكي",
-                emoji: "🏆",
-                colors: {
-                    certificate_bg: "#FFFBEB",
-                    gold_color: "#D4AF37",
-                    text_color: "#78350F",
-                    accent_color: "#C9A961"
-                }
-            },
-            silver: {
-                name: "فضي راقي",
-                emoji: "🥈",
-                colors: {
-                    certificate_bg: "#F8FAFC",
-                    gold_color: "#94A3B8",
-                    text_color: "#1E293B",
-                    accent_color: "#CBD5E1"
-                }
-            },
-            royal: {
-                name: "أزرق ملكي",
-                emoji: "👑",
-                colors: {
-                    certificate_bg: "#EFF6FF",
-                    gold_color: "#3B82F6",
-                    text_color: "#1E3A8A",
-                    accent_color: "#60A5FA"
-                }
-            },
-            elegant: {
-                name: "وردي أنيق",
-                emoji: "🌸",
-                colors: {
-                    certificate_bg: "#FDF2F8",
-                    gold_color: "#EC4899",
-                    text_color: "#831843",
-                    accent_color: "#F9A8D4"
-                }
-            },
-            emerald: {
-                name: "أخضر زمردي",
-                emoji: "💚",
-                colors: {
-                    certificate_bg: "#ECFDF5",
-                    gold_color: "#10B981",
-                    text_color: "#064E3B",
-                    accent_color: "#6EE7B7"
-                }
-            },
-            sunset: {
-                name: "غروب برتقالي",
-                emoji: "🌅",
-                colors: {
-                    certificate_bg: "#FFF7ED",
-                    gold_color: "#EA580C",
-                    text_color: "#7C2D12",
-                    accent_color: "#FB923C"
-                }
-            },
-            ocean: {
-                name: "محيط أزرق",
-                emoji: "🌊",
-                colors: {
-                    certificate_bg: "#F0F9FF",
-                    gold_color: "#0EA5E9",
-                    text_color: "#0C4A6E",
-                    accent_color: "#7DD3FC"
-                }
-            },
-            forest: {
-                name: "غابة خضراء",
-                emoji: "🌲",
-                colors: {
-                    certificate_bg: "#F0FDF4",
-                    gold_color: "#16A34A",
-                    text_color: "#14532D",
-                    accent_color: "#86EFAC"
-                }
-            },
-            lavender: {
-                name: "خزامى بنفسجي",
-                emoji: "💜",
-                colors: {
-                    certificate_bg: "#FAF5FF",
-                    gold_color: "#A855F7",
-                    text_color: "#581C87",
-                    accent_color: "#D8B4FE"
-                }
-            },
-            bronze: {
-                name: "برونزي تقليدي",
-                emoji: "🥉",
-                colors: {
-                    certificate_bg: "#FEF3C7",
-                    gold_color: "#B45309",
-                    text_color: "#78350F",
-                    accent_color: "#FCD34D"
-                }
-            },
-            ruby: {
-                name: "ياقوت أحمر",
-                emoji: "💎",
-                colors: {
-                    certificate_bg: "#FEF2F2",
-                    gold_color: "#DC2626",
-                    text_color: "#7F1D1D",
-                    accent_color: "#FCA5A5"
-                }
-            },
-            midnight: {
-                name: "منتصف الليل",
-                emoji: "🌙",
-                colors: {
-                    certificate_bg: "#F1F5F9",
-                    gold_color: "#475569",
-                    text_color: "#1E293B",
-                    accent_color: "#94A3B8"
-                }
-            },
-            peacock: {
-                name: "ريش الطاووس",
-                emoji: "🦚",
-                colors: {
-                    certificate_bg: "#ECFEFF",
-                    gold_color: "#06B6D4",
-                    text_color: "#164E63",
-                    accent_color: "#67E8F9"
-                }
-            },
-            coral: {
-                name: "مرجاني وردي",
-                emoji: "🪸",
-                colors: {
-                    certificate_bg: "#FFF1F2",
-                    gold_color: "#F43F5E",
-                    text_color: "#881337",
-                    accent_color: "#FDA4AF"
-                }
-            },
-            mint: {
-                name: "نعناع منعش",
-                emoji: "🍃",
-                colors: {
-                    certificate_bg: "#F0FDFA",
-                    gold_color: "#14B8A6",
-                    text_color: "#134E4A",
-                    accent_color: "#5EEAD4"
-                }
-            },
-            amber: {
-                name: "كهرماني دافئ",
-                emoji: "🔥",
-                colors: {
-                    certificate_bg: "#FFFBEB",
-                    gold_color: "#F59E0B",
-                    text_color: "#78350F",
-                    accent_color: "#FCD34D"
-                }
-            },
-            plum: {
-                name: "برقوق داكن",
-                emoji: "🍇",
-                colors: {
-                    certificate_bg: "#FDF4FF",
-                    gold_color: "#C026D3",
-                    text_color: "#701A75",
-                    accent_color: "#F0ABFC"
-                }
-            },
-            steel: {
-                name: "فولاذ صناعي",
-                emoji: "⚙️",
-                colors: {
-                    certificate_bg: "#F9FAFB",
-                    gold_color: "#6B7280",
-                    text_color: "#1F2937",
-                    accent_color: "#D1D5DB"
-                }
-            },
-            lime: {
-                name: "ليموني حمضي",
-                emoji: "🍋",
-                colors: {
-                    certificate_bg: "#F7FEE7",
-                    gold_color: "#84CC16",
-                    text_color: "#3F6212",
-                    accent_color: "#BEF264"
-                }
-            },
-            indigo: {
-                name: "نيلي عميق",
-                emoji: "🔮",
-                colors: {
-                    certificate_bg: "#EEF2FF",
-                    gold_color: "#6366F1",
-                    text_color: "#312E81",
-                    accent_color: "#A5B4FC"
-                }
-            }
-        };
-        
-        // Quick Templates
-        const quickTemplates = {
-            employee_month: {
-                name: "موظف الشهر",
-                emoji: "⭐",
-                data: {
-                    certificateType: "excellence",
-                    message: "لتميزك وإخلاصك في العمل طوال هذا الشهر"
-                }
-            },
-            course_completion: {
-                name: "إتمام دورة",
-                emoji: "🎓",
-                data: {
-                    certificateType: "achievement",
-                    message: "لإتمامك الدورة التدريبية بتفوق ونجاح"
-                }
-            },
-            volunteer: {
-                name: "عمل تطوعي",
-                emoji: "❤️",
-                data: {
-                    certificateType: "thanks",
-                    message: "لمساهمتك التطوعية القيمة في خدمة المجتمع"
-                }
-            },
-            participation: {
-                name: "مشاركة فعالة",
-                emoji: "🤝",
-                data: {
-                    certificateType: "participation",
-                    message: "لمشاركتك الفعالة والمميزة في الفعالية"
-                }
-            },
-            leadership: {
-                name: "قيادة ملهمة",
-                emoji: "🎯",
-                data: {
-                    certificateType: "excellence",
-                    message: "لقيادتك الملهمة وإدارتك الناجحة للفريق"
-                }
-            },
-            innovation: {
-                name: "ابتكار وإبداع",
-                emoji: "💡",
-                data: {
-                    certificateType: "excellence",
-                    message: "لأفكارك المبتكرة ومساهماتك الإبداعية"
-                }
-            }
-        };
-        
-        // App state
+        // --- إعدادات الاتصال بـ Supabase ---
+        // استبدلي هذه القيم بالقيم الخاصة بمشروع الشهادات الجديد في حسابكِ
+        const SUPABASE_URL = "https://lxyyrdhvcaqqdvuucnua.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_Y-_Th8vqG4IWIg2JouB5cg_cvzL2vA6";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // حالة التطبيق العامة
         let currentUser = null;
+        let currentView = 'login'; // الإطلالات المتاحة: login, register, dashboard, gallery
         let currentRecords = [];
         let isLoading = false;
-        let currentView = 'login';
-        let editingCertificate = null;
-        let selectedTheme = 'classic';
-        let customColors = null;
-        let certificateToDelete = null;
-        let isDarkMode = false;
-        let certificateSize = 'medium';
-        let certificateVisibility = 'private';
-        let undoStack = [];
-        let redoStack = [];
-        let maxUndoStack = 20;
-        let showSaveOptionsModal = false;
-        let searchQuery = '';
-        let filterType = 'all';
-        let filterFavorites = false;
-        let autoSaveTimer = null;
-        let lastSavedState = null;
-        let showFullscreen = false;
-        let selectedTemplate = null;
-        
-        // Certificate form data
+
+        // بيانات النموذج الافتراضية لإنشاء الشهادة
         let formData = {
-            recipientName: 'أحمد محمد',
-            message: 'لجهودك المميزة',
-            senderName: 'إدارة الشركة',
-            gender: 'male',
+            recipientName: 'الطالب المتميز',
+            message: 'لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته',
+            senderName: 'إدارة المدرسة الشرعية',
             certificateType: 'appreciation'
         };
-        
-        // Toggle favorite
-        async function toggleFavorite(certificate) {
-            if (isLoading) return;
-            
-            isLoading = true;
-            
-            const updatedCert = {
-                ...certificate,
-                is_favorite: certificate.is_favorite === 'true' ? 'false' : 'true'
-            };
-            
-            const result = await window.dataSdk.update(updatedCert);
-            
-            isLoading = false;
-            
-            if (result.isOk) {
-                showToast(updatedCert.is_favorite === 'true' ? '⭐ تمت الإضافة للمفضلة' : '⭐ تمت الإزالة من المفضلة');
-                if (currentView === 'gallery') {
-                    renderGallery();
-                }
+
+        // دالة بدء تشغيل التطبيق وفحص الجلسة الحالية
+        async function initApp() {
+            showLoading(true);
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                currentView = 'dashboard';
+                await loadUserCertificates();
             } else {
-                showToast('❌ حدث خطأ');
+                currentView = 'login';
+            }
+            showLoading(false);
+            renderApp();
+        }
+
+        // رندر الواجهة بناءً على الصفحة الحالية
+        function renderApp() {
+            const app = document.getElementById('app');
+            
+            if (currentView === 'login') {
+                app.innerHTML = renderLoginView();
+            } else if (currentView === 'register') {
+                app.innerHTML = renderRegisterView();
+            } else if (currentView === 'dashboard') {
+                app.innerHTML = renderDashboardView();
+            } else if (currentView === 'gallery') {
+                app.innerHTML = renderGalleryView();
             }
         }
-        
-        // Apply quick template
-        function applyQuickTemplate(templateKey) {
-            const template = quickTemplates[templateKey];
-            if (!template) return;
-            
-            saveState();
-            
-            formData.certificateType = template.data.certificateType;
-            formData.message = template.data.message;
-            
-            if (document.getElementById('certificateType')) {
-                document.getElementById('certificateType').value = template.data.certificateType;
-                document.getElementById('message').value = template.data.message;
-                updateCertificatePreview();
-                updateCharCounters();
-            }
-            
-            showToast('✅ تم تطبيق القالب: ' + template.name);
-        }
-        
-        // Start auto-save
-        function startAutoSave() {
-            if (autoSaveTimer) {
-                clearInterval(autoSaveTimer);
-            }
-            
-            autoSaveTimer = setInterval(() => {
-                if (currentView === 'create' && currentUser) {
-                    const currentState = JSON.stringify({
-                        recipientName: document.getElementById('recipientName')?.value || formData.recipientName,
-                        message: document.getElementById('message')?.value || formData.message,
-                        senderName: document.getElementById('senderName')?.value || formData.senderName,
-                        gender: document.querySelector('input[name="gender"]:checked')?.value || formData.gender,
-                        certificateType: document.getElementById('certificateType')?.value || formData.certificateType
-                    });
-                    
-                    if (currentState !== lastSavedState) {
-                        lastSavedState = currentState;
-                        showAutoSaveIndicator();
-                    }
-                }
-            }, 30000); // Every 30 seconds
-        }
-        
-        // Show auto-save indicator
-        function showAutoSaveIndicator() {
-            const existingIndicator = document.querySelector('.autosave-indicator');
-            if (existingIndicator) existingIndicator.remove();
-            
-            const indicator = document.createElement('div');
-            indicator.className = 'autosave-indicator';
-            indicator.textContent = '💾 تم الحفظ التلقائي';
-            document.body.appendChild(indicator);
-            
-            setTimeout(() => {
-                indicator.style.animation = 'slideDown 0.3s ease-out reverse';
-                setTimeout(() => indicator.remove(), 300);
-            }, 2000);
-        }
-        
-        // Download certificate as image
-        async function downloadCertificate() {
-            const certificate = document.getElementById('certificate');
-            if (!certificate) return;
-            
-            showToast('⏳ جاري تحضير الصورة...');
-            
-            try {
-                const canvas = await html2canvas(certificate, {
-                    scale: 2,
-                    backgroundColor: null,
-                    logging: false,
-                    useCORS: true
-                });
-                
-                const link = document.createElement('a');
-                const recipientName = document.getElementById('recipientName')?.value || 'شهادة';
-                link.download = `${recipientName}-certificate.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                showToast('✅ تم تحميل الصورة بنجاح!');
-            } catch (error) {
-                showToast('❌ حدث خطأ أثناء التحميل');
-            }
-        }
-        
-        // Show fullscreen preview
-        function showFullscreenPreview() {
-            showFullscreen = true;
-            const certificate = document.getElementById('certificate');
-            if (!certificate) return;
-            
-            const fullscreenHTML = `
-                <div class="fullscreen-preview" onclick="hideFullscreenPreview()">
-                    <div style="max-width: 90%; max-height: 90%; overflow: auto;">
-                        ${certificate.outerHTML}
+
+        // واجهة تسجيل الدخول
+        function renderLoginView() {
+            return `
+            <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
+                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">مرحباً بك في منصة الشهادات التفاعلية</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
+                        <input type="email" id="login-email" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="name@domain.com">
                     </div>
-                    <button 
-                        onclick="hideFullscreenPreview(); event.stopPropagation();"
-                        style="position: absolute; top: 20px; right: 20px; background: white; color: black; padding: 15px 25px; border-radius: 10px; font-size: 20px; font-weight: bold; cursor: pointer; z-index: 10001;"
-                    >
-                        ✖ إغلاق
-                    </button>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">كلمة المرور</label>
+                        <input type="password" id="login-password" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="••••••••">
+                    </div>
+                    <button onclick="handleLogin()" class="w-full py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 transition">تسجيل الدخول</button>
+                    <p class="text-center text-sm text-gray-600 mt-4">ليس لديك حساب؟ <span onclick="switchView('register')" class="text-amber-600 cursor-pointer underline">أنشئ حساباً جديداً</span></p>
                 </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', fullscreenHTML);
+            </div>`;
         }
-        
-        // Hide fullscreen preview
-        function hideFullscreenPreview() {
-            showFullscreen = false;
-            const fullscreen = document.querySelector('.fullscreen-preview');
-            if (fullscreen) fullscreen.remove();
+
+        // واجهة إنشاء حساب جديد
+        function renderRegisterView() {
+            return `
+            <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
+                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">إنشاء حساب جديد</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
+                        <input type="email" id="reg-email" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">كلمة المرور</label>
+                        <input type="password" id="reg-password" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="لا تقل عن 6 خانات">
+                    </div>
+                    <button onclick="handleRegister()" class="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">تسجيل حساب جديد</button>
+                    <p class="text-center text-sm text-gray-600 mt-4">لديك حساب بالفعل؟ <span onclick="switchView('login')" class="text-amber-600 cursor-pointer underline">تسجيل الدخول</span></p>
+                </div>
+            </div>`;
         }
-        
-        // Search and filter certificates
-        function filterCertificates(certificates) {
-            let filtered = certificates;
-            
-            // Search by name or message
-            if (searchQuery) {
-                filtered = filtered.filter(cert => 
-                    cert.recipient_name.includes(searchQuery) || 
-                    cert.message.includes(searchQuery) ||
-                    cert.sender_name.includes(searchQuery)
-                );
-            }
-            
-            // Filter by type
-            if (filterType !== 'all') {
-                filtered = filtered.filter(cert => cert.certificate_type === filterType);
-            }
-            
-            // Filter favorites
-            if (filterFavorites) {
-                filtered = filtered.filter(cert => cert.is_favorite === 'true');
-            }
-            
-            return filtered;
+
+        // واجهة لوحة التحكم وتصميم الشهادة
+        function renderDashboardView() {
+            return `
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-8">
+                    <div class="flex items-center gap-4">
+                        <span class="font-bold text-amber-900">مرحباً: ${currentUser.email}</span>
+                        <button onclick="switchView('gallery')" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي</button>
+                    </div>
+                    <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">تسجيل الخروج</button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4">
+                        <h3 class="text-xl font-bold text-gray-800 border-b pb-2">أدخل بيانات الشهادة</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم المستلم (الطالب/ة)</label>
+                            <input type="text" id="recipientName" value="${formData.recipientName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">نص التقدير والثناء</label>
+                            <textarea id="message" rows="3" oninput="updatePreview()" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-amber-500">${formData.message}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم المعلم/ة أو الجهة المصدرة</label>
+                            <input type="text" id="senderName" value="${formData.senderName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">نوع الشهادة</label>
+                            <select id="certificateType" onchange="updatePreview()" class="w-full p-3 border rounded-xl">
+                                <option value="appreciation" ${formData.certificateType === 'appreciation' ? 'selected' : ''}>شهادة تقدير وعرفان</option>
+                                <option value="excellence" ${formData.certificateType === 'excellence' ? 'selected' : ''}>شهادة تفوق وتميز</option>
+                                <option value="thanks" ${formData.certificateType === 'thanks' ? 'selected' : ''}>شهادة شكر وامتنان</option>
+                            </select>
+                        </div>
+                        <div class="pt-4 flex gap-4">
+                            <button onclick="saveCertificateToSupabase()" class="flex-1 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 shadow-md">💾 حفظ سحابياً</button>
+                            <button onclick="downloadCertificateAsPNG()" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-md">🖼️ تحميل كصورة</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center">
+                        <div id="certificate-capture-area" class="w-full max-w-lg bg-amber-50 border-8 border-amber-300 p-8 rounded-xl shadow-2xl relative text-center min-h-[400px] flex flex-col justify-between">
+                            <div class="text-amber-700 font-bold text-lg tracking-widest border-b border-amber-200 pb-2 mb-4" id="view-cert-title">شهادة تقدير وعرفان</div>
+                            <div class="my-auto space-y-4">
+                                <p class="text-gray-600 text-sm">تتقدم إدارة المدرسة بالامتنان والتقدير لـ</p>
+                                <h2 class="text-3xl font-bold text-amber-800 arabic-title gold-text" id="view-recipient">${formData.recipientName}</h2>
+                                <p class="text-gray-700 leading-relaxed px-4 text-sm" id="view-message">${formData.message}</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-amber-200 text-sm">
+                                <div class="text-right text-gray-600">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</div>
+                                <div class="text-left font-bold text-amber-900" id="view-sender">${formData.senderName}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
         }
-        
-        // Toggle dark mode
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            const app = document.getElementById('app');
-            if (isDarkMode) {
-                app.classList.add('dark-mode');
+
+        // واجهة المعرض السحابي
+        function renderGalleryView() {
+            let recordsHTML = '';
+            if (currentRecords.length === 0) {
+                recordsHTML = '<p class="col-span-full text-center text-gray-500 py-12">لم تقم بحفظ أي شهادات سحابياً حتى الآن.</p>';
             } else {
-                app.classList.remove('dark-mode');
+                currentRecords.forEach(cert => {
+                    recordsHTML += `
+                    <div class="bg-amber-50 p-6 rounded-xl shadow border border-amber-200 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded font-bold">${cert.certificate_type === 'excellence' ? 'تفوق' : 'تقدير'}</span>
+                            <h4 class="text-lg font-bold text-amber-900 mt-2">${cert.recipient_name}</h4>
+                            <p class="text-gray-700 text-xs my-2 line-clamp-2">${cert.message}</p>
+                            <small class="text-gray-400">بواسطة: ${cert.sender_name}</small>
+                        </div>
+                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-100 text-red-700 text-sm font-semibold rounded-lg hover:bg-red-200 transition">🗑️ حذف من السحابة</button>
+                    </div>`;
+                });
             }
-            showToast(isDarkMode ? '🌙 تم تفعيل الوضع الليلي' : '☀️ تم تفعيل الوضع النهاري');
+
+            return `
+            <div class="max-w-5xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-amber-900">📂 معرض شهاداتي السحابي</h2>
+                    <button onclick="switchView('dashboard')" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700">➕ تصميم شهادة جديدة</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${recordsHTML}
+                </div>
+            </div>`;
         }
-        
-        // Toggle password visibility
-        function togglePasswordVisibility(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.textContent = '🙈';
+
+        // --- العمليات والتحكم بالفروع والبيانات ---
+
+        function switchView(view) {
+            currentView = view;
+            renderApp();
+        }
+
+        function updatePreview() {
+            formData.recipientName = document.getElementById('recipientName').value;
+            formData.message = document.getElementById('message').value;
+            formData.senderName = document.getElementById('senderName').value;
+            formData.certificateType = document.getElementById('certificateType').value;
+
+            // تحديث العرض الحي
+            document.getElementById('view-recipient').textContent = formData.recipientName;
+            document.getElementById('view-message').textContent = formData.message;
+            document.getElementById('view-sender').textContent = formData.senderName;
+            
+            const typeLabels = { appreciation: 'شهادة تقدير وعرفان', excellence: 'شهادة تفوق وتميز', thanks: 'شهادة شكر وامتنان' };
+            document.getElementById('view-title').textContent = typeLabels[formData.certificateType] || 'شهادة تقدير';
+        }
+
+        // تسجيل حساب جديد في السحابة
+        async function handleRegister() {
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            if (!email || !password) return showToast('⚠️ يرجى ملء كافة الحقول');
+
+            showLoading(true);
+            const { data, error } = await supabase.auth.signUp({ email, password });
+            showLoading(false);
+
+            if (error) {
+                showToast('❌ خطأ: ' + error.message);
             } else {
-                input.type = 'password';
-                icon.textContent = '👁️';
+                showToast('🎉 تم إنشاء الحساب بنجاح! تفقد بريدك للتفعيل إذا تطلب الأمر.');
+                switchView('login');
             }
         }
-        
-        // Save state for undo
-        function saveState() {
-            const state = {
-                recipientName: document.getElementById('recipientName')?.value || formData.recipientName,
-                message: document.getElementById('message')?.value || formData.message,
-                senderName: document.getElementById('senderName')?.value || formData.senderName,
-                gender: document.querySelector('input[name="gender"]:checked')?.value || formData.gender,
-                certificateType: document.getElementById('certificateType')?.value || formData.certificateType,
-                selectedTheme: selectedTheme,
-                customColors: customColors ? {...customColors} : null,
-                certificateSize: certificateSize,
-                certificateVisibility: certificateVisibility
-            };
-            
-            undoStack.push(state);
-            if (undoStack.length > maxUndoStack) {
-                undoStack.shift();
-            }
-            redoStack = [];
-            updateUndoRedoButtons();
-        }
-        
-        // Undo action
-        function undo() {
-            if (undoStack.length === 0) return;
-            
-            const currentState = {
-                recipientName: document.getElementById('recipientName')?.value || formData.recipientName,
-                message: document.getElementById('message')?.value || formData.message,
-                senderName: document.getElementById('senderName')?.value || formData.senderName,
-                gender: document.querySelector('input[name="gender"]:checked')?.value || formData.gender,
-                certificateType: document.getElementById('certificateType')?.value || formData.certificateType,
-                selectedTheme: selectedTheme,
-                customColors: customColors ? {...customColors} : null,
-                certificateSize: certificateSize,
-                certificateVisibility: certificateVisibility
-            };
-            
-            redoStack.push(currentState);
-            const previousState = undoStack.pop();
-            applyState(previousState);
-            showToast('↩️ تم التراجع');
-        }
-        
-        // Redo action
-        function redo() {
-            if (redoStack.length === 0) return;
-            
-            const currentState = {
-                recipientName: document.getElementById('recipientName')?.value || formData.recipientName,
-                message: document.getElementById('message')?.value || formData.message,
-                senderName: document.getElementById('senderName')?.value || formData.senderName,
-                gender: document.querySelector('input[name="gender"]:checked')?.value || formData.gender,
-                certificateType: document.getElementById('certificateType')?.value || formData.certificateType,
-                selectedTheme: selectedTheme,
-                customColors: customColors ? {...customColors} : null,
-                certificateSize: certificateSize,
-                certificateVisibility: certificateVisibility
-            };
-            
-            undoStack.push(currentState);
-            const nextState = redoStack.pop();
-            applyState(nextState);
-            showToast('↪️ تمت الإعادة');
-        }
-        
-        // Apply state
-        function applyState(state) {
-            formData = {
-                recipientName: state.recipientName,
-                message: state.message,
-                senderName: state.senderName,
-                gender: state.gender,
-                certificateType: state.certificateType
-            };
-            
-            selectedTheme = state.selectedTheme;
-            customColors = state.customColors ? {...state.customColors} : null;
-            certificateSize = state.certificateSize;
-            certificateVisibility = state.certificateVisibility;
-            
-            if (document.getElementById('recipientName')) {
-                document.getElementById('recipientName').value = state.recipientName;
-                document.getElementById('message').value = state.message;
-                document.getElementById('senderName').value = state.senderName;
-                document.getElementById('certificateType').value = state.certificateType;
-                
-                const genderRadio = document.querySelector(`input[name="gender"][value="${state.gender}"]`);
-                if (genderRadio) genderRadio.checked = true;
-                
-                updateCertificatePreview();
-                updateUndoRedoButtons();
-                updateCharCounters();
+
+        // تسجيل الدخول
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if (!email || !password) return showToast('⚠️ يرجى إدخال البريد وكلمة المرور');
+
+            showLoading(true);
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            showLoading(false);
+
+            if (error) {
+                showToast('❌ فشل تسجيل الدخول: ' + error.message);
+            } else {
+                currentUser = data.user;
+                showToast('👋 مرحباً بك مجدداً!');
+                currentView = 'dashboard';
+                await loadUserCertificates();
+                renderApp();
             }
         }
-        
-        // Update undo/redo buttons
-        function updateUndoRedoButtons() {
-            const undoBtn = document.getElementById('undoBtn');
-            const redoBtn = document.getElementById('redoBtn');
-            
-            if (undoBtn) {
-                undoBtn.disabled = undoStack.length === 0;
-            }
-            if (redoBtn) {
-                redoBtn.disabled = redoStack.length === 0;
-            }
+
+        // تسجيل الخروج
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            currentRecords = [];
+            currentView = 'login';
+            renderApp();
         }
-        
-        // Update character counters
-        function updateCharCounters() {
-            const recipientName = document.getElementById('recipientName')?.value || '';
-            const message = document.getElementById('message')?.value || '';
-            const senderName = document.getElementById('senderName')?.value || '';
+
+        // حفظ الشهادة في جدول Supabase
+        async function saveCertificateToSupabase() {
+            if (!currentUser) return showToast('⚠️ يجب تسجيل الدخول أولاً');
             
-            const recipientCounter = document.getElementById('recipientCounter');
-            const messageCounter = document.getElementById('messageCounter');
-            const senderCounter = document.getElementById('senderCounter');
-            
-            if (recipientCounter) {
-                const recipientLength = recipientName.length;
-                recipientCounter.textContent = `${recipientLength}/15 حرف`;
-                recipientCounter.classList.remove('warning', 'danger');
-                
-                if (recipientLength >= 15) {
-                    recipientCounter.classList.add('danger');
-                } else if (recipientLength >= 13) {
-                    recipientCounter.classList.add('warning');
+            showLoading(true);
+            const { data, error } = await supabase.from('certificates').insert([
+                {
+                    user_id: currentUser.id,
+                    recipient_name: formData.recipientName,
+                    message: formData.message,
+                    sender_name: formData.senderName,
+                    certificate_type: formData.certificateType,
+                    created_at: new Date()
                 }
-            }
-            
-            if (messageCounter) {
-                const messageLength = message.length;
-                messageCounter.textContent = `${messageLength}/70 حرف`;
-                messageCounter.classList.remove('warning', 'danger');
-                
-                if (messageLength >= 70) {
-                    messageCounter.classList.add('danger');
-                } else if (messageLength >= 65) {
-                    messageCounter.classList.add('warning');
-                }
-            }
-            
-            if (senderCounter) {
-                const senderLength = senderName.length;
-                senderCounter.textContent = `${senderLength}/15 حرف`;
-                senderCounter.classList.remove('warning', 'danger');
-                
-                if (senderLength >= 15) {
-                    senderCounter.classList.add('danger');
-                } else if (senderLength >= 13) {
-                    senderCounter.classList.add('warning');
-                }
+            ]);
+            showLoading(false);
+
+            if (error) {
+                showToast('❌ خطأ أثناء الحفظ السحابي: ' + error.message);
+            } else {
+                showToast('💾 تم حفظ الشهادة في قاعدة البيانات السحابية بنجاح!');
+                await loadUserCertificates();
             }
         }
-        
-        // Set certificate size
-        function setCertificateSize(size) {
-            saveState();
-            certificateSize = size;
-            updateCertificatePreview();
-        }
-        
-        // Set certificate visibility
-        function setCertificateVisibility(visibility) {
-            certificateVisibility = visibility;
-            updateCertificatePreview();
-        }
-        
-        // Data SDK Handler
-        const dataHandler = {
-            onDataChanged(data) {
+
+        // جلب الشهادات المخزنة للمستخدم الحالي
+        async function loadUserCertificates() {
+            if (!currentUser) return;
+            const { data, error } = await supabase
+                .from('certificates')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (!error && data) {
                 currentRecords = data;
-                if (currentView === 'gallery') {
-                    renderGallery();
-                } else if (currentView === 'profile') {
-                    render();
-                } else if (currentView === 'favorites') {
-                    renderFavorites();
-                } else if (currentView === 'stats') {
-                    renderStats();
-                }
-            }
-        };
-        
-        // Initialize Data SDK
-        (async () => {
-            const initResult = await window.dataSdk.init(dataHandler);
-            if (!initResult.isOk) {
-                console.error("Failed to initialize Data SDK");
-            }
-        })();
-        
-        // Generate confetti pieces
-        function createConfetti() {
-            const colors = ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#95E1D3', '#F38181', '#AA96DA', '#FCBAD3'];
-            const app = document.getElementById('app');
-            const existingConfetti = app.querySelectorAll('.confetti');
-            existingConfetti.forEach(c => c.remove());
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                confetti.style.animationDelay = Math.random() * 5 + 's';
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                app.appendChild(confetti);
             }
         }
-        
-        // Create burst confetti effect
-        function createBurstConfetti() {
-            const colors = ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#95E1D3', '#F38181', '#AA96DA', '#FCBAD3'];
-            const container = document.getElementById('app');
-            
-            for (let i = 0; i < 30; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'burst-confetti';
-                confetti.style.width = '12px';
-                confetti.style.height = '12px';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confetti.style.left = '50%';
-                confetti.style.top = '50%';
-                
-                const angle = (Math.PI * 2 * i) / 30;
-                const velocity = 100 + Math.random() * 200;
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity;
-                
-                confetti.style.setProperty('--tx', tx + 'px');
-                confetti.style.setProperty('--ty', ty + 'px');
-                
-                container.appendChild(confetti);
-                
-                setTimeout(() => confetti.remove(), 1500);
+
+        // حذف شهادة من السحابة
+        async function deleteCertificate(id) {
+            showLoading(true);
+            const { error } = await supabase.from('certificates').delete().eq('id', id);
+            showLoading(false);
+
+            if (error) {
+                showToast('❌ لم يتم الحذف: ' + error.message);
+            } else {
+                showToast('🗑️ تم الحذف بنجاح من السحابة');
+                await loadUserCertificates();
+                renderApp();
             }
         }
-        
-        // Show toast notification
-        function showToast(message) {
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) existingToast.remove();
+
+        // تحميل كصورة PNG عبر المتصفح
+        async function downloadCertificateAsPNG() {
+            const area = document.getElementById('certificate-capture-area');
+            if (!area) return;
+            showToast('⏳ جاري إنشاء ملف الصورة الخاص بك...');
             
+            const canvas = await html2canvas(area, { scale: 2, useCORS: true });
+            const link = document.createElement('a');
+            link.download = `${formData.recipientName}-شهادة.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('✅ تم تحميل الصورة بنجاح!');
+        }
+
+        // أدوات مساعدة للـ UI
+        function showToast(msg) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
             const toast = document.createElement('div');
             toast.className = 'toast';
-            toast.textContent = message;
+            toast.textContent = msg;
             document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.5s ease-out reverse';
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
+            setTimeout(() => toast.remove(), 4000);
         }
-        
-        // Hash password
-        function hashPassword(password) {
-            let hash = 0;
-            for (let i = 0; i < password.length; i++) {
-                const char = password.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return hash.toString();
+
+        function showLoading(state) {
+            isLoading = state;
+            // يمكن إضافة سبينر كبير هنا إذا لزم الأمر
         }
-        
-        // Copy share link - FIXED
-        function copyShareLink(certificateId) {
-            const shareUrl = `https://canva.com/certificate/${certificateId}`;
-            
-            const textarea = document.createElement('textarea');
-            textarea.value = shareUrl;
-            textarea.style.position = 'fixed';
-            textarea.style.left = '-9999px';
-            textarea.style.top = '0';
-            document.body.appendChild(textarea);
-            textarea.focus();
-            textarea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showToast('🔗 تم نسخ رابط المشاركة!');
-                } else {
-                    showToast('⚠️ فشل نسخ الرابط');
-                }
-            } catch (err) {
-                showToast('⚠️ فشل نسخ الرابط');
-            }
-            
-            document.body.removeChild(textarea);
-        }
-        
-        // Show save options modal
-        function showSaveOptionsModalFunc() {
-            showSaveOptionsModal = true;
-            renderSaveOptionsModal();
-        }
-        
-        // Hide save options modal
-        function hideSaveOptionsModal() {
-            showSaveOptionsModal = false;
-            const modal = document.getElementById('saveOptionsModal');
-            if (modal) modal.remove();
-        }
-        
-        // Save as new certificate
-        async function saveAsNew() {
-            hideSaveOptionsModal();
-            await saveCertificateAsNew();
-        }
-        
-        // Replace existing certificate
-        async function replaceExisting() {
-            hideSaveOptionsModal();
-            await updateCertificate();
-        }
-        
-        // Render save options modal
-        function renderSaveOptionsModal() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            
-            const existingModal = document.getElementById('saveOptionsModal');
-            if (existingModal) existingModal.remove();
-            
-            const modalHTML = `
-                <div id="saveOptionsModal">
-                    <div class="modal-overlay" onclick="hideSaveOptionsModal()"></div>
-                    <div class="modal-content" style="max-width: 500px;">
-                        <h2 class="text-2xl font-bold text-center mb-6" style="font-size: ${baseSize * 1.5}px; color: #D4AF37;">
-                            💾 خيارات الحفظ
-                        </h2>
-                        <p class="text-center mb-6" style="font-size: ${baseSize}px;">
-                            هل تريد حفظ نسخة جديدة أم استبدال النسخة الحالية؟
-                        </p>
-                        <div class="space-y-3">
-                            <button 
-                                onclick="saveAsNew()"
-                                class="w-full py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
-                                style="background: linear-gradient(135deg, #10B981, #059669); font-size: ${baseSize * 1.1}px;"
-                            >
-                                ➕ حفظ كنسخة جديدة
-                            </button>
-                            <button 
-                                onclick="replaceExisting()"
-                                class="w-full py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
-                                style="background: linear-gradient(135deg, #3B82F6, #2563EB); font-size: ${baseSize * 1.1}px;"
-                            >
-                                🔄 استبدال النسخة الحالية
-                            </button>
-                            <button 
-                                onclick="hideSaveOptionsModal()"
-                                class="w-full py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
-                                style="font-size: ${baseSize}px;"
-                            >
-                                إلغاء
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        }
-        
-        // Register user
-        async function register() {
-            if (isLoading) return;
-            
-            const username = document.getElementById('regUsername').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
-            
-            if (!username || !password || !confirmPassword) {
-                showToast('⚠️ الرجاء ملء جميع الحقول');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showToast('⚠️ كلمة المرور غير متطابقة');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showToast('⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-                return;
-            }
-            
-            const existingUser = currentRecords.find(r => r.type === 'user' && r.username === username);
-            if (existingUser) {
-                showToast('⚠️ اسم المستخدم موجود بالفعل');
-                return;
-            }
-            
-            if (currentRecords.length >= 999) {
-                showToast('⚠️ تم الوصول للحد الأقصى من السجلات');
-                return;
-            }
-            
-            isLoading = true;
-            const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            
-            const result = await window.dataSdk.create({
-                type: 'user',
-                user_id: userId,
-                username: username,
-                password: hashPassword(password),
-                created_at: new Date().toISOString(),
-                recipient_name: '',
-                message: '',
-                sender_name: '',
-                gender: '',
-                certificate_type: '',
-                color_theme: '',
-                custom_colors: '',
-                certificate_id: '',
-                visibility: '',
-                certificate_size: '',
-                is_favorite: '',
-                template_name: ''
-            });
-            
-            isLoading = false;
-            
-            if (result.isOk) {
-                showToast('🎉 تم إنشاء الحساب بنجاح!');
-                currentView = 'login';
-                render();
-            } else {
-                showToast('❌ حدث خطأ أثناء إنشاء الحساب');
-            }
-        }
-        
-        // Login user
-        function login() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            
-            if (!username || !password) {
-                showToast('⚠️ الرجاء ملء جميع الحقول');
-                return;
-            }
-            
-            const userExists = currentRecords.find(r => 
-                r.type === 'user' && 
-                r.username === username
-            );
-            
-            if (!userExists) {
-                showToast('❌ الحساب غير موجود');
-                return;
-            }
-            
-            const user = currentRecords.find(r => 
-                r.type === 'user' && 
-                r.username === username && 
-                r.password === hashPassword(password)
-            );
-            
-            if (user) {
-                currentUser = user;
-                currentView = 'create';
-                startAutoSave();
-                showToast('🎉 مرحباً بك ' + username + '!');
-                render();
-            } else {
-                showToast('❌ كلمة المرور غير صحيحة');
-            }
-        }
-        
-        // Logout
-        function logout() {
-            currentUser = null;
-            currentView = 'login';
-            editingCertificate = null;
-            if (autoSaveTimer) {
-                clearInterval(autoSaveTimer);
-            }
-            render();
-            showToast('👋 تم تسجيل الخروج بنجاح');
-        }
-        
-        // Get user certificates
-        function getUserCertificates() {
-            if (!currentUser) return [];
-            return currentRecords.filter(r => r.type === 'certificate' && r.user_id === currentUser.user_id);
-        }
-        
-        // Save certificate as new
-        async function saveCertificateAsNew() {
-            if (isLoading || !currentUser) return;
-            
-            const recipientName = document.getElementById('recipientName').value.trim();
-            const message = document.getElementById('message').value.trim();
-            const senderName = document.getElementById('senderName').value.trim();
-            const gender = document.querySelector('input[name="gender"]:checked')?.value || 'male';
-            const certificateType = document.getElementById('certificateType').value;
-            
-            if (!recipientName || !message || !senderName) {
-                showToast('⚠️ الرجاء ملء جميع الحقول');
-                return;
-            }
-            
-            if (recipientName.length > 15) {
-                showToast('⚠️ اسم المستلم يجب ألا يزيد عن 15 حرف');
-                return;
-            }
-            
-            if (message.length > 70) {
-                showToast('⚠️ رسالة التقدير يجب ألا تزيد عن 70 حرف');
-                return;
-            }
-            
-            if (senderName.length > 15) {
-                showToast('⚠️ اسم الكاتب يجب ألا يزيد عن 15 حرف');
-                return;
-            }
-            
-            if (currentRecords.length >= 999) {
-                showToast('⚠️ تم الوصول للحد الأقصى من السجلات (999)');
-                return;
-            }
-            
-            isLoading = true;
-            const saveBtn = document.getElementById('saveBtn');
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<div class="loading-spinner mx-auto"></div>';
-            saveBtn.disabled = true;
-            
-            const certificateId = 'cert_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            const colors = customColors || certificateTemplates[selectedTheme].colors;
-            
-            const result = await window.dataSdk.create({
-                type: 'certificate',
-                user_id: currentUser.user_id,
-                certificate_id: certificateId,
-                recipient_name: recipientName,
-                message: message,
-                sender_name: senderName,
-                gender: gender,
-                certificate_type: certificateType,
-                color_theme: selectedTheme,
-                custom_colors: JSON.stringify(colors),
-                visibility: certificateVisibility,
-                certificate_size: certificateSize,
-                is_favorite: 'false',
-                template_name: selectedTemplate || selectedTheme,
-                created_at: new Date().toISOString(),
-                username: '',
-                password: ''
-            });
-            
-            isLoading = false;
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
-            
-            if (result.isOk) {
-                createBurstConfetti();
-                showToast('✅ تم حفظ الشهادة بنجاح!');
-                
-                document.getElementById('recipientName').value = 'أحمد محمد';
-                document.getElementById('message').value = 'لجهودك المميزة';
-                document.getElementById('senderName').value = 'إدارة الشركة';
-                selectedTheme = 'classic';
-                customColors = null;
-                certificateSize = 'medium';
-                certificateVisibility = 'private';
-                selectedTemplate = null;
-                undoStack = [];
-                redoStack = [];
-                editingCertificate = null;
-                updateUndoRedoButtons();
-                updateCharCounters();
-                updateCertificatePreview();
-            } else {
-                showToast('❌ حدث خطأ أثناء الحفظ');
-            }
-        }
-        
-        // Save certificate (main handler)
-        async function saveCertificate() {
-            if (editingCertificate) {
-                showSaveOptionsModalFunc();
-            } else {
-                await saveCertificateAsNew();
-            }
-        }
-        
-        // Delete certificate
-        async function deleteCertificate(certificate) {
-            if (isLoading) return;
-            
-            isLoading = true;
-            
-            const result = await window.dataSdk.delete(certificate);
-            
-            isLoading = false;
-            
-            if (result.isOk) {
-                showToast('🗑️ تم حذف الشهادة بنجاح');
-                certificateToDelete = null;
-                if (currentView === 'gallery') {
-                    renderGallery();
-                } else if (currentView === 'favorites') {
-                    renderFavorites();
-                }
-            } else {
-                showToast('❌ حدث خطأ أثناء الحذف');
-            }
-        }
-        
-        // Edit certificate
-        function editCertificate(certificate) {
-            editingCertificate = certificate;
-            
-            const colors = certificate.custom_colors ? JSON.parse(certificate.custom_colors) : certificateTemplates[certificate.color_theme].colors;
-            customColors = colors;
-            selectedTheme = certificate.color_theme;
-            certificateSize = certificate.certificate_size || 'medium';
-            certificateVisibility = certificate.visibility || 'private';
-            selectedTemplate = certificate.template_name || null;
-            
-            formData = {
-                recipientName: certificate.recipient_name,
-                message: certificate.message,
-                senderName: certificate.sender_name,
-                gender: certificate.gender,
-                certificateType: certificate.certificate_type
-            };
-            
-            undoStack = [];
-            redoStack = [];
-            
-            currentView = 'create';
-            render();
-            showToast('✏️ جاري تعديل الشهادة...');
-        }
-        
-        // Update certificate
-        async function updateCertificate() {
-            if (isLoading || !editingCertificate) return;
-            
-            const recipientName = document.getElementById('recipientName').value.trim();
-            const message = document.getElementById('message').value.trim();
-            const senderName = document.getElementById('senderName').value.trim();
-            const gender = document.querySelector('input[name="gender"]:checked')?.value || 'male';
-            const certificateType = document.getElementById('certificateType').value;
-            
-            if (!recipientName || !message || !senderName) {
-                showToast('⚠️ الرجاء ملء جميع الحقول');
-                return;
-            }
-            
-            if (recipientName.length > 15) {
-                showToast('⚠️ اسم المستلم يجب ألا يزيد عن 15 حرف');
-                return;
-            }
-            
-            if (message.length > 70) {
-                showToast('⚠️ رسالة التقدير يجب ألا تزيد عن 70 حرف');
-                return;
-            }
-            
-            if (senderName.length > 15) {
-                showToast('⚠️ اسم الكاتب يجب ألا يزيد عن 15 حرف');
-                return;
-            }
-            
-            isLoading = true;
-            const saveBtn = document.getElementById('saveBtn');
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<div class="loading-spinner mx-auto"></div>';
-            saveBtn.disabled = true;
-            
-            const colors = customColors || certificateTemplates[selectedTheme].colors;
-            
-            const updatedCert = {
-                ...editingCertificate,
-                recipient_name: recipientName,
-                message: message,
-                sender_name: senderName,
-                gender: gender,
-                certificate_type: certificateType,
-                color_theme: selectedTheme,
-                custom_colors: JSON.stringify(colors),
-                visibility: certificateVisibility,
-                certificate_size: certificateSize,
-                template_name: selectedTemplate || selectedTheme
-            };
-            
-            const result = await window.dataSdk.update(updatedCert);
-            
-            isLoading = false;
-            saveBtn.innerHTML = originalText;
-            saveBtn.disabled = false;
-            
-            if (result.isOk) {
-                showToast('✅ تم تحديث الشهادة بنجاح!');
-                editingCertificate = null;
-                undoStack = [];
-                redoStack = [];
-                selectedTemplate = null;
-                currentView = 'gallery';
-                render();
-            } else {
-                showToast('❌ حدث خطأ أثناء التحديث');
-            }
-        }
-        
-        // Apply color theme
-        function applyColorTheme(themeName) {
-            saveState();
-            selectedTheme = themeName;
-            selectedTemplate = themeName;
-            customColors = null;
-            updateCertificatePreview();
-        }
-        
-        // Apply custom color
-        function applyCustomColor(colorKey, value) {
-            saveState();
-            if (!customColors) {
-                customColors = { ...certificateTemplates[selectedTheme].colors };
-            }
-            customColors[colorKey] = value;
-            updateCertificatePreview();
-        }
-        
-        // 3D tilt effect
-        function handleTilt(e, element) {
-            const rect = element.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
-            
-            element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        }
-        
-        function resetTilt(element) {
-            element.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-        }
-        
-        // Update certificate preview
-        function updateCertificatePreview() {
-            const recipientName = document.getElementById('recipientName')?.value.trim() || formData.recipientName;
-            const message = document.getElementById('message')?.value.trim() || formData.message;
-            const senderName = document.getElementById('senderName')?.value.trim() || formData.senderName;
-            const gender = document.querySelector('input[name="gender"]:checked')?.value || formData.gender;
-            const certificateType = document.getElementById('certificateType')?.value || formData.certificateType;
-            
-            const previewRecipient = document.getElementById('previewRecipient');
-            const previewMessage = document.getElementById('previewMessage');
-            const previewSender = document.getElementById('previewSender');
-            const previewGender = document.getElementById('previewGender');
-            const previewType = document.getElementById('previewType');
-            
-            if (previewRecipient) {
-                previewRecipient.textContent = recipientName || '_______________';
-            }
-            if (previewMessage) {
-                previewMessage.textContent = message || '_______________________________________________';
-            }
-            if (previewSender) {
-                previewSender.textContent = senderName || '_______________';
-            }
-            if (previewGender) {
-                previewGender.textContent = gender === 'male' ? 'السيد' : 'السيدة';
-            }
-            if (previewType) {
-                const types = {
-                    appreciation: 'تقدير وعرفان',
-                    thanks: 'شكر وامتنان',
-                    excellence: 'تميز وإبداع',
-                    achievement: 'إنجاز متميز',
-                    participation: 'مشاركة فعالة'
-                };
-                previewType.textContent = types[certificateType] || 'تقدير وعرفان';
-            }
-            
-            const colors = customColors || certificateTemplates[selectedTheme].colors;
-            const certificate = document.getElementById('certificate');
-            if (certificate) {
-                certificate.style.background = colors.certificate_bg;
-                certificate.style.borderColor = colors.gold_color;
-                
-                const sizeStyles = {
-                    small: { maxWidth: '500px', padding: '30px', fontSize: '0.85' },
-                    medium: { maxWidth: '700px', padding: '48px', fontSize: '1' },
-                    large: { maxWidth: '900px', padding: '64px', fontSize: '1.15' }
-                };
-                
-                const size = sizeStyles[certificateSize] || sizeStyles.medium;
-                certificate.style.maxWidth = size.maxWidth;
-                certificate.style.padding = size.padding;
-                
-                const scalablElements = certificate.querySelectorAll('.scalable-text');
-                scalablElements.forEach(el => {
-                    const baseSize = parseFloat(el.getAttribute('data-base-size') || '16');
-                    el.style.fontSize = (baseSize * parseFloat(size.fontSize)) + 'px';
-                });
-                
-                const goldElements = certificate.querySelectorAll('.preview-gold');
-                goldElements.forEach(el => el.style.color = colors.gold_color);
-                
-                const textElements = certificate.querySelectorAll('.preview-text');
-                textElements.forEach(el => el.style.color = colors.text_color);
-                
-                // Fix border lines color
-                const borderLines = certificate.querySelectorAll('.border-line');
-                borderLines.forEach(el => el.style.backgroundColor = colors.text_color);
-                
-                const ornaments = certificate.querySelectorAll('.ornament-corner path');
-                ornaments.forEach(el => el.setAttribute('fill', colors.gold_color));
-                
-                const circles = certificate.querySelectorAll('.ornament-corner circle');
-                circles.forEach(el => el.setAttribute('fill', colors.accent_color));
-                
-                const seal = certificate.querySelector('.seal');
-                if (seal) {
-                    seal.querySelector('circle:first-child').setAttribute('fill', colors.gold_color);
-                    seal.querySelector('circle:nth-child(2)').setAttribute('fill', colors.accent_color);
-                    seal.querySelector('path').setAttribute('fill', colors.gold_color);
-                    seal.querySelector('circle:last-child').setAttribute('stroke', colors.gold_color);
-                }
-                
-                const ribbon = certificate.querySelector('.ribbon');
-                if (ribbon) {
-                    ribbon.style.background = `linear-gradient(135deg, ${colors.gold_color}, ${colors.accent_color})`;
-                }
-            }
-            
-            const visibilityIndicator = document.getElementById('visibilityIndicator');
-            if (visibilityIndicator) {
-                visibilityIndicator.textContent = certificateVisibility === 'private' ? '🔒 خاص' : '🌐 عام';
-            }
-            
-            const sizeButtons = document.querySelectorAll('.size-selector');
-            sizeButtons.forEach(btn => {
-                if (btn.dataset.size === certificateSize) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            const visibilityButtons = document.querySelectorAll('.visibility-toggle');
-            visibilityButtons.forEach(btn => {
-                if (btn.dataset.visibility === certificateVisibility) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-        }
-        
-        // Render login view
-        function renderLogin() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            
-            return `
-                <div class="min-h-full w-full flex items-center justify-center py-12 px-4" style="font-family: ${customFont}, Cairo, sans-serif;">
-                    <div class="max-w-md w-full">
-                        <div class="bg-white rounded-3xl shadow-2xl p-8" style="border: 3px solid #D4AF37;">
-                            <div class="text-center mb-8">
-                                <div class="text-6xl mb-4">🏆</div>
-                                <h1 class="text-3xl font-bold mb-2" style="font-size: ${baseSize * 2}px; color: #D4AF37;">
-                                    ${config.login_title || defaultConfig.login_title}
-                                </h1>
-                                <p style="font-size: ${baseSize}px; color: ${textColor};">قم بتسجيل الدخول لإنشاء شهاداتك المميزة</p>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                        اسم المستخدم
-                                    </label>
-                                    <input 
-                                        type="text" 
-                                        id="loginUsername" 
-                                        placeholder="أدخل اسم المستخدم"
-                                        class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                        style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                    />
-                                </div>
-                                
-                                <div>
-                                    <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                        كلمة المرور
-                                    </label>
-                                    <div class="relative">
-                                        <input 
-                                            type="password" 
-                                            id="loginPassword" 
-                                            placeholder="أدخل كلمة المرور"
-                                            class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                            style="border-color: #C9A961; font-size: ${baseSize}px; padding-left: 50px;"
-                                            onkeypress="if(event.key === 'Enter') login()"
-                                        />
-                                        <span 
-                                            id="loginPasswordToggle"
-                                            class="password-toggle absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl"
-                                            onclick="togglePasswordVisibility('loginPassword', 'loginPasswordToggle')"
-                                        >👁️</span>
-                                    </div>
-                                </div>
-                                
-                                <button 
-                                    onclick="login()"
-                                    class="save-button w-full py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
-                                    style="background: linear-gradient(135deg, #D4AF37, #C9A961); font-size: ${baseSize * 1.2}px;"
-                                >
-                                    تسجيل الدخول 🚀
-                                </button>
-                                
-                                <div class="text-center mt-4">
-                                    <button 
-                                        onclick="currentView = 'register'; render();"
-                                        class="text-blue-600 hover:text-blue-800 font-semibold"
-                                        style="font-size: ${baseSize}px;"
-                                    >
-                                        ليس لديك حساب؟ سجل الآن
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Render register view
-        function renderRegister() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            
-            return `
-                <div class="min-h-full w-full flex items-center justify-center py-12 px-4" style="font-family: ${customFont}, Cairo, sans-serif;">
-                    <div class="max-w-md w-full">
-                        <div class="bg-white rounded-3xl shadow-2xl p-8" style="border: 3px solid #D4AF37;">
-                            <div class="text-center mb-8">
-                                <div class="text-6xl mb-4">✨</div>
-                                <h1 class="text-3xl font-bold mb-2" style="font-size: ${baseSize * 2}px; color: #D4AF37;">
-                                    إنشاء حساب جديد
-                                </h1>
-                                <p style="font-size: ${baseSize}px; color: ${textColor};">ابدأ رحلتك في إنشاء شهادات مميزة</p>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                        اسم المستخدم
-                                    </label>
-                                    <input 
-                                        type="text" 
-                                        id="regUsername" 
-                                        placeholder="اختر اسم مستخدم فريد"
-                                        class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                        style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                    />
-                                </div>
-                                
-                                <div>
-                                    <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                        كلمة المرور
-                                    </label>
-                                    <div class="relative">
-                                        <input 
-                                            type="password" 
-                                            id="regPassword" 
-                                            placeholder="6 أحرف على الأقل"
-                                            class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                            style="border-color: #C9A961; font-size: ${baseSize}px; padding-left: 50px;"
-                                        />
-                                        <span 
-                                            id="regPasswordToggle"
-                                            class="password-toggle absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl"
-                                            onclick="togglePasswordVisibility('regPassword', 'regPasswordToggle')"
-                                        >👁️</span>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                        تأكيد كلمة المرور
-                                    </label>
-                                    <div class="relative">
-                                        <input 
-                                            type="password" 
-                                            id="regConfirmPassword" 
-                                            placeholder="أعد إدخال كلمة المرور"
-                                            class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                            style="border-color: #C9A961; font-size: ${baseSize}px; padding-left: 50px;"
-                                            onkeypress="if(event.key === 'Enter') register()"
-                                        />
-                                        <span 
-                                            id="regConfirmPasswordToggle"
-                                            class="password-toggle absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl"
-                                            onclick="togglePasswordVisibility('regConfirmPassword', 'regConfirmPasswordToggle')"
-                                        >👁️</span>
-                                    </div>
-                                </div>
-                                
-                                <button 
-                                    onclick="register()"
-                                    class="save-button w-full py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
-                                    style="background: linear-gradient(135deg, #D4AF37, #C9A961); font-size: ${baseSize * 1.2}px;"
-                                >
-                                    إنشاء الحساب 🎊
-                                </button>
-                                
-                                <div class="text-center mt-4">
-                                    <button 
-                                        onclick="currentView = 'login'; render();"
-                                        class="text-blue-600 hover:text-blue-800 font-semibold"
-                                        style="font-size: ${baseSize}px;"
-                                    >
-                                        لديك حساب؟ سجل دخول
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Render navigation
-        function renderNavigation() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const userCertificates = getUserCertificates();
-            const favorites = userCertificates.filter(c => c.is_favorite === 'true');
-            
-            return `
-                <div class="bg-white shadow-lg mb-6 rounded-2xl p-4">
-                    <div class="flex items-center justify-between flex-wrap gap-4">
-                        <div class="flex gap-2 flex-wrap">
-                            <button 
-                                onclick="currentView = 'create'; editingCertificate = null; render();"
-                                class="nav-tab ${currentView === 'create' ? 'active' : ''}"
-                                style="font-size: ${baseSize}px;"
-                            >
-                                🎨 إنشاء شهادة
-                            </button>
-                            <button 
-                                onclick="currentView = 'gallery'; render();"
-                                class="nav-tab ${currentView === 'gallery' ? 'active' : ''}"
-                                style="font-size: ${baseSize}px;"
-                            >
-                                🖼️ المعرض (${userCertificates.length})
-                            </button>
-                            <button 
-                                onclick="currentView = 'favorites'; renderFavorites();"
-                                class="nav-tab ${currentView === 'favorites' ? 'active' : ''}"
-                                style="font-size: ${baseSize}px;"
-                            >
-                                ⭐ المفضلة (${favorites.length})
-                            </button>
-                            <button 
-                                onclick="currentView = 'stats'; renderStats();"
-                                class="nav-tab ${currentView === 'stats' ? 'active' : ''}"
-                                style="font-size: ${baseSize}px;"
-                            >
-                                📊 إحصائيات
-                            </button>
-                            <button 
-                                onclick="currentView = 'profile'; render();"
-                                class="nav-tab ${currentView === 'profile' ? 'active' : ''}"
-                                style="font-size: ${baseSize}px;"
-                            >
-                                👤 الملف الشخصي
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center gap-4 flex-wrap">
-                            <button 
-                                onclick="toggleDarkMode()"
-                                class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all"
-                                style="font-size: ${baseSize * 0.9}px;"
-                            >
-                                ${isDarkMode ? '☀️' : '🌙'}
-                            </button>
-                            <span style="font-size: ${baseSize}px;" class="font-semibold text-gray-700">
-                                مرحباً، ${currentUser.username} 👋
-                            </span>
-                            <button 
-                                onclick="logout()"
-                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
-                                style="font-size: ${baseSize * 0.9}px;"
-                            >
-                                تسجيل خروج
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Render create certificate view - CONTINUES IN NEXT PART DUE TO LENGTH
-        function renderCreateCertificate() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const colors = customColors || certificateTemplates[selectedTheme].colors;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            
-            return `
-                <div style="font-family: ${customFont}, Cairo, sans-serif;">
-                    ${renderNavigation()}
-                    
-                    <div class="grid lg:grid-cols-2 gap-6">
-                        <!-- Input Section -->
-                        <div class="bg-white rounded-3xl shadow-2xl p-8" style="border: 3px solid #C9A961;">
-                            <h2 class="text-3xl font-bold text-center mb-6" style="font-size: ${baseSize * 1.8}px; color: #D4AF37;">
-                                ${editingCertificate ? '✏️ تعديل الشهادة' : '✨ إنشاء شهادة جديدة'}
-                            </h2>
-                            
-                            <!-- Quick Templates -->
-                            <div class="mb-6">
-                                <label class="block mb-3 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    قوالب سريعة 🚀
-                                </label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    ${Object.entries(quickTemplates).map(([key, template]) => `
-                                        <button 
-                                            onclick="applyQuickTemplate('${key}')"
-                                            class="py-3 px-2 rounded-lg border-2 border-gray-200 hover:border-gold-500 transition-all text-center"
-                                            style="font-size: ${baseSize * 0.8}px;"
-                                        >
-                                            <div class="text-2xl mb-1">${template.emoji}</div>
-                                            <div>${template.name}</div>
-                                        </button>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            
-                            <!-- Certificate Type -->
-                            <div class="mb-6">
-                                <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    نوع الشهادة 🏅
-                                </label>
-                                <select 
-                                    id="certificateType" 
-                                    class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                    style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                    onchange="updateCertificatePreview()"
-                                >
-                                    <option value="appreciation" ${formData.certificateType === 'appreciation' ? 'selected' : ''}>تقدير وعرفان</option>
-                                    <option value="thanks" ${formData.certificateType === 'thanks' ? 'selected' : ''}>شكر وامتنان</option>
-                                    <option value="excellence" ${formData.certificateType === 'excellence' ? 'selected' : ''}>تميز وإبداع</option>
-                                    <option value="achievement" ${formData.certificateType === 'achievement' ? 'selected' : ''}>إنجاز متميز</option>
-                                    <option value="participation" ${formData.certificateType === 'participation' ? 'selected' : ''}>مشاركة فعالة</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Gender Selection -->
-                            <div class="mb-6">
-                                <label class="block mb-3 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    جنس المستلم 👤
-                                </label>
-                                <div class="flex gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input 
-                                            type="radio" 
-                                            name="gender" 
-                                            value="male" 
-                                            ${formData.gender === 'male' ? 'checked' : ''}
-                                            onchange="updateCertificatePreview()"
-                                            class="w-5 h-5"
-                                        />
-                                        <span style="font-size: ${baseSize}px;">ذكر 👨</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input 
-                                            type="radio" 
-                                            name="gender" 
-                                            value="female" 
-                                            ${formData.gender === 'female' ? 'checked' : ''}
-                                            onchange="updateCertificatePreview()"
-                                            class="w-5 h-5"
-                                        />
-                                        <span style="font-size: ${baseSize}px;">أنثى 👩</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <!-- Recipient Name -->
-                            <div class="mb-6">
-                                <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    اسم المستلم 📝
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="recipientName" 
-                                    value="${formData.recipientName}"
-                                    placeholder="أدخل اسم الشخص"
-                                    maxlength="15"
-                                    class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                    style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                    oninput="saveState(); updateCertificatePreview(); updateCharCounters();"
-                                />
-                                <div id="recipientCounter" class="char-counter text-xs mt-1" style="color: ${textColor};">
-                                    ${formData.recipientName.length}/15 حرف
-                                </div>
-                            </div>
-                            
-                            <!-- Message -->
-                            <div class="mb-6">
-                                <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    رسالة التقدير 💬
-                                </label>
-                                <textarea 
-                                    id="message" 
-                                    rows="3"
-                                    placeholder="اكتب رسالة تقدير"
-                                    maxlength="70"
-                                    class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none resize-none"
-                                    style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                    oninput="saveState(); updateCertificatePreview(); updateCharCounters();"
-                                >${formData.message}</textarea>
-                                <div id="messageCounter" class="char-counter text-xs mt-1" style="color: ${textColor};">
-                                    ${formData.message.length}/70 حرف
-                                </div>
-                            </div>
-                            
-                            <!-- Sender Name -->
-                            <div class="mb-6">
-                                <label class="block mb-2 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    من 🖊️
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="senderName" 
-                                    value="${formData.senderName}"
-                                    placeholder="اسمك أو المؤسسة"
-                                    maxlength="15"
-                                    class="input-field w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                    style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                    oninput="saveState(); updateCertificatePreview(); updateCharCounters();"
-                                />
-                                <div id="senderCounter" class="char-counter text-xs mt-1" style="color: ${textColor};">
-                                    ${formData.senderName.length}/15 حرف
-                                </div>
-                            </div>
-                            
-                            <!-- Certificate Size -->
-                            <div class="mb-6">
-                                <label class="block mb-3 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    حجم الشهادة 📏
-                                </label>
-                                <div class="flex gap-3">
-                                    <button 
-                                        onclick="setCertificateSize('small')"
-                                        data-size="small"
-                                        class="size-selector flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all ${certificateSize === 'small' ? 'active' : ''}"
-                                        style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    >
-                                        صغير 📄
-                                    </button>
-                                    <button 
-                                        onclick="setCertificateSize('medium')"
-                                        data-size="medium"
-                                        class="size-selector flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all ${certificateSize === 'medium' ? 'active' : ''}"
-                                        style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    >
-                                        متوسط 📃
-                                    </button>
-                                    <button 
-                                        onclick="setCertificateSize('large')"
-                                        data-size="large"
-                                        class="size-selector flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all ${certificateSize === 'large' ? 'active' : ''}"
-                                        style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    >
-                                        كبير 📜
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Certificate Visibility -->
-                            <div class="mb-6">
-                                <label class="block mb-3 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    مستوى العرض <span id="visibilityIndicator">${certificateVisibility === 'private' ? '🔒 خاص' : '🌐 عام'}</span>
-                                </label>
-                                <div class="flex gap-3">
-                                    <button 
-                                        onclick="setCertificateVisibility('private')"
-                                        data-visibility="private"
-                                        class="visibility-toggle flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all ${certificateVisibility === 'private' ? 'active' : ''}"
-                                        style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    >
-                                        🔒 خاص
-                                    </button>
-                                    <button 
-                                        onclick="setCertificateVisibility('public')"
-                                        data-visibility="public"
-                                        class="visibility-toggle flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all ${certificateVisibility === 'public' ? 'active' : ''}"
-                                        style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    >
-                                        🌐 عام
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Undo/Redo Buttons -->
-                            <div class="mb-6 flex gap-3">
-                                <button 
-                                    id="undoBtn"
-                                    onclick="undo()"
-                                    class="undo-redo-btn flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all"
-                                    style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    disabled
-                                >
-                                    ↩️ تراجع
-                                </button>
-                                <button 
-                                    id="redoBtn"
-                                    onclick="redo()"
-                                    class="undo-redo-btn flex-1 py-3 px-4 rounded-xl border-2 hover:shadow-lg transition-all"
-                                    style="border-color: #C9A961; font-size: ${baseSize * 0.9}px;"
-                                    disabled
-                                >
-                                    ↪️ إعادة
-                                </button>
-                            </div>
-                            
-                            <!-- Color Templates (20 templates) -->
-                            <div class="mb-6">
-                                <label class="block mb-3 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    قوالب الألوان (20 قالب) 🎨
-                                </label>
-                                <div class="grid grid-cols-5 gap-2 mb-4">
-                                    ${Object.entries(certificateTemplates).map(([key, theme]) => `
-                                        <button 
-                                            onclick="applyColorTheme('${key}')"
-                                            class="template-card p-2 rounded-lg ${selectedTheme === key && !customColors ? 'selected' : ''}"
-                                            style="background: linear-gradient(135deg, ${theme.colors.gold_color}, ${theme.colors.accent_color});"
-                                            title="${theme.name}"
-                                        >
-                                            <div class="text-2xl">${theme.emoji}</div>
-                                            <div class="text-xs text-white mt-1">${theme.name}</div>
-                                        </button>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            
-                            <!-- Custom Colors -->
-                            <div class="mb-6">
-                                <label class="block mb-3 font-semibold" style="font-size: ${baseSize}px; color: ${textColor};">
-                                    تخصيص الألوان 🎨
-                                </label>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label style="font-size: ${baseSize * 0.9}px; color: ${textColor};">لون الخلفية</label>
-                                        <input 
-                                            type="color" 
-                                            value="${colors.certificate_bg}"
-                                            onchange="applyCustomColor('certificate_bg', this.value)"
-                                            class="w-full h-12 rounded-lg cursor-pointer"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label style="font-size: ${baseSize * 0.9}px; color: ${textColor};">اللون الذهبي</label>
-                                        <input 
-                                            type="color" 
-                                            value="${colors.gold_color}"
-                                            onchange="applyCustomColor('gold_color', this.value)"
-                                            class="w-full h-12 rounded-lg cursor-pointer"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label style="font-size: ${baseSize * 0.9}px; color: ${textColor};">لون النص</label>
-                                        <input 
-                                            type="color" 
-                                            value="${colors.text_color}"
-                                            onchange="applyCustomColor('text_color', this.value)"
-                                            class="w-full h-12 rounded-lg cursor-pointer"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label style="font-size: ${baseSize * 0.9}px; color: ${textColor};">اللون المساعد</label>
-                                        <input 
-                                            type="color" 
-                                            value="${colors.accent_color}"
-                                            onchange="applyCustomColor('accent_color', this.value)"
-                                            class="w-full h-12 rounded-lg cursor-pointer"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <button 
-                                id="saveBtn"
-                                onclick="saveCertificate()"
-                                class="save-button w-full py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 mb-3"
-                                style="background: linear-gradient(135deg, #D4AF37, #C9A961); font-size: ${baseSize * 1.2}px;"
-                            >
-                                ${editingCertificate ? '💾 حفظ التغييرات' : config.button_text || defaultConfig.button_text} 🎊
-                            </button>
-                            
-                            <div class="grid grid-cols-2 gap-3">
-                                <button 
-                                    onclick="downloadCertificate()"
-                                    class="py-3 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600 transition-all"
-                                    style="font-size: ${baseSize}px;"
-                                >
-                                    📥 تحميل كصورة
-                                </button>
-                                <button 
-                                    onclick="showFullscreenPreview()"
-                                    class="py-3 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600 transition-all"
-                                    style="font-size: ${baseSize}px;"
-                                >
-                                    🔍 معاينة كاملة
-                                </button>
-                            </div>
-                            
-                            ${editingCertificate ? `
-                                <button 
-                                    onclick="editingCertificate = null; currentView = 'gallery'; render();"
-                                    class="w-full py-3 mt-3 rounded-xl border-2 border-gray-300 hover:bg-gray-50 transition-all"
-                                    style="font-size: ${baseSize}px;"
-                                >
-                                    إلغاء التعديل
-                                </button>
-                            ` : ''}
-                        </div>
-                        
-                        <!-- Certificate Preview -->
-                        <div class="certificate-container">
-                            <div 
-                                id="certificate"
-                                class="certificate relative bg-white rounded-2xl shadow-2xl p-12 mx-auto"
-                                style="background: ${colors.certificate_bg}; border: 8px solid ${colors.gold_color};"
-                                onmousemove="handleTilt(event, this)"
-                                onmouseleave="resetTilt(this)"
-                            >
-                                <!-- Ornamental Corners -->
-                                <svg class="ornament-corner ornament-top-right" viewBox="0 0 100 100">
-                                    <path d="M0,0 L100,0 L100,100 Q50,50 0,0 Z" fill="${colors.gold_color}" opacity="0.3"/>
-                                    <circle cx="85" cy="15" r="8" fill="${colors.accent_color}"/>
-                                    <circle cx="15" cy="85" r="6" fill="${colors.accent_color}"/>
-                                </svg>
-                                
-                                <svg class="ornament-corner ornament-top-left" viewBox="0 0 100 100">
-                                    <path d="M0,0 L100,0 L100,100 Q50,50 0,0 Z" fill="${colors.gold_color}" opacity="0.3"/>
-                                    <circle cx="85" cy="15" r="8" fill="${colors.accent_color}"/>
-                                    <circle cx="15" cy="85" r="6" fill="${colors.accent_color}"/>
-                                </svg>
-                                
-                                <svg class="ornament-corner ornament-bottom-right" viewBox="0 0 100 100">
-                                    <path d="M0,0 L100,0 L100,100 Q50,50 0,0 Z" fill="${colors.gold_color}" opacity="0.3"/>
-                                    <circle cx="85" cy="15" r="8" fill="${colors.accent_color}"/>
-                                    <circle cx="15" cy="85" r="6" fill="${colors.accent_color}"/>
-                                </svg>
-                                
-                                <svg class="ornament-corner ornament-bottom-left" viewBox="0 0 100 100">
-                                    <path d="M0,0 L100,0 L100,100 Q50,50 0,0 Z" fill="${colors.gold_color}" opacity="0.3"/>
-                                    <circle cx="85" cy="15" r="8" fill="${colors.accent_color}"/>
-                                    <circle cx="15" cy="85" r="6" fill="${colors.accent_color}"/>
-                                </svg>
-                                
-                                <!-- Ribbon -->
-                                <div class="ribbon" style="background: linear-gradient(135deg, ${colors.gold_color}, ${colors.accent_color});"></div>
-                                
-                                <!-- Seal -->
-                                <svg class="seal" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="45" fill="${colors.gold_color}" opacity="0.9"/>
-                                    <circle cx="50" cy="50" r="35" fill="${colors.accent_color}"/>
-                                    <path d="M50,20 L55,40 L75,40 L60,52 L65,72 L50,60 L35,72 L40,52 L25,40 L45,40 Z" fill="${colors.gold_color}"/>
-                                    <circle cx="50" cy="50" r="30" fill="none" stroke="${colors.gold_color}" stroke-width="2"/>
-                                </svg>
-                                
-                                <!-- Content -->
-                                <div class="text-center relative z-10">
-                                    <div class="mb-6">
-                                        <div class="text-5xl mb-4">🏆</div>
-                                        <h1 class="font-bold mb-2 preview-gold scalable-text" data-base-size="40" style="font-family: 'Amiri', serif; font-size: ${baseSize * 2.5}px; color: ${colors.gold_color};">
-                                            شهادة <span id="previewType">تقدير وعرفان</span>
-                                        </h1>
-                                        <div class="w-32 h-1 mx-auto mb-4 border-line" style="background: ${colors.text_color};"></div>
-                                    </div>
-                                    
-                                    <p class="mb-6 preview-text scalable-text" data-base-size="18" style="font-size: ${baseSize * 1.1}px; color: ${colors.text_color};">
-                                        ${config.subtitle_text || defaultConfig.subtitle_text}
-                                    </p>
-                                    
-                                    <div class="mb-6">
-                                        <p class="mb-2 preview-text scalable-text" data-base-size="18" style="font-size: ${baseSize * 1.1}px; color: ${colors.text_color};">
-                                            إلى <span id="previewGender">السيد</span>
-                                        </p>
-                                        <p id="previewRecipient" class="text-4xl font-bold mb-6 preview-gold scalable-text" data-base-size="40" style="font-family: 'Amiri', serif; font-size: ${baseSize * 2.5}px; color: ${colors.gold_color};">
-                                            ${formData.recipientName}
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="mb-10 px-6">
-                                        <p id="previewMessage" class="leading-relaxed preview-text scalable-text" data-base-size="19" style="font-size: ${baseSize * 1.2}px; color: ${colors.text_color};">
-                                            ${formData.message}
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="flex justify-between items-end px-6">
-                                        <div>
-                                            <p class="mb-2 preview-text scalable-text" data-base-size="14" style="font-size: ${baseSize * 0.9}px; color: ${colors.text_color};">التاريخ</p>
-                                            <p class="font-semibold preview-text scalable-text" data-base-size="16" style="font-size: ${baseSize}px; color: ${colors.text_color};">
-                                                ${new Date().toLocaleDateString('ar-SA')}
-                                            </p>
-                                        </div>
-                                        
-                                        <div style="position: relative; z-index: 10;">
-                                            <div class="w-40 h-0.5 mb-3 border-line" style="background-color: ${colors.text_color};"></div>
-                                            <p id="previewSender" class="font-bold preview-gold scalable-text" data-base-size="19" style="font-size: ${baseSize * 1.2}px; color: ${colors.gold_color};">
-                                                ${formData.senderName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Render gallery view
-        function renderGallery() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            const userCertificates = getUserCertificates().sort((a, b) => 
-                new Date(b.created_at) - new Date(a.created_at)
-            );
-            
-            const filteredCertificates = filterCertificates(userCertificates);
-            
-            const galleryHTML = `
-                <div style="font-family: ${customFont}, Cairo, sans-serif;">
-                    ${renderNavigation()}
-                    
-                    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6">
-                        <h2 class="text-3xl font-bold text-center mb-2" style="font-size: ${baseSize * 2}px; color: #D4AF37;">
-                            🖼️ ${config.gallery_title || defaultConfig.gallery_title}
-                        </h2>
-                        <p class="text-center mb-6" style="font-size: ${baseSize}px; color: ${textColor};">
-                            لديك ${userCertificates.length} شهادة محفوظة
-                        </p>
-                        
-                        <!-- Search and Filter -->
-                        <div class="space-y-4">
-                            <input 
-                                type="text" 
-                                placeholder="🔍 ابحث بالاسم أو الرسالة..."
-                                class="search-input w-full px-4 py-3 rounded-xl border-2 focus:outline-none"
-                                style="border-color: #C9A961; font-size: ${baseSize}px;"
-                                oninput="searchQuery = this.value; renderGallery();"
-                                value="${searchQuery}"
-                            />
-                            
-                            <div class="flex gap-2 flex-wrap">
-                                <button onclick="filterType = 'all'; renderGallery();" class="filter-chip ${filterType === 'all' ? 'active' : ''}" style="font-size: ${baseSize * 0.9}px;">
-                                    الكل
-                                </button>
-                                <button onclick="filterType = 'appreciation'; renderGallery();" class="filter-chip ${filterType === 'appreciation' ? 'active' : ''}" style="font-size: ${baseSize * 0.9}px;">
-                                    تقدير
-                                </button>
-                                <button onclick="filterType = 'thanks'; renderGallery();" class="filter-chip ${filterType === 'thanks' ? 'active' : ''}" style="font-size: ${baseSize * 0.9}px;">
-                                    شكر
-                                </button>
-                                <button onclick="filterType = 'excellence'; renderGallery();" class="filter-chip ${filterType === 'excellence' ? 'active' : ''}" style="font-size: ${baseSize * 0.9}px;">
-                                    تميز
-                                </button>
-                                <button onclick="filterType = 'achievement'; renderGallery();" class="filter-chip ${filterType === 'achievement' ? 'active' : ''}" style="font-size: ${baseSize * 0.9}px;">
-                                    إنجاز
-                                </button>
-                                <button onclick="filterType = 'participation'; renderGallery();" class="filter-chip ${filterType === 'participation' ? 'active' : ''}" style="font-size: ${baseSize * 0.9}px;">
-                                    مشاركة
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    ${filteredCertificates.length === 0 ? `
-                        <div class="text-center py-20">
-                            <div class="text-8xl mb-6">📭</div>
-                            <h3 class="text-2xl font-bold mb-3" style="color: ${textColor};">لا توجد شهادات</h3>
-                            <p class="mb-6" style="font-size: ${baseSize}px; color: ${textColor};">
-                                ${searchQuery || filterType !== 'all' ? 'لا توجد نتائج للبحث' : 'ابدأ بإنشاء أول شهادة لك!'}
-                            </p>
-                            ${!searchQuery && filterType === 'all' ? `
-                                <button 
-                                    onclick="currentView = 'create'; render();"
-                                    class="px-8 py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
-                                    style="background: linear-gradient(135deg, #D4AF37, #C9A961); font-size: ${baseSize * 1.1}px;"
-                                >
-                                    إنشاء شهادة جديدة 🎨
-                                </button>
-                            ` : ''}
-                        </div>
-                    ` : `
-                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${filteredCertificates.map(cert => {
-                                const colors = cert.custom_colors ? JSON.parse(cert.custom_colors) : certificateTemplates[cert.color_theme].colors;
-                                const types = {
-                                    appreciation: 'تقدير وعرفان',
-                                    thanks: 'شكر وامتنان',
-                                    excellence: 'تميز وإبداع',
-                                    achievement: 'إنجاز متميز',
-                                    participation: 'مشاركة فعالة'
-                                };
-                                const visibility = cert.visibility || 'private';
-                                const isFavorite = cert.is_favorite === 'true';
-                                
-                                return `
-                                    <div class="gallery-card certificate-card bg-white rounded-2xl shadow-lg overflow-hidden" style="border: 3px solid ${colors.gold_color};">
-                                        <div class="certificate-preview p-6 relative" style="background: ${colors.certificate_bg};">
-                                            <div class="absolute top-2 right-2 flex gap-2">
-                                                ${visibility === 'public' ? '<div class="text-2xl">🌐</div>' : '<div class="text-2xl">🔒</div>'}
-                                                <div 
-                                                    class="favorite-star"
-                                                    onclick='toggleFavorite(${JSON.stringify(cert).replace(/'/g, "\\'")});'
-                                                >
-                                                    ${isFavorite ? '⭐' : '☆'}
-                                                </div>
-                                            </div>
-                                            <div class="text-4xl text-center mb-3">🏆</div>
-                                            <h3 class="text-xl font-bold text-center mb-2" style="color: ${colors.gold_color}; font-size: ${baseSize * 1.3}px;">
-                                                ${types[cert.certificate_type]}
-                                            </h3>
-                                            <p class="text-center mb-2 font-bold" style="color: ${colors.text_color}; font-size: ${baseSize * 1.1}px;">
-                                                ${cert.recipient_name}
-                                            </p>
-                                            <p class="text-center text-sm mb-3 line-clamp-2" style="color: ${colors.text_color}; font-size: ${baseSize * 0.9}px;">
-                                                ${cert.message}
-                                            </p>
-                                            <p class="text-center text-xs" style="color: ${colors.text_color}; font-size: ${baseSize * 0.8}px;">
-                                                من: ${cert.sender_name}
-                                            </p>
-                                            <p class="text-center text-xs mt-2" style="color: ${colors.text_color}; font-size: ${baseSize * 0.75}px;">
-                                                ${new Date(cert.created_at).toLocaleDateString('ar-SA')}
-                                            </p>
-                                        </div>
-                                        <div class="p-4 bg-gray-50">
-                                            <div class="flex gap-2 mb-2">
-                                                <button 
-                                                    onclick='editCertificate(${JSON.stringify(cert).replace(/'/g, "\\'")});'
-                                                    class="flex-1 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all transform hover:scale-105"
-                                                    style="font-size: ${baseSize * 0.9}px;"
-                                                >
-                                                    ✏️ تعديل
-                                                </button>
-                                                ${certificateToDelete === cert.certificate_id ? `
-                                                    <button 
-                                                        onclick='deleteCertificate(${JSON.stringify(cert).replace(/'/g, "\\'")});'
-                                                        class="flex-1 py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all delete-confirm"
-                                                        style="font-size: ${baseSize * 0.9}px;"
-                                                    >
-                                                        ⚠️ تأكيد الحذف
-                                                    </button>
-                                                ` : `
-                                                    <button 
-                                                        onclick="certificateToDelete = '${cert.certificate_id}'; renderGallery();"
-                                                        class="flex-1 py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all transform hover:scale-105"
-                                                        style="font-size: ${baseSize * 0.9}px;"
-                                                    >
-                                                        🗑️ حذف
-                                                    </button>
-                                                `}
-                                            </div>
-                                            ${visibility === 'public' ? `
-                                                <button 
-                                                    onclick="copyShareLink('${cert.certificate_id}')"
-                                                    class="w-full py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all transform hover:scale-105"
-                                                    style="font-size: ${baseSize * 0.9}px;"
-                                                >
-                                                    🔗 نسخ رابط المشاركة
-                                                </button>
-                                            ` : ''}
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `}
-                </div>
-            `;
-            
-            document.getElementById('app').innerHTML = galleryHTML;
-        }
-        
-        // Render favorites view
-        function renderFavorites() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            const favorites = getUserCertificates().filter(c => c.is_favorite === 'true').sort((a, b) => 
-                new Date(b.created_at) - new Date(a.created_at)
-            );
-            
-            const favoritesHTML = `
-                <div style="font-family: ${customFont}, Cairo, sans-serif;">
-                    ${renderNavigation()}
-                    
-                    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6">
-                        <h2 class="text-3xl font-bold text-center mb-2" style="font-size: ${baseSize * 2}px; color: #D4AF37;">
-                            ⭐ المفضلة
-                        </h2>
-                        <p class="text-center" style="font-size: ${baseSize}px; color: ${textColor};">
-                            لديك ${favorites.length} شهادة مفضلة
-                        </p>
-                    </div>
-                    
-                    ${favorites.length === 0 ? `
-                        <div class="text-center py-20">
-                            <div class="text-8xl mb-6">⭐</div>
-                            <h3 class="text-2xl font-bold mb-3" style="color: ${textColor};">لا توجد شهادات مفضلة</h3>
-                            <p class="mb-6" style="font-size: ${baseSize}px; color: ${textColor};">
-                                قم بإضافة شهادات للمفضلة من المعرض
-                            </p>
-                            <button 
-                                onclick="currentView = 'gallery'; render();"
-                                class="px-8 py-4 rounded-xl text-white font-bold shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
-                                style="background: linear-gradient(135deg, #D4AF37, #C9A961); font-size: ${baseSize * 1.1}px;"
-                            >
-                                انتقل للمعرض 🖼️
-                            </button>
-                        </div>
-                    ` : `
-                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${favorites.map(cert => {
-                                const colors = cert.custom_colors ? JSON.parse(cert.custom_colors) : certificateTemplates[cert.color_theme].colors;
-                                const types = {
-                                    appreciation: 'تقدير وعرفان',
-                                    thanks: 'شكر وامتنان',
-                                    excellence: 'تميز وإبداع',
-                                    achievement: 'إنجاز متميز',
-                                    participation: 'مشاركة فعالة'
-                                };
-                                const visibility = cert.visibility || 'private';
-                                
-                                return `
-                                    <div class="gallery-card certificate-card bg-white rounded-2xl shadow-lg overflow-hidden" style="border: 3px solid ${colors.gold_color};">
-                                        <div class="certificate-preview p-6 relative" style="background: ${colors.certificate_bg};">
-                                            <div class="absolute top-2 right-2 flex gap-2">
-                                                ${visibility === 'public' ? '<div class="text-2xl">🌐</div>' : '<div class="text-2xl">🔒</div>'}
-                                                <div 
-                                                    class="favorite-star"
-                                                    onclick='toggleFavorite(${JSON.stringify(cert).replace(/'/g, "\\'")});'
-                                                >
-                                                    ⭐
-                                                </div>
-                                            </div>
-                                            <div class="text-4xl text-center mb-3">🏆</div>
-                                            <h3 class="text-xl font-bold text-center mb-2" style="color: ${colors.gold_color}; font-size: ${baseSize * 1.3}px;">
-                                                ${types[cert.certificate_type]}
-                                            </h3>
-                                            <p class="text-center mb-2 font-bold" style="color: ${colors.text_color}; font-size: ${baseSize * 1.1}px;">
-                                                ${cert.recipient_name}
-                                            </p>
-                                            <p class="text-center text-sm mb-3 line-clamp-2" style="color: ${colors.text_color}; font-size: ${baseSize * 0.9}px;">
-                                                ${cert.message}
-                                            </p>
-                                            <p class="text-center text-xs" style="color: ${colors.text_color}; font-size: ${baseSize * 0.8}px;">
-                                                من: ${cert.sender_name}
-                                            </p>
-                                        </div>
-                                        <div class="p-4 bg-gray-50">
-                                            <div class="flex gap-2">
-                                                <button 
-                                                    onclick='editCertificate(${JSON.stringify(cert).replace(/'/g, "\\'")});'
-                                                    class="flex-1 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all transform hover:scale-105"
-                                                    style="font-size: ${baseSize * 0.9}px;"
-                                                >
-                                                    ✏️ تعديل
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `}
-                </div>
-            `;
-            
-            document.getElementById('app').innerHTML = favoritesHTML;
-        }
-        
-        // Render stats view
-        function renderStats() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            const userCertificates = getUserCertificates();
-            
-            // Calculate stats
-            const typeStats = {
-                appreciation: 0,
-                thanks: 0,
-                excellence: 0,
-                achievement: 0,
-                participation: 0
-            };
-            
-            const recipientNames = {};
-            const monthlyStats = {};
-            
-            userCertificates.forEach(cert => {
-                typeStats[cert.certificate_type]++;
-                
-                recipientNames[cert.recipient_name] = (recipientNames[cert.recipient_name] || 0) + 1;
-                
-                const month = new Date(cert.created_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short' });
-                monthlyStats[month] = (monthlyStats[month] || 0) + 1;
-            });
-            
-            const topRecipients = Object.entries(recipientNames)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            
-            const typeNames = {
-                appreciation: 'تقدير وعرفان',
-                thanks: 'شكر وامتنان',
-                excellence: 'تميز وإبداع',
-                achievement: 'إنجاز متميز',
-                participation: 'مشاركة فعالة'
-            };
-            
-            const statsHTML = `
-                <div style="font-family: ${customFont}, Cairo, sans-serif;">
-                    ${renderNavigation()}
-                    
-                    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6">
-                        <h2 class="text-3xl font-bold text-center mb-2" style="font-size: ${baseSize * 2}px; color: #D4AF37;">
-                            📊 إحصائيات تفصيلية
-                        </h2>
-                        <p class="text-center" style="font-size: ${baseSize}px; color: ${textColor};">
-                            تحليل شامل لشهاداتك
-                        </p>
-                    </div>
-                    
-                    <!-- Type Distribution -->
-                    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6">
-                        <h3 class="text-2xl font-bold mb-6" style="font-size: ${baseSize * 1.5}px; color: #D4AF37;">
-                            📈 توزيع أنواع الشهادات
-                        </h3>
-                        <div class="space-y-4">
-                            ${Object.entries(typeStats).map(([type, count]) => {
-                                const percentage = userCertificates.length > 0 ? (count / userCertificates.length * 100) : 0;
-                                return `
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <span style="font-size: ${baseSize}px; color: ${textColor};">${typeNames[type]}</span>
-                                            <span style="font-size: ${baseSize}px; color: ${textColor};" class="font-bold">${count} (${percentage.toFixed(1)}%)</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-4">
-                                            <div 
-                                                class="h-4 rounded-full transition-all"
-                                                style="width: ${percentage}%; background: linear-gradient(135deg, #D4AF37, #C9A961);"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- Top Recipients -->
-                    ${topRecipients.length > 0 ? `
-                        <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6">
-                            <h3 class="text-2xl font-bold mb-6" style="font-size: ${baseSize * 1.5}px; color: #D4AF37;">
-                                👥 الأكثر استلاماً للشهادات
-                            </h3>
-                            <div class="space-y-3">
-                                ${topRecipients.map(([name, count], index) => `
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                        <div class="flex items-center gap-4">
-                                            <div class="text-3xl">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'}</div>
-                                            <div>
-                                                <div class="font-bold" style="font-size: ${baseSize * 1.1}px; color: ${textColor};">${name}</div>
-                                                <div class="text-sm" style="color: ${textColor};">${count} شهادة</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <!-- Monthly Timeline -->
-                    ${Object.keys(monthlyStats).length > 0 ? `
-                        <div class="bg-white rounded-3xl shadow-2xl p-8">
-                            <h3 class="text-2xl font-bold mb-6" style="font-size: ${baseSize * 1.5}px; color: #D4AF37;">
-                                📅 الجدول الزمني الشهري
-                            </h3>
-                            <div class="space-y-3">
-                                ${Object.entries(monthlyStats).map(([month, count]) => `
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                        <span style="font-size: ${baseSize}px; color: ${textColor};">${month}</span>
-                                        <span class="font-bold" style="font-size: ${baseSize * 1.1}px; color: #D4AF37;">${count} شهادة</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-            
-            document.getElementById('app').innerHTML = statsHTML;
-        }
-        
-        // Render profile view
-        function renderProfile() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const customFont = config.font_family || defaultConfig.font_family;
-            const baseSize = config.font_size || defaultConfig.font_size;
-            const textColor = isDarkMode ? '#e8e8e8' : '#78350F';
-            const userCertificates = getUserCertificates();
-            
-            const typeStats = {
-                appreciation: 0,
-                thanks: 0,
-                excellence: 0,
-                achievement: 0,
-                participation: 0
-            };
-            
-            userCertificates.forEach(cert => {
-                typeStats[cert.certificate_type]++;
-            });
-            
-            const mostUsedType = Object.entries(typeStats).reduce((a, b) => a[1] > b[1] ? a : b, ['appreciation', 0])[0];
-            const typeNames = {
-                appreciation: 'تقدير وعرفان',
-                thanks: 'شكر وامتنان',
-                excellence: 'تميز وإبداع',
-                achievement: 'إنجاز متميز',
-                participation: 'مشاركة فعالة'
-            };
-            
-            const favorites = userCertificates.filter(c => c.is_favorite === 'true');
-            
-            return `
-                <div style="font-family: ${customFont}, Cairo, sans-serif;">
-                    ${renderNavigation()}
-                    
-                    <div class="max-w-4xl mx-auto">
-                        <!-- Profile Header -->
-                        <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6" style="border: 3px solid #D4AF37;">
-                            <div class="text-center">
-                                <div class="text-8xl mb-4">👤</div>
-                                <h2 class="text-4xl font-bold mb-2" style="font-size: ${baseSize * 2.5}px; color: #D4AF37;">
-                                    ${currentUser.username}
-                                </h2>
-                                <p style="font-size: ${baseSize}px; color: ${textColor};">
-                                    عضو منذ ${new Date(currentUser.created_at).toLocaleDateString('ar-SA')}
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <!-- Statistics -->
-                        <div class="grid md:grid-cols-3 gap-6 mb-6">
-                            <div class="stat-card profile-stat">
-                                <div class="text-5xl mb-3 text-center">📊</div>
-                                <h3 class="text-3xl font-bold text-center mb-2">${userCertificates.length}</h3>
-                                <p class="text-center" style="font-size: ${baseSize}px;">إجمالي الشهادات</p>
-                            </div>
-                            
-                            <div class="stat-card profile-stat" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                                <div class="text-5xl mb-3 text-center">⭐</div>
-                                <h3 class="text-3xl font-bold text-center mb-2">${favorites.length}</h3>
-                                <p class="text-center" style="font-size: ${baseSize}px;">المفضلة</p>
-                            </div>
-                            
-                            <div class="stat-card profile-stat" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                                <div class="text-5xl mb-3 text-center">🏆</div>
-                                <h3 class="text-xl font-bold text-center mb-2" style="font-size: ${baseSize * 1.3}px;">
-                                    ${typeNames[mostUsedType] || 'لا يوجد'}
-                                </h3>
-                                <p class="text-center" style="font-size: ${baseSize}px;">الأكثر استخداماً</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Type Breakdown -->
-                        <div class="bg-white rounded-3xl shadow-2xl p-8">
-                            <h3 class="text-2xl font-bold mb-6 text-center" style="font-size: ${baseSize * 1.5}px; color: #D4AF37;">
-                                📈 إحصائيات الشهادات
-                            </h3>
-                            <div class="space-y-4">
-                                ${Object.entries(typeStats).map(([type, count]) => `
-                                    <div>
-                                        <div class="flex justify-between mb-2">
-                                            <span style="font-size: ${baseSize}px; color: ${textColor};">${typeNames[type]}</span>
-                                            <span style="font-size: ${baseSize}px; color: ${textColor};" class="font-bold">${count}</span>
-                                        </div>
-                                        <div class="w-full bg-gray-200 rounded-full h-3">
-                                            <div 
-                                                class="h-3 rounded-full transition-all"
-                                                style="width: ${userCertificates.length > 0 ? (count / userCertificates.length * 100) : 0}%; background: linear-gradient(135deg, #D4AF37, #C9A961);"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Main render function
-        function render() {
-            const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
-            const app = document.getElementById('app');
-            app.style.background = `linear-gradient(to bottom right, ${config.background_color || defaultConfig.background_color}, ${config.certificate_bg || defaultConfig.certificate_bg})`;
-            
-            let content = '';
-            
-            if (!currentUser) {
-                if (currentView === 'register') {
-                    content = renderRegister();
-                } else {
-                    content = renderLogin();
-                }
-            } else {
-                if (currentView === 'create') {
-                    content = renderCreateCertificate();
-                    setTimeout(() => {
-                        updateCertificatePreview();
-                        updateCharCounters();
-                    }, 0);
-                } else if (currentView === 'gallery') {
-                    renderGallery();
-                    return;
-                } else if (currentView === 'favorites') {
-                    renderFavorites();
-                    return;
-                } else if (currentView === 'stats') {
-                    renderStats();
-                    return;
-                } else if (currentView === 'profile') {
-                    content = renderProfile();
-                }
-            }
-            
-            app.innerHTML = `<div class="min-h-full w-full py-6 px-4">${content}</div>`;
-            
-            if (currentUser && currentView === 'create') {
-                createConfetti();
-            }
-        }
-        
-        // Element SDK implementation
-        const elementApi = {
-            defaultConfig: defaultConfig,
-            onConfigChange: async (config) => {
-                render();
-            },
-            mapToCapabilities: (config) => ({
-                recolorables: [
-                    {
-                        get: () => config.background_color || defaultConfig.background_color,
-                        set: (value) => {
-                            config.background_color = value;
-                            window.elementSdk.setConfig({ background_color: value });
-                        }
-                    },
-                    {
-                        get: () => config.certificate_bg || defaultConfig.certificate_bg,
-                        set: (value) => {
-                            config.certificate_bg = value;
-                            window.elementSdk.setConfig({ certificate_bg: value });
-                        }
-                    },
-                    {
-                        get: () => config.gold_color || defaultConfig.gold_color,
-                        set: (value) => {
-                            config.gold_color = value;
-                            window.elementSdk.setConfig({ gold_color: value });
-                        }
-                    },
-                    {
-                        get: () => config.text_color || defaultConfig.text_color,
-                        set: (value) => {
-                            config.text_color = value;
-                            window.elementSdk.setConfig({ text_color: value });
-                        }
-                    },
-                    {
-                        get: () => config.accent_color || defaultConfig.accent_color,
-                        set: (value) => {
-                            config.accent_color = value;
-                            window.elementSdk.setConfig({ accent_color: value });
-                        }
-                    }
-                ],
-                borderables: [],
-                fontEditable: {
-                    get: () => config.font_family || defaultConfig.font_family,
-                    set: (value) => {
-                        config.font_family = value;
-                        window.elementSdk.setConfig({ font_family: value });
-                    }
-                },
-                fontSizeable: {
-                    get: () => config.font_size || defaultConfig.font_size,
-                    set: (value) => {
-                        config.font_size = value;
-                        window.elementSdk.setConfig({ font_size: value });
-                    }
-                }
-            }),
-            mapToEditPanelValues: (config) => new Map([
-                ["certificate_title", config.certificate_title || defaultConfig.certificate_title],
-                ["subtitle_text", config.subtitle_text || defaultConfig.subtitle_text],
-                ["default_message", config.default_message || defaultConfig.default_message],
-                ["button_text", config.button_text || defaultConfig.button_text],
-                ["login_title", config.login_title || defaultConfig.login_title],
-                ["gallery_title", config.gallery_title || defaultConfig.gallery_title]
-            ])
-        };
-        
-        // Initialize Element SDK
-        if (window.elementSdk) {
-            window.elementSdk.init(elementApi);
-        }
-        
-        // Initial render
-        render();
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a07f96a0e9e2e7bc',t:'MTc4MDgzNDU5MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+        // بدء تشغيل التطبيق بالكامل
+        initApp();
+  </script>
+ </body>
 </html>
