@@ -44,28 +44,19 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             z-index: 10000;
         }
-        .loading-spinner {
-            border: 3px solid rgba(201, 169, 97, 0.3);
-            border-top: 3px solid #C9A961;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
  </head>
  <body class="h-full bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
 
-  <div id="app" class="w-full h-full overflow-auto p-4 md:p-8">
-      </div>
+  <div id="app" class="w-full h-full overflow-auto p-4 md:p-8"></div>
 
   <script>
         // --- إعدادات الاتصال بـ Supabase ---
-        // استبدلي هذه القيم بالقيم الخاصة بمشروع الشهادات الجديد في حسابكِ
         const SUPABASE_URL = "https://lxyyrdhvcaqqdvuucnua.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_Y-_Th8vqG4IWIg2JouB5cg_cvzL2vA6";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // تم تغيير اسم المتغير هنا إلى supabaseClient لمنع التعارض البرمجي وتوقف الصفحة
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // حالة التطبيق العامة
         let currentUser = null;
@@ -83,22 +74,29 @@
 
         // دالة بدء تشغيل التطبيق وفحص الجلسة الحالية
         async function initApp() {
-            showLoading(true);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                currentView = 'dashboard';
-                await loadUserCertificates();
-            } else {
-                currentView = 'login';
+            try {
+                showLoading(true);
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (session) {
+                    currentUser = session.user;
+                    currentView = 'dashboard';
+                    await loadUserCertificates();
+                } else {
+                    currentView = 'login';
+                }
+            } catch (err) {
+                console.error("خطأ أثناء الاتصال بسوبابيز:", err);
+                currentView = 'login'; // لضمان ظهور واجهة الدخول حتى لو فشل الاتصال الأولي
+            } finally {
+                showLoading(false);
+                renderApp();
             }
-            showLoading(false);
-            renderApp();
         }
 
         // رندر الواجهة بناءً على الصفحة الحالية
         function renderApp() {
             const app = document.getElementById('app');
+            if (!app) return;
             
             if (currentView === 'login') {
                 app.innerHTML = renderLoginView();
@@ -157,7 +155,7 @@
             <div class="max-w-6xl mx-auto">
                 <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-8">
                     <div class="flex items-center gap-4">
-                        <span class="font-bold text-amber-900">مرحباً: ${currentUser.email}</span>
+                        <span class="font-bold text-amber-900">مرحباً: ${currentUser ? currentUser.email : ''}</span>
                         <button onclick="switchView('gallery')" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي</button>
                     </div>
                     <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">تسجيل الخروج</button>
@@ -197,7 +195,7 @@
                             <div class="text-amber-700 font-bold text-lg tracking-widest border-b border-amber-200 pb-2 mb-4" id="view-cert-title">شهادة تقدير وعرفان</div>
                             <div class="my-auto space-y-4">
                                 <p class="text-gray-600 text-sm">تتقدم إدارة المدرسة بالامتنان والتقدير لـ</p>
-                                <h2 class="text-3xl font-bold text-amber-800 arabic-title gold-text" id="view-recipient">${formData.recipientName}</h2>
+                                <h2 class="text-3xl font-bold text-amber-800 gold-text" id="view-recipient">${formData.recipientName}</h2>
                                 <p class="text-gray-700 leading-relaxed px-4 text-sm" id="view-message">${formData.message}</p>
                             </div>
                             <div class="flex justify-between items-center mt-6 pt-4 border-t border-amber-200 text-sm">
@@ -250,20 +248,19 @@
         }
 
         function updatePreview() {
-                formData.recipientName = document.getElementById('recipientName').value;
-                formData.message = document.getElementById('message').value;
-                formData.senderName = document.getElementById('senderName').value;
-                formData.certificateType = document.getElementById('certificateType').value;
+            formData.recipientName = document.getElementById('recipientName').value;
+            formData.message = document.getElementById('message').value;
+            formData.senderName = document.getElementById('senderName').value;
+            formData.certificateType = document.getElementById('certificateType').value;
 
-                // تحديث العرض الحي
-                document.getElementById('view-recipient').textContent = formData.recipientName;
-                document.getElementById('view-message').textContent = formData.message;
-                document.getElementById('view-sender').textContent = formData.senderName;
-    
-                const typeLabels = { appreciation: 'شهادة تقدير وعرفان', excellence: 'شهادة تفوق وتميز', thanks: 'شهادة شكر وامتنان' };
-                // تم التصحيح هنا إلى view-cert-title ليطابق الـ HTML
-                document.getElementById('view-cert-title').textContent = typeLabels[formData.certificateType] || 'شهادة تقدير';
-            }
+            // تحديث العرض الحي
+            document.getElementById('view-recipient').textContent = formData.recipientName;
+            document.getElementById('view-message').textContent = formData.message;
+            document.getElementById('view-sender').textContent = formData.senderName;
+            
+            const typeLabels = { appreciation: 'شهادة تقدير وعرفان', excellence: 'شهادة تفوق وتميز', thanks: 'شهادة شكر وامتنان' };
+            document.getElementById('view-cert-title').textContent = typeLabels[formData.certificateType] || 'شهادة تقدير';
+        }
 
         // تسجيل حساب جديد في السحابة
         async function handleRegister() {
@@ -272,13 +269,13 @@
             if (!email || !password) return showToast('⚠️ يرجى ملء كافة الحقول');
 
             showLoading(true);
-            const { data, error } = await supabase.auth.signUp({ email, password });
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
             showLoading(false);
 
             if (error) {
                 showToast('❌ خطأ: ' + error.message);
             } else {
-                showToast('🎉 تم إنشاء الحساب بنجاح! تفقد بريدك للتفعيل إذا تطلب الأمر.');
+                showToast('🎉 تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
                 switchView('login');
             }
         }
@@ -290,7 +287,7 @@
             if (!email || !password) return showToast('⚠️ يرجى إدخال البريد وكلمة المرور');
 
             showLoading(true);
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
             showLoading(false);
 
             if (error) {
@@ -306,7 +303,7 @@
 
         // تسجيل الخروج
         async function handleLogout() {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             currentUser = null;
             currentRecords = [];
             currentView = 'login';
@@ -318,14 +315,13 @@
             if (!currentUser) return showToast('⚠️ يجب تسجيل الدخول أولاً');
             
             showLoading(true);
-            const { data, error } = await supabase.from('certificates').insert([
+            const { data, error } = await supabaseClient.from('certificates').insert([
                 {
                     user_id: currentUser.id,
                     recipient_name: formData.recipientName,
                     message: formData.message,
                     sender_name: formData.senderName,
-                    certificate_type: formData.certificateType,
-                    created_at: new Date()
+                    certificate_type: formData.certificateType
                 }
             ]);
             showLoading(false);
@@ -341,7 +337,7 @@
         // جلب الشهادات المخزنة للمستخدم الحالي
         async function loadUserCertificates() {
             if (!currentUser) return;
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('certificates')
                 .select('*')
                 .eq('user_id', currentUser.id)
@@ -355,7 +351,7 @@
         // حذف شهادة من السحابة
         async function deleteCertificate(id) {
             showLoading(true);
-            const { error } = await supabase.from('certificates').delete().eq('id', id);
+            const { error } = await supabaseClient.from('certificates').delete().eq('id', id);
             showLoading(false);
 
             if (error) {
@@ -394,11 +390,12 @@
 
         function showLoading(state) {
             isLoading = state;
-            // يمكن إضافة سبينر كبير هنا إذا لزم الأمر
         }
 
-        // بدء تشغيل التطبيق بالكامل
-        initApp();
+        // بدء تشغيل التطبيق بالكامل عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
   </script>
  </body>
 </html>
