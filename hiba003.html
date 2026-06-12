@@ -250,19 +250,20 @@
         }
 
         function updatePreview() {
-            formData.recipientName = document.getElementById('recipientName').value;
-            formData.message = document.getElementById('message').value;
-            formData.senderName = document.getElementById('senderName').value;
-            formData.certificateType = document.getElementById('certificateType').value;
+                formData.recipientName = document.getElementById('recipientName').value;
+                formData.message = document.getElementById('message').value;
+                formData.senderName = document.getElementById('senderName').value;
+                formData.certificateType = document.getElementById('certificateType').value;
 
-            // تحديث العرض الحي
-            document.getElementById('view-recipient').textContent = formData.recipientName;
-            document.getElementById('view-message').textContent = formData.message;
-            document.getElementById('view-sender').textContent = formData.senderName;
-            
-            const typeLabels = { appreciation: 'شهادة تقدير وعرفان', excellence: 'شهادة تفوق وتميز', thanks: 'شهادة شكر وامتنان' };
-            document.getElementById('view-title').textContent = typeLabels[formData.certificateType] || 'شهادة تقدير';
-        }
+                // تحديث العرض الحي
+                document.getElementById('view-recipient').textContent = formData.recipientName;
+                document.getElementById('view-message').textContent = formData.message;
+                document.getElementById('view-sender').textContent = formData.senderName;
+    
+                const typeLabels = { appreciation: 'شهادة تقدير وعرفان', excellence: 'شهادة تفوق وتميز', thanks: 'شهادة شكر وامتنان' };
+                // تم التصحيح هنا إلى view-cert-title ليطابق الـ HTML
+                document.getElementById('view-cert-title').textContent = typeLabels[formData.certificateType] || 'شهادة تقدير';
+            }
 
         // تسجيل حساب جديد في السحابة
         async function handleRegister() {
