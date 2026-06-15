@@ -31,7 +31,7 @@
             z-index: 10000;
         }
 
-        /* ستايل الصورة القابلة للسحب والتحريك وضبط الإطارات الفنية */
+        /* ستايل الصورة القابلة للسحب والتحريك */
         .draggable-image {
             position: absolute;
             cursor: move;
@@ -40,12 +40,13 @@
             z-index: 50;
         }
         
-        .frame-none { border-style: none !important; padding: 0px !important; }
+        /* قوالب الإطارات المخصصة للصورة */
+        .frame-none { border: none !important; padding: 0 !important; }
         .frame-circle { border-radius: 50% !important; }
-        .frame-gold { border-style: double !important; border-width: 6px !important; padding: 2px !important; }
-        .frame-royal { border-style: solid !important; border-width: 3px !important; padding: 2px !important; }
+        .frame-gold { border-style: double !important; border-width: 6px !important; padding: 2px; }
+        .frame-royal { border-style: solid !important; border-width: 4px !important; padding: 2px; }
 
-        /* تحسين جودة الخطوط العربية لمنع التقطع عند التصدير */
+        /* تحسين جودة الخطوط العربية عند التنزيل */
         .fix-arabic-render {
             letter-spacing: 0px !important;
             word-spacing: 0px !important;
@@ -66,15 +67,15 @@
         let currentView = 'login'; 
         let currentRecords = [];
 
-        // متغيرات الصورة والتحكم بها
+        // متغيرات الصورة المرفوعة والتحكم بها
         let uploadedImageSrc = '';
         let imageSize = 100;
-        let imageFrame = 'frame-none';
+        let imageFrameClass = 'frame-none';
         let isDragging = false;
         let startX, startY;
         let initialLeft = 50, initialTop = 50;
 
-        // إعدادات الألوان الافتراضية الذكية HEX
+        // الألوان المخصصة عبر نافذة الألوان HEX
         let customColors = {
             bgColor: '#fdfbf7',
             borderColor: '#d4af37',
@@ -189,17 +190,17 @@
                             <input type="file" id="imageUploader" accept="image/*" onchange="handleImageUpload(event)" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
                             
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">حجم الصورة</label>
+                                <label class="block text-xs text-gray-600 mb-1">حجم الصورة المرفوعة</label>
                                 <input type="range" id="imageSizeSlider" min="40" max="250" value="${imageSize}" oninput="changeImageSize(this.value)" class="w-full accent-amber-600">
                             </div>
 
                             <div>
                                 <label class="block text-xs text-gray-600 mb-1">شكل ونوع الإطار</label>
-                                <select id="imageFrameSelect" onchange="changeImageFrame(this.value)" class="w-full p-1.5 text-xs border rounded-lg bg-white">
-                                    <option value="frame-none" ${imageFrame === 'frame-none' ? 'selected' : ''}>بدون إطار</option>
-                                    <option value="frame-circle" ${imageFrame === 'frame-circle' ? 'selected' : ''}>شكل دائري مبسط</option>
-                                    <option value="frame-gold" ${imageFrame === 'frame-gold' ? 'selected' : ''}>إطار ملكي مزدوج</option>
-                                    <option value="frame-royal" ${imageFrame === 'frame-royal' ? 'selected' : ''}>إطار كحلي مدرسي متين</option>
+                                <select id="imageFrameSelect" onchange="changeImageFrame(this.value)" class="w-full p-2 text-xs border rounded-lg bg-white">
+                                    <option value="frame-none">بدون إطار</option>
+                                    <option value="frame-circle">شكل دائري هندسي</option>
+                                    <option value="frame-gold">إطار مزدوج ملكي</option>
+                                    <option value="frame-royal">إطار مصمت مدرسي</option>
                                 </select>
                             </div>
 
@@ -248,8 +249,8 @@
                     <div class="flex items-center justify-center lg:col-span-2 select-none relative">
                         <div id="certificate-capture-area" class="w-full max-w-2xl border-[12px] p-12 rounded-xl shadow-2xl relative text-center min-h-[480px] flex flex-col justify-between overflow-hidden" style="font-family: 'Amiri', serif; background-color: ${customColors.bgColor}; border-color: ${customColors.borderColor}; color: ${customColors.textColor};">
                             
-                            <div id="imageContainer" class="draggable-image ${imageFrame}" style="left: ${initialLeft}px; top: ${initialTop}px; display: ${uploadedImageSrc ? 'block' : 'none'}; border-color: ${customColors.frameColor};">
-                                <img id="certCustomImage" src="${uploadedImageSrc}" style="width: ${imageSize}px; height: auto;" class="${imageFrame.includes('frame-circle') ? 'rounded-full' : ''}">
+                            <div id="imageContainer" class="draggable-image ${imageFrameClass}" style="left: ${initialLeft}px; top: ${initialTop}px; display: ${uploadedImageSrc ? 'block' : 'none'}; border-color: ${customColors.frameColor};">
+                                <img id="certCustomImage" src="${uploadedImageSrc}" style="width: ${imageSize}px; height: auto;" class="${imageFrameClass.includes('frame-circle') ? 'rounded-full' : ''}">
                             </div>
 
                             <div class="font-bold text-3xl tracking-widest border-b border-opacity-20 pb-3 mb-6 fix-arabic-render" id="view-cert-title" style="color: ${customColors.textColor};">شهادة تقدير وعرفان</div>
@@ -276,18 +277,17 @@
                 recordsHTML = '<p class="col-span-full text-center text-gray-500 py-12">لم تقم بحفظ أي شهادات سحابياً حتى الآن.</p>';
             } else {
                 currentRecords.forEach(cert => {
-                    // إصلاح التداخل: فحص ما إذا كانت القيم المخزنة هي كود لون HEX أم نصوص قديمة
-                    const bg = (cert.theme && cert.theme.startsWith('#')) ? cert.theme : '#fdfbf7';
-                    const txt = (cert.font_family && cert.font_family.startsWith('#')) ? cert.font_family : '#85581A';
+                    const bg = cert.theme && cert.theme.startsWith('#') ? cert.theme : '#fdfbf7';
+                    const txt = cert.font_family && cert.font_family.startsWith('#') ? cert.font_family : '#85581A';
                     
                     recordsHTML += `
-                    <div class="p-6 rounded-xl shadow-md border-2 flex flex-col justify-between" style="background-color: ${bg}; color: ${txt}; border-color: ${txt}40; font-family: 'Tajawal', sans-serif;">
+                    <div class="p-6 rounded-xl shadow border flex flex-col justify-between" style="background-color: ${bg}; color: ${txt}; font-family: 'Amiri', sans-serif;">
                         <div>
-                            <h4 class="text-lg font-bold border-b border-opacity-20 pb-1 mb-2 fix-arabic-render">${cert.recipient_name || 'طالب متميز'}</h4>
-                            <p class="text-xs my-2 line-clamp-3 opacity-90 fix-arabic-render">${cert.message || ''}</p>
-                            <small class="block mt-2 font-semibold opacity-75 fix-arabic-render">بواسطة: ${cert.sender_name || 'إدارة المدرسة'}</small>
+                            <h4 class="text-lg font-bold">${cert.recipient_name || 'طالب'}</h4>
+                            <p class="text-sm my-2 line-clamp-2 opacity-90">${cert.message || ''}</p>
+                            <small class="opacity-70">بواسطة: ${cert.sender_name || 'الإدارة'}</small>
                         </div>
-                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-2 bg-red-600 bg-opacity-10 text-red-700 text-xs font-bold rounded-lg hover:bg-opacity-20 transition">🗑️ حذف من السحابة</button>
+                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-600 bg-opacity-20 text-red-700 text-sm font-semibold rounded-lg hover:bg-opacity-30 transition">🗑️ حذف سحابياً</button>
                     </div>`;
                 });
             }
@@ -295,8 +295,8 @@
             return `
             <div class="max-w-5xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-amber-900">📂 معرض شهاداتي السحابي الفاخر</h2>
-                    <button onclick="switchView('dashboard')" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 shadow">➕ صمم شهادة جديدة</button>
+                    <h2 class="text-2xl font-bold text-amber-900">📂 معرض شهاداتي السحابي المميز</h2>
+                    <button onclick="switchView('dashboard')" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700">➕ صمم شهادة جديدة</button>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     ${recordsHTML}
@@ -304,6 +304,7 @@
             </div>`;
         }
 
+        // تحكم دقيق بالألوان المخصصة (HEX) حياً ومباشراً
         function updateCustomColors(key, value) {
             customColors[key] = value;
             
@@ -347,19 +348,19 @@
             if (imgEl) imgEl.style.width = `${size}px`;
         }
 
-        // دالة تغيير وتحميل إطار الصورة التفاعلي الحقيقي
-        function changeImageFrame(frame) {
-            imageFrame = frame;
+        // دالة تغيير وتحويل شكل إطار الصورة الحية
+        function changeImageFrame(frameClass) {
+            imageFrameClass = frameClass;
             const containerEl = document.getElementById('imageContainer');
             const imgEl = document.getElementById('certCustomImage');
             if (containerEl && imgEl) {
-                // إسناد الكلاس الجديد مع الحفاظ على الكلاسات الأساسية للسحب والتوجيه
-                containerEl.className = `draggable-image ${frame}`;
-                if (frame === 'frame-circle') imgEl.classList.add('rounded-full');
+                containerEl.className = `draggable-image ${frameClass}`;
+                if (frameClass === 'frame-circle') imgEl.classList.add('rounded-full');
                 else imgEl.classList.remove('rounded-full');
             }
         }
 
+        // برمجة السحب والإفلات المستقر والتثبيت المحكم لمنع الالتصاق
         function setupDraggable() {
             const container = document.getElementById('imageContainer');
             const area = document.getElementById('certificate-capture-area');
@@ -399,7 +400,7 @@
             }
 
             function dragEnd() {
-                isDragging = false;
+                isDragging = false; // إلغاء الارتباط الفوري والتثبيت الكامل
             }
         }
 
@@ -409,7 +410,7 @@
         }
 
         async function goToGallery() {
-            showToast('⏳ جاري جلب وتحديث شهاداتكِ المحفوظة من السحابة...');
+            showToast('⏳ جاري تحديث وجلب بيانات المعرض من السحابة...');
             await loadUserCertificates();
             switchView('gallery');
         }
@@ -452,7 +453,7 @@
             if (error) showToast('❌ خطأ: تأكد من بياناتك وتفعيل الحساب سحابياً.');
             else {
                 currentUser = data.user;
-                showToast('👋 أهلاً بكِ في سحابتكِ الرقمية المتكاملة!');
+                showToast('👋 أهلاً بكِ في سحابتكِ الرقمية!');
                 currentView = 'dashboard';
                 await loadUserCertificates();
                 renderApp();
@@ -467,9 +468,8 @@
         }
 
         async function saveCertificateToSupabase() {
-            if (!currentUser) return showToast('⚠️ سجل الدخول أولاً ليتم الحفظ سحابياً');
+            if (!currentUser) return showToast('⚠️ سجل الدخول أولاً');
             
-            showToast('⏳ جاري إرسال التصميم والألوان المخصصة لقاعدة البيانات...');
             const { error } = await supabaseClient.from('certificates').insert([
                 {
                     user_id: currentUser.id,
@@ -477,14 +477,14 @@
                     message: formData.message,
                     sender_name: formData.senderName,
                     certificate_type: formData.certificateType,
-                    theme: customColors.bgColor,       // حفظ لون الخلفية بدقة
-                    font_family: customColors.textColor  // حفظ لون النص بدقة
+                    theme: customColors.bgColor, 
+                    font_family: customColors.textColor 
                 }
             ]);
 
-            if (error) showToast('❌ فشل الحفظ السحابي: ' + error.message);
+            if (error) showToast('❌ فشل الحفظ: ' + error.message);
             else {
-                showToast('💾 تم حفظ الشهادة بتصميمها الفريد في السحابة بنجاح!');
+                showToast('💾 تم حفظ الشهادة بتصميمها وألوانها الخاصة في السحابة!');
                 await loadUserCertificates();
             }
         }
@@ -502,9 +502,7 @@
 
         async function deleteCertificate(id) {
             const { error } = await supabaseClient.from('certificates').delete().eq('id', id);
-            if (error) {
-                showToast('❌ خطأ في الحذف: ' + error.message);
-            } else {
+            if (!error) {
                 showToast('🗑️ تم الحذف السحابي بنجاح');
                 await loadUserCertificates();
                 renderApp();
@@ -514,21 +512,21 @@
         async function downloadCertificateAsPNG() {
             const area = document.getElementById('certificate-capture-area');
             if (!area) return;
-            showToast('⏳ جاري معالجة ودمج الحروف لمنع التقطع...');
+            showToast('⏳ جاري دمج الخطوط العربية وحفظ الصورة بدقة فائقة...');
             
             const canvas = await html2canvas(area, { 
-                scale: 3, // دقة 4K عالية جداً للطباعة المدرسية الفاخرة
+                scale: 3, 
                 useCORS: true,
                 logging: false,
-                letterRendering: false, // يمنع تماماً تقطع الكلمات العربية المتصلة مثل خط أميري
+                letterRendering: false, 
                 backgroundColor: null
             });
             
             const link = document.createElement('a');
-            link.download = `${formData.recipientName}-شهادة_شكر_وتقدير.png`;
+            link.download = `${formData.recipientName}-شهادة_شكر.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('✅ تم تحميل الشهادة بنجاح وبجودة مذهلة وبدون أي تقطع!');
+            showToast('✅ تم تحميل شهادتكِ بجودة فائقة وجاذبية تامة!');
         }
 
         window.addEventListener('DOMContentLoaded', () => { initApp(); });
