@@ -32,7 +32,6 @@
             transition: all 0.4s ease;
         }
 
-        /* ستايل الصورة القابلة للسحب والتحريك */
         .draggable-image {
             position: absolute;
             cursor: move;
@@ -41,13 +40,11 @@
             z-index: 50;
         }
         
-        /* قوالب الإطارات المخصصة للصورة */
         .frame-none { border: none !important; padding: 0 !important; }
         .frame-circle { border-radius: 50% !important; }
         .frame-gold { border-style: double !important; border-width: 6px !important; padding: 2px; }
         .frame-royal { border-style: solid !important; border-width: 4px !important; padding: 2px; }
 
-        /* تحسين جودة الخطوط العربية عند التنزيل */
         .fix-arabic-render {
             letter-spacing: 0px !important;
             word-spacing: 0px !important;
@@ -67,10 +64,12 @@
         let currentUser = null;
         let currentView = 'login'; 
         let currentRecords = [];
-        let isOtpSent = false; // متغير لمتابعة ما إذا تم إرسال الرمز للبريد
-        let targetEmail = '';   // لحفظ البريد المؤقت أثناء عملية التحقق
+        
+        // متغيرات التحكم بـ OTP المطورة
+        let isOtpSent = false; 
+        let targetEmail = '';   
+        let otpType = 'magiclink'; // يمكن أن تكون 'magiclink' للدخول أو 'signup' للتسجيل الجديد
 
-        // متغيرات الصورة المرفوعة والتحكم بها
         let uploadedImageSrc = '';
         let imageSize = 100;
         let imageFrameClass = 'frame-none';
@@ -78,7 +77,6 @@
         let startX, startY;
         let initialLeft = 50, initialTop = 50;
 
-        // الألوان المخصصة عبر نافذة الألوان HEX
         let customColors = {
             bgColor: '#fdfbf7',
             borderColor: '#d4af37',
@@ -95,7 +93,6 @@
             fontFamily: 'Amiri'
         };
 
-        // دالة إنشاء وإظهار التنبيهات
         function showToast(message) {
             const toast = document.createElement('div');
             toast.className = 'toast';
@@ -109,7 +106,6 @@
         }
 
         async function initApp() {
-            // مراقبة حالة الجلسة عند بدء التحميل تلقائياً
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
@@ -132,40 +128,38 @@
             }
         }
 
-        // واجهة الدخول المتطورة بـ OTP المكون من خطوتين في نفس الصفحة
+        // واجهة الدخول المرنة التي تستقبل الرمز المكون من 6 أرقام
         function renderLoginView() {
             if (!isOtpSent) {
-                // الخطوة الأولى: إدخال البريد الإلكتروني
                 return `
                 <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
                     <div class="text-center mb-6">
                         <span class="text-4xl">🔐</span>
-                        <h2 class="text-2xl font-bold text-amber-800 mt-2">تسجيل دخول آمن وسريع</h2>
-                        <p class="text-xs text-gray-500 mt-1">أدخلي بريدكِ الإلكتروني ليصلكِ رمز التحقق الفوري</p>
+                        <h2 class="text-2xl font-bold text-amber-800 mt-2">تسجيل الدخول / إنشاء حساب</h2>
+                        <p class="text-xs text-gray-500 mt-1">أدخلي بريدكِ الإلكتروني وسيتعرف النظام عليكِ فوراً بالرمز الرقمي</p>
                     </div>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
                             <input type="email" id="login-email" value="${targetEmail}" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-left" placeholder="name@domain.com" dir="ltr">
                         </div>
-                        <button onclick="sendOtpCode()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl font-bold hover:from-amber-700 hover:to-orange-700 shadow-md transition">إرسال رمز التحقق الرقمي</button>
+                        <button onclick="sendOtpCode()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl font-bold hover:from-amber-700 hover:to-orange-700 shadow-md transition">إرسال رمز التحقق (6 أرقام)</button>
                     </div>
                 </div>`;
             } else {
-                // الخطوة الثانية: إدخال الرمز السري المكون من 6 أرقام
                 return `
                 <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-emerald-200">
                     <div class="text-center mb-6">
                         <span class="text-4xl">📨</span>
-                        <h2 class="text-2xl font-bold text-emerald-800 mt-2">تأكيد رمز التحقق</h2>
+                        <h2 class="text-2xl font-bold text-emerald-800 mt-2">تأكيد رمز التحقق السري</h2>
                         <p class="text-xs text-gray-500 mt-1">أدخلي الرمز المكون من 6 أرقام المرسل إلى <br><b class="text-slate-700">${targetEmail}</b></p>
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">رمز الـ OTP</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">أدخل الرمز هنا</label>
                             <input type="text" id="otp-code" maxlength="6" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-center font-bold tracking-widest text-xl text-slate-800" placeholder="000000" dir="ltr">
                         </div>
-                        <button onclick="verifyOtpCode()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 shadow-md transition">تأكيد والوجـوع للمنصة</button>
+                        <button onclick="verifyOtpCode()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 shadow-md transition">تأكيد وولوج آمن</button>
                         <button onclick="isOtpSent = false; renderApp();" class="w-full text-xs text-center text-gray-500 hover:underline">🔄 تغيير البريد الإلكتروني</button>
                     </div>
                 </div>`;
@@ -176,7 +170,7 @@
             return `
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-8">
-                    <span class="font-bold text-amber-900 flex items-center gap-2">✨ مرحباً بكِ في منصتكِ السحابية الآمنة بنظام OTP</span>
+                    <span class="font-bold text-amber-900 flex items-center gap-2">✨ مرحباً بكِ في نظام التصميم والتحقق الذكي المستقر</span>
                     <div class="flex gap-2">
                         <button onclick="goToGallery()" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي السحابي</button>
                         <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">خروج آمن</button>
@@ -324,7 +318,6 @@
 
         function updateCustomColors(key, value) {
             customColors[key] = value;
-            
             const previewArea = document.getElementById('certificate-capture-area');
             const titleArea = document.getElementById('view-cert-title');
             const recipientArea = document.getElementById('view-recipient');
@@ -448,15 +441,19 @@
             if (previewArea) previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
         }
 
-        // 1. إرسال رمز الـ OTP المكون من 6 أرقام إلى البريد الإلكتروني
+        // 1. دالة طلب الرمز السري (تتعرف تلقائياً على حالة الحساب)
         async function sendOtpCode() {
             const email = document.getElementById('login-email').value.trim();
             if (!email) return showToast('⚠️ يرجى إدخال البريد الإلكتروني أولاً.');
 
-            showToast('⏳ جاري طلب وإرسال الرمز الرقمي السري...');
+            showToast('⏳ جاري طلب إرسال الرمز الرقمي الفوري...');
 
-            const { error } = await supabaseClient.auth.signInWithOtp({
-                email: email
+            // نقوم بطلب الرمز، وسيقوم Supabase بإرسال 6 أرقام للبريد الإلكتروني
+            const { data, error } = await supabaseClient.auth.signInWithOtp({
+                email: email,
+                options: {
+                    shouldCreateUser: true // إذا لم يكن البريد مسجلاً، سيقوم بإنشاء حساب له تلقائياً!
+                }
             });
 
             if (error) {
@@ -464,57 +461,53 @@
             } else {
                 targetEmail = email;
                 isOtpSent = true;
-                showToast('🔢 تم إرسال الرمز الرقمي بنجاح! تفقد بريدك الإلكتروني الآن.');
+                showToast('🔢 تم إرسال الرمز بنجاح! تفكدي بريدك الإلكتروني الآن.');
                 renderApp();
             }
         }
 
-        // 2. التحقق من الرمز الذي كتبه المستخدم لتسجيل الدخول الفوري
+        // 2. دالة التحقق الذكية من الرمز المكون من 6 خانات
         async function verifyOtpCode() {
             const token = document.getElementById('otp-code').value.trim();
-            if (!token || token.length !== 6) return showToast('⚠️ يرجى إدخال الرمز المكون من 6 خانات بالكامل.');
+            if (!token || token.length !== 6) return showToast('⚠️ يرجى إدخال الرمز المكون من 6 خانات.');
 
-            showToast('⏳ جاري مطابقة الرمز سحابياً للتأكد من هويتك...');
+            showToast('⏳ جاري التحقق من الرمز سحابياً...');
 
-            const { data, error } = await supabaseClient.auth.verifyOtp({
+            // نجرب أولاً التحقق بنوع magiclink (للمستخدمين المسجلين سابقاً)
+            let result = await supabaseClient.auth.verifyOtp({
                 email: targetEmail,
                 token: token,
-                type: 'magiclink' // أو 'signup' تبعاً لنوع التدفق السحابي الافتراضي لـ Supabase OTP
+                type: 'magiclink'
             });
 
-            if (error) {
-                showToast('❌ الرمز غير صحيح أو منتهي الصلاحية! حاول مجدداً.');
-            } else if (data.user) {
-                currentUser = data.user;
+            // إذا فشل، نجرب نوع signup (في حال كان هذا أول دخول للبريد وإنشاء حساب جديد)
+            if (result.error) {
+                result = await supabaseClient.auth.verifyOtp({
+                    email: targetEmail,
+                    token: token,
+                    type: 'signup'
+                });
+            }
+
+            if (result.error) {
+                showToast('❌ الرمز غير صحيح أو انتهت صلاحيته الزمنيّة.');
+            } else if (result.data.user) {
+                currentUser = result.data.user;
                 isOtpSent = false;
-                showToast('👋 تم التحقق بنجاح! مرحباً بكِ في الواجهة السحابية.');
+                showToast('👋 تم التحقق المباشر! أهلاً بكِ في سحابتكِ الرقمية.');
                 currentView = 'dashboard';
                 await loadUserCertificates();
                 renderApp();
             }
         }
 
-        // تصفير الجلسة تماماً والبيانات عند الخروج الآمن لمنع تداخل الحسابات
         async function handleLogout() {
             await supabaseClient.auth.signOut();
             currentUser = null;
             currentView = 'login';
             isOtpSent = false;
             targetEmail = '';
-            
-            formData = {
-                introText: 'تتقدم إدارة المدرسة بالامتنان والتقدير لـ',
-                recipientName: 'الطالب المتميز',
-                message: 'لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته للجنة التكنولوجية',
-                senderName: 'إدارة المدرسة الشرعية',
-                certificateType: 'appreciation',
-                fontFamily: 'Amiri'
-            };
-            uploadedImageSrc = ''; 
-            initialLeft = 50;
-            initialTop = 50;
-
-            showToast('👋 تم تسجيل الخروج بنجاح وتأمين الجلسة.');
+            showToast('👋 تم تسجيل الخروج وتأمين لوحة التحكم.');
             renderApp();
         }
 
@@ -535,7 +528,7 @@
 
             if (error) showToast('❌ فشل الحفظ: ' + error.message);
             else {
-                showToast('💾 تم حفظ الشهادة بتصميمها وألوانها الخاصة في السحابة!');
+                showToast('💾 تم حفظ الشهادة بنجاح في المعرض السحابي!');
                 await loadUserCertificates();
             }
         }
@@ -563,7 +556,7 @@
         async function downloadCertificateAsPNG() {
             const area = document.getElementById('certificate-capture-area');
             if (!area) return;
-            showToast('⏳ جاري دمج الخطوط العربية وحفظ الصورة بدقة فائقة...');
+            showToast('⏳ جاري معالجة الألوان وحفظ الصورة...');
             
             const canvas = await html2canvas(area, { 
                 scale: 3, 
@@ -577,7 +570,7 @@
             link.download = `${formData.recipientName}-شهادة_شكر.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('✅ تم تحميل شهادتكِ بجودة فائقة وجاذبية تامة!');
+            showToast('✅ تم تحميل شهادتكِ بجودة فائقة!');
         }
 
         window.addEventListener('DOMContentLoaded', () => { initApp(); });
