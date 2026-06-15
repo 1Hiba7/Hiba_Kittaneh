@@ -29,6 +29,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             z-index: 10000;
+            transition: all 0.4s ease;
         }
 
         /* ستايل الصورة القابلة للسحب والتحريك */
@@ -91,6 +92,19 @@
             certificateType: 'appreciation',
             fontFamily: 'Amiri'
         };
+
+        // دالة إنشاء وإظهار التنبيهات المفقودة لإصلاح الأزرار
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
 
         async function initApp() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -304,7 +318,6 @@
             </div>`;
         }
 
-        // تحكم دقيق بالألوان المخصصة (HEX) حياً ومباشراً
         function updateCustomColors(key, value) {
             customColors[key] = value;
             
@@ -348,19 +361,20 @@
             if (imgEl) imgEl.style.width = `${size}px`;
         }
 
-        // دالة تغيير وتحويل شكل إطار الصورة الحية
         function changeImageFrame(frameClass) {
             imageFrameClass = frameClass;
             const containerEl = document.getElementById('imageContainer');
             const imgEl = document.getElementById('certCustomImage');
             if (containerEl && imgEl) {
                 containerEl.className = `draggable-image ${frameClass}`;
-                if (frameClass === 'frame-circle') imgEl.classList.add('rounded-full');
-                else imgEl.classList.remove('rounded-full');
+                if (frameClass === 'frame-circle') imgEl.className = 'rounded-full';
+                else imgEl.className = '';
+                // الحفاظ على قياس العرض المختار بالسلايدر
+                imgEl.style.width = `${imageSize}px`;
+                imgEl.style.height = 'auto';
             }
         }
 
-        // برمجة السحب والإفلات المستقر والتثبيت المحكم لمنع الالتصاق
         function setupDraggable() {
             const container = document.getElementById('imageContainer');
             const area = document.getElementById('certificate-capture-area');
@@ -400,7 +414,7 @@
             }
 
             function dragEnd() {
-                isDragging = false; // إلغاء الارتباط الفوري والتثبيت الكامل
+                isDragging = false;
             }
         }
 
