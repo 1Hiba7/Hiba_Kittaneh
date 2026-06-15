@@ -93,7 +93,7 @@
             fontFamily: 'Amiri'
         };
 
-        // دالة إنشاء وإظهار التنبيهات المفقودة لإصلاح الأزرار
+        // دالة إنشاء وإظهار التنبيهات
         function showToast(message) {
             const toast = document.createElement('div');
             toast.className = 'toast';
@@ -103,25 +103,27 @@
             setTimeout(() => {
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 400);
-            }, 3000);
+            }, 4000);
         }
 
         async function initApp() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                currentView = 'dashboard';
-                await loadUserCertificates();
-            } else {
-                currentView = 'login';
-            }
-            renderApp();
+            // مراقبة الجلسة والتأكد إذا تم التحقق من الرابط بنجاح لتحويل المستخدم تلقائياً لدخول آمن
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                if (session) {
+                    currentUser = session.user;
+                    currentView = 'dashboard';
+                    loadUserCertificates().then(() => renderApp());
+                } else {
+                    currentUser = null;
+                    currentView = 'login';
+                    renderApp();
+                }
+            });
         }
 
         function renderApp() {
             const app = document.getElementById('app');
             if (currentView === 'login') app.innerHTML = renderLoginView();
-            else if (currentView === 'register') app.innerHTML = renderRegisterView();
             else if (currentView === 'dashboard') app.innerHTML = renderDashboardView();
             else if (currentView === 'gallery') app.innerHTML = renderGalleryView();
             
@@ -130,40 +132,24 @@
             }
         }
 
+        // واجهة دخول آمنة وخالية من ثغرة كلمات المرور (Magic Link UX)
         function renderLoginView() {
             return `
             <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
-                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">منصة الشهادات التفاعلية السحابية</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
-                        <input type="email" id="login-email" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="name@domain.com">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">كلمة المرور</label>
-                        <input type="password" id="login-password" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="••••••••">
-                    </div>
-                    <button onclick="handleLogin()" class="w-full py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 transition">تسجيل الدخول</button>
-                    <p class="text-center text-sm text-gray-600 mt-4">ليس لديك حساب؟ <span onclick="switchView('register')" class="text-amber-600 cursor-pointer underline">أنشئ حساباً مجانياً</span></p>
+                <div class="text-center mb-6">
+                    <span class="text-4xl">🔐</span>
+                    <h2 class="text-2xl font-bold text-amber-800 mt-2">منصة الشهادات السحابية الآمنة</h2>
+                    <p class="text-xs text-gray-500 mt-1">نظام تفعيل برقم سري مشفر لحماية هويتك الرقمية</p>
                 </div>
-            </div>`;
-        }
-
-        function renderRegisterView() {
-            return `
-            <div class="max-w-md mx-auto mt-20 bg-white p-8 rounded-2xl shadow-xl border border-amber-200">
-                <h2 class="text-2xl font-bold text-center text-amber-800 mb-6">إنشاء حساب جديد وتفعيل مجاني</h2>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">البريد الإلكتروني</label>
-                        <input type="email" id="reg-email" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <input type="email" id="login-email" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-left" placeholder="name@domain.com" dir="ltr">
                     </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">كلمة المرور</label>
-                        <input type="password" id="reg-password" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500" placeholder="لا تقل عن 6 خانات">
+                    <button onclick="handleSecureLogin()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl font-bold hover:from-amber-700 hover:to-orange-700 shadow-md transition">إرسال رابط الدخول الآمن للبريد</button>
+                    <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800 leading-relaxed">
+                        💡 <b>ملاحظة أمنية:</b> سيصلك رابط تسجيل دخول مباشر إلى بريدك. لن يتمكن أي شخص آخر من فتح الحساب إلا من داخل صندوق بريدك الفعلي.
                     </div>
-                    <button onclick="handleRegister()" class="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition">إرسال رابط التحقق للجيميل</button>
-                    <p class="text-center text-sm text-gray-600 mt-4">لديك حساب بالفعل؟ <span onclick="switchView('login')" class="text-amber-600 cursor-pointer underline">تسجيل الدخول</span></p>
                 </div>
             </div>`;
         }
@@ -172,10 +158,10 @@
             return `
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-md mb-8">
-                    <span class="font-bold text-amber-900">مرحباً بكِ في نظام التصميم الذكي المطور</span>
+                    <span class="font-bold text-amber-900 flex items-center gap-2">✨ مرحباً بكِ في نظام التصميم الذكي والمؤمّن</span>
                     <div class="flex gap-2">
                         <button onclick="goToGallery()" class="px-4 py-2 bg-amber-100 text-amber-800 rounded-xl font-semibold hover:bg-amber-200">📂 معرض شهاداتي السحابي</button>
-                        <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">خروج</button>
+                        <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-700 rounded-xl font-semibold hover:bg-red-200">خروج آمن</button>
                     </div>
                 </div>
 
@@ -369,7 +355,6 @@
                 containerEl.className = `draggable-image ${frameClass}`;
                 if (frameClass === 'frame-circle') imgEl.className = 'rounded-full';
                 else imgEl.className = '';
-                // الحفاظ على قياس العرض المختار بالسلايدر
                 imgEl.style.width = `${imageSize}px`;
                 imgEl.style.height = 'auto';
             }
@@ -445,39 +430,46 @@
             if (previewArea) previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
         }
 
-        async function handleRegister() {
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            if (!email || !password) return showToast('⚠️ يرجى ملء كافة الحقول');
-
-            const { error } = await supabaseClient.auth.signUp({ email, password });
-            if (error) showToast('❌ خطأ: ' + error.message);
-            else {
-                showToast('🎉 تفقد بريدك الإلكتروني الآن واضغط على رابط التحقق للتفعيل!');
-                switchView('login');
-            }
-        }
-
-        async function handleLogin() {
+        // دالة الدخول الآمن المشفرة لحل مشكلة عامر وسميرة نهائياً
+        async function handleSecureLogin() {
             const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            if (!email || !password) return showToast('⚠️ يرجى إدخال البيانات');
+            if (!email) return showToast('⚠️ يرجى إدخال البريد الإلكتروني الخاص بك أولاً.');
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) showToast('❌ خطأ: تأكد من بياناتك وتفعيل الحساب سحابياً.');
-            else {
-                currentUser = data.user;
-                showToast('👋 أهلاً بكِ في سحابتكِ الرقمية!');
-                currentView = 'dashboard';
-                await loadUserCertificates();
-                renderApp();
+            showToast('⏳ جاري إرسال مفتاح الدخول الآمن سحابياً...');
+
+            const { error } = await supabaseClient.auth.signInWithOtp({
+                email: email,
+                options: {
+                    emailRedirectTo: window.location.href // يعود للموقع تلقائياً عند الضغط على الرابط
+                }
+            });
+
+            if (error) {
+                showToast('❌ خطأ: ' + error.message);
+            } else {
+                showToast('📧 تم إرسال رابط التحقق بنجاح! تفقد صندوق الرسائل لديك واضغط عليه لتسجيل الدخول.');
             }
         }
 
+        // حل المشكلة 1: تفريغ وإعادة تصفير الذاكرة والصور تماماً عند تسجيل الخروج لمنع تداخل الحسابات
         async function handleLogout() {
             await supabaseClient.auth.signOut();
             currentUser = null;
             currentView = 'login';
+            
+            formData = {
+                introText: 'تتقدم إدارة المدرسة بالامتنان والتقدير لـ',
+                recipientName: 'الطالب المتميز',
+                message: 'لقد بذلت جهداً كبيراً هذا العام فهنيئاً لك وشكراً لك على كل ما قدمته للجنة التكنولوجية',
+                senderName: 'إدارة المدرسة الشرعية',
+                certificateType: 'appreciation',
+                fontFamily: 'Amiri'
+            };
+            uploadedImageSrc = ''; 
+            initialLeft = 50;
+            initialTop = 50;
+
+            showToast('👋 تم تسجيل الخروج الآمن وتصفير الجلسة الحالية بنجاح.');
             renderApp();
         }
 
