@@ -441,18 +441,19 @@
             if (previewArea) previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
         }
 
-        // 1. دالة طلب الرمز السري (تتعرف تلقائياً على حالة الحساب)
+        // 1. دالة طلب الرمز السري المحدثة (تعطل إرسال الروابط لتعمل بنظام الأرقام الستة بكفاءة)
         async function sendOtpCode() {
             const email = document.getElementById('login-email').value.trim();
             if (!email) return showToast('⚠️ يرجى إدخال البريد الإلكتروني أولاً.');
 
             showToast('⏳ جاري طلب إرسال الرمز الرقمي الفوري...');
 
-            // نقوم بطلب الرمز، وسيقوم Supabase بإرسال 6 أرقام للبريد الإلكتروني
+            // طلب الرمز مع تحديد خيار إبطال روابط التوجيه المسببة لمشكلة الـ 404
             const { data, error } = await supabaseClient.auth.signInWithOtp({
                 email: email,
                 options: {
-                    shouldCreateUser: true // إذا لم يكن البريد مسجلاً، سيقوم بإنشاء حساب له تلقائياً!
+                    shouldCreateUser: true, 
+                    emailRedirectTo: undefined // إلغاء تفعيل روابط التوجيه التلقائي
                 }
             });
 
@@ -473,14 +474,14 @@
 
             showToast('⏳ جاري التحقق من الرمز سحابياً...');
 
-            // نجرب أولاً التحقق بنوع magiclink (للمستخدمين المسجلين سابقاً)
+            // تجربة التحقق كحساب مسجل مسبقاً
             let result = await supabaseClient.auth.verifyOtp({
                 email: targetEmail,
                 token: token,
                 type: 'magiclink'
             });
 
-            // إذا فشل، نجرب نوع signup (في حال كان هذا أول دخول للبريد وإنشاء حساب جديد)
+            // تجربة التحقق كحساب جديد بالكامل
             if (result.error) {
                 result = await supabaseClient.auth.verifyOtp({
                     email: targetEmail,
