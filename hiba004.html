@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>رحلة المعرفة | هبة كتانة</title>
   <link rel="icon" type="image/png" href="4.png">
-  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&amp;family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet">
   <style>
         * {
@@ -29,1763 +29,638 @@
 
         .app-wrapper {
             width: 100%;
-            min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            animation: gradientShift 10s ease infinite;
-            background-size: 200% 200%;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .login-screen {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100%;
             padding: 20px;
-            flex: 1;
         }
 
-        .login-card {
+        .glass-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            max-width: 500px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-header {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .login-logo {
-            font-size: 3.5em;
-            margin-bottom: 10px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .login-title {
-            font-size: 2em;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .login-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1em;
-        }
-
-        .language-switcher {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .lang-btn {
-            padding: 10px 25px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
+            max-width: 500px;
+            padding: 40px;
+            color: #ffffff;
             transition: all 0.3s ease;
-            font-size: 1em;
         }
 
-        .lang-btn.active {
-            background: rgba(255, 255, 255, 0.9);
-            color: #667eea;
-            border-color: white;
+        .glass-card:hover {
+            box-shadow: 0 8px 40px 0 rgba(31, 38, 135, 0.45);
         }
 
-        .lang-btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .tab-container {
+        .tabs {
             display: flex;
-            padding: 5px;
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 5px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .tab-btn {
             flex: 1;
-            padding: 15px;
             background: transparent;
-            color: rgba(255, 255, 255, 0.7);
             border: none;
-            font-size: 1.1em;
-            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
             border-radius: 10px;
-            margin: 0 5px;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
         }
 
         .tab-btn.active {
-            background: rgba(255, 255, 255, 0.9);
-            color: #667eea;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            color: #764ba2;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .form-container {
-            padding: 30px 40px 40px;
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        [dir="rtl"] .input-group {
-            text-align: right;
-        }
-
-        .input-group label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: white;
+            font-size: 14px;
             font-weight: 600;
-            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.3em;
-            color: #667eea;
-        }
-
-        [dir="rtl"] .input-icon {
-            left: auto;
-            right: 15px;
-        }
-
-        .input-group input, .input-group select {
+        .input-control {
             width: 100%;
-            padding: 15px 50px 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 15px;
-            font-size: 1em;
-            font-family: inherit;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #ffffff;
+            font-size: 15px;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-
-        [dir="rtl"] .input-group input,
-        [dir="rtl"] .input-group select {
-            padding: 15px 20px 15px 50px;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus {
             outline: none;
-            border-color: white;
-            background: white;
-            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.2);
+            font-family: 'Cairo', sans-serif;
         }
 
-        .hero-selection {
-            margin: 20px 0;
-        }
-
-        .hero-selection > label {
-            display: block;
-            margin-bottom: 15px;
-            color: white;
-            font-weight: 700;
-            font-size: 1em;
-        }
-
-        .hero-options {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .hero-option {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .hero-option input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-        }
-
-        .hero-emoji {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 70px;
-            height: 70px;
-            font-size: 2.2em;
+        .input-control:focus {
             background: rgba(255, 255, 255, 0.2);
-            border: 3px solid rgba(255, 255, 255, 0.4);
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
         }
 
-        .hero-option:hover .hero-emoji {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
+        select.input-control option {
+            background: #764ba2;
+            color: #ffffff;
         }
 
-        .hero-option input[type="radio"]:checked + .hero-emoji {
-            border-color: #fbbf24;
-            background: rgba(251, 191, 36, 0.3);
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.8);
-            animation: glow 1.5s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
-            50% { box-shadow: 0 0 40px rgba(251, 191, 36, 1); }
-        }
-
-        .auth-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.2em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.4);
-            margin-top: 15px;
-        }
-
-        .auth-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(251, 191, 36, 0.6);
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-
-        .auth-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .dashboard-screen {
-            display: none;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-            flex: 1;
-        }
-
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-icon {
-            font-size: 2.5em;
-        }
-
-        .logo-text {
-            font-size: 1.8em;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-avatar {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .user-info {
-            text-align: right;
-        }
-
-        [dir="ltr"] .user-info {
-            text-align: left;
-        }
-
-        .username {
-            font-weight: 700;
-            font-size: 1.2em;
-            color: #333;
-        }
-
-        .grade-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-
-        .score-display {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 1.3em;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
-        }
-
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            font-size: 1em;
-        }
-
-        .logout-btn:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-        }
-
-        .welcome-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 40px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .welcome-title {
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .welcome-subtitle {
-            font-size: 1.2em;
-            color: #666;
-        }
-
-        .subjects-grid {
+        .avatar-selection {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .subject-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .subject-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: var(--subject-color);
-        }
-
-        .subject-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .subject-icon {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .subject-card:hover .subject-icon {
-            transform: scale(1.2) rotate(10deg);
-        }
-
-        .subject-name {
-            font-size: 1.6em;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .progress-info {
-            margin: 15px 0;
-        }
-
-        .progress-bar-wrapper {
-            background: #e0e0e0;
-            border-radius: 15px;
-            height: 12px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--subject-color);
-            border-radius: 15px;
-            transition: width 0.6s ease;
-        }
-
-        .start-quiz-btn {
-            background: linear-gradient(135deg, var(--subject-color), var(--subject-color-light));
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
             margin-top: 10px;
         }
 
-        .start-quiz-btn:hover {
+        .avatar-option {
+            position: relative;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .avatar-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .avatar-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .avatar-box .icon {
+            font-size: 28px;
+        }
+
+        .avatar-box .name {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .avatar-option input:checked ~ .avatar-box {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #ffffff;
+            transform: translateY(-4px);
+        }
+
+        .primary-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #764ba2;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            font-family: 'Cairo', sans-serif;
+            margin-top: 10px;
+        }
+
+        .primary-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .quiz-screen {
-            display: none;
-            padding: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            flex: 1;
-        }
-
-        .quiz-container {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
 
-        .quiz-header {
+        .primary-btn:active {
+            transform: translateY(0);
+        }
+
+        .dashboard {
+            max-width: 800px;
+            display: none;
+        }
+
+        .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .quiz-title {
-            font-size: 2em;
-            font-weight: 900;
-            color: #333;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
-        .quiz-progress {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #667eea;
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            border: 2px solid #ffffff;
         }
 
-        .question-card {
-            background: #f8f9fa;
+        .user-details h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .user-details span {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .score-badge {
+            background: #ffffff;
+            color: #764ba2;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .question-text {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .option-btn {
-            background: white;
-            border: 3px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 20px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: right;
-            font-family: inherit;
-            color: #333;
-        }
-
-        [dir="ltr"] .option-btn {
-            text-align: left;
-        }
-
-        .option-btn:hover:not(:disabled) {
-            border-color: #667eea;
-            background: #f0f4ff;
-            transform: translateX(-5px);
-        }
-
-        [dir="ltr"] .option-btn:hover:not(:disabled) {
-            transform: translateX(5px);
-        }
-
-        .option-btn.correct {
-            border-color: #10b981;
-            background: #d1fae5;
-        }
-
-        .option-btn.incorrect {
-            border-color: #ef4444;
-            background: #fee2e2;
-        }
-
-        .option-btn:disabled {
-            cursor: not-allowed;
-        }
-
-        .quiz-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .quiz-btn {
-            padding: 15px 40px;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            border: none;
-        }
-
-        .next-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .next-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .back-btn {
-            background: #6b7280;
-            color: white;
-        }
-
-        .back-btn:hover {
-            background: #4b5563;
-        }
-
-        .quiz-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .results-screen {
-            display: none;
-            padding: 20px;
-            max-width: 700px;
-            margin: 0 auto;
-            flex: 1;
-        }
-
-        .results-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 50px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .results-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-        }
-
-        .results-title {
-            font-size: 2.5em;
-            font-weight: 900;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .results-score {
-            font-size: 3em;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 20px 0;
-        }
-
-        .results-message {
-            font-size: 1.3em;
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .results-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .result-btn {
-            padding: 15px 35px;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .retry-btn {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: white;
+        .action-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .retry-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+        .action-icon {
+            font-size: 40px;
+            margin-bottom: 14px;
+            display: inline-block;
         }
 
-        .dashboard-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .action-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
 
-        .dashboard-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        .action-card p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 14px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .leaderboard-table th {
+            font-weight: 700;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(255,255,255,0.05);
         }
 
         .toast {
             position: fixed;
             bottom: 30px;
-            right: 30px;
-            background: rgba(16, 185, 129, 0.95);
-            color: white;
-            padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            color: #333333;
+            padding: 14px 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             font-weight: 600;
-            font-size: 1.1em;
-            animation: slideInToast 0.5s ease-out;
             z-index: 1000;
+            animation: slideUp 0.3s ease, fadeOut 0.3s ease 2.7s;
+            font-family: 'Cairo', sans-serif;
+            border-right: 4px solid #4caf50;
         }
 
         .toast.error {
-            background: rgba(239, 68, 68, 0.95);
+            border-right-color: #f44336;
         }
 
-        @keyframes slideInToast {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes slideUp {
+            from { bottom: -50px; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
         }
 
-        [dir="rtl"] .toast {
-            right: auto;
-            left: 30px;
-        }
-
-        [dir="rtl"] @keyframes slideInToast {
-            from { transform: translateX(-400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .app-footer {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            border-top: 1px solid rgba(255, 215, 0, 0.3);
-            padding: 16px 24px;
-            text-align: center;
-            color: #fbbf24;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-top: auto;
-        }
-
-        .return-to-encyclopedia {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
-            padding: 12px 28px;
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        .logout-btn {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.4);
+            color: #ff8a80;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
             font-family: 'Cairo', sans-serif;
-            margin: 20px auto;
-            width: fit-content;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: rgba(244, 67, 54, 0.4);
+            color: #ffffff;
         }
 
-        .return-to-encyclopedia:hover {
-            background: #1e90ff;
-            border-color: rgba(255, 255, 255, 0.8);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 144, 255, 0.4);
-            color: white;
-        }
-
-        .footer-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .return-to-encyclopedia span {
-                display: none;
-            }
-            .return-to-encyclopedia {
-                padding: 10px 18px;
-                border-radius: 40px;
-            }
-            .return-to-encyclopedia::before {
-                content: "🏠";
-                font-size: 1.2rem;
-            }
-            .return-to-encyclopedia .icon-text {
-                display: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 25px 30px 35px;
-            }
-            .dashboard-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .subjects-grid {
+        @media(max-width: 576px) {
+            .action-grid {
                 grid-template-columns: 1fr;
             }
-            .quiz-container {
-                padding: 25px;
-            }
-            .results-container {
-                padding: 30px;
+            .avatar-selection {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
-    </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
- <script src="/_sdk/telemetry_sdk.js"></script></head>
+  </style>
+ </head>
  <body class="h-full">
-  <div class="app-wrapper"><!-- Login Screen -->
-   <div class="login-screen" id="loginScreen">
-    <div class="login-card">
-     <div class="login-header">
-      <div class="login-logo">
-       🎓
-      </div>
-      <h1 class="login-title" id="mainTitle">رحلة المعرفة</h1>
-      <p class="login-subtitle" id="mainSubtitle">ابدأ رحلة التعلم</p>
-     </div>
-     <div class="language-switcher"><button type="button" class="lang-btn" id="langEnBtn">English</button> <button type="button" class="lang-btn active" id="langArBtn">العربية</button>
-     </div>
-     <div class="tab-container"><button type="button" class="tab-btn active" id="loginTab">تسجيل دخول</button> <button type="button" class="tab-btn" id="signupTab">إنشاء حساب</button>
-     </div>
-     <div class="form-container"><!-- Login Form -->
-      <div class="tab-content active" id="loginContent">
-       <form id="loginForm">
-        <div class="input-group"><label for="loginUsername" id="loginUsernameLabel">اسم المستخدم</label>
-         <div class="input-wrapper"><input type="text" id="loginUsername" required> <span class="input-icon">👤</span>
-         </div>
-        </div>
-        <div class="input-group"><label for="loginPassword" id="loginPasswordLabel">كلمة المرور</label>
-         <div class="input-wrapper"><input type="password" id="loginPassword" required> <span class="input-icon">🔒</span>
-         </div>
-        </div><button type="submit" class="auth-btn" id="loginBtn">استكمل المغامرة 🚀</button>
-       </form>
-      </div><!-- Signup Form -->
-      <div class="tab-content" id="signupContent">
-       <form id="signupForm">
-        <div class="input-group"><label for="signupUsername" id="signupUsernameLabel">اسم المستخدم</label>
-         <div class="input-wrapper"><input type="text" id="signupUsername" required> <span class="input-icon">👤</span>
-         </div>
-        </div>
-        <div class="input-group"><label for="signupPassword" id="signupPasswordLabel">كلمة المرور</label>
-         <div class="input-wrapper"><input type="password" id="signupPassword" required> <span class="input-icon">🔒</span>
-         </div>
-        </div>
-        <div class="input-group"><label for="gradeSelect" id="gradeSelectLabel">اختر صفك الدراسي</label>
-         <div class="input-wrapper"><select id="gradeSelect" required> <option value="">اختر الصف / Choose Grade</option> <option value="6">الصف السادس / 6th Grade</option> <option value="7">الصف السابع / 7th Grade</option> <option value="8">الصف الثامن / 8th Grade</option> <option value="9">الصف التاسع / 9th Grade</option> <option value="10">الصف العاشر / 10th Grade</option> <option value="11">الصف الحادي عشر / 11th Grade</option> <option value="12">الصف الثاني عشر / 12th Grade</option> </select> <span class="input-icon">🎓</span>
-         </div>
-        </div>
-        <div class="hero-selection"><label id="heroSelectLabel">اختر صورتك الرمزية</label>
-         <div class="hero-options"><label class="hero-option"> <input type="radio" name="hero" value="👩‍🚀" checked>
-           <div class="hero-emoji">
-            👩‍🚀
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🦁">
-           <div class="hero-emoji">
-            🦁
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🤖">
-           <div class="hero-emoji">
-            🤖
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🧙">
-           <div class="hero-emoji">
-            🧙
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🦸">
-           <div class="hero-emoji">
-            🦸
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🧑‍🎓">
-           <div class="hero-emoji">
-            🧑‍🎓
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="👨‍💻">
-           <div class="hero-emoji">
-            👨‍💻
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🧕">
-           <div class="hero-emoji">
-            🧕
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🦄">
-           <div class="hero-emoji">
-            🦄
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🐉">
-           <div class="hero-emoji">
-            🐉
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🦅">
-           <div class="hero-emoji">
-            🦅
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🐺">
-           <div class="hero-emoji">
-            🐺
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🦋">
-           <div class="hero-emoji">
-            🦋
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🌟">
-           <div class="hero-emoji">
-            🌟
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="⚡">
-           <div class="hero-emoji">
-            ⚡
-           </div></label> <label class="hero-option"> <input type="radio" name="hero" value="🔥">
-           <div class="hero-emoji">
-            🔥
-           </div></label>
-         </div>
-        </div><button type="submit" class="auth-btn" id="signupBtn">إنشاء حساب 🎯</button>
-       </form>
-      </div>
-     </div>
+  <div class="app-wrapper">
+   <div id="authCard" class="glass-card">
+    <div class="tabs">
+     <button id="loginTab" class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button> 
+     <button id="signupTab" class="tab-btn" onclick="switchTab('signup')">إنشاء حساب</button>
     </div>
-   </div><!-- Dashboard Screen -->
-   <div class="dashboard-screen" id="dashboardScreen">
-    <div class="dashboard-header">
-     <div class="logo-section">
-      <div class="logo-icon">
-       🎓
+    <form id="loginForm" onsubmit="handleLogin(event)">
+     <div class="form-group">
+      <label for="loginUser">اسم المستخدم</label> 
+      <input type="text" id="loginUser" class="input-control" required placeholder="أدخل اسم المستخدم">
+     </div>
+     <div class="form-group">
+      <label for="loginPass">كلمة المرور</label> 
+      <input type="password" id="loginPass" class="input-control" required placeholder="••••••••">
+     </div><button type="submit" class="primary-btn">انطلاق 🚀</button>
+    </form>
+    <form id="signupForm" onsubmit="handleSignup(event)" style="display: none;">
+     <div class="form-group">
+      <label for="signupUser">اسم المستخدم</label> 
+      <input type="text" id="signupUser" class="input-control" required placeholder="اختر اسم مستخدم متميز">
+     </div>
+     <div class="form-group">
+      <label for="signupPass">كلمة المرور</label> 
+      <input type="password" id="signupPass" class="input-control" required placeholder="••••••••">
+     </div>
+     <div class="form-group">
+      <label for="userGrade">الصف الدراسي</label> <select id="userGrade" class="input-control" required> <option value="" disabled selected>اختر صفك الدراسي</option> <option value="7">الصف السابع</option> <option value="8">الصف الثامن</option> <option value="9">الصف التاسع</option> <option value="10">الصف العاشر</option> </select>
+     </div>
+     <div class="form-group">
+      <label>اختر بطل رحلتك (الأفاتار)</label>
+      <div class="avatar-selection">
+       <label class="avatar-option"> <input type="radio" name="avatar" value="⚡" checked>
+        <div class="avatar-box">
+         <span class="icon">⚡</span> <span class="name">المفكر</span>
+        </div> </label> <label class="avatar-option"> <input type="radio" name="avatar" value="🌟">
+        <div class="avatar-box">
+         <span class="icon">🌟</span> <span class="name">الذكي</span>
+        </div> </label> <label class="avatar-option"> <input type="radio" name="avatar" value="🚀">
+        <div class="avatar-box">
+         <span class="icon">🚀</span> <span class="name">المكتشف</span>
+        </div> </label> <label class="avatar-option"> <input type="radio" name="avatar" value="🔮">
+        <div class="avatar-box">
+         <span class="icon">🔮</span> <span class="name">العبقري</span>
+        </div> </label>
       </div>
-      <div class="logo-text" id="dashboardTitle">
-       رحلة المعرفة
-      </div>
-     </div>
-     <div class="user-section">
-      <div class="score-display" id="scoreDisplay">
-       0 نقطة
-      </div>
-      <div class="user-info">
-       <div class="username" id="displayUsername">
-        طالب
-       </div><span class="grade-badge" id="displayGrade">الصف 6</span>
-      </div>
-      <div class="user-avatar" id="userAvatar">
-       👤
-      </div><button class="logout-btn" id="logoutBtn">تسجيل خروج</button>
-     </div>
-    </div>
-    <div class="welcome-card">
-     <h2 class="welcome-title" id="welcomeTitle">مرحباً بعودتك!</h2>
-     <p class="welcome-subtitle" id="welcomeSubtitle">اختر مادة لبدء التعلم</p>
-    </div>
-    <div class="subjects-grid" id="subjectsGrid"></div>
-   </div><!-- Quiz Screen -->
-   <div class="quiz-screen" id="quizScreen">
-    <div class="quiz-container">
-     <div class="quiz-header">
-      <h2 class="quiz-title" id="quizTitle">اختبار</h2>
-      <div class="quiz-progress" id="quizProgress">
-       1/5
-      </div>
-     </div>
-     <div class="question-card">
-      <div class="question-text" id="questionText">
-       جارٍ تحميل السؤال...
-      </div>
-      <div class="options-container" id="optionsContainer"></div>
-     </div>
-     <div class="quiz-actions"><button class="quiz-btn back-btn" id="backToSubjectsBtn">العودة للمواد</button> <button class="quiz-btn next-btn" id="nextQuestionBtn" disabled>السؤال التالي</button>
-     </div>
-    </div>
-   </div><!-- Results Screen -->
-   <div class="results-screen" id="resultsScreen">
-    <div class="results-container" id="resultsContainer">
-     <div class="results-icon" id="resultsIcon">
-      🏆
-     </div>
-     <h2 class="results-title" id="resultsTitle">اكتمل الاختبار!</h2>
-     <div class="results-score" id="resultsScore">
-      0/5
-     </div>
-     <p class="results-message" id="resultsMessage">عمل رائع!</p>
-     <div class="results-actions"><button class="result-btn retry-btn" id="retryBtn">حاول مرة أخرى</button> <button class="result-btn dashboard-btn" id="backToDashboardBtn">العودة للوحة الرئيسية</button>
-     </div>
-    </div>
+     </div><button type="submit" class="primary-btn">بدء الرحلة الآن 🎉</button>
+    </form>
    </div>
-
-   <div class="footer-container">
-    <footer class="app-footer">
-      جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين
-    </footer>
-    <a href="https://safa2.my.canva.site/hiba000" target="_blank" class="return-to-encyclopedia" id="returnToEncyclopediaBtn">
-      <span>🏠</span>
-      <span class="icon-text">العودة للموسوعة الرئيسية</span>
-    </a>
+   <div id="dashboardCard" class="glass-card dashboard">
+    <div class="dashboard-header">
+     <div class="user-info">
+      <div id="displayAvatar" class="user-avatar">
+       ⚡
+      </div>
+      <div class="user-details">
+       <h3 id="displayUsername">مرحباً بك</h3> <span id="displayGrade">الصف الدراسي</span>
+      </div>
+     </div>
+     <div style="display: flex; align-items: center;">
+      <button class="logout-btn" onclick="handleLogout()">خروج</button>
+      <div class="score-badge">
+       🏆 <span id="displayScore">0</span> نقطة
+      </div>
+     </div>
+    </div>
+    <div id="mainDashboardView" class="action-grid">
+     <div class="action-card" onclick="startQuest()">
+      <span class="action-icon">🗺️</span>
+      <h4>بدء المغامرة</h4>
+      <p>انطلق في اختبارات ممتعة وتحديات علمية مذهلة</p>
+     </div>
+     <div class="action-card" onclick="viewLeaderboard()">
+      <span class="action-icon">📊</span>
+      <h4>لوحة الصدارة</h4>
+      <p>شاهد ترتيبك بين أبطال ومكتشفي رحلة المعرفة</p>
+     </div>
+    </div>
+    <div id="leaderboardView" style="display: none;">
+     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <h4 style="font-size: 20px; font-weight: 700;">🏆 قائمة الأبطال المتصدرين</h4> <button class="primary-btn" style="margin: 0; width: auto; padding: 6px 16px; font-size: 14px;" onclick="closeLeaderboard()">العودة للوحة التحكم</button>
+     </div>
+     <div style="max-height: 300px; overflow-y: auto;">
+      <table class="leaderboard-table">
+       <thead>
+        <tr>
+         <th>الترتيب</th>
+         <th>البطل</th>
+         <th>الصف</th>
+         <th>النقاط</th>
+        </tr>
+       </thead>
+       <tbody id="leaderboardBody">
+        </tbody>
+      </table>
+     </div>
+    </div>
    </div>
   </div>
-
   <script>
-        // Language System (نفس الكود الأصلي لم يتغير)
-        const translations = {
-            ar: {
-                mainTitle: 'رحلة المعرفة',
-                mainSubtitle: 'ابدأ رحلة التعلم',
-                loginTab: 'تسجيل دخول',
-                signupTab: 'إنشاء حساب',
-                loginUsernameLabel: 'اسم المستخدم',
-                loginPasswordLabel: 'كلمة المرور',
-                loginUsernamePlaceholder: 'أدخل اسم المستخدم',
-                loginPasswordPlaceholder: 'أدخل كلمة المرور',
-                loginBtn: 'استكمل المغامرة 🚀',
-                signupUsernameLabel: 'اسم المستخدم',
-                signupPasswordLabel: 'كلمة المرور',
-                signupUsernamePlaceholder: 'اختر اسم المستخدم',
-                signupPasswordPlaceholder: 'أنشئ كلمة مرور',
-                gradeSelectLabel: 'اختر صفك الدراسي',
-                heroSelectLabel: 'اختر صورتك الرمزية',
-                signupBtn: 'إنشاء حساب 🎯',
-                dashboardTitle: 'رحلة المعرفة',
-                welcomeTitle: 'مرحباً بعودتك!',
-                welcomeSubtitle: 'اختر مادة لبدء التعلم',
-                logoutBtn: 'تسجيل خروج',
-                scoreText: 'نقطة',
-                gradeText: 'الصف',
-                backToSubjects: 'العودة للمواد',
-                nextQuestion: 'السؤال التالي',
-                quizCompleted: 'اكتمل الاختبار!',
-                retryQuiz: 'حاول مرة أخرى',
-                backToDashboard: 'العودة للوحة الرئيسية',
-                progressText: 'التقدم',
-                startQuiz: 'ابدأ الاختبار',
-                viewLeaders: '🏆 المتصدرون',
-                leaderboardTitle: 'لوحة المتصدرين',
-                leaderboardSubtitle: 'أفضل 10 لاعبين',
-                leaderboardDesc: 'شاهد ترتيب أفضل اللاعبين',
-                tests: 'اختبار',
-                pts: 'نقطة'
-            },
-            en: {
-                mainTitle: 'Knowledge Quest',
-                mainSubtitle: 'Start Your Learning Journey',
-                loginTab: 'Login',
-                signupTab: 'Sign Up',
-                loginUsernameLabel: 'Username',
-                loginPasswordLabel: 'Password',
-                loginUsernamePlaceholder: 'Enter username',
-                loginPasswordPlaceholder: 'Enter password',
-                loginBtn: 'Continue Adventure 🚀',
-                signupUsernameLabel: 'Username',
-                signupPasswordLabel: 'Password',
-                signupUsernamePlaceholder: 'Choose username',
-                signupPasswordPlaceholder: 'Create password',
-                gradeSelectLabel: 'Choose Your Grade',
-                heroSelectLabel: 'Choose Your Avatar',
-                signupBtn: 'Create Account 🎯',
-                dashboardTitle: 'Knowledge Quest',
-                welcomeTitle: 'Welcome Back!',
-                welcomeSubtitle: 'Choose a subject to start learning',
-                logoutBtn: 'Logout',
-                scoreText: 'Points',
-                gradeText: 'Grade',
-                backToSubjects: 'Back to Subjects',
-                nextQuestion: 'Next Question',
-                quizCompleted: 'Quiz Completed!',
-                retryQuiz: 'Try Again',
-                backToDashboard: 'Back to Dashboard',
-                progressText: 'Progress',
-                startQuiz: 'Start Quiz',
-                viewLeaders: '🏆 View Leaders',
-                leaderboardTitle: 'Leaderboard',
-                leaderboardSubtitle: 'Top 10 Players',
-                leaderboardDesc: 'View top players ranking',
-                tests: 'tests',
-                pts: 'pts'
-            }
-        };
+        // إعدادات الاتصال بـ Supabase
+        const SUPABASE_URL = "https://xjcsvvrzqjpkaxuwhebl.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_C6QsfadUxnRFV0Nvuaj_Dg_0ttlkFAB";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentLang = 'ar';
-
-        function applyLanguageTexts() {
-            Object.keys(translations[currentLang]).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'BUTTON') {
-                        if (element.type === 'submit' || element.tagName === 'BUTTON') {
-                            element.textContent = translations[currentLang][key];
-                        }
-                    } else {
-                        element.textContent = translations[currentLang][key];
-                    }
-                }
-            });
-
-            const loginUsername = document.getElementById('loginUsername');
-            const loginPassword = document.getElementById('loginPassword');
-            const signupUsername = document.getElementById('signupUsername');
-            const signupPassword = document.getElementById('signupPassword');
-            
-            if (loginUsername) loginUsername.placeholder = translations[currentLang].loginUsernamePlaceholder;
-            if (loginPassword) loginPassword.placeholder = translations[currentLang].loginPasswordPlaceholder;
-            if (signupUsername) signupUsername.placeholder = translations[currentLang].signupUsernamePlaceholder;
-            if (signupPassword) signupPassword.placeholder = translations[currentLang].signupPasswordPlaceholder;
-        }
-
-        function switchLanguage(lang) {
-            currentLang = lang;
-            document.documentElement.lang = lang;
-            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-            
-            document.getElementById('langArBtn').classList.toggle('active', lang === 'ar');
-            document.getElementById('langEnBtn').classList.toggle('active', lang === 'en');
-            
-            applyLanguageTexts();
-
-            const backBtn = document.getElementById('backToSubjectsBtn');
-            const nextBtn = document.getElementById('nextQuestionBtn');
-            if (backBtn) backBtn.textContent = translations[lang].backToSubjects;
-            if (nextBtn) nextBtn.textContent = translations[lang].nextQuestion;
-
-            if (currentUser && document.getElementById('dashboardScreen').style.display === 'block') {
-                updateDashboardUI();
-                renderSubjects();
-            }
-        }
-
-        const questionsDB = {
-            math_6: [
-                {q: {ar: 'ما هو حاصل ضرب 12 × 15؟', en: 'What is 12 × 15?'}, o: [{ar: '180', en: '180'}, {ar: '175', en: '175'}, {ar: '185', en: '185'}, {ar: '190', en: '190'}], a: 0},
-                {q: {ar: 'اذا كان محيط مربع 48 سم، فما طول ضلعه؟', en: 'If a square has perimeter 48cm, what is its side length?'}, o: [{ar: '10 سم', en: '10cm'}, {ar: '12 سم', en: '12cm'}, {ar: '14 سم', en: '14cm'}, {ar: '16 سم', en: '16cm'}], a: 1}
-            ],
-            math_7: [
-                {q: {ar: 'ما هو ناتج: -5 + 8 - 3؟', en: 'What is: -5 + 8 - 3?'}, o: [{ar: '0', en: '0'}, {ar: '1', en: '1'}, {ar: '-1', en: '-1'}, {ar: '6', en: '6'}], a: 0},
-                {q: {ar: 'ما هو 25% من 200؟', en: 'What is 25% of 200?'}, o: [{ar: '40', en: '40'}, {ar: '50', en: '50'}, {ar: '60', en: '60'}, {ar: '75', en: '75'}], a: 1}
-            ],
-            math_8: [
-                {q: {ar: 'ما قيمة x في المعادلة: 2x + 5 = 15؟', en: 'What is x in: 2x + 5 = 15?'}, o: [{ar: '4', en: '4'}, {ar: '5', en: '5'}, {ar: '6', en: '6'}, {ar: '7', en: '7'}], a: 1},
-                {q: {ar: 'ما مساحة مستطيل طوله 8 سم وعرضه 5 سم؟', en: 'Area of rectangle: length 8cm, width 5cm?'}, o: [{ar: '35 سم²', en: '35cm²'}, {ar: '40 سم²', en: '40cm²'}, {ar: '45 سم²', en: '45cm²'}, {ar: '50 سم²', en: '50cm²'}], a: 1}
-            ],
-            math_9: [
-                {q: {ar: 'ما هو الجذر التربيعي لـ 144؟', en: 'What is √144?'}, o: [{ar: '10', en: '10'}, {ar: '11', en: '11'}, {ar: '12', en: '12'}, {ar: '13', en: '13'}], a: 2},
-                {q: {ar: 'اذا كان a² = 49، فما قيمة a؟', en: 'If a² = 49, what is a?'}, o: [{ar: '5', en: '5'}, {ar: '6', en: '6'}, {ar: '7', en: '7'}, {ar: '8', en: '8'}], a: 2}
-            ],
-            math_10: [
-                {q: {ar: 'ما ميل الخط المار بالنقطتين (0,0) و (3,6)؟', en: 'Slope of line through (0,0) and (3,6)?'}, o: [{ar: '1', en: '1'}, {ar: '2', en: '2'}, {ar: '3', en: '3'}, {ar: '0.5', en: '0.5'}], a: 1},
-                {q: {ar: 'حل المعادلة: x² - 4 = 0', en: 'Solve: x² - 4 = 0'}, o: [{ar: 'x = 1', en: 'x = 1'}, {ar: 'x = ±2', en: 'x = ±2'}, {ar: 'x = 4', en: 'x = 4'}, {ar: 'x = 0', en: 'x = 0'}], a: 1}
-            ],
-            math_11: [
-                {q: {ar: 'ما مشتقة الدالة f(x) = x²؟', en: 'What is derivative of f(x) = x²?'}, o: [{ar: 'x', en: 'x'}, {ar: '2x', en: '2x'}, {ar: 'x²', en: 'x²'}, {ar: '2', en: '2'}], a: 1},
-                {q: {ar: 'ما قيمة sin(30°)؟', en: 'What is sin(30°)?'}, o: [{ar: '0.5', en: '0.5'}, {ar: '1', en: '1'}, {ar: '0.707', en: '0.707'}, {ar: '0.866', en: '0.866'}], a: 0}
-            ],
-            math_12: [
-                {q: {ar: 'ما تكامل: ∫2x dx؟', en: 'What is: ∫2x dx?'}, o: [{ar: '2x²', en: '2x²'}, {ar: 'x² + C', en: 'x² + C'}, {ar: 'x²', en: 'x²'}, {ar: '2x² + C', en: '2x² + C'}], a: 1},
-                {q: {ar: 'اذا كان log₁₀(100) = x، فما قيمة x؟', en: 'If log₁₀(100) = x, what is x?'}, o: [{ar: '1', en: '1'}, {ar: '2', en: '2'}, {ar: '10', en: '10'}, {ar: '100', en: '100'}], a: 1}
-            ],
-            science_6: [
-                {q: {ar: 'ما عدد كواكب النظام الشمسي؟', en: 'How many planets in solar system?'}, o: [{ar: '7', en: '7'}, {ar: '8', en: '8'}, {ar: '9', en: '9'}, {ar: '10', en: '10'}], a: 1},
-                {q: {ar: 'ما الغاز الذي نتنفسه؟', en: 'Which gas do we breathe?'}, o: [{ar: 'هيدروجين', en: 'Hydrogen'}, {ar: 'اكسجين', en: 'Oxygen'}, {ar: 'نيتروجين', en: 'Nitrogen'}, {ar: 'كربون', en: 'Carbon'}], a: 1}
-            ],
-            science_7: [
-                {q: {ar: 'ما الوحدة الأساسية للحياة؟', en: 'What is basic unit of life?'}, o: [{ar: 'الذرة', en: 'Atom'}, {ar: 'الخلية', en: 'Cell'}, {ar: 'الجزيء', en: 'Molecule'}, {ar: 'العضو', en: 'Organ'}], a: 1},
-                {q: {ar: 'ما عدد حالات المادة؟', en: 'How many states of matter?'}, o: [{ar: '2', en: '2'}, {ar: '3', en: '3'}, {ar: '4', en: '4'}, {ar: '5', en: '5'}], a: 2}
-            ],
-            science_8: [
-                {q: {ar: 'ما الصيغة الكيميائية للماء؟', en: 'Chemical formula for water?'}, o: [{ar: 'H2O', en: 'H2O'}, {ar: 'CO2', en: 'CO2'}, {ar: 'O2', en: 'O2'}, {ar: 'H2', en: 'H2'}], a: 0},
-                {q: {ar: 'ما سرعة الضوء تقريباً؟', en: 'Speed of light approximately?'}, o: [{ar: '300,000 كم/ث', en: '300,000 km/s'}, {ar: '150,000 كم/ث', en: '150,000 km/s'}, {ar: '500,000 كم/ث', en: '500,000 km/s'}, {ar: '100,000 كم/ث', en: '100,000 km/s'}], a: 0}
-            ],
-            science_9: [
-                {q: {ar: 'ما عدد الكروموسومات في الإنسان؟', en: 'Number of chromosomes in humans?'}, o: [{ar: '23', en: '23'}, {ar: '44', en: '44'}, {ar: '46', en: '46'}, {ar: '48', en: '48'}], a: 2},
-                {q: {ar: 'ما وحدة قياس القوة؟', en: 'Unit of force?'}, o: [{ar: 'جول', en: 'Joule'}, {ar: 'نيوتن', en: 'Newton'}, {ar: 'واط', en: 'Watt'}, {ar: 'باسكال', en: 'Pascal'}], a: 1}
-            ],
-            science_10: [
-                {q: {ar: 'ما الرقم الذري للكربون؟', en: 'Atomic number of carbon?'}, o: [{ar: '4', en: '4'}, {ar: '6', en: '6'}, {ar: '8', en: '8'}, {ar: '12', en: '12'}], a: 1},
-                {q: {ar: 'ما قانون نيوتن الثاني؟', en: "Newton's second law?"}, o: [{ar: 'F = ma', en: 'F = ma'}, {ar: 'E = mc²', en: 'E = mc²'}, {ar: 'V = IR', en: 'V = IR'}, {ar: 'P = VI', en: 'P = VI'}], a: 0}
-            ],
-            science_11: [
-                {q: {ar: 'ما وحدة قياس التردد؟', en: 'Unit of frequency?'}, o: [{ar: 'هرتز', en: 'Hertz'}, {ar: 'واط', en: 'Watt'}, {ar: 'فولت', en: 'Volt'}, {ar: 'أمبير', en: 'Ampere'}], a: 0},
-                {q: {ar: 'ما عملية تحويل الطاقة الشمسية للكيميائية؟', en: 'Process converting solar to chemical energy?'}, o: [{ar: 'التنفس', en: 'Respiration'}, {ar: 'البناء الضوئي', en: 'Photosynthesis'}, {ar: 'الهضم', en: 'Digestion'}, {ar: 'التخمر', en: 'Fermentation'}], a: 1}
-            ],
-            science_12: [
-                {q: {ar: 'ما نظرية أينشتاين الشهيرة؟', en: "Einstein's famous theory?"}, o: [{ar: 'E = mc²', en: 'E = mc²'}, {ar: 'F = ma', en: 'F = ma'}, {ar: 'a² + b² = c²', en: 'a² + b² = c²'}, {ar: 'PV = nRT', en: 'PV = nRT'}], a: 0},
-                {q: {ar: 'ما الحمض النووي الناقل للصفات الوراثية؟', en: 'DNA that carries genetic traits?'}, o: [{ar: 'RNA', en: 'RNA'}, {ar: 'DNA', en: 'DNA'}, {ar: 'ATP', en: 'ATP'}, {ar: 'ADP', en: 'ADP'}], a: 1}
-            ],
-            arabic_6: [
-                {q: {ar: 'ما جمع كلمة "كتاب"؟', en: 'Plural of "كتاب" (book)?'}, o: [{ar: 'كتابات', en: 'كتابات'}, {ar: 'كتب', en: 'كتب'}, {ar: 'كتابين', en: 'كتابين'}, {ar: 'اكتاب', en: 'اكتاب'}], a: 1},
-                {q: {ar: 'ما نوع الجملة: "العلم نور"؟', en: 'Type of sentence: "العلم نور"?'}, o: [{ar: 'فعلية', en: 'Verbal'}, {ar: 'اسمية', en: 'Nominal'}, {ar: 'شرطية', en: 'Conditional'}, {ar: 'استفهامية', en: 'Interrogative'}], a: 1}
-            ],
-            arabic_7: [
-                {q: {ar: 'ما اعراب كلمة "محمد" في: "جاء محمد"؟', en: 'Parsing of "محمد" in "جاء محمد"?'}, o: [{ar: 'فاعل', en: 'Subject'}, {ar: 'مفعول به', en: 'Object'}, {ar: 'مبتدأ', en: 'Topic'}, {ar: 'خبر', en: 'Predicate'}], a: 0},
-                {q: {ar: 'ما المثنى من "طالب"؟', en: 'Dual of "طالب" (student)?'}, o: [{ar: 'طالبان', en: 'طالبان'}, {ar: 'طلاب', en: 'طلاب'}, {ar: 'طالبين', en: 'طالبين'}, {ar: 'طلبة', en: 'طلبة'}], a: 0}
-            ],
-            arabic_8: [
-                {q: {ar: 'ما الفعل الماضي من "يكتب"؟', en: 'Past tense of "يكتب" (writes)?'}, o: [{ar: 'كتب', en: 'كتب'}, {ar: 'كاتب', en: 'كاتب'}, {ar: 'مكتوب', en: 'مكتوب'}, {ar: 'اكتب', en: 'اكتب'}], a: 0},
-                {q: {ar: 'ما نوع "ال" في كلمة "الشمس"؟', en: 'Type of "ال" in "الشمس"?'}, o: [{ar: 'قمرية', en: 'Lunar'}, {ar: 'شمسية', en: 'Solar'}, {ar: 'زائدة', en: 'Extra'}, {ar: 'موصولة', en: 'Connected'}], a: 1}
-            ],
-            arabic_9: [
-                {q: {ar: 'ما وزن كلمة "كتاب"؟', en: 'Pattern of "كتاب"?'}, o: [{ar: 'فَعَل', en: 'فَعَل'}, {ar: 'فِعال', en: 'فِعال'}, {ar: 'فُعَل', en: 'فُعَل'}, {ar: 'فَعيل', en: 'فَعيل'}], a: 1},
-                {q: {ar: 'ما الفاعل في: "أكل الطفل التفاحة"؟', en: 'Subject in: "أكل الطفل التفاحة"?'}, o: [{ar: 'أكل', en: 'أكل'}, {ar: 'الطفل', en: 'الطفل'}, {ar: 'التفاحة', en: 'التفاحة'}, {ar: 'لا يوجد', en: 'None'}], a: 1}
-            ],
-            arabic_10: [
-                {q: {ar: 'ما بحر الشعر للبيت: "ألا ليت الشباب يعود يوماً"؟', en: 'Meter of: "ألا ليت الشباب يعود يوماً"?'}, o: [{ar: 'الطويل', en: 'الطويل'}, {ar: 'البسيط', en: 'البسيط'}, {ar: 'الكامل', en: 'الكامل'}, {ar: 'الوافر', en: 'الوافر'}], a: 1},
-                {q: {ar: 'ما الحال في: "جاء الطالب مسرعاً"؟', en: 'Adverb in: "جاء الطالب مسرعاً"?'}, o: [{ar: 'جاء', en: 'جاء'}, {ar: 'الطالب', en: 'الطالب'}, {ar: 'مسرعاً', en: 'مسرعاً'}, {ar: 'لا يوجد', en: 'None'}], a: 2}
-            ],
-            arabic_11: [
-                {q: {ar: 'من شاعر المعلقات صاحب "قفا نبك"؟', en: 'Poet of "قفا نبك"?'}, o: [{ar: 'امرؤ القيس', en: 'امرؤ القيس'}, {ar: 'المتنبي', en: 'المتنبي'}, {ar: 'أبو تمام', en: 'أبو تمام'}, {ar: 'البحتري', en: 'البحتري'}], a: 0},
-                {q: {ar: 'ما المفعول المطلق في: "ضرب ضرباً"؟', en: 'Absolute object in: "ضرب ضرباً"?'}, o: [{ar: 'ضرب الأول', en: 'First ضرب'}, {ar: 'ضرباً', en: 'ضرباً'}, {ar: 'كلاهما', en: 'Both'}, {ar: 'لا يوجد', en: 'None'}], a: 1}
-            ],
-            arabic_12: [
-                {q: {ar: 'من صاحب ديوان "الغزليات"؟', en: 'Author of "الغزليات"?'}, o: [{ar: 'عمر بن أبي ربيعة', en: 'عمر بن أبي ربيعة'}, {ar: 'جميل بثينة', en: 'جميل بثينة'}, {ar: 'قيس ليلى', en: 'قيس ليلى'}, {ar: 'كثير عزة', en: 'كثير عزة'}], a: 0},
-                {q: {ar: 'ما الممنوع من الصرف في: "مساجد"؟', en: 'Diptote in: "مساجد"?'}, o: [{ar: 'نعم', en: 'Yes'}, {ar: 'لا', en: 'No'}, {ar: 'أحياناً', en: 'Sometimes'}, {ar: 'غير محدد', en: 'Undefined'}], a: 0}
-            ],
-            english_6: [
-                {q: {ar: 'ما معنى "Beautiful" بالعربية؟', en: 'Meaning of "Beautiful"?'}, o: [{ar: 'جميل', en: 'Beautiful'}, {ar: 'قبيح', en: 'Ugly'}, {ar: 'كبير', en: 'Big'}, {ar: 'صغير', en: 'Small'}], a: 0},
-                {q: {ar: 'ما جمع "Child"؟', en: 'Plural of "Child"?'}, o: [{ar: 'Childs', en: 'Childs'}, {ar: 'Children', en: 'Children'}, {ar: 'Childes', en: 'Childes'}, {ar: 'Childs', en: 'Childs'}], a: 1}
-            ],
-            english_7: [
-                {q: {ar: 'اختر الصحيح: "He ___ to school."', en: 'Choose correct: "He ___ to school."'}, o: [{ar: 'go', en: 'go'}, {ar: 'goes', en: 'goes'}, {ar: 'going', en: 'going'}, {ar: 'gone', en: 'gone'}], a: 1},
-                {q: {ar: 'ما الماضي من "Write"؟', en: 'Past tense of "Write"?'}, o: [{ar: 'Writed', en: 'Writed'}, {ar: 'Written', en: 'Written'}, {ar: 'Wrote', en: 'Wrote'}, {ar: 'Writing', en: 'Writing'}], a: 2}
-            ],
-            english_8: [
-                {q: {ar: 'ما معنى "Knowledge"؟', en: 'Meaning of "Knowledge"?'}, o: [{ar: 'معرفة', en: 'Knowledge'}, {ar: 'قوة', en: 'Power'}, {ar: 'حرية', en: 'Freedom'}, {ar: 'سعادة', en: 'Happiness'}], a: 0},
-                {q: {ar: 'اختر الصحيح: "I have ___ this book."', en: 'Choose: "I have ___ this book."'}, o: [{ar: 'read', en: 'read'}, {ar: 'readed', en: 'readed'}, {ar: 'reading', en: 'reading'}, {ar: 'reads', en: 'reads'}], a: 0}
-            ],
-            english_9: [
-                {q: {ar: 'ما نوع الكلمة "Quickly"؟', en: 'Type of word "Quickly"?'}, o: [{ar: 'اسم', en: 'Noun'}, {ar: 'فعل', en: 'Verb'}, {ar: 'صفة', en: 'Adjective'}, {ar: 'ظرف', en: 'Adverb'}], a: 3},
-                {q: {ar: 'ما المضارع التام من "Go"؟', en: 'Present perfect of "Go"?'}, o: [{ar: 'Have went', en: 'Have went'}, {ar: 'Have gone', en: 'Have gone'}, {ar: 'Has go', en: 'Has go'}, {ar: 'Going', en: 'Going'}], a: 1}
-            ],
-            english_10: [
-                {q: {ar: 'ما الفرق بين "Their" و "There"؟', en: 'Difference between "Their" and "There"?'}, o: [{ar: 'ملكية / مكان', en: 'Possessive / Place'}, {ar: 'نفس المعنى', en: 'Same meaning'}, {ar: 'زمن / مكان', en: 'Time / Place'}, {ar: 'فعل / اسم', en: 'Verb / Noun'}], a: 0},
-                {q: {ar: 'ما الشرطي الثاني: "If I ___ rich..."', en: 'Second conditional: "If I ___ rich..."'}, o: [{ar: 'am', en: 'am'}, {ar: 'was', en: 'was'}, {ar: 'were', en: 'were'}, {ar: 'be', en: 'be'}], a: 2}
-            ],
-            english_11: [
-                {q: {ar: 'ما معنى "Metaphor"؟', en: 'Meaning of "Metaphor"?'}, o: [{ar: 'استعارة', en: 'Metaphor'}, {ar: 'تشبيه', en: 'Simile'}, {ar: 'مجاز', en: 'Metonymy'}, {ar: 'كناية', en: 'Euphemism'}], a: 0},
-                {q: {ar: 'ما نوع الجملة: "What a beautiful day!"', en: 'Type: "What a beautiful day!"'}, o: [{ar: 'تعجبية', en: 'Exclamatory'}, {ar: 'استفهامية', en: 'Interrogative'}, {ar: 'خبرية', en: 'Declarative'}, {ar: 'امرية', en: 'Imperative'}], a: 0}
-            ],
-            english_12: [
-                {q: {ar: 'من كتب "Romeo and Juliet"؟', en: 'Who wrote "Romeo and Juliet"?'}, o: [{ar: 'Dickens', en: 'Dickens'}, {ar: 'Shakespeare', en: 'Shakespeare'}, {ar: 'Hemingway', en: 'Hemingway'}, {ar: 'Austen', en: 'Austen'}], a: 1},
-                {q: {ar: 'ما المبني للمجهول من "They teach English"؟', en: 'Passive of "They teach English"?'}, o: [{ar: 'English teaches', en: 'English teaches'}, {ar: 'English is taught', en: 'English is taught'}, {ar: 'English taught', en: 'English taught'}, {ar: 'English teaching', en: 'English teaching'}], a: 1}
-            ],
-            history_6: [
-                {q: {ar: 'في أي قارة بدأت الحضارة المصرية القديمة؟', en: 'In which continent did ancient Egyptian civilization start?'}, o: [{ar: 'آسيا', en: 'Asia'}, {ar: 'أفريقيا', en: 'Africa'}, {ar: 'أوروبا', en: 'Europe'}, {ar: 'أمريكا', en: 'America'}], a: 1},
-                {q: {ar: 'ما عاصمة الدولة الأموية؟', en: 'Capital of Umayyad Caliphate?'}, o: [{ar: 'بغداد', en: 'Baghdad'}, {ar: 'دمشق', en: 'Damascus'}, {ar: 'القاهرة', en: 'Cairo'}, {ar: 'مكة', en: 'Mecca'}], a: 1}
-            ],
-            history_7: [
-                {q: {ar: 'متى سقطت الدولة العباسية؟', en: 'When did Abbasid Caliphate fall?'}, o: [{ar: '1258 م', en: '1258 AD'}, {ar: '1453 م', en: '1453 AD'}, {ar: '1492 م', en: '1492 AD'}, {ar: '1517 م', en: '1517 AD'}], a: 0},
-                {q: {ar: 'من اخترع المطبعة؟', en: 'Who invented printing press?'}, o: [{ar: 'نيوتن', en: 'Newton'}, {ar: 'جوتنبرغ', en: 'Gutenberg'}, {ar: 'أديسون', en: 'Edison'}, {ar: 'تسلا', en: 'Tesla'}], a: 1}
-            ],
-            history_8: [
-                {q: {ar: 'متى بدأت الحرب العالمية الأولى؟', en: 'When did WWI start?'}, o: [{ar: '1912', en: '1912'}, {ar: '1914', en: '1914'}, {ar: '1916', en: '1916'}, {ar: '1918', en: '1918'}], a: 1},
-                {q: {ar: 'من قائد فتح القسطنطينية؟', en: 'Who conquered Constantinople?'}, o: [{ar: 'سليمان القانوني', en: 'Suleiman'}, {ar: 'محمد الفاتح', en: 'Mehmed II'}, {ar: 'صلاح الدين', en: 'Saladin'}, {ar: 'السلطان سليم', en: 'Sultan Selim'}], a: 1}
-            ],
-            history_9: [
-                {q: {ar: 'متى انتهت الحرب العالمية الثانية؟', en: 'When did WWII end?'}, o: [{ar: '1943', en: '1943'}, {ar: '1944', en: '1944'}, {ar: '1945', en: '1945'}, {ar: '1946', en: '1946'}], a: 2},
-                {q: {ar: 'ما اسم السفينة التي أبحرت بكولومبوس؟', en: "Columbus's ship name?"}, o: [{ar: 'تيتانيك', en: 'Titanic'}, {ar: 'سانتا ماريا', en: 'Santa Maria'}, {ar: 'فيكتوريا', en: 'Victoria'}, {ar: 'بينتا', en: 'Pinta'}], a: 1}
-            ],
-            history_10: [
-                {q: {ar: 'متى كانت الثورة الفرنسية؟', en: 'When was French Revolution?'}, o: [{ar: '1776', en: '1776'}, {ar: '1789', en: '1789'}, {ar: '1812', en: '1812'}, {ar: '1848', en: '1848'}], a: 1},
-                {q: {ar: 'من أول رئيس للولايات المتحدة؟', en: 'First US President?'}, o: [{ar: 'لنكولن', en: 'Lincoln'}, {ar: 'واشنطن', en: 'Washington'}, {ar: 'جيفرسون', en: 'Jefferson'}, {ar: 'فرانكلين', en: 'Franklin'}], a: 1}
-            ],
-            history_11: [
-                {q: {ar: 'متى انهار جدار برلين؟', en: 'When did Berlin Wall fall?'}, o: [{ar: '1987', en: '1987'}, {ar: '1989', en: '1989'}, {ar: '1991', en: '1991'}, {ar: '1993', en: '1993'}], a: 1},
-                {q: {ar: 'من زعيم الاتحاد السوفيتي في الحرب الباردة؟', en: 'Soviet leader in Cold War?'}, o: [{ar: 'لينين', en: 'Lenin'}, {ar: 'ستالين', en: 'Stalin'}, {ar: 'خروتشوف', en: 'Khrushchev'}, {ar: 'بريجنيف', en: 'Brezhnev'}], a: 2}
-            ],
-            history_12: [
-                {q: {ar: 'متى تأسست منظمة الأمم المتحدة؟', en: 'When was UN founded?'}, o: [{ar: '1942', en: '1942'}, {ar: '1945', en: '1945'}, {ar: '1948', en: '1948'}, {ar: '1950', en: '1950'}], a: 1},
-                {q: {ar: 'من قاد حركة الحقوق المدنية في أمريكا؟', en: 'Who led Civil Rights Movement?'}, o: [{ar: 'مالكوم إكس', en: 'Malcolm X'}, {ar: 'مارتن لوثر كينغ', en: 'MLK Jr'}, {ar: 'روزا باركس', en: 'Rosa Parks'}, {ar: 'نيلسون مانديلا', en: 'Mandela'}], a: 1}
-            ],
-            geography_6: [
-                {q: {ar: 'ما أكبر قارة في العالم؟', en: 'Largest continent?'}, o: [{ar: 'أفريقيا', en: 'Africa'}, {ar: 'آسيا', en: 'Asia'}, {ar: 'أوروبا', en: 'Europe'}, {ar: 'أمريكا', en: 'America'}], a: 1},
-                {q: {ar: 'ما عدد محيطات العالم؟', en: 'Number of world oceans?'}, o: [{ar: '3', en: '3'}, {ar: '4', en: '4'}, {ar: '5', en: '5'}, {ar: '6', en: '6'}], a: 2}
-            ],
-            geography_7: [
-                {q: {ar: 'ما أطول نهر في العالم؟', en: 'Longest river?'}, o: [{ar: 'النيل', en: 'Nile'}, {ar: 'الأمازون', en: 'Amazon'}, {ar: 'الميسيسبي', en: 'Mississippi'}, {ar: 'اليانغتسي', en: 'Yangtze'}], a: 0},
-                {q: {ar: 'ما عاصمة فرنسا؟', en: 'Capital of France?'}, o: [{ar: 'لندن', en: 'London'}, {ar: 'باريس', en: 'Paris'}, {ar: 'روما', en: 'Rome'}, {ar: 'برلين', en: 'Berlin'}], a: 1}
-            ],
-            geography_8: [
-                {q: {ar: 'ما أعلى جبل في العالم؟', en: 'Highest mountain?'}, o: [{ar: 'كليمنجارو', en: 'Kilimanjaro'}, {ar: 'إيفرست', en: 'Everest'}, {ar: 'فوجي', en: 'Fuji'}, {ar: 'الألب', en: 'Alps'}], a: 1},
-                {q: {ar: 'ما أكبر صحراء في العالم؟', en: 'Largest desert?'}, o: [{ar: 'الربع الخالي', en: 'Rub al Khali'}, {ar: 'الصحراء الكبرى', en: 'Sahara'}, {ar: 'جوبي', en: 'Gobi'}, {ar: 'أتاكاما', en: 'Atacama'}], a: 1}
-            ],
-            geography_9: [
-                {q: {ar: 'ما عاصمة أستراليا؟', en: 'Capital of Australia?'}, o: [{ar: 'سيدني', en: 'Sydney'}, {ar: 'ملبورن', en: 'Melbourne'}, {ar: 'كانبرا', en: 'Canberra'}, {ar: 'بيرث', en: 'Perth'}], a: 2},
-                {q: {ar: 'ما البحر الذي يفصل أوروبا عن أفريقيا؟', en: 'Sea between Europe and Africa?'}, o: [{ar: 'الأحمر', en: 'Red Sea'}, {ar: 'المتوسط', en: 'Mediterranean'}, {ar: 'الأسود', en: 'Black Sea'}, {ar: 'الكاريبي', en: 'Caribbean'}], a: 1}
-            ],
-            geography_10: [
-                {q: {ar: 'كم عدد خطوط الطول؟', en: 'Number of longitude lines?'}, o: [{ar: '180', en: '180'}, {ar: '360', en: '360'}, {ar: '90', en: '90'}, {ar: '270', en: '270'}], a: 1},
-                {q: {ar: 'ما الدولة الأكبر مساحة؟', en: 'Largest country by area?'}, o: [{ar: 'كندا', en: 'Canada'}, {ar: 'روسيا', en: 'Russia'}, {ar: 'الصين', en: 'China'}, {ar: 'أمريكا', en: 'USA'}], a: 1}
-            ],
-            geography_11: [
-                {q: {ar: 'ما المضيق الذي يربط المحيط الأطلسي بالمتوسط؟', en: 'Strait connecting Atlantic to Mediterranean?'}, o: [{ar: 'هرمز', en: 'Hormuz'}, {ar: 'جبل طارق', en: 'Gibraltar'}, {ar: 'البوسفور', en: 'Bosphorus'}, {ar: 'ماجلان', en: 'Magellan'}], a: 1},
-                {q: {ar: 'ما خط العرض الذي يقسم الأرض لنصفين؟', en: 'Latitude dividing Earth in half?'}, o: [{ar: 'مدار السرطان', en: 'Tropic of Cancer'}, {ar: 'خط الاستواء', en: 'Equator'}, {ar: 'مدار الجدي', en: 'Tropic of Capricorn'}, {ar: 'الدائرة القطبية', en: 'Arctic Circle'}], a: 1}
-            ],
-            geography_12: [
-                {q: {ar: 'ما أصغر دولة في العالم؟', en: 'Smallest country?'}, o: [{ar: 'موناكو', en: 'Monaco'}, {ar: 'الفاتيكان', en: 'Vatican'}, {ar: 'سان مارينو', en: 'San Marino'}, {ar: 'ليختنشتاين', en: 'Liechtenstein'}], a: 1},
-                {q: {ar: 'ما أعمق نقطة في المحيطات؟', en: 'Deepest ocean point?'}, o: [{ar: 'خندق ماريانا', en: 'Mariana Trench'}, {ar: 'خندق تونجا', en: 'Tonga Trench'}, {ar: 'خندق الفلبين', en: 'Philippine Trench'}, {ar: 'خندق بورتوريكو', en: 'Puerto Rico Trench'}], a: 0}
-            ],
-            islamic_6: [
-                {q: {ar: 'كم عدد أركان الإسلام؟', en: 'Number of Islam pillars?'}, o: [{ar: '3', en: '3'}, {ar: '4', en: '4'}, {ar: '5', en: '5'}, {ar: '6', en: '6'}], a: 2},
-                {q: {ar: 'ما أول سورة في القرآن؟', en: 'First Quran chapter?'}, o: [{ar: 'البقرة', en: 'Al-Baqarah'}, {ar: 'الفاتحة', en: 'Al-Fatihah'}, {ar: 'الناس', en: 'An-Nas'}, {ar: 'الإخلاص', en: 'Al-Ikhlas'}], a: 1}
-            ],
-            islamic_7: [
-                {q: {ar: 'كم عدد الصلوات المفروضة؟', en: 'Number of daily prayers?'}, o: [{ar: '3', en: '3'}, {ar: '4', en: '4'}, {ar: '5', en: '5'}, {ar: '6', en: '6'}], a: 2},
-                {q: {ar: 'في أي شهر فُرض الصيام؟', en: 'Which month is fasting?'}, o: [{ar: 'رجب', en: 'Rajab'}, {ar: 'شعبان', en: 'Shaban'}, {ar: 'رمضان', en: 'Ramadan'}, {ar: 'ذو الحجة', en: 'Dhul Hijjah'}], a: 2}
-            ],
-            islamic_8: [
-                {q: {ar: 'كم عدد سور القرآن؟', en: 'Number of Quran chapters?'}, o: [{ar: '110', en: '110'}, {ar: '114', en: '114'}, {ar: '120', en: '120'}, {ar: '124', en: '124'}], a: 1},
-                {q: {ar: 'ما أطول سورة في القرآن؟', en: 'Longest Quran chapter?'}, o: [{ar: 'آل عمران', en: 'Ali Imran'}, {ar: 'البقرة', en: 'Al-Baqarah'}, {ar: 'النساء', en: 'An-Nisa'}, {ar: 'الأعراف', en: 'Al-Araf'}], a: 1}
-            ],
-            islamic_9: [
-                {q: {ar: 'كم عدد أركان الإيمان؟', en: 'Number of faith pillars?'}, o: [{ar: '4', en: '4'}, {ar: '5', en: '5'}, {ar: '6', en: '6'}, {ar: '7', en: '7'}], a: 2},
-                {q: {ar: 'من أول من أسلم من الرجال؟', en: 'First Muslim man?'}, o: [{ar: 'عمر بن الخطاب', en: 'Umar'}, {ar: 'أبو بكر الصديق', en: 'Abu Bakr'}, {ar: 'عثمان بن عفان', en: 'Uthman'}, {ar: 'علي بن أبي طالب', en: 'Ali'}], a: 1}
-            ],
-            islamic_10: [
-                {q: {ar: 'في أي غزوة كانت معركة بدر؟', en: 'Which battle was Badr?'}, o: [{ar: 'الأولى', en: 'First'}, {ar: 'الثانية', en: 'Second'}, {ar: 'الثالثة', en: 'Third'}, {ar: 'الرابعة', en: 'Fourth'}], a: 0},
-                {q: {ar: 'كم عدد الخلفاء الراشدين؟', en: 'Number of Rightly Guided Caliphs?'}, o: [{ar: '3', en: '3'}, {ar: '4', en: '4'}, {ar: '5', en: '5'}, {ar: '6', en: '6'}], a: 1}
-            ],
-            islamic_11: [
-                {q: {ar: 'ما السورة التي تعدل ثلث القرآن؟', en: 'Chapter equal to 1/3 Quran?'}, o: [{ar: 'الفاتحة', en: 'Al-Fatihah'}, {ar: 'الإخلاص', en: 'Al-Ikhlas'}, {ar: 'الكافرون', en: 'Al-Kafirun'}, {ar: 'الناس', en: 'An-Nas'}], a: 1},
-                {q: {ar: 'في أي عام كانت الهجرة النبوية؟', en: 'Year of Prophet\'s migration?'}, o: [{ar: '620', en: '620'}, {ar: '622', en: '622'}, {ar: '624', en: '624'}, {ar: '630', en: '630'}], a: 1}
-            ],
-            islamic_12: [
-                {q: {ar: 'من آخر الخلفاء الراشدين؟', en: 'Last Rightly Guided Caliph?'}, o: [{ar: 'عمر', en: 'Umar'}, {ar: 'عثمان', en: 'Uthman'}, {ar: 'علي', en: 'Ali'}, {ar: 'معاوية', en: 'Muawiyah'}], a: 2},
-                {q: {ar: 'كم مرة ذُكر اسم "محمد" في القرآن؟', en: 'Times "Muhammad" mentioned in Quran?'}, o: [{ar: '2', en: '2'}, {ar: '4', en: '4'}, {ar: '6', en: '6'}, {ar: '8', en: '8'}], a: 1}
-            ],
-            computer_6: [
-                {q: {ar: 'ما اختصار CPU؟', en: 'What is CPU?'}, o: [{ar: 'وحدة المعالجة المركزية', en: 'Central Processing Unit'}, {ar: 'ذاكرة الكمبيوتر', en: 'Computer Memory'}, {ar: 'القرص الصلب', en: 'Hard Disk'}, {ar: 'البطاقة الرسومية', en: 'Graphics Card'}], a: 0},
-                {q: {ar: 'ما وظيفة الفأرة (Mouse)؟', en: 'Function of mouse?'}, o: [{ar: 'الكتابة', en: 'Typing'}, {ar: 'التأشير والنقر', en: 'Pointing & Clicking'}, {ar: 'الطباعة', en: 'Printing'}, {ar: 'الحفظ', en: 'Saving'}], a: 1}
-            ],
-            computer_7: [
-                {q: {ar: 'ما لغة البرمجة الأسهل للمبتدئين؟', en: 'Easiest programming language?'}, o: [{ar: 'C++', en: 'C++'}, {ar: 'Python', en: 'Python'}, {ar: 'Assembly', en: 'Assembly'}, {ar: 'Java', en: 'Java'}], a: 1},
-                {q: {ar: 'ما وحدة قياس الذاكرة؟', en: 'Memory unit?'}, o: [{ar: 'هرتز', en: 'Hertz'}, {ar: 'بايت', en: 'Byte'}, {ar: 'واط', en: 'Watt'}, {ar: 'بكسل', en: 'Pixel'}], a: 1}
-            ],
-            computer_8: [
-                {q: {ar: 'ما معنى HTML؟', en: 'What is HTML?'}, o: [{ar: 'لغة ترميز النص التشعبي', en: 'HyperText Markup Language'}, {ar: 'لغة برمجة', en: 'Programming Language'}, {ar: 'نظام تشغيل', en: 'Operating System'}, {ar: 'قاعدة بيانات', en: 'Database'}], a: 0},
-                {q: {ar: 'كم بايت في كيلوبايت؟', en: 'Bytes in kilobyte?'}, o: [{ar: '100', en: '100'}, {ar: '512', en: '512'}, {ar: '1024', en: '1024'}, {ar: '2048', en: '2048'}], a: 2}
-            ],
-            computer_9: [
-                {q: {ar: 'ما نظام التشغيل Linux؟', en: 'What is Linux?'}, o: [{ar: 'لعبة فيديو', en: 'Video Game'}, {ar: 'نظام تشغيل مفتوح المصدر', en: 'Open Source OS'}, {ar: 'متصفح ويب', en: 'Web Browser'}, {ar: 'برنامج تحرير صور', en: 'Image Editor'}], a: 1},
-                {q: {ar: 'ما معنى WWW؟', en: 'What is WWW?'}, o: [{ar: 'Wide World Web', en: 'Wide World Web'}, {ar: 'World Wide Web', en: 'World Wide Web'}, {ar: 'Web World Wide', en: 'Web World Wide'}, {ar: 'World Web Wide', en: 'World Web Wide'}], a: 1}
-            ],
-            computer_10: [
-                {q: {ar: 'ما معنى IP Address؟', en: 'What is IP Address?'}, o: [{ar: 'عنوان بروتوكول الإنترنت', en: 'Internet Protocol Address'}, {ar: 'كلمة مرور', en: 'Password'}, {ar: 'اسم مستخدم', en: 'Username'}, {ar: 'رابط موقع', en: 'Website URL'}], a: 0},
-                {q: {ar: 'ما أشهر قاعدة بيانات علائقية؟', en: 'Most popular relational database?'}, o: [{ar: 'MongoDB', en: 'MongoDB'}, {ar: 'MySQL', en: 'MySQL'}, {ar: 'Redis', en: 'Redis'}, {ar: 'Cassandra', en: 'Cassandra'}], a: 1}
-            ],
-            computer_11: [
-                {q: {ar: 'ما معنى AI؟', en: 'What is AI?'}, o: [{ar: 'Automated Intelligence', en: 'Automated Intelligence'}, {ar: 'Artificial Intelligence', en: 'Artificial Intelligence'}, {ar: 'Advanced Internet', en: 'Advanced Internet'}, {ar: 'Algorithmic Integration', en: 'Algorithmic Integration'}], a: 1},
-                {q: {ar: 'ما لغة برمجة المواقع الديناميكية؟', en: 'Dynamic website programming language?'}, o: [{ar: 'HTML', en: 'HTML'}, {ar: 'CSS', en: 'CSS'}, {ar: 'JavaScript', en: 'JavaScript'}, {ar: 'XML', en: 'XML'}], a: 2}
-            ],
-            computer_12: [
-                {q: {ar: 'ما معنى Algorithm؟', en: 'What is Algorithm?'}, o: [{ar: 'خوارزمية - خطوات حل مشكلة', en: 'Algorithm - Problem solving steps'}, {ar: 'لغة برمجة', en: 'Programming Language'}, {ar: 'نظام تشغيل', en: 'Operating System'}, {ar: 'برنامج حماية', en: 'Security Software'}], a: 0},
-                {q: {ar: 'ما هو Blockchain؟', en: 'What is Blockchain?'}, o: [{ar: 'لعبة', en: 'Game'}, {ar: 'تقنية سلسلة الكتل', en: 'Block Chain Technology'}, {ar: 'متصفح', en: 'Browser'}, {ar: 'نظام تشغيل', en: 'Operating System'}], a: 1}
-            ]
-        };
-
-        const subjects = [
-            {id: 'math', nameAr: 'الرياضيات', nameEn: 'Mathematics', icon: '🔢', color: '#3b82f6', colorLight: '#60a5fa'},
-            {id: 'science', nameAr: 'العلوم', nameEn: 'Science', icon: '🔬', color: '#10b981', colorLight: '#34d399'},
-            {id: 'arabic', nameAr: 'اللغة العربية', nameEn: 'Arabic', icon: '📖', color: '#f59e0b', colorLight: '#fbbf24'},
-            {id: 'english', nameAr: 'اللغة الانجليزية', nameEn: 'English', icon: '🌐', color: '#ef4444', colorLight: '#f87171'},
-            {id: 'history', nameAr: 'التاريخ', nameEn: 'History', icon: '📜', color: '#8b5cf6', colorLight: '#a78bfa'},
-            {id: 'geography', nameAr: 'الجغرافيا', nameEn: 'Geography', icon: '🌍', color: '#06b6d4', colorLight: '#22d3ee'},
-            {id: 'islamic', nameAr: 'التربية الاسلامية', nameEn: 'Islamic Studies', icon: '🕌', color: '#14b8a6', colorLight: '#2dd4bf'},
-            {id: 'computer', nameAr: 'الحاسوب', nameEn: 'Computer', icon: '💻', color: '#6366f1', colorLight: '#818cf8'}
-        ];
-
-        let users = JSON.parse(localStorage.getItem('knowledgeQuestUsers') || '[]');
         let currentUser = null;
-        let currentQuiz = null;
-        let currentQuestions = [];
-        let currentQuestionIndex = 0;
-        let quizScore = 0;
+        let userProfile = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeEventListeners();
-            applyLanguageTexts();
-            checkAutoLogin();
-        });
-
-        function initializeEventListeners() {
-            document.getElementById('langArBtn').addEventListener('click', () => switchLanguage('ar'));
-            document.getElementById('langEnBtn').addEventListener('click', () => switchLanguage('en'));
-            document.getElementById('loginTab').addEventListener('click', () => switchTab('login'));
-            document.getElementById('signupTab').addEventListener('click', () => switchTab('signup'));
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('signupForm').addEventListener('submit', handleSignup);
-            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-            document.getElementById('nextQuestionBtn').addEventListener('click', handleNextQuestion);
-            document.getElementById('backToSubjectsBtn').addEventListener('click', showDashboard);
-            document.getElementById('retryBtn').addEventListener('click', retryQuiz);
-            document.getElementById('backToDashboardBtn').addEventListener('click', showDashboard);
-        }
-
-        function switchTab(tab) {
+        function switchTab(type) {
             const loginTab = document.getElementById('loginTab');
             const signupTab = document.getElementById('signupTab');
-            const loginContent = document.getElementById('loginContent');
-            const signupContent = document.getElementById('signupContent');
-            if (tab === 'login') {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+
+            if(type === 'login') {
                 loginTab.classList.add('active');
                 signupTab.classList.remove('active');
-                loginContent.classList.add('active');
-                signupContent.classList.remove('active');
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
             } else {
                 signupTab.classList.add('active');
                 loginTab.classList.remove('active');
-                signupContent.classList.add('active');
-                loginContent.classList.remove('active');
+                signupForm.style.display = 'block';
+                loginForm.style.display = 'none';
             }
         }
 
-        function handleLogin(e) {
+        // إنشاء حساب جديد
+        async function handleSignup(e) {
             e.preventDefault();
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const userExists = users.find(u => u.username === username);
-            if (!userExists) {
-                showToast(currentLang === 'ar' ? 'اسم المستخدم غير موجود' : 'Username does not exist', true);
+            const username = document.getElementById('signupUser').value.trim();
+            const password = document.getElementById('signupPass').value;
+            const gradeNum = document.getElementById('userGrade').value;
+            const avatar = document.querySelector('input[name="avatar"]:checked').value;
+
+            const gradeMap = { "7": "السابع", "8": "الثامن", "9": "التاسع", "10": "العاشر" };
+            const gradeText = gradeMap[gradeNum] || "غير محدد";
+
+            // تكوين بريد إلكتروني وهمي بالاعتماد على اسم المستخدم لتسهيل الدخول
+            const fakeEmail = `${username.toLowerCase()}@knowledgequest.com`;
+
+            // 1. إنشاء الحساب في قائمة Auth العامة
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: fakeEmail,
+                password: password
+            });
+
+            if (authError) {
+                showToast(authError.message, true);
                 return;
             }
-            const user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                showToast(currentLang === 'ar' ? 'تم تسجيل الدخول بنجاح!' : 'Login successful!', false);
-                setTimeout(() => showDashboard(), 500);
-            } else {
-                showToast(currentLang === 'ar' ? 'كلمة المرور غير صحيحة' : 'Incorrect password', true);
+
+            if (authData.user) {
+                // 2. إدخال التفاصيل الإضافية بجدول profiles
+                const { error: profileError } = await supabase.from('profiles').insert([
+                    { 
+                        id: authData.user.id, 
+                        username: username, 
+                        grade: gradeText, 
+                        avatar: avatar, 
+                        score: 0 
+                    }
+                ]);
+
+                if (profileError) {
+                    showToast("حدث خطأ أثناء حفظ بيانات الملف الشخصي", true);
+                    console.error(profileError);
+                } else {
+                    showToast("تم إنشاء حسابك المتميز بنجاح! يمكنك الدخول الآن.");
+                    switchTab('login');
+                    document.getElementById('loginUser').value = username;
+                }
             }
         }
 
-        function handleSignup(e) {
+        // تسجيل الدخول
+        async function handleLogin(e) {
             e.preventDefault();
-            const username = document.getElementById('signupUsername').value.trim();
-            const password = document.getElementById('signupPassword').value;
-            const grade = document.getElementById('gradeSelect').value;
-            const hero = document.querySelector('input[name="hero"]:checked').value;
-            if (users.find(u => u.username === username)) {
-                showToast(currentLang === 'ar' ? 'اسم المستخدم موجود بالفعل' : 'Username already exists', true);
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value;
+
+            const fakeEmail = `${username.toLowerCase()}@knowledgequest.com`;
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: fakeEmail,
+                password: password
+            });
+
+            if (error) {
+                showToast("اسم المستخدم أو كلمة المرور غير صحيحة", true);
                 return;
             }
-            const newUser = {
-                username,
-                password,
-                grade: parseInt(grade),
-                hero,
-                score: 0,
-                progress: {},
-                testsCompleted: 0,
-                badges: []
-            };
-            users.push(newUser);
-            localStorage.setItem('knowledgeQuestUsers', JSON.stringify(users));
-            currentUser = newUser;
-            localStorage.setItem('currentUser', JSON.stringify(newUser));
-            showToast(currentLang === 'ar' ? 'تم انشاء الحساب بنجاح!' : 'Account created successfully!', false);
-            setTimeout(() => showDashboard(), 500);
-        }
 
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('dashboardScreen').style.display = 'none';
-            document.getElementById('loginForm').reset();
-            showToast(currentLang === 'ar' ? 'تم تسجيل الخروج' : 'Logged out', false);
-        }
+            currentUser = data.user;
 
-        function checkAutoLogin() {
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
+            // جلب بيانات الطالب من جدول profiles
+            const { data: profile, error: pError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (profile) {
+                userProfile = profile;
+                showToast("مرحباً بك في رحلة المعرفة! 🚀");
                 showDashboard();
+            } else {
+                showToast("لم يتم العثور على بيانات إضافية للملف الشخصي", true);
             }
         }
 
         function showDashboard() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboardScreen').style.display = 'block';
-            document.getElementById('quizScreen').style.display = 'none';
-            document.getElementById('resultsScreen').style.display = 'none';
-            updateDashboardUI();
-            renderSubjects();
+            document.getElementById('authCard').style.display = 'none';
+            document.getElementById('dashboardCard').style.display = 'block';
+            
+            document.getElementById('displayAvatar').textContent = userProfile.avatar;
+            document.getElementById('displayUsername').textContent = userProfile.username;
+            document.getElementById('displayGrade').textContent = `الصف ${userProfile.grade}`;
+            document.getElementById('displayScore').textContent = userProfile.score;
         }
 
-        function updateDashboardUI() {
-            document.getElementById('displayUsername').textContent = currentUser.username;
-            document.getElementById('userAvatar').textContent = currentUser.hero;
-            document.getElementById('displayGrade').textContent = currentLang === 'ar' 
-                ? `${translations[currentLang].gradeText} ${currentUser.grade}` 
-                : `Grade ${currentUser.grade}`;
-            document.getElementById('scoreDisplay').textContent = currentLang === 'ar'
-                ? `${currentUser.score} ${translations[currentLang].scoreText}`
-                : `${currentUser.score} ${translations[currentLang].scoreText}`;
+        // محاكاة انتهاء تحدي وإضافة نقاط جديدة كمثال
+        async function startQuest() {
+            showToast("انطلقت المغامرة! تم منحك 10 نقاط افتراضية للنجاح 🎉");
+            
+            const newScore = userProfile.score + 10;
+            
+            // تحديث السكور في Supabase
+            const { error } = await supabase
+                .from('profiles')
+                .update({ score: newScore })
+                .eq('id', currentUser.id);
+
+            if (!error) {
+                userProfile.score = newScore;
+                document.getElementById('displayScore').textContent = newScore;
+            } else {
+                console.error("خطأ في تحديث السكور:", error);
+            }
         }
 
-        function renderSubjects() {
-            const grid = document.getElementById('subjectsGrid');
-            grid.innerHTML = subjects.map(subject => {
-                const progress = currentUser.progress[subject.id] || 0;
-                const subjectName = currentLang === 'ar' ? subject.nameAr : subject.nameEn;
-                return `
-                    <div class="subject-card" style="--subject-color: ${subject.color}; --subject-color-light: ${subject.colorLight}">
-                        <div class="subject-icon">${subject.icon}</div>
-                        <div class="subject-name">${subjectName}</div>
-                        <div class="progress-info">
-                            <div>${translations[currentLang].progressText}: ${progress}%</div>
-                            <div class="progress-bar-wrapper">
-                                <div class="progress-bar-fill" style="width: ${progress}%; background: ${subject.color}"></div>
-                            </div>
-                        </div>
-                        <button class="start-quiz-btn" onclick="startQuiz('${subject.id}')" 
-                                style="--subject-color: ${subject.color}; --subject-color-light: ${subject.colorLight}">
-                            ${translations[currentLang].startQuiz}
-                        </button>
-                    </div>
-                `;
-            }).join('');
-            grid.innerHTML += `
-                <div class="subject-card" style="--subject-color: #fbbf24; --subject-color-light: #fcd34d; background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(252,211,77,0.1))">
-                    <div class="subject-icon" style="font-size: 4em;">🏆</div>
-                    <div class="subject-name">${translations[currentLang].leaderboardTitle}</div>
-                    <div class="progress-info" style="margin: 15px 0;">
-                        <div style="font-size: 0.9em; color: #ffffff;">
-                            ${translations[currentLang].leaderboardDesc}
-                        </div>
-                    </div>
-                    <button class="start-quiz-btn" onclick="showLeaderboard()" 
-                            style="--subject-color: #fbbf24; --subject-color-light: #fcd34d;">
-                        ${translations[currentLang].viewLeaders}
-                    </button>
-                </div>
-            `;
-        }
+        // عرض لوحة الصدارة من داتا حية بـ Supabase
+        async function viewLeaderboard() {
+            document.getElementById('mainDashboardView').style.display = 'none';
+            document.getElementById('leaderboardView').style.display = 'block';
 
-        function startQuiz(subjectId) {
-            const subject = subjects.find(s => s.id === subjectId);
-            currentQuiz = subject;
-            const questionsKey = `${subjectId}_${currentUser.grade}`;
-            currentQuestions = questionsDB[questionsKey] || [];
-            if (currentQuestions.length === 0) {
-                showToast(currentLang === 'ar' ? 'لا توجد اسئلة لهذا المستوى' : 'No questions for this level', true);
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">جاري تحميل الأبطال...</td></tr>';
+
+            // سحب أعلى 10 طلاب نقاطاً من جدول profiles
+            const { data: topUsers, error } = await supabase
+                .from('profiles')
+                .select('username, grade, avatar, score')
+                .order('score', { ascending: false })
+                .limit(10);
+
+            if (error) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">فشل جلب البيانات</td></tr>';
                 return;
             }
-            currentQuestionIndex = 0;
-            quizScore = 0;
-            document.getElementById('dashboardScreen').style.display = 'none';
-            document.getElementById('quizScreen').style.display = 'block';
-            updateQuizUI();
-            loadQuestion();
-        }
 
-        function updateQuizUI() {
-            const title = currentLang === 'ar' ? currentQuiz.nameAr : currentQuiz.nameEn;
-            document.getElementById('quizTitle').textContent = `${currentQuiz.icon} ${title}`;
-            document.getElementById('quizProgress').textContent = `${currentQuestionIndex + 1}/${currentQuestions.length}`;
-        }
-
-        function loadQuestion() {
-            const question = currentQuestions[currentQuestionIndex];
-            const questionText = currentLang === 'ar' ? question.q.ar : question.q.en;
-            document.getElementById('questionText').textContent = questionText;
-            const optionsHtml = question.o.map((option, index) => {
-                const optionText = currentLang === 'ar' ? option.ar : option.en;
-                return `<button class="option-btn" onclick="selectAnswer(${index})">${optionText}</button>`;
-            }).join('');
-            document.getElementById('optionsContainer').innerHTML = optionsHtml;
-            document.getElementById('nextQuestionBtn').disabled = true;
-        }
-
-        function selectAnswer(selectedIndex) {
-            const question = currentQuestions[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach((btn, index) => {
-                btn.disabled = true;
-                if (index === question.a) btn.classList.add('correct');
-                if (index === selectedIndex && index !== question.a) btn.classList.add('incorrect');
+            tbody.innerHTML = '';
+            topUsers.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.className = 'leaderboard-row';
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.avatar} ${user.username}</td>
+                    <td>${user.grade}</td>
+                    <td style="font-weight:700; color:#fff;">${user.score} pts</td>
+                `;
+                tbody.appendChild(row);
             });
-            if (selectedIndex === question.a) quizScore++;
-            document.getElementById('nextQuestionBtn').disabled = false;
-        }
-
-        function handleNextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < currentQuestions.length) {
-                updateQuizUI();
-                loadQuestion();
-            } else {
-                finishQuiz();
-            }
-        }
-
-        function finishQuiz() {
-            const percentage = Math.round((quizScore / currentQuestions.length) * 100);
-            const pointsEarned = quizScore * 10;
-            currentUser.score += pointsEarned;
-            currentUser.progress[currentQuiz.id] = percentage;
-            currentUser.testsCompleted++;
-            checkBadges();
-            const userIndex = users.findIndex(u => u.username === currentUser.username);
-            users[userIndex] = currentUser;
-            localStorage.setItem('knowledgeQuestUsers', JSON.stringify(users));
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            showResults();
-        }
-
-        function checkBadges() {
-            Object.values(currentUser.progress).forEach(prog => {
-                if (prog >= 90 && !currentUser.badges.includes('genius')) {
-                    currentUser.badges.push('genius');
-                    showToast(currentLang === 'ar' ? '🏆 حصلت على شارة العبقري!' : '🏆 Genius Badge Earned!', false);
-                }
-            });
-            if (currentUser.testsCompleted >= 50 && !currentUser.badges.includes('persistent')) {
-                currentUser.badges.push('persistent');
-                showToast(currentLang === 'ar' ? '🔥 حصلت على شارة المثابر!' : '🔥 Persistent Badge Earned!', false);
-            }
-            const topScore = Math.max(...users.map(u => u.score));
-            if (currentUser.score === topScore && currentUser.score > 0 && !currentUser.badges.includes('star')) {
-                currentUser.badges.push('star');
-                showToast(currentLang === 'ar' ? '⭐ حصلت على شارة النجم!' : '⭐ Star Badge Earned!', false);
-            }
-        }
-
-        function showResults() {
-            const percentage = Math.round((quizScore / currentQuestions.length) * 100);
-            const pointsEarned = quizScore * 10;
-            document.getElementById('quizScreen').style.display = 'none';
-            document.getElementById('resultsScreen').style.display = 'block';
-            let icon = '🎯';
-            let message = '';
-            if (percentage >= 90) {
-                icon = '🏆';
-                message = currentLang === 'ar' ? 'ممتاز! اداء رائع!' : 'Excellent! Outstanding performance!';
-            } else if (percentage >= 70) {
-                icon = '🌟';
-                message = currentLang === 'ar' ? 'جيد جداً! استمر!' : 'Very Good! Keep it up!';
-            } else if (percentage >= 50) {
-                icon = '👍';
-                message = currentLang === 'ar' ? 'جيد! يمكنك التحسن' : 'Good! You can improve';
-            } else {
-                icon = '💪';
-                message = currentLang === 'ar' ? 'حاول مرة اخرى!' : 'Try again!';
-            }
-            document.getElementById('resultsContainer').innerHTML = `
-                <div class="results-icon" id="resultsIcon">${icon}</div>
-                <h2 class="results-title" id="resultsTitle">${translations[currentLang].quizCompleted}</h2>
-                <div class="results-score" id="resultsScore">${quizScore}/${currentQuestions.length}</div>
-                <p class="results-message" id="resultsMessage">${message}<br>+${pointsEarned} ${translations[currentLang].scoreText}</p>
-                <div class="results-actions">
-                    <button class="result-btn retry-btn" id="retryBtn">${translations[currentLang].retryQuiz}</button>
-                    <button class="result-btn dashboard-btn" id="backToDashboardBtn">${translations[currentLang].backToDashboard}</button>
-                </div>
-            `;
-            document.getElementById('retryBtn').addEventListener('click', retryQuiz);
-            document.getElementById('backToDashboardBtn').addEventListener('click', showDashboard);
-        }
-
-        function retryQuiz() {
-            startQuiz(currentQuiz.id);
-        }
-
-        function showLeaderboard() {
-            const sortedUsers = [...users].sort((a, b) => b.score - a.score).slice(0, 10);
-            const leaderboardHTML = `
-                <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 25px; padding: 40px; max-width: 700px; margin: 0 auto;">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <div style="font-size: 4em; margin-bottom: 15px;">🏆</div>
-                        <h2 style="font-size: 2.5em; font-weight: 900; color: #333; margin-bottom: 10px;">
-                            ${translations[currentLang].leaderboardTitle}
-                        </h2>
-                        <p style="font-size: 1.1em; color: #666;">
-                            ${translations[currentLang].leaderboardSubtitle}
-                        </p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 15px;">
-                        ${sortedUsers.map((user, index) => {
-                            const isCurrentUser = user.username === currentUser.username;
-                            const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-                            const bgColor = isCurrentUser ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255, 255, 255, 0.5)';
-                            const borderColor = isCurrentUser ? '#fbbf24' : '#e0e0e0';
-                            return `
-                                <div style="background: ${bgColor}; border: 3px solid ${borderColor}; border-radius: 15px; padding: 20px; display: flex; align-items: center; gap: 20px; transition: all 0.3s ease;">
-                                    <div style="font-size: 2em; min-width: 50px; text-align: center; font-weight: 700;">${medal}</div>
-                                    <div style="font-size: 2.5em;">${user.hero}</div>
-                                    <div style="flex: 1;">
-                                        <div style="font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 5px;">${user.username} ${isCurrentUser ? '⭐' : ''}</div>
-                                        <div style="font-size: 0.9em; color: #666;">${translations[currentLang].gradeText} ${user.grade} • ${user.testsCompleted} ${translations[currentLang].tests}</div>
-                                    </div>
-                                    <div style="font-size: 1.5em; font-weight: 700; color: #667eea;">${user.score} ${translations[currentLang].pts}</div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                    <button onclick="closeLeaderboard()" style="width: 100%; margin-top: 30px; padding: 18px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 15px; font-size: 1.2em; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.3s ease;">
-                        ${translations[currentLang].backToDashboard}
-                    </button>
-                </div>
-            `;
-            document.getElementById('dashboardScreen').style.display = 'none';
-            document.getElementById('quizScreen').style.display = 'none';
-            document.getElementById('resultsScreen').style.display = 'block';
-            document.getElementById('resultsContainer').innerHTML = leaderboardHTML;
         }
 
         function closeLeaderboard() {
-            showDashboard();
+            document.getElementById('leaderboardView').style.display = 'none';
+            document.getElementById('mainDashboardView').style.display = 'grid';
+        }
+
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            userProfile = null;
+            document.getElementById('dashboardCard').style.display = 'none';
+            document.getElementById('authCard').style.display = 'block';
+            showToast("تم تسجيل الخروج بنجاح.");
         }
 
         function showToast(message, isError = false) {
             const existingToast = document.querySelector('.toast');
             if (existingToast) existingToast.remove();
             const toast = document.createElement('div');
-            toast.className = `toast ${isError ? 'error' : ''}`;
+            toast.className = `toast ${isError ? 'error' : ''}`;\
             toast.textContent = message;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a06839587a42b669',t:'MTc4MDU4OTU5Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ </body>
 </html>
