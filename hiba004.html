@@ -6,6 +6,7 @@
   <title>رحلة المعرفة | هبة كتانة</title>
   <link rel="icon" type="image/png" href="4.png">
   
+  <!-- تضمين مكتبة سوبابيز الرسمية -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -512,25 +513,6 @@
             margin-bottom: 15px;
         }
 
-        .progress-info {
-            margin: 15px 0;
-        }
-
-        .progress-bar-wrapper {
-            background: #e0e0e0;
-            border-radius: 15px;
-            height: 12px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--subject-color);
-            border-radius: 15px;
-            transition: width 0.6s ease;
-        }
-
         .start-quiz-btn {
             background: linear-gradient(135deg, var(--subject-color), var(--subject-color-light));
             color: white;
@@ -543,11 +525,6 @@
             transition: all 0.3s ease;
             font-family: inherit;
             margin-top: 10px;
-        }
-
-        .start-quiz-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .quiz-screen {
@@ -874,32 +851,12 @@
                 display: none;
             }
         }
-
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 25px 30px 35px;
-            }
-            .dashboard-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .subjects-grid {
-                grid-template-columns: 1fr;
-            }
-            .quiz-container {
-                padding: 25px;
-            }
-            .results-container {
-                padding: 30px;
-            }
-        }
-    </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </style>
  </head>
  <body class="h-full">
   <div class="app-wrapper">
    
+   <!-- Login Screen -->
    <div class="login-screen" id="loginScreen">
     <div class="login-card">
      <div class="login-header">
@@ -917,6 +874,7 @@
      </div>
      <div class="form-container">
       
+      <!-- Login Form -->
       <div class="tab-content active" id="loginContent">
        <form id="loginForm">
         <div class="input-group">
@@ -935,6 +893,7 @@
        </form>
       </div>
       
+      <!-- Signup Form -->
       <div class="tab-content" id="signupContent">
        <form id="signupForm">
         <div class="input-group">
@@ -986,6 +945,7 @@
     </div>
    </div>
 
+   <!-- Dashboard Screen -->
    <div class="dashboard-screen" id="dashboardScreen">
     <div class="dashboard-header">
      <div class="logo-section">
@@ -1009,6 +969,7 @@
     <div class="subjects-grid" id="subjectsGrid"></div>
    </div>
 
+   <!-- Quiz Screen -->
    <div class="quiz-screen" id="quizScreen">
     <div class="quiz-container">
      <div class="quiz-header">
@@ -1026,6 +987,7 @@
     </div>
    </div>
 
+   <!-- Results Screen -->
    <div class="results-screen" id="resultsScreen">
     <div class="results-container" id="resultsContainer">
      <div class="results-icon" id="resultsIcon">🏆</div>
@@ -1048,12 +1010,12 @@
   </div>
 
   <script>
-    // 1. إعدادات سوبابيز الأساسية (استبدلي الرموز ببيانات مشروعك الحقيقية)
+    // 1. إعدادات سوبابيز الأساسية (تأكدي من استبدال المفاتيح ببيانات مشروعك الحقيقي)
     const SUPABASE_URL = "https://xjcsvvrzqjpkaxuwhebl.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_C6QsfadUxnRFV0Nvuaj_Dg_0ttlkFAB";
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // نظام الترجمة واللغات الأصلي
+    // نظام الترجمة واللغات المعدل والمكتمل الحقول
     const translations = {
         ar: {
             mainTitle: 'رحلة المعرفة', mainSubtitle: 'ابدأ رحلة التعلم', loginTab: 'تسجيل دخول', signupTab: 'إنشاء حساب',
@@ -1063,7 +1025,7 @@
             welcomeTitle: 'مرحباً بعودتك!', welcomeSubtitle: 'اختر مادة لبدء التعلم', logoutBtn: 'تسجيل خروج',
             scoreText: 'نقطة', gradeText: 'الصف', backToSubjects: 'العودة للمواد', nextQuestion: 'السؤال التالي',
             quizCompleted: 'اكتمل الاختبار!', retryQuiz: 'حاول مرة أخرى', backToDashboard: 'العودة للوحة الرئيسية',
-            startQuiz: 'ابدأ الاختبار'
+            startQuiz: 'ابدأ الاختبار', pts: 'نقاط'
         },
         en: {
             mainTitle: 'Knowledge Quest', mainSubtitle: 'Start Your Learning Journey', loginTab: 'Login', signupTab: 'Sign Up',
@@ -1073,7 +1035,7 @@
             welcomeTitle: 'Welcome Back!', welcomeSubtitle: 'Choose a subject to start learning', logoutBtn: 'Logout',
             scoreText: 'Points', gradeText: 'Grade', backToSubjects: 'Back to Subjects', nextQuestion: 'Next Question',
             quizCompleted: 'Quiz Completed!', retryQuiz: 'Try Again', backToDashboard: 'Back to Dashboard',
-            startQuiz: 'Start Quiz'
+            startQuiz: 'Start Quiz', pts: 'Points'
         }
     };
 
@@ -1085,7 +1047,7 @@
     let selectedOptionIndex = null;
     let scoreGained = 0;
 
-    // بنك الأسئلة للمواد المختلفة لجميع الصفوف
+    // بنك الأسئلة المبدئي
     const quizData = {
         math: [
             { q_ar: "ما ناتج 5 + 7؟", q_en: "What is 5 + 7?", options_ar: ["10", "12", "14", "15"], options_en: ["10", "12", "14", "15"], answer: 1 },
@@ -1096,7 +1058,7 @@
             { q_ar: "أي كوكب يسمى الكوكب الأحمر؟", q_en: "Which planet is known as the Red Planet?", options_ar: ["الأرض", "المريخ", "المشتري", "زحل"], options_en: ["Earth", "Mars", "Jupiter", "Saturn"], answer: 1 }
         ],
         technology: [
-            { q_ar: "ماذا تعني اختصار CPU؟", q_en: "What does CPU stand for?", options_ar: ["وحدة المعالجة المركزية", "وحدة الطاقة", "الذاكرة العشوائية", "كرت الشاشة"], options_en: ["Central Processing Unit", "Control Power Unit", "Computer Personal Unit", "Core Processing Unit"], answer: 0 }
+            { q_ar: "ماذا يعني اختصار CPU؟", q_en: "What does CPU stand for?", options_ar: ["وحدة المعالجة المركزية", "وحدة الطاقة", "الذاكرة العشوائية", "كرت الشاشة"], options_en: ["Central Processing Unit", "Control Power Unit", "Computer Personal Unit", "Core Processing Unit"], answer: 0 }
         ]
     };
 
@@ -1105,6 +1067,47 @@
         { id: 'science', nameAr: 'العلوم', nameEn: 'Science', icon: '🔬', color: '#10b981', colorLight: '#059669' },
         { id: 'technology', nameAr: 'التكنولوجيا', nameEn: 'Technology', icon: '💻', color: '#fbbf24', colorLight: '#f59e0b' }
     ];
+
+    // تبديل لغات الواجهة بشكل فوري وتحديث النصوص
+    document.getElementById('langArBtn').addEventListener('click', () => updateLanguage('ar'));
+    document.getElementById('langEnBtn').addEventListener('click', () => updateLanguage('en'));
+
+    function updateLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('langArBtn').classList.toggle('active', lang === 'ar');
+        document.getElementById('langEnBtn').classList.toggle('active', lang === 'en');
+        
+        // تغيير اتجاه الصفحة
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+
+        // تحديث جميع النصوص بناء على اللغة المختارة
+        document.getElementById('mainTitle').textContent = translations[lang].mainTitle;
+        document.getElementById('mainSubtitle').textContent = translations[lang].mainSubtitle;
+        document.getElementById('loginTab').textContent = translations[lang].loginTab;
+        document.getElementById('signupTab').textContent = translations[lang].signupTab;
+        document.getElementById('loginUsernameLabel').textContent = translations[lang].loginUsernameLabel;
+        document.getElementById('loginPasswordLabel').textContent = translations[lang].loginPasswordLabel;
+        document.getElementById('loginBtn').textContent = translations[lang].loginBtn;
+        document.getElementById('signupUsernameLabel').textContent = translations[lang].signupUsernameLabel;
+        document.getElementById('signupPasswordLabel').textContent = translations[lang].signupPasswordLabel;
+        document.getElementById('gradeSelectLabel').textContent = translations[lang].gradeSelectLabel;
+        document.getElementById('heroSelectLabel').textContent = translations[lang].heroSelectLabel;
+        document.getElementById('signupBtn').textContent = translations[lang].signupBtn;
+        document.getElementById('dashboardTitle').textContent = translations[lang].dashboardTitle;
+        document.getElementById('welcomeTitle').textContent = translations[lang].welcomeTitle;
+        document.getElementById('welcomeSubtitle').textContent = translations[lang].welcomeSubtitle;
+        document.getElementById('logoutBtn').textContent = translations[lang].logoutBtn;
+        document.getElementById('backToSubjectsBtn').textContent = translations[lang].backToSubjects;
+        document.getElementById('nextQuestionBtn').textContent = translations[lang].nextQuestion;
+        document.getElementById('resultsTitle').textContent = translations[lang].quizCompleted;
+        document.getElementById('retryBtn').textContent = translations[lang].retryQuiz;
+        document.getElementById('backToDashboardBtn').textContent = translations[lang].backToDashboard;
+
+        if (currentUser) {
+            showDashboard();
+        }
+    }
 
     // تبديل ألسنة الدخول والتسجيل
     document.getElementById('loginTab').addEventListener('click', () => switchTab('login'));
@@ -1117,7 +1120,7 @@
         document.getElementById('signupContent').classList.toggle('active', type === 'signup');
     }
 
-    // إرسال نموذج إنشاء الحساب (سوبابيز)
+    // معالجة نموذج إنشاء الحساب وحفظ البيانات في سوبابيز
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('signupUsername').value.trim();
@@ -1127,40 +1130,46 @@
 
         if(!username || !password || !grade) return;
 
-        // التأكد من عدم تكرار الاسم
-        const { data: existingUser } = await supabase.from('students').select('*').eq('username', username).maybeSingle();
-        if(existingUser) {
-            showToast(currentLang === 'ar' ? "اسم المستخدم مسجل مسبقاً!" : "Username already exists!", true);
-            return;
-        }
+        try {
+            const { data: existingUser } = await supabase.from('students').select('*').eq('username', username).maybeSingle();
+            if(existingUser) {
+                showToast(currentLang === 'ar' ? "اسم المستخدم مسجل مسبقاً!" : "Username already exists!", true);
+                return;
+            }
 
-        // إدراج الطالب الجديد
-        const { data, error } = await supabase.from('students').insert([
-            { username: username, password: password, grade: grade, avatar: avatar, score: 0 }
-        ]).select().single();
+            const { data, error } = await supabase.from('students').insert([
+                { username: username, password: password, grade: grade, avatar: avatar, score: 0 }
+            ]).select().single();
 
-        if (error) {
-            showToast("حدث خطأ أثناء الإنشاء", true);
-        } else {
+            if (error) throw error;
+
             showToast(currentLang === 'ar' ? "تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول." : "Account created successfully! Please login.");
             switchTab('login');
+        } catch (err) {
+            showToast(currentLang === 'ar' ? "حدث خطأ أثناء إنشاء الحساب" : "Error creating account", true);
         }
     });
 
-    // إرسال نموذج تسجيل الدخول (سوبابيز)
+    // معالجة نموذج تسجيل الدخول ومنع إعادة تحميل الصفحة
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value;
 
-        const { data: user, error } = await supabase.from('students').select('*').eq('username', username).eq('password', password).maybeSingle();
+        if (!username || !password) return;
 
-        if (user) {
-            currentUser = user;
-            showToast(currentLang === 'ar' ? "مرحباً بك في لوحة التحكم!" : "Welcome to the dashboard!");
-            showDashboard();
-        } else {
-            showToast(currentLang === 'ar' ? "اسم المستخدم أو كلمة المرور خاطئة" : "Invalid username or password", true);
+        try {
+            const { data: user, error } = await supabase.from('students').select('*').eq('username', username).eq('password', password).maybeSingle();
+
+            if (user) {
+                currentUser = user;
+                showToast(currentLang === 'ar' ? "مرحباً بك في لوحة التحكم!" : "Welcome to the dashboard!");
+                showDashboard();
+            } else {
+                showToast(currentLang === 'ar' ? "اسم المستخدم أو كلمة المرور خاطئة" : "Invalid username or password", true);
+            }
+        } catch (err) {
+            showToast(currentLang === 'ar' ? "خطأ في الاتصال بقاعدة البيانات" : "Database connection error", true);
         }
     });
 
@@ -1239,7 +1248,7 @@
 
         if (index === q.answer) {
             clickedBtn.classList.add('correct');
-            scoreGained += 10; // كل إجابة صحيحة تمنح 10 نقاط فورا
+            scoreGained += 10;
         } else {
             clickedBtn.classList.add('incorrect');
             buttons[q.answer].classList.add('correct');
@@ -1263,7 +1272,6 @@
 
         document.getElementById('resultsScore').textContent = `+ ${scoreGained} ${translations[currentLang].pts}`;
 
-        // تحديث مجموع النقاط في سوبابيز للطالب فوراً
         const newTotalScore = (currentUser.score || 0) + scoreGained;
         const { error } = await supabase.from('students').update({ score: newTotalScore }).eq('id', currentUser.id);
 
