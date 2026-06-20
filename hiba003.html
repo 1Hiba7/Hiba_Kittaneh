@@ -51,7 +51,6 @@
             transform: translateZ(0);
         }
         
-        /* حاوية المعاينة لمنع تشوه الأبعاد على الشاشات الصغيرة */
         .preview-scroll-container {
             width: 100%;
             overflow-x: auto;
@@ -85,7 +84,6 @@
         let startX, startY;
         let initialLeft = 50, initialTop = 50;
 
-        // المتغيرات الجديدة للتحكم بأبعاد الشهادة المخصصة بشكل مستقل ودائم
         let certDimensions = {
             width: 700,
             height: 480
@@ -218,7 +216,6 @@
                             <input type="text" id="senderName" value="${formData.senderName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl">
                         </div>
 
-                        <!-- قسم التحكم المطور بأبعاد حجم الشهادة بالبكسل لتفادي مشاكل الشاشات الصغيرة -->
                         <div class="p-3 bg-orange-50 rounded-xl border border-orange-200 space-y-3">
                             <label class="block text-xs font-bold text-orange-800">📏 التحكم بأبعاد حجم الشهادة (بكسل)</label>
                             <div>
@@ -298,7 +295,6 @@
                         </div>
                     </div>
 
-                    <!-- حاوية الاستجابة المحدثة لمنع انهيار وتغير أبعاد الشهادة على الشاشات الفردية والموبايل -->
                     <div class="lg:col-span-2 select-none relative preview-scroll-container">
                         <div id="certificate-capture-area" class="border-[12px] p-12 rounded-xl shadow-2xl relative text-center flex flex-col justify-between overflow-hidden flex-shrink-0" style="font-family: 'Amiri', serif; background-color: ${customColors.bgColor}; border-color: ${customColors.borderColor}; color: ${customColors.textColor}; width: ${certDimensions.width}px; height: ${certDimensions.height}px;">
                             
@@ -329,7 +325,7 @@
             if (currentRecords.length === 0) {
                 recordsHTML = '<p class="col-span-full text-center text-gray-500 py-12">لم تقم بحفظ أي شهادات سحابياً حتى الآن.</p>';
             } else {
-                currentRecords.forEach(cert => {
+                currentRecords.forEach((cert, index) => {
                     const bg = cert.theme && cert.theme.startsWith('#') ? cert.theme : '#fdfbf7';
                     const txt = cert.font_family && cert.font_family.startsWith('#') ? cert.font_family : '#85581A';
                     
@@ -340,7 +336,11 @@
                             <p class="text-sm my-2 line-clamp-2 opacity-90">${cert.message || ''}</p>
                             <small class="opacity-70">بواسطة: ${cert.sender_name || 'الإدارة'}</small>
                         </div>
-                        <button onclick="deleteCertificate('${cert.id}')" class="mt-4 w-full py-1.5 bg-red-600 bg-opacity-20 text-red-700 text-sm font-semibold rounded-lg hover:bg-opacity-30 transition">🗑️ حذف سحابياً</button>
+                        <div class="mt-4 grid grid-cols-2 gap-2">
+                            <!-- زر معاينة وتعديل الشهادة المضاف حديثاً بطلبكِ -->
+                            <button onclick="previewAndEditCertificate(${index})" class="py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition">👁️ معاينة وتعديل</button>
+                            <button onclick="deleteCertificate('${cert.id}')" class="py-1.5 bg-red-600 bg-opacity-20 text-red-700 text-xs font-semibold rounded-lg hover:bg-opacity-30 transition">🗑️ حذف سحابي</button>
+                        </div>
                     </div>`;
                 });
             }
@@ -357,7 +357,28 @@
             </div>`;
         }
 
-        // دالة جديدة لتحديث أبعاد الشهادة الحقيقية بناء على تحكم السلايدر الفوري
+        // الدالة الجديدة لاسترجاع بيانات الشهادة المحددة بالكامل من المعرض وعرضها باللوحة الرئيسية
+        function previewAndEditCertificate(index) {
+            const cert = currentRecords[index];
+            if (!cert) return;
+
+            // استعادة النصوص
+            formData.recipientName = cert.recipient_name || '';
+            formData.message = cert.message || '';
+            formData.senderName = cert.sender_name || '';
+            
+            // استعادة الألوان إن وجدت في قاعدة البيانات
+            if (cert.theme && cert.theme.startsWith('#')) {
+                customColors.bgColor = cert.theme;
+            }
+            if (cert.font_family && cert.font_family.startsWith('#')) {
+                customColors.textColor = cert.font_family;
+            }
+
+            showToast('👁️ تم فتح الشهادة بنجاح في لوحة المعاينة والتعديل!');
+            switchView('dashboard');
+        }
+
         function updateCertDimensions(dimension, value) {
             certDimensions[dimension] = parseInt(value);
             
