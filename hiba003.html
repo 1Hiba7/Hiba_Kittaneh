@@ -50,6 +50,16 @@
             word-spacing: 0px !important;
             transform: translateZ(0);
         }
+        
+        /* حاوية المعاينة لمنع تشوه الأبعاد على الشاشات الصغيرة */
+        .preview-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
   </style>
  </head>
  <body class="h-full bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50">
@@ -74,6 +84,12 @@
         let isDragging = false;
         let startX, startY;
         let initialLeft = 50, initialTop = 50;
+
+        // المتغيرات الجديدة للتحكم بأبعاد الشهادة المخصصة بشكل مستقل ودائم
+        let certDimensions = {
+            width: 700,
+            height: 480
+        };
 
         let customColors = {
             bgColor: '#fdfbf7',
@@ -103,16 +119,13 @@
             }, 4000);
         }
 
-        // تحسين دالة التهيئة لالتقاط التوكن التلقائي المتسبب في الـ 404 والتعامل معه فوراً
         async function initApp() {
-            // التحقق إذا كان الرابط يحتوي على توكن قادم من البريد الإلكتروني
             if (window.location.hash && window.location.hash.includes('access_token=')) {
                 showToast('🔄 جاري معالجة رابط الدخول الآمن المتلقى...');
                 const { data, error } = await supabaseClient.auth.getSession();
                 if (data && data.session) {
                     currentUser = data.session.user;
                     currentView = 'dashboard';
-                    // تنظيف الرابط في المتصفح مظهر جمالي
                     window.history.replaceState(null, null, window.location.pathname);
                     await loadUserCertificates();
                     renderApp();
@@ -204,6 +217,25 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">اسم المعلمة أو الإدارة</label>
                             <input type="text" id="senderName" value="${formData.senderName}" oninput="updatePreview()" class="w-full p-3 border rounded-xl">
                         </div>
+
+                        <!-- قسم التحكم المطور بأبعاد حجم الشهادة بالبكسل لتفادي مشاكل الشاشات الصغيرة -->
+                        <div class="p-3 bg-orange-50 rounded-xl border border-orange-200 space-y-3">
+                            <label class="block text-xs font-bold text-orange-800">📏 التحكم بأبعاد حجم الشهادة (بكسل)</label>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-600 mb-1">
+                                    <span>عرض الشهادة:</span>
+                                    <span id="widthValue" class="font-bold text-orange-700">${certDimensions.width}px</span>
+                                </div>
+                                <input type="range" id="certWidthSlider" min="500" max="1000" value="${certDimensions.width}" oninput="updateCertDimensions('width', this.value)" class="w-full accent-orange-600">
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-600 mb-1">
+                                    <span>ارتفاع الشهادة:</span>
+                                    <span id="heightValue" class="font-bold text-orange-700">${certDimensions.height}px</span>
+                                </div>
+                                <input type="range" id="certHeightSlider" min="350" max="800" value="${certDimensions.height}" oninput="updateCertDimensions('height', this.value)" class="w-full accent-orange-600">
+                            </div>
+                        </div>
                         
                         <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 space-y-3">
                             <label class="block text-xs font-bold text-amber-800">✨ إضافة شعار أو صورة للشهادة</label>
@@ -241,7 +273,7 @@
                                     <input type="color" value="${customColors.bgColor}" oninput="updateCustomColors('bgColor', this.value)" class="w-full h-8 border rounded cursor-pointer">
                                 </div>
                                 <div class="text-center">
-                                    <label class="block text-[11px] text-gray-600 mb-1">الإطار</label>
+                                    <label class="block text-[11px] text-gray-600 mb-1">إطارها</label>
                                     <input type="color" value="${customColors.borderColor}" oninput="updateCustomColors('borderColor', this.value)" class="w-full h-8 border rounded cursor-pointer">
                                 </div>
                                 <div class="text-center">
@@ -266,24 +298,25 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-center lg:col-span-2 select-none relative">
-                        <div id="certificate-capture-area" class="w-full max-w-2xl border-[12px] p-12 rounded-xl shadow-2xl relative text-center min-h-[480px] flex flex-col justify-between overflow-hidden" style="font-family: 'Amiri', serif; background-color: ${customColors.bgColor}; border-color: ${customColors.borderColor}; color: ${customColors.textColor};">
+                    <!-- حاوية الاستجابة المحدثة لمنع انهيار وتغير أبعاد الشهادة على الشاشات الفردية والموبايل -->
+                    <div class="lg:col-span-2 select-none relative preview-scroll-container">
+                        <div id="certificate-capture-area" class="border-[12px] p-12 rounded-xl shadow-2xl relative text-center flex flex-col justify-between overflow-hidden flex-shrink-0" style="font-family: 'Amiri', serif; background-color: ${customColors.bgColor}; border-color: ${customColors.borderColor}; color: ${customColors.textColor}; width: ${certDimensions.width}px; height: ${certDimensions.height}px;">
                             
                             <div id="imageContainer" class="draggable-image ${imageFrameClass}" style="left: ${initialLeft}px; top: ${initialTop}px; display: ${uploadedImageSrc ? 'block' : 'none'}; border-color: ${customColors.frameColor};">
                                 <img id="certCustomImage" src="${uploadedImageSrc}" style="width: ${imageSize}px; height: auto;" class="${imageFrameClass.includes('frame-circle') ? 'rounded-full' : ''}">
                             </div>
 
-                            <div class="font-bold text-3xl tracking-widest border-b border-opacity-20 pb-3 mb-6 fix-arabic-render" id="view-cert-title" style="color: ${customColors.textColor};">شهادة تقدير وعرفان</div>
+                            <div class="font-bold text-3xl tracking-widest border-b border-opacity-20 pb-3 mb-4 fix-arabic-render" id="view-cert-title" style="color: ${customColors.textColor};">شهادة تقدير وعرفان</div>
                             
-                            <div class="my-auto space-y-6 z-10">
+                            <div class="my-auto space-y-4 z-10">
                                 <p class="opacity-80 text-base fix-arabic-render" id="view-intro">${formData.introText}</p>
-                                <h2 class="text-4xl font-bold fix-arabic-render" id="view-recipient" style="color: ${customColors.textColor}; text-shadow: 0px 1px 1px rgba(0,0,0,0.1);">${formData.recipientName}</h2>
-                                <p class="leading-relaxed px-8 text-lg fix-arabic-render" id="view-message">${formData.message}</p>
+                                <h2 class="text-3xl font-bold fix-arabic-render" id="view-recipient" style="color: ${customColors.textColor}; text-shadow: 0px 1px 1px rgba(0,0,0,0.1);">${formData.recipientName}</h2>
+                                <p class="leading-relaxed px-6 text-base fix-arabic-render" id="view-message">${formData.message}</p>
                             </div>
                             
-                            <div class="flex justify-between items-center mt-8 pt-4 border-t border-opacity-20 text-sm z-10">
+                            <div class="flex justify-between items-center mt-6 pt-3 border-t border-opacity-20 text-xs z-10">
                                 <div class="opacity-70">التاريخ: ${new Date().toLocaleDateString('ar-EG')}</div>
-                                <div class="font-bold text-lg fix-arabic-render" id="view-sender">${formData.senderName}</div>
+                                <div class="font-bold text-base fix-arabic-render" id="view-sender">${formData.senderName}</div>
                             </div>
                         </div>
                     </div>
@@ -322,6 +355,20 @@
                     ${recordsHTML}
                 </div>
             </div>`;
+        }
+
+        // دالة جديدة لتحديث أبعاد الشهادة الحقيقية بناء على تحكم السلايدر الفوري
+        function updateCertDimensions(dimension, value) {
+            certDimensions[dimension] = parseInt(value);
+            
+            const labelEl = document.getElementById(`${dimension}Value`);
+            if (labelEl) labelEl.textContent = `${value}px`;
+            
+            const area = document.getElementById('certificate-capture-area');
+            if (area) {
+                if (dimension === 'width') area.style.width = `${value}px`;
+                if (dimension === 'height') area.style.height = `${value}px`;
+            }
         }
 
         function updateCustomColors(key, value) {
@@ -449,7 +496,6 @@
             if (previewArea) previewArea.style.fontFamily = `'${formData.fontFamily}', sans-serif`;
         }
 
-        // تحسين دالة الإرسال لتقوم بالتوجيه تلقائياً لنفس صفحة المشروع الفردية المفتوحة حالياً
         async function sendOtpCode() {
             const email = document.getElementById('login-email').value.trim();
             if (!email) return showToast('⚠️ يرجى إدخل البريد الإلكتروني أولاً.');
@@ -460,7 +506,7 @@
                 email: email,
                 options: {
                     shouldCreateUser: true, 
-                    emailRedirectTo: window.location.href // إخبار سوبابيز بالرجوع بدقة لنفس الرابط المفتوح حالياً
+                    emailRedirectTo: window.location.href 
                 }
             });
 
@@ -543,7 +589,7 @@
             link.download = `${formData.recipientName}-شهادة_شكر.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('✅ تم تحميل شهادتكِ بجودة فائقة!');
+            showToast('✅ تم تحميل شهادتكِ بجودة فائقة بالأبعاد المخصصة!');
         }
 
         window.addEventListener('DOMContentLoaded', () => { initApp(); });
