@@ -187,6 +187,32 @@
             text-align: right;
         }
 
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        [dir="rtl"] .input-icon {
+            left: auto;
+            right: 15px;
+        }
+
         .input-group input, .input-group select {
             width: 100%;
             padding: 15px 50px 15px 20px;
@@ -980,9 +1006,7 @@
     // 1. إعدادات سوبابيز الأساسية
     const SUPABASE_URL = "https://xjcsvvrzqjpkaxuwhebl.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_C6QsfadUxnRFV0Nvuaj_Dg_0ttlkFAB";
-    
-    // تم تغيير اسم المتغير لـ supabaseClient لمنع الخطأ البرمجي والتعارض مع اسم المكتبة الافتراضي
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // نظام الترجمة واللغات المعدل والمكتمل الحقول
     const translations = {
@@ -1100,13 +1124,13 @@
         if(!username || !password || !grade) return;
 
         try {
-            const { data: existingUser } = await supabaseClient.from('students').select('*').eq('username', username).maybeSingle();
+            const { data: existingUser } = await supabase.from('students').select('*').eq('username', username).maybeSingle();
             if(existingUser) {
                 showToast(currentLang === 'ar' ? "اسم المستخدم مسجل مسبقاً!" : "Username already exists!", true);
                 return;
             }
 
-            const { data, error } = await supabaseClient.from('students').insert([
+            const { data, error } = await supabase.from('students').insert([
                 { username: username, password: password, grade: grade, avatar: avatar, score: 0 }
             ]).select().single();
 
@@ -1115,6 +1139,8 @@
             showToast(currentLang === 'ar' ? "تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول." : "Account created successfully! Please login.");
             switchTab('login');
         } catch (err) {
+            // التعديل والإصلاح هنا: طباعة الخطأ كاملاً في الكونسول لمعرفة سببه الحقيقي (مثل الـ RLS)
+            console.error("Supabase Signup Detailed Error:", err);
             showToast(currentLang === 'ar' ? "حدث خطأ أثناء إنشاء الحساب" : "Error creating account", true);
         }
     });
@@ -1128,7 +1154,9 @@
         if (!username || !password) return;
 
         try {
-            const { data: user, error } = await supabaseClient.from('students').select('*').eq('username', username).eq('password', password).maybeSingle();
+            const { data: user, error } = await supabase.from('students').select('*').eq('username', username).eq('password', password).maybeSingle();
+
+            if (error) throw error;
 
             if (user) {
                 currentUser = user;
@@ -1138,6 +1166,7 @@
                 showToast(currentLang === 'ar' ? "اسم المستخدم أو كلمة المرور خاطئة" : "Invalid username or password", true);
             }
         } catch (err) {
+            console.error("Supabase Login Detailed Error:", err);
             showToast(currentLang === 'ar' ? "خطأ في الاتصال بقاعدة البيانات" : "Database connection error", true);
         }
     });
@@ -1242,10 +1271,12 @@
         document.getElementById('resultsScore').textContent = `+ ${scoreGained} ${translations[currentLang].pts}`;
 
         const newTotalScore = (currentUser.score || 0) + scoreGained;
-        const { error } = await supabaseClient.from('students').update({ score: newTotalScore }).eq('id', currentUser.id);
+        const { error } = await supabase.from('students').update({ score: newTotalScore }).eq('id', currentUser.id);
 
         if(!error) {
             currentUser.score = newTotalScore;
+        } else {
+            console.error("Error updating score:", error);
         }
     }
 
