@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حساب المعدل الدراسي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --sand:#F4EEDF;
+    --card:#FFFDF7;
+    --ink:#20281F;
+    --ink-soft:#5B6357;
+    --olive:#33533F;
+    --olive-dark:#213A2B;
+    --maroon:#7B1E2B;
+    --maroon-light:#A6394B;
+    --teal:#1F4E4F;
+    --gold:#C89B3C;
+    --line:#E2D8BF;
+
+    --excellent:#2E7D46;
+    --verygood:#17877C;
+    --good:#2563AC;
+    --medium:#D99A2B;
+    --acceptable:#C9702B;
+    --poor:#B23A3A;
+
+    --radius:16px;
+    --shadow: 0 10px 30px -12px rgba(33,58,43,0.25);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  ::selection { background-color: #85b2d2 !important; color: white !important; }
+  ::-moz-selection { background-color: #85b2d2 !important; color: white !important; }
+
+  body{
+    margin:0;
+    font-family:'Tajawal', sans-serif;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(51,83,63,0.07), transparent 45%),
+      radial-gradient(circle at 100% 20%, rgba(123,30,43,0.06), transparent 40%),
+      var(--sand);
+    color:var(--ink);
+    line-height:1.7;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  h1,h2,h3,h4{ font-family:'Cairo', sans-serif; margin:0; }
+
+  .container{ width:100%; max-width:1180px; margin:0 auto; padding:0 20px; }
+
+  /* ---------- Tatreez pattern (signature motif) ---------- */
+  .tatreez-strip{
+    height:14px;
+    width:100%;
+    background-image: repeating-linear-gradient(45deg, var(--maroon) 0 3px, transparent 3px 8px),
+                       repeating-linear-gradient(-45deg, var(--olive) 0 3px, transparent 3px 8px);
+    background-size: 16px 14px;
+    opacity:0.85;
+  }
+  .tatreez-diamond{
+    display:inline-block; width:9px; height:9px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    margin:0 6px;
+    border-radius:2px;
+  }
+
+  /* ---------- Fixed back button ---------- */
+  .back-btn{
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:#fff;
+    text-decoration:none;
+    font-family:'Cairo', sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    box-shadow:0 6px 18px rgba(0,0,0,0.18);
+    transition:background 0.35s ease, transform 0.2s ease;
+  }
+  .back-btn svg{ width:16px; height:16px; flex-shrink:0; }
+  .back-btn:hover{ background:#1e90ff; transform:translateY(-1px); }
+  .back-btn span.label{ white-space:nowrap; }
+  @media (max-width:520px){
+    .back-btn span.label{ display:none; }
+    .back-btn{ padding:10px; }
+  }
+
+  /* ---------- Header ---------- */
+  header.hero{
+    position:relative;
+    padding:86px 20px 46px;
+    text-align:center;
+    background:linear-gradient(160deg, var(--olive-dark) 0%, var(--olive) 55%, var(--teal) 100%);
+    color:#fff;
+    overflow:hidden;
+  }
+  header.hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 26px);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .hero h1{
+    font-size:clamp(2.1rem, 5vw, 3.2rem);
+    font-weight:900;
+    background:linear-gradient(90deg, #F4EEDF, #C89B3C 45%, #E8C877 70%, #F4EEDF);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    letter-spacing:0.5px;
+  }
+  .hero p.subtitle{
+    max-width:640px;
+    margin:14px auto 0;
+    color:rgba(244,238,223,0.88);
+    font-size:1.02rem;
+  }
+
+  /* ---------- Sections generic ---------- */
+  section{ padding:46px 0; }
+  .section-title{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    text-align:center; margin-bottom:26px;
+  }
+  .section-title h2{ font-size:1.55rem; color:var(--olive-dark); }
+  .section-title .eyebrow{
+    display:block; font-size:0.75rem; color:var(--maroon); letter-spacing:1px;
+    font-family:'Cairo',sans-serif; font-weight:700; margin-bottom:6px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+
+  /* ---------- Countdown ---------- */
+  .countdown-wrap{
+    margin-top:-34px;
+    position:relative;
+    z-index:2;
+  }
+  .countdown-card{
+    max-width:760px;
+    margin:0 auto;
+    padding:22px 26px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    align-items:center;
+  }
+  .countdown-title{
+    font-family:'Cairo',sans-serif; font-weight:700; color:var(--olive-dark); font-size:1rem;
+  }
+  .countdown-title b{ color:var(--maroon); }
+  .countdown-grid{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .countdown-unit{
+    min-width:74px;
+    background:linear-gradient(160deg, var(--olive), var(--olive-dark));
+    color:#fff;
+    border-radius:12px;
+    padding:12px 6px;
+    text-align:center;
+  }
+  .countdown-unit .num{ font-family:'Cairo',sans-serif; font-size:1.6rem; font-weight:800; }
+  .countdown-unit .lbl{ font-size:0.72rem; opacity:0.85; }
+  .countdown-note{ font-size:0.78rem; color:var(--ink-soft); text-align:center; }
+
+  /* ---------- Holidays calendar ---------- */
+  .tabs{
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:20px;
+  }
+  .tab-btn{
+    font-family:'Cairo',sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--olive-dark);
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .tab-btn.active{ background:var(--olive); color:#fff; border-color:var(--olive); }
+  .holiday-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+    gap:16px;
+  }
+  .holiday-item{
+    padding:16px 18px;
+    border-radius:14px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-inline-start:5px solid var(--gold);
+  }
+  .holiday-item h4{ font-size:0.98rem; color:var(--olive-dark); margin-bottom:6px; }
+  .holiday-item .date{ font-size:0.85rem; color:var(--maroon); font-weight:600; }
+  .holiday-item .cat{ font-size:0.72rem; color:var(--ink-soft); margin-top:4px; }
+  .calendar-disclaimer{
+    text-align:center; font-size:0.78rem; color:var(--ink-soft); margin-top:18px;
+  }
+
+  /* ---------- Account banner ---------- */
+  .account-banner{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:16px 22px;
+    background:linear-gradient(90deg, rgba(200,155,60,0.15), rgba(123,30,43,0.08));
+    border:1px dashed var(--gold);
+    border-radius:14px;
+  }
+  .account-banner p{ margin:0; font-size:0.9rem; color:var(--ink-soft); }
+  .account-banner strong{ color:var(--maroon); }
+  .btn{
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem;
+    padding:10px 20px; border-radius:10px; border:none; cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn-primary{ background:var(--maroon); color:#fff; }
+  .btn-outline{ background:transparent; border:1.5px solid var(--olive); color:var(--olive); }
+  .btn-gold{ background:var(--gold); color:#2b2107; }
+  .btn-sm{ padding:6px 12px; font-size:0.78rem; }
+  .btn-ghost{ background:rgba(0,0,0,0.05); color:var(--ink); }
+  .btn-danger{ background:rgba(178,58,58,0.12); color:var(--poor); }
+
+  /* ---------- Calculator setup ---------- */
+  .setup-row{
+    display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:22px;
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; font-size:0.85rem; }
+  .field label{ font-weight:600; color:var(--olive-dark); font-family:'Cairo',sans-serif; }
+  select, input[type=text], input[type=number], input[type=password]{
+    font-family:'Tajawal',sans-serif;
+    padding:9px 12px;
+    border-radius:9px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    font-size:0.88rem;
+    min-width:150px;
+  }
+  select:focus, input:focus{ outline:2px solid var(--gold); outline-offset:1px; }
+
+  .table-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .table-tab{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 14px; border-radius:10px 10px 0 0;
+    background:#fff; border:1px solid var(--line); border-bottom:none;
+    cursor:pointer; font-size:0.85rem; font-family:'Cairo',sans-serif; font-weight:600;
+    color:var(--ink-soft);
+  }
+  .table-tab.active{ color:var(--maroon); background:var(--card); box-shadow:0 -4px 12px rgba(0,0,0,0.04); }
+  .table-tab input{ border:none; background:transparent; padding:0; min-width:60px; font-weight:600; font-family:'Cairo',sans-serif; color:inherit; }
+  .table-tab .del-x{ color:var(--poor); font-weight:800; cursor:pointer; }
+
+  .subject-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .subject-table th, .subject-table td{ padding:10px 8px; text-align:center; border-bottom:1px solid var(--line); }
+  .subject-table th{ font-family:'Cairo',sans-serif; color:#fff; background:var(--olive); font-size:0.78rem; font-weight:700; }
+  .subject-table th:first-child, .subject-table td:first-child{ text-align:right; }
+  .subject-table tr:hover td{ background:rgba(200,155,60,0.06); }
+  .subject-name-input{ min-width:150px; font-weight:600; }
+  .mark-input{ width:64px; min-width:64px; text-align:center; padding:6px 4px; }
+  .max-tag{ display:block; font-size:0.68rem; color:var(--ink-soft); }
+  .convert-wrap{ position:relative; display:inline-flex; align-items:center; gap:4px; }
+  .convert-btn{
+    width:20px; height:20px; border-radius:50%; border:1px solid var(--gold);
+    background:#fff; color:var(--gold); font-size:0.65rem; cursor:pointer; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .convert-popover{
+    position:absolute; top:26px; left:50%; transform:translateX(-50%);
+    background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
+    padding:8px; z-index:10; display:none; width:150px;
+  }
+  .convert-popover.show{ display:block; }
+  .convert-popover input{ width:100%; min-width:0; margin-bottom:6px; }
+  .subj-total{ font-weight:800; font-family:'Cairo',sans-serif; }
+  .subj-progress{ width:70px; height:6px; border-radius:6px; background:var(--line); overflow:hidden; margin:4px auto 0; }
+  .subj-progress > div{ height:100%; background:var(--olive); }
+
+  .table-actions{ display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 26px; }
+
+  .results-row{
+    display:flex; gap:20px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    padding:22px; margin-top:10px;
+  }
+  .gpa-block{ display:flex; align-items:center; gap:18px; }
+  .ring{ position:relative; width:96px; height:96px; }
+  .ring svg{ transform:rotate(-90deg); }
+  .ring .ring-bg{ fill:none; stroke:var(--line); stroke-width:9; }
+  .ring .ring-fg{ fill:none; stroke:var(--olive); stroke-width:9; stroke-linecap:round; transition:stroke-dashoffset 0.6s ease; }
+  .ring .ring-label{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:1.2rem; color:var(--olive-dark);
+  }
+  .badge{
+    display:inline-block; padding:6px 16px; border-radius:999px; font-family:'Cairo',sans-serif;
+    font-weight:700; font-size:0.85rem; color:#fff;
+  }
+  .badge.excellent{ background:var(--excellent); }
+  .badge.verygood{ background:var(--verygood); }
+  .badge.good{ background:var(--good); }
+  .badge.medium{ background:var(--medium); color:#2b2107; }
+  .badge.acceptable{ background:var(--acceptable); }
+  .badge.poor{ background:var(--poor); }
+
+  /* ---------- Goal tracker ---------- */
+  .goal-card{ display:flex; gap:24px; flex-wrap:wrap; align-items:center; justify-content:space-between; padding:24px; }
+  .goal-form{ display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
+  .goal-msg{ font-size:0.85rem; color:var(--ink-soft); max-width:260px; }
+  .goal-msg b{ color:var(--maroon); }
+
+  /* ---------- Motivation ---------- */
+  .motivation-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .motivation-grid{ grid-template-columns:1fr; } }
+  .motivation-card{ padding:26px; text-align:center; position:relative; overflow:hidden; }
+  .motivation-card.quotes{ background:linear-gradient(160deg,#fff, #FBF6E9); }
+  .motivation-card.duas{ background:linear-gradient(160deg,#fff, #F3E9EC); }
+  .motivation-card .icon{ font-size:1.6rem; margin-bottom:10px; }
+  .motivation-text{ font-size:1.02rem; min-height:70px; display:flex; align-items:center; justify-content:center; color:var(--ink); transition:opacity 0.5s ease; }
+  .motivation-label{ font-family:'Cairo',sans-serif; font-weight:700; color:var(--maroon); margin-bottom:14px; font-size:0.95rem; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(20,26,20,0.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:10000; padding:20px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    background:#fff; border-radius:18px; max-width:420px; width:100%; padding:28px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.3); position:relative;
+  }
+  .modal h3{ color:var(--olive-dark); margin-bottom:6px; }
+  .modal .sub{ font-size:0.82rem; color:var(--ink-soft); margin-bottom:18px; }
+  .modal .field{ margin-bottom:12px; }
+  .modal .field input, .modal .field select{ width:100%; }
+  .modal-close{
+    position:absolute; top:14px; left:14px; background:none; border:none; font-size:1.2rem;
+    cursor:pointer; color:var(--ink-soft);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top:auto;
+    background:var(--olive-dark);
+    color:rgba(244,238,223,0.85);
+    text-align:center;
+    padding:20px;
+    font-size:0.85rem;
+  }
+
+  .empty-state{ text-align:center; padding:30px; color:var(--ink-soft); font-size:0.9rem; }
+
+  @media (max-width:600px){
+    .subject-table{ font-size:0.72rem; }
+    .mark-input{ width:46px; min-width:46px; }
+    .subject-name-input{ min-width:90px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M9 21V12h6v9"/></svg>
+  <span class="label">العودة للموسوعة الرئيسية</span>
+</a>
+
+<header class="hero">
+  <div class="hero-inner container">
+    <h1>حساب المعدل الدراسي</h1>
+    <p class="subtitle">أداتك الذكية لحساب معدلك الأكاديمي، تتبع أهدافك، وتنظيم جدول علاماتك بدقة</p>
+  </div>
+</header>
+<div class="tatreez-strip"></div>
+
+<div class="container countdown-wrap">
+  <div class="card countdown-card">
+    <div class="countdown-title">⏳ العد التنازلي حتى <b id="countdownEventName">...</b></div>
+    <div class="countdown-grid" id="countdownGrid">
+      <div class="countdown-unit"><div class="num" id="cd-days">--</div><div class="lbl">يوم</div></div>
+      <div class="countdown-unit"><div class="num" id="cd-hours">--</div><div class="lbl">ساعة</div></div>
+      <div class="countdown-unit"><div class="num" id="cd-min">--</div><div class="lbl">دقيقة</div></div>
+      <div class="countdown-unit"><div class="num" id="cd-sec">--</div><div class="lbl">ثانية</div></div>
+    </div>
+    <div class="countdown-note">بتاريخ <span id="countdownEventDate"></span></div>
+  </div>
+</div>
+
+<section id="holidays">
+  <div class="container">
+    <div class="section-title">
+      <div>
+        <span class="eyebrow">رزنامة العطل المدرسية</span>
+        <h2>العطل الرسمية للعام الدراسي</h2>
+      </div>
+    </div>
+    <div class="tabs" id="holidayTabs"></div>
+    <div class="holiday-grid" id="holidayGrid"></div>
+    <p class="calendar-disclaimer">* التواريخ أدناه تقديرية وقد تختلف حسب التعميم الرسمي لوزارة التربية والتعليم الفلسطينية لهذا العام الدراسي.</p>
+  </div>
+</section>
+
+<section id="account">
+  <div class="container">
+    <div class="account-banner">
+      <p id="accountBannerText">👋 أنت الآن تستخدم التطبيق <strong>كضيف</strong> — بياناتك محفوظة على متصفحك فقط. أنشئ حسابًا لضمان مزامنة بياناتك بشكل دائم في السحابة.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;" id="accountBannerActions">
+        <button class="btn btn-outline" onclick="openLogin()">تسجيل الدخول</button>
+        <button class="btn btn-gold" onclick="openSignup()">إنشاء حساب</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calculator">
+  <div class="container">
+    <div class="section-title">
+      <div>
+        <span class="eyebrow">الحاسبة الرئيسية</span>
+        <h2>جداول العلامات والمعدل</h2>
+      </div>
+    </div>
+
+    <div class="card" style="padding:24px;">
+      <div class="setup-row">
+        <div class="field">
+          <label>الصف الدراسي</label>
+          <select id="gradeSelect">
+            <option value="">اختر الصف</option>
+            <option value="4">الرابع وما دون</option>
+            <option value="5">الخامس</option>
+            <option value="6">السادس</option>
+            <option value="7">السابع</option>
+            <option value="8">الثامن</option>
+            <option value="9">التاسع</option>
+            <option value="10">العاشر</option>
+            <option value="11">الحادي عشر</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>نوع المدرسة</label>
+          <select id="schoolTypeSelect">
+            <option value="حكومية">حكومية</option>
+            <option value="شرعية">شرعية</option>
+          </select>
+        </div>
+        <div class="field">
+          <button class="btn btn-primary" onclick="createTable()">+ إنشاء جدول جديد</button>
+        </div>
+      </div>
+      <div id="unsupportedMsg" class="empty-state" style="display:none;">
+        عذرًا، هذه الأداة تدعم الصفوف من الخامس حتى العاشر فقط. الصفوف الأقل من الخامس، والحادي عشر، والثاني عشر غير مدعومة حاليًا.
+      </div>
+
+      <div class="table-tabs" id="tableTabs"></div>
+      <div id="tableContent"></div>
+    </div>
+  </div>
+</section>
+
+<section id="goal">
+  <div class="container">
+    <div class="section-title">
+      <div>
+        <span class="eyebrow">تتبع الأهداف</span>
+        <h2>هدفك في المعدل</h2>
+      </div>
+    </div>
+    <div class="card goal-card">
+      <div class="goal-form">
+        <div class="field">
+          <label>المعدل المستهدف (%)</label>
+          <input type="number" id="targetInput" min="0" max="100" placeholder="مثال: 90">
+        </div>
+        <button class="btn btn-outline" onclick="saveTarget()">حفظ الهدف</button>
+      </div>
+      <div class="gpa-block">
+        <div class="ring">
+          <svg width="96" height="96">
+            <circle class="ring-bg" cx="48" cy="48" r="40"></circle>
+            <circle class="ring-fg" id="goalRingFg" cx="48" cy="48" r="40" stroke-dasharray="251" stroke-dashoffset="251"></circle>
+          </svg>
+          <div class="ring-label" id="goalRingLabel">--%</div>
+        </div>
+        <p class="goal-msg" id="goalMsg">حدّد هدفك لمتابعة تقدمك نحوه.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="motivation">
+  <div class="container">
+    <div class="section-title">
+      <div>
+        <span class="eyebrow">ركن التحفيز</span>
+        <h2>كلمات وأدعية تعينك على النجاح</h2>
+      </div>
+    </div>
+    <div class="motivation-grid">
+      <div class="card motivation-card quotes">
+        <div class="icon">🌟</div>
+        <div class="motivation-label">كلمة تحفيزية</div>
+        <div class="motivation-text" id="quoteText"></div>
+      </div>
+      <div class="card motivation-card duas">
+        <div class="icon">🤲</div>
+        <div class="motivation-label">دعاء للنجاح والتوفيق</div>
+        <div class="motivation-text" id="duaText"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tatreez-strip"></div>
+<footer>
+  جميع الحقوق محفوظة لـ هبة كتانة <span class="tatreez-diamond"></span> قلقيلية <span class="tatreez-diamond"></span> فلسطين
+</footer>
+
+<!-- Signup Modal -->
+<div class="modal-overlay" id="signupOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSignup()">✕</button>
+    <h3>إنشاء حساب جديد</h3>
+    <p class="sub">لضمان مزامنة بياناتك بشكل دائم عبر السحابة.</p>
+    <div class="field">
+      <label>الاسم الرباعي</label>
+      <input type="text" id="signupName" placeholder="مثال: علي محمد نعيم كتانة">
+    </div>
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="signupEmail" placeholder="example@email.com">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="signupPass" placeholder="••••••••">
+    </div>
+    <div class="field">
+      <label>تأكيد كلمة المرور</label>
+      <input type="password" id="signupPass2" placeholder="••••••••">
+    </div>
+    <div class="field">
+      <label>نوع المدرسة</label>
+      <select id="signupSchoolType" onchange="toggleShariaNotice()">
+        <option value="حكومية">حكومية</option>
+        <option value="شرعية">شرعية</option>
+      </select>
+    </div>
+    <p class="sub" id="shariaNotice" style="display:none;">✅ سيتم تفعيل حقول "المواد الشرعية" في حاسبتك تلقائيًا.</p>
+    <button class="btn btn-primary" id="signupSubmitBtn" style="width:100%; margin-top:8px;" onclick="submitSignup()">إنشاء الحساب</button>
+    <p class="sub" id="signupError" style="color:var(--poor); display:none; margin-top:8px;"></p>
+    <p class="sub" style="text-align:center; margin-top:14px;">لديك حساب بالفعل؟ <a href="#" onclick="switchToLogin(event)" style="color:var(--maroon); font-weight:700;">سجّل الدخول</a></p>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLogin()">✕</button>
+    <h3>تسجيل الدخول</h3>
+    <p class="sub">للوصول إلى بياناتك المحفوظة في السحابة.</p>
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="loginEmail" placeholder="example@email.com">
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary" id="loginSubmitBtn" style="width:100%; margin-top:8px;" onclick="submitLogin()">تسجيل الدخول</button>
+    <p class="sub" id="loginError" style="color:var(--poor); display:none; margin-top:8px;"></p>
+    <p class="sub" style="text-align:center; margin-top:14px;">ليس لديك حساب؟ <a href="#" onclick="switchToSignup(event)" style="color:var(--maroon); font-weight:700;">أنشئ حساباً</a></p>
+  </div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const SUBJECTS_5_9 = ["التربية الدينية","اللغة العربية","اللغة الإنجليزية","الرياضيات","العلوم والحياة","الاجتماعيات","الفنون والحرف","التربية البدنية","التربية التكنولوجية والبرمجة"];
+const SUBJECTS_10 = ["التربية الدينية","اللغة العربية","اللغة الإنجليزية","الرياضيات","العلوم الحياتية","فيزياء","أحياء","جغرافيا","الفنون والحرف","التربية البدنية","التربية التكنولوجية والبرمجة"];
+
+const NORMAL_MAX = { d1:10, mid:20, d2:10, qual:20, fin:40 };
+const SHARIA_MAX = { d1:20, mid:40, d2:20, qual:40, fin:80 };
+
+const HOLIDAYS = [
+  { name:"بداية العام الدراسي", date:"2026-08-23", cat:"وغيرها" },
+  { name:"عيد الميلاد المجيد", date:"2026-12-25", cat:"الأعياد المسيحية" },
+  { name:"رأس السنة الميلادية", date:"2027-01-01", cat:"وغيرها" },
+  { name:"عطلة العطلة بين الفصلين", date:"2027-01-28", cat:"العطلة بين الفصلين" },
+  { name:"عيد الأم", date:"2027-03-21", cat:"عيد الأم" },
+  { name:"عيد الفطر السعيد (تقديري)", date:"2027-03-09", cat:"الأعياد الإسلامية" },
+  { name:"عيد العمال العالمي", date:"2027-05-01", cat:"يوم العمال" },
+  { name:"عيد الأضحى المبارك (تقديري)", date:"2027-05-16", cat:"الأعياد الإسلامية" },
+  { name:"عطلة نهاية العام الدراسي (الصيفية)", date:"2027-06-24", cat:"وغيرها" },
+];
+
+const QUOTES = [
+  "كل صفحة تذاكرها اليوم، هي خطوة أقرب نحو حلمك الكبير.",
+  "التفوق ليس صدفة، بل نتيجة إصرارك اليومي الصغير.",
+  "أنت أقوى من كل عائق يقف أمام تفوقك، فقط استمر.",
+  "النجاح يبدأ بقرار بسيط: أن لا تتوقف.",
+  "تعبك اليوم هو سرّ ابتسامتك يوم النتائج.",
+  "كن فخورًا بكل مجهود تبذله، مهما بدا صغيرًا.",
+  "العلم نور، واجتهادك اليوم يضيء طريق غدك.",
+  "لا تقارن نفسك إلا بنفسك بالأمس، وكن أفضل اليوم."
+];
+const DUAS = [
+  "اللهم اجعل العلم حليفي، والنجاح رفيقي، ويسّر لي أموري.",
+  "ربِّ اشرح لي صدري، ويسّر لي أمري، واحلل عقدة من لساني يفقهوا قولي.",
+  "اللهم لا سهل إلا ما جعلته سهلاً، وأنت تجعل الحزن إذا شئت سهلاً.",
+  "اللهم اجعلني ممن يستمع القول فيتبع أحسنه، وارزقني الفهم والتوفيق.",
+  "اللهم إني أسألك علمًا نافعًا، وقلبًا حاضرًا، وهمة لا تعرف الكلل.",
+  "ربِّ زدني علمًا، ووفقني لما تحب وترضى."
+];
+
+/* ================= SUPABASE ================= */
+const SUPABASE_URL = 'https://rwigcgpehtneedciykvd.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_yeIJGvHQLM_DTCPqWNw59g_FBH0D_t-';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser = null;
+let cloudSyncTimer = null;
+
+/* ================= STATE ================= */
+let state = loadState();
+function loadState(){
+  try{
+    const raw = localStorage.getItem('gpaAppState');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { tables:[], activeTableId:null, target:null, account:null };
+}
+function saveState(){
+  localStorage.setItem('gpaAppState', JSON.stringify(state));
+  queueCloudSync();
+}
+
+// يرسل نسخة من الحالة إلى Supabase بعد ثانيتين من آخر تعديل (لتقليل عدد الطلبات)
+function queueCloudSync(){
+  if(!currentUser) return;
+  clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(pushCloudData, 1500);
+}
+async function pushCloudData(){
+  if(!currentUser) return;
+  const payload = { tables: state.tables, activeTableId: state.activeTableId, target: state.target };
+  await sb.from('user_data').upsert({ user_id: currentUser.id, data: payload, updated_at: new Date().toISOString() });
+}
+async function pullCloudData(){
+  if(!currentUser) return;
+  const { data, error } = await sb.from('user_data').select('data').eq('user_id', currentUser.id).maybeSingle();
+  if(error){ console.error(error); return; }
+  if(data && data.data){
+    // البيانات السحابية موجودة: استخدمها كأساس (تتفوق على النسخة المحلية عند أول تسجيل دخول)
+    state.tables = data.data.tables || [];
+    state.activeTableId = data.data.activeTableId || null;
+    state.target = (data.data.target !== undefined) ? data.data.target : null;
+    localStorage.setItem('gpaAppState', JSON.stringify(state));
+  } else {
+    // لا توجد بيانات سحابية بعد: ارفع النسخة المحلية الحالية لتصبح هي النسخة الأولى في السحابة
+    await pushCloudData();
+  }
+  renderTables();
+  updateGoalTracker();
+}
+async function fetchProfile(userId){
+  const { data } = await sb.from('profiles').select('full_name, school_type').eq('id', userId).maybeSingle();
+  return data;
+}
+function setLoggedInUI(name, schoolType){
+  document.getElementById('accountBannerText').innerHTML =
+    `مرحبًا <strong>${escapeHtml((name||'').split(' ')[0] || 'بك')}</strong> 👋 — بياناتك تُزامَن الآن تلقائيًا مع حسابك السحابي.`;
+  document.getElementById('accountBannerActions').innerHTML =
+    `<button class="btn btn-outline" onclick="signOutUser()">تسجيل الخروج</button>`;
+  if(schoolType) document.getElementById('schoolTypeSelect').value = schoolType;
+}
+function setGuestUI(){
+  document.getElementById('accountBannerText').innerHTML =
+    `👋 أنت الآن تستخدم التطبيق <strong>كضيف</strong> — بياناتك محفوظة على متصفحك فقط. أنشئ حسابًا لضمان مزامنة بياناتك بشكل دائم في السحابة.`;
+  document.getElementById('accountBannerActions').innerHTML =
+    `<button class="btn btn-outline" onclick="openLogin()">تسجيل الدخول</button>
+     <button class="btn btn-gold" onclick="openSignup()">إنشاء حساب</button>`;
+}
+async function initAuth(){
+  const { data: { session } } = await sb.auth.getSession();
+  if(session && session.user){
+    currentUser = session.user;
+    const profile = await fetchProfile(currentUser.id);
+    setLoggedInUI(profile ? profile.full_name : currentUser.email, profile ? profile.school_type : null);
+    await pullCloudData();
+  }
+}
+sb.auth.onAuthStateChange((event, session) => {
+  if(event === 'SIGNED_OUT'){
+    currentUser = null;
+    setGuestUI();
+  }
+});
+
+let uidCounter = 1;
+function uid(prefix){ return prefix + '_' + (Date.now().toString(36)) + '_' + (uidCounter++); }
+
+/* ================= COUNTDOWN ================= */
+function getNextHoliday(){
+  const now = new Date();
+  const upcoming = HOLIDAYS
+    .map(h => ({ ...h, dt: new Date(h.date + 'T00:00:00') }))
+    .filter(h => h.dt > now)
+    .sort((a,b)=> a.dt - b.dt);
+  return upcoming[0] || null;
+}
+function updateCountdown(){
+  const next = getNextHoliday();
+  if(!next){
+    document.getElementById('countdownEventName').textContent = "لا توجد عطل قادمة مسجلة";
+    return;
+  }
+  document.getElementById('countdownEventName').textContent = next.name;
+  document.getElementById('countdownEventDate').textContent = next.dt.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
+  const now = new Date();
+  let diff = Math.max(0, next.dt - now);
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff / (1000*60*60)) % 24);
+  const mins = Math.floor((diff / (1000*60)) % 60);
+  const secs = Math.floor((diff / 1000) % 60);
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cd-min').textContent = String(mins).padStart(2,'0');
+  document.getElementById('cd-sec').textContent = String(secs).padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+/* ================= HOLIDAYS CALENDAR ================= */
+const CATS = ["الكل","العطلة بين الفصلين","الأعياد الإسلامية","الأعياد المسيحية","يوم العمال","عيد الأم","وغيرها"];
+let activeCat = "الكل";
+function renderHolidayTabs(){
+  const wrap = document.getElementById('holidayTabs');
+  wrap.innerHTML = '';
+  CATS.forEach(cat=>{
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (cat===activeCat ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => { activeCat = cat; renderHolidayTabs(); renderHolidayGrid(); };
+    wrap.appendChild(btn);
+  });
+}
+function renderHolidayGrid(){
+  const grid = document.getElementById('holidayGrid');
+  grid.innerHTML = '';
+  const list = HOLIDAYS.filter(h => activeCat === "الكل" || h.cat === activeCat);
+  list.forEach(h=>{
+    const dt = new Date(h.date + 'T00:00:00');
+    const div = document.createElement('div');
+    div.className = 'holiday-item';
+    div.innerHTML = `<h4>${h.name}</h4><div class="date">${dt.toLocaleDateString('ar-EG', {year:'numeric', month:'long', day:'numeric'})}</div><div class="cat">${h.cat}</div>`;
+    grid.appendChild(div);
+  });
+  if(list.length === 0){
+    grid.innerHTML = '<div class="empty-state">لا توجد عطل ضمن هذا التصنيف.</div>';
+  }
+}
+renderHolidayTabs();
+renderHolidayGrid();
+
+/* ================= MOTIVATION ROTATION ================= */
+let qIdx = 0, dIdx = 0;
+function rotateMotivation(){
+  const qEl = document.getElementById('quoteText');
+  const dEl = document.getElementById('duaText');
+  qEl.style.opacity = 0;
+  dEl.style.opacity = 0;
+  setTimeout(()=>{
+    qIdx = (qIdx + 1) % QUOTES.length;
+    dIdx = (dIdx + 1) % DUAS.length;
+    qEl.textContent = QUOTES[qIdx];
+    dEl.textContent = DUAS[dIdx];
+    qEl.style.opacity = 1;
+    dEl.style.opacity = 1;
+  }, 400);
+}
+document.getElementById('quoteText').textContent = QUOTES[0];
+document.getElementById('duaText').textContent = DUAS[0];
+setInterval(rotateMotivation, 6000);
+
+/* ================= SIGNUP / LOGIN MODALS ================= */
+function openSignup(){ document.getElementById('signupOverlay').classList.add('show'); }
+function closeSignup(){ document.getElementById('signupOverlay').classList.remove('show'); }
+function openLogin(){ document.getElementById('loginOverlay').classList.add('show'); }
+function closeLogin(){ document.getElementById('loginOverlay').classList.remove('show'); }
+function switchToLogin(e){ e.preventDefault(); closeSignup(); openLogin(); }
+function switchToSignup(e){ e.preventDefault(); closeLogin(); openSignup(); }
+function toggleShariaNotice(){
+  const val = document.getElementById('signupSchoolType').value;
+  document.getElementById('shariaNotice').style.display = (val === 'شرعية') ? 'block' : 'none';
+}
+
+async function submitSignup(){
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pass = document.getElementById('signupPass').value;
+  const pass2 = document.getElementById('signupPass2').value;
+  const schoolType = document.getElementById('signupSchoolType').value;
+  const errEl = document.getElementById('signupError');
+  const btn = document.getElementById('signupSubmitBtn');
+  const parts = name.split(/\s+/).filter(Boolean);
+
+  if(parts.length < 4){
+    errEl.textContent = 'الرجاء إدخال الاسم الرباعي كاملاً.'; errEl.style.display = 'block'; return;
+  }
+  if(!email || !email.includes('@')){
+    errEl.textContent = 'الرجاء إدخال بريد إلكتروني صحيح.'; errEl.style.display = 'block'; return;
+  }
+  if(pass.length < 6){
+    errEl.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل.'; errEl.style.display = 'block'; return;
+  }
+  if(pass !== pass2){
+    errEl.textContent = 'كلمتا المرور غير متطابقتين.'; errEl.style.display = 'block'; return;
+  }
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'جاري الإنشاء...';
+
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: { data: { full_name: name, school_type: schoolType } }
+  });
+
+  btn.disabled = false; btn.textContent = 'إنشاء الحساب';
+
+  if(error){
+    errEl.textContent = 'تعذّر إنشاء الحساب: ' + error.message;
+    errEl.style.display = 'block'; return;
+  }
+
+  closeSignup();
+  if(data.session){
+    currentUser = data.user;
+    setLoggedInUI(name, schoolType);
+    await pullCloudData();
+  } else {
+    alert('تم إنشاء الحساب بنجاح! يرجى تفقّد بريدك الإلكتروني لتأكيد الحساب، ثم تسجيل الدخول.');
+  }
+}
+
+async function submitLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginSubmitBtn');
+
+  if(!email || !pass){
+    errEl.textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور.'; errEl.style.display = 'block'; return;
+  }
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'جاري الدخول...';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+
+  btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+
+  if(error){
+    errEl.textContent = 'تعذّر تسجيل الدخول: ' + error.message;
+    errEl.style.display = 'block'; return;
+  }
+
+  currentUser = data.user;
+  const profile = await fetchProfile(currentUser.id);
+  closeLogin();
+  setLoggedInUI(profile ? profile.full_name : currentUser.email, profile ? profile.school_type : null);
+  await pullCloudData();
+}
+
+async function signOutUser(){
+  await sb.auth.signOut();
+  currentUser = null;
+  setGuestUI();
+}
+
+/* ================= TABLE / SUBJECT MANAGEMENT ================= */
+function getPreset(grade, schoolType){
+  let list;
+  if(grade === '10') list = SUBJECTS_10.slice();
+  else list = SUBJECTS_5_9.slice();
+
+  const subjects = list.map(name => ({
+    id: uid('subj'), name, sharia:false,
+    vals:{ d1:'', mid:'', d2:'', qual:'', fin:'' },
+    max:{ ...NORMAL_MAX }, target:''
+  }));
+  if(schoolType === 'شرعية'){
+    subjects.push({
+      id: uid('subj'), name:'المواد الشرعية (الحفظ والشرعي)', sharia:true,
+      vals:{ d1:'', mid:'', d2:'', qual:'', fin:'' },
+      max:{ ...SHARIA_MAX }, target:''
+    });
+  }
+  return subjects;
+}
+
+function createTable(){
+  const grade = document.getElementById('gradeSelect').value;
+  const schoolType = document.getElementById('schoolTypeSelect').value;
+  const unsupported = document.getElementById('unsupportedMsg');
+  if(!grade){ alert('يرجى اختيار الصف الدراسي أولاً.'); return; }
+  if(['4','11','12'].includes(grade)){
+    unsupported.style.display = 'block';
+    return;
+  }
+  unsupported.style.display = 'none';
+
+  const table = {
+    id: uid('table'),
+    name: `جدول ${state.tables.length + 1}`,
+    grade, schoolType,
+    subjects: getPreset(grade, schoolType)
+  };
+  state.tables.push(table);
+  state.activeTableId = table.id;
+  saveState();
+  renderTables();
+}
+
+function deleteTable(id, ev){
+  ev.stopPropagation();
+  if(!confirm('هل أنت متأكد من حذف هذا الجدول؟')) return;
+  state.tables = state.tables.filter(t => t.id !== id);
+  if(state.activeTableId === id){
+    state.activeTableId = state.tables.length ? state.tables[0].id : null;
+  }
+  saveState();
+  renderTables();
+}
+
+function renameTable(id, newName){
+  const t = state.tables.find(t=>t.id===id);
+  if(t){ t.name = newName || t.name; saveState(); }
+}
+
+function setActiveTable(id){
+  state.activeTableId = id;
+  saveState();
+  renderTables();
+}
+
+function addSubject(tableId){
+  const t = state.tables.find(t=>t.id===tableId);
+  if(!t) return;
+  t.subjects.push({
+    id: uid('subj'), name:'مادة جديدة', sharia:false,
+    vals:{ d1:'', mid:'', d2:'', qual:'', fin:'' },
+    max:{ ...NORMAL_MAX }, target:''
+  });
+  saveState();
+  renderTables();
+}
+function deleteSubject(tableId, subjId){
+  const t = state.tables.find(t=>t.id===tableId);
+  if(!t) return;
+  t.subjects = t.subjects.filter(s=>s.id!==subjId);
+  saveState();
+  renderTables();
+}
+function updateSubjectField(tableId, subjId, field, value){
+  const t = state.tables.find(t=>t.id===tableId);
+  if(!t) return;
+  const s = t.subjects.find(s=>s.id===subjId);
+  if(!s) return;
+  if(field === 'name') s.name = value;
+  else if(field === 'target') s.target = value;
+  else {
+    let v = parseFloat(value);
+    if(!isNaN(v) && s.max[field] !== undefined){
+      const max = s.max[field];
+      // إذا كانت العلامة أكبر من العلامة الكبرى لهذا الحقل، قسّمها تلقائياً حتى تصبح ضمن العلامة الكبرى
+      while(v > max && v > 0){
+        v = v / 2;
+      }
+      v = Math.round(v * 10) / 10;
+      value = String(v);
+    }
+    s.vals[field] = value;
+  }
+  saveState();
+  renderTables();
+}
+
+function subjectTotal(s){
+  const maxSum = s.max.d1 + s.max.mid + s.max.d2 + s.max.qual + s.max.fin;
+  let sum = 0;
+  ['d1','mid','d2','qual','fin'].forEach(k=>{
+    const v = parseFloat(s.vals[k]);
+    if(!isNaN(v)) sum += Math.min(v, s.max[k]);
+  });
+  return { sum, maxSum, pct: maxSum ? (sum / maxSum * 100) : 0 };
+}
+
+function tableAverage(t){
+  if(!t.subjects.length) return 0;
+  const pcts = t.subjects.map(s => subjectTotal(s).pct);
+  return pcts.reduce((a,b)=>a+b,0) / pcts.length;
+}
+
+function gradeBadge(pct){
+  if(pct >= 90) return { text:'ممتاز', cls:'excellent' };
+  if(pct >= 80) return { text:'جيد جداً', cls:'verygood' };
+  if(pct >= 70) return { text:'جيد', cls:'good' };
+  if(pct >= 60) return { text:'متوسط', cls:'medium' };
+  if(pct >= 50) return { text:'مقبول', cls:'acceptable' };
+  return { text:'غير مرض', cls:'poor' };
+}
+
+function toggleConvert(btn){
+  const pop = btn.nextElementSibling;
+  document.querySelectorAll('.convert-popover.show').forEach(p=>{ if(p!==pop) p.classList.remove('show'); });
+  pop.classList.toggle('show');
+}
+function applyConvert(tableId, subjId, field, inputEl){
+  const v = parseFloat(inputEl.value);
+  if(isNaN(v)) return;
+  const t = state.tables.find(t=>t.id===tableId);
+  const s = t.subjects.find(s=>s.id===subjId);
+  const divisor = s.sharia ? 2 : 2; // /20 -> /10 (and /40 -> /20 for sharia daily) both halve
+  s.vals[field] = (v / divisor).toFixed(1);
+  saveState();
+  renderTables();
+}
+
+function renderTables(){
+  const tabsWrap = document.getElementById('tableTabs');
+  const content = document.getElementById('tableContent');
+
+  // احفظ موضع التمرير الأفقي الحالي للجدول، والحقل الذي كان المستخدم يعمل عليه، لإعادتهما بعد التحديث
+  const prevScrollWrap = content.querySelector('.table-scroll-wrap');
+  const prevScrollLeft = prevScrollWrap ? prevScrollWrap.scrollLeft : null;
+  const activeEl = document.activeElement;
+  const activeName = (activeEl && activeEl.tagName === 'INPUT') ? activeEl.name : null;
+
+  tabsWrap.innerHTML = '';
+  content.innerHTML = '';
+
+  if(!state.tables.length){
+    content.innerHTML = '<div class="empty-state">لا توجد جداول بعد. اختر الصف ونوع المدرسة، ثم اضغط "إنشاء جدول جديد" للبدء.</div>';
+    return;
+  }
+  if(!state.activeTableId || !state.tables.find(t=>t.id===state.activeTableId)){
+    state.activeTableId = state.tables[0].id;
+  }
+
+  state.tables.forEach(t=>{
+    const tab = document.createElement('div');
+    tab.className = 'table-tab' + (t.id === state.activeTableId ? ' active' : '');
+    tab.onclick = () => setActiveTable(t.id);
+    const inp = document.createElement('input');
+    inp.value = t.name;
+    inp.onclick = (e)=> e.stopPropagation();
+    inp.onchange = (e)=> renameTable(t.id, e.target.value);
+    const delX = document.createElement('span');
+    delX.className = 'del-x';
+    delX.textContent = '✕';
+    delX.onclick = (e)=> deleteTable(t.id, e);
+    tab.appendChild(inp);
+    tab.appendChild(delX);
+    tabsWrap.appendChild(tab);
+  });
+
+  const t = state.tables.find(t=>t.id===state.activeTableId);
+  if(!t) return;
+
+  let html = `<div class="table-scroll-wrap" style="overflow-x:auto;"><table class="subject-table"><thead><tr>
+    <th>المادة</th>
+    <th>يومي 1 <span class="max-tag">/${t.subjects[0]?t.subjects[0].max.d1:10}</span></th>
+    <th>نصفي <span class="max-tag">/${t.subjects[0]?t.subjects[0].max.mid:20}</span></th>
+    <th>يومي 2 <span class="max-tag">/${t.subjects[0]?t.subjects[0].max.d2:10}</span></th>
+    <th>تقويم نوعي <span class="max-tag">/${t.subjects[0]?t.subjects[0].max.qual:20}</span></th>
+    <th>نهائي <span class="max-tag">/${t.subjects[0]?t.subjects[0].max.fin:40}</span></th>
+    <th>المجموع</th>
+    <th>هدف %</th>
+    <th></th>
+  </tr></thead><tbody>`;
+
+  t.subjects.forEach(s=>{
+    const tot = subjectTotal(s);
+    const badge = gradeBadge(tot.pct);
+    html += `<tr>
+      <td><input class="subject-name-input" type="text" value="${escapeHtml(s.name)}" onchange="updateSubjectField('${t.id}','${s.id}','name',this.value)"></td>
+      <td>${examCell(t.id, s, 'd1')}</td>
+      <td><input class="mark-input" name="mark_${t.id}_${s.id}_mid" type="number" min="0" value="${s.vals.mid}" onchange="updateSubjectField('${t.id}','${s.id}','mid',this.value)"></td>
+      <td>${examCell(t.id, s, 'd2')}</td>
+      <td><input class="mark-input" name="mark_${t.id}_${s.id}_qual" type="number" min="0" value="${s.vals.qual}" onchange="updateSubjectField('${t.id}','${s.id}','qual',this.value)"></td>
+      <td><input class="mark-input" name="mark_${t.id}_${s.id}_fin" type="number" min="0" value="${s.vals.fin}" onchange="updateSubjectField('${t.id}','${s.id}','fin',this.value)"></td>
+      <td>
+        <span class="subj-total">${tot.sum.toFixed(1)}/${tot.maxSum}</span>
+        <span class="badge ${badge.cls}" style="font-size:0.65rem; padding:3px 8px; display:inline-block; margin-top:4px;">${badge.text}</span>
+        <div class="subj-progress"><div style="width:${Math.min(100,tot.pct)}%"></div></div>
+      </td>
+      <td><input class="mark-input" type="number" min="0" max="100" value="${s.target}" onchange="updateSubjectField('${t.id}','${s.id}','target',this.value)" placeholder="--"></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteSubject('${t.id}','${s.id}')">حذف</button></td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+  content.innerHTML = html;
+
+  const actions = document.createElement('div');
+  actions.className = 'table-actions';
+  actions.innerHTML = `<button class="btn btn-outline" onclick="addSubject('${t.id}')">+ إضافة مادة</button>`;
+  content.appendChild(actions);
+
+  const avg = tableAverage(t);
+  const badge = gradeBadge(avg);
+  const circumference = 2 * Math.PI * 40;
+  const offset = circumference - (Math.min(100,avg)/100) * circumference;
+
+  const results = document.createElement('div');
+  results.className = 'card results-row';
+  results.innerHTML = `
+    <div class="gpa-block">
+      <div class="ring">
+        <svg width="96" height="96">
+          <circle class="ring-bg" cx="48" cy="48" r="40"></circle>
+          <circle class="ring-fg" cx="48" cy="48" r="40" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+        </svg>
+        <div class="ring-label">${avg.toFixed(1)}%</div>
+      </div>
+      <div>
+        <div style="font-family:'Cairo',sans-serif; font-weight:700; color:var(--olive-dark); margin-bottom:6px;">معدل «${escapeHtml(t.name)}»</div>
+        <span class="badge ${badge.cls}">${badge.text}</span>
+      </div>
+    </div>
+  `;
+  content.appendChild(results);
+
+  // أعد موضع التمرير الأفقي كما كان، وأعد التركيز إلى نفس الحقل الذي كان المستخدم يعمل عليه
+  const newScrollWrap = content.querySelector('.table-scroll-wrap');
+  if(newScrollWrap && prevScrollLeft !== null){
+    newScrollWrap.scrollLeft = prevScrollLeft;
+  }
+  if(activeName){
+    const toFocus = content.querySelector(`input[name="${activeName}"]`);
+    if(toFocus){
+      toFocus.focus();
+      if(typeof toFocus.select === 'function') toFocus.select();
+    }
+  }
+
+  updateGoalTracker();
+}
+
+function examCell(tableId, s, field){
+  const val = s.vals[field];
+  const max = s.max[field];
+  return `<span class="convert-wrap">
+    <input class="mark-input" name="mark_${tableId}_${s.id}_${field}" type="number" min="0" value="${val}" onchange="updateSubjectField('${tableId}','${s.id}','${field}',this.value)">
+    <button type="button" class="convert-btn" title="تحويل من علامة أعلى" onclick="toggleConvert(this)">⇄</button>
+    <div class="convert-popover">
+      <label style="font-size:0.68rem; color:var(--ink-soft);">أدخل العلامة من ${max*2}:</label>
+      <input type="number" onkeydown="if(event.key==='Enter'){applyConvert('${tableId}','${s.id}','${field}',this)}">
+      <button class="btn btn-sm btn-outline" style="width:100%;" onclick="applyConvert('${tableId}','${s.id}','${field}',this.previousElementSibling)">تحويل</button>
+    </div>
+  </span>`;
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.convert-wrap')){
+    document.querySelectorAll('.convert-popover.show').forEach(p=>p.classList.remove('show'));
+  }
+});
+
+/* ================= GOAL TRACKER ================= */
+function saveTarget(){
+  const v = parseFloat(document.getElementById('targetInput').value);
+  state.target = isNaN(v) ? null : Math.max(0, Math.min(100, v));
+  saveState();
+  updateGoalTracker();
+}
+function updateGoalTracker(){
+  const ringFg = document.getElementById('goalRingFg');
+  const ringLabel = document.getElementById('goalRingLabel');
+  const msg = document.getElementById('goalMsg');
+  const circumference = 251.2;
+
+  if(state.target === null || state.target === undefined){
+    ringFg.setAttribute('stroke-dashoffset', circumference);
+    ringLabel.textContent = '--%';
+    msg.innerHTML = 'حدّد هدفك لمتابعة تقدمك نحوه.';
+    return;
+  }
+  document.getElementById('targetInput').value = state.target;
+
+  const t = state.tables.find(t=>t.id===state.activeTableId);
+  const current = t ? tableAverage(t) : 0;
+  const progressPct = state.target > 0 ? Math.min(100, (current / state.target) * 100) : 0;
+  const offset = circumference - (progressPct/100) * circumference;
+  ringFg.setAttribute('stroke-dashoffset', offset);
+  ringLabel.textContent = progressPct.toFixed(0) + '%';
+
+  if(current >= state.target){
+    msg.innerHTML = `🎉 لقد حققت هدفك! معدلك الحالي <b>${current.toFixed(1)}%</b>`;
+  } else {
+    const remaining = (state.target - current).toFixed(1);
+    msg.innerHTML = `تحتاج <b>${remaining}%</b> إضافية للوصول إلى هدفك (${state.target}%).`;
+  }
+}
+
+/* ================= INIT ================= */
+if(state.target !== null && state.target !== undefined){
+  document.getElementById('targetInput').value = state.target;
+}
+renderTables();
+updateGoalTracker();
+initAuth();
+</script>
+</body>
+</html>
