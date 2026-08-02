@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>حساب المعدل الدراسي</title>
+<link rel="icon" type="image/png" href="32.png">
+<link rel="shortcut icon" type="image/png" href="32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -233,6 +235,23 @@
   }
   .account-banner p{ margin:0; font-size:0.9rem; color:var(--ink-soft); }
   .account-banner strong{ color:var(--maroon); }
+
+  /* ---------- Features ---------- */
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:18px;
+  }
+  .feature-item{
+    padding:22px 20px;
+    text-align:center;
+    border-top:4px solid var(--gold);
+    transition:transform 0.2s ease;
+  }
+  .feature-item:hover{ transform:translateY(-3px); }
+  .feature-icon{ font-size:1.7rem; margin-bottom:10px; }
+  .feature-item h4{ font-size:0.98rem; color:var(--olive-dark); margin-bottom:8px; }
+  .feature-item p{ font-size:0.83rem; color:var(--ink-soft); margin:0; }
   .btn{
     font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem;
     padding:10px 20px; border-radius:10px; border:none; cursor:pointer;
@@ -284,19 +303,6 @@
   .subject-name-input{ min-width:150px; font-weight:600; }
   .mark-input{ width:64px; min-width:64px; text-align:center; padding:6px 4px; }
   .max-tag{ display:block; font-size:0.68rem; color:var(--ink-soft); }
-  .convert-wrap{ position:relative; display:inline-flex; align-items:center; gap:4px; }
-  .convert-btn{
-    width:20px; height:20px; border-radius:50%; border:1px solid var(--gold);
-    background:#fff; color:var(--gold); font-size:0.65rem; cursor:pointer; line-height:1;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .convert-popover{
-    position:absolute; top:26px; left:50%; transform:translateX(-50%);
-    background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);
-    padding:8px; z-index:10; display:none; width:150px;
-  }
-  .convert-popover.show{ display:block; }
-  .convert-popover input{ width:100%; min-width:0; margin-bottom:6px; }
   .subj-total{ font-weight:800; font-family:'Cairo',sans-serif; }
   .subj-progress{ width:70px; height:6px; border-radius:6px; background:var(--line); overflow:hidden; margin:4px auto 0; }
   .subj-progress > div{ height:100%; background:var(--olive); }
@@ -383,7 +389,7 @@
 </head>
 <body>
 
-<a class="back-btn" href="https://safa2.my.canva.site/hiba000" target="_blank" rel="noopener">
+<a class="back-btn" href="https://1hiba7.github.io/Hiba_Kittaneh/" target="_blank" rel="noopener">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M9 21V12h6v9"/></svg>
   <span class="label">العودة للموسوعة الرئيسية</span>
 </a>
@@ -430,6 +436,49 @@
       <div style="display:flex; gap:10px; flex-wrap:wrap;" id="accountBannerActions">
         <button class="btn btn-outline" onclick="openLogin()">تسجيل الدخول</button>
         <button class="btn btn-gold" onclick="openSignup()">إنشاء حساب</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="section-title">
+      <div>
+        <span class="eyebrow">لماذا هذا الموقع</span>
+        <h2>مزايا ذكية تسهّل عليك الحساب</h2>
+      </div>
+    </div>
+    <div class="feature-grid">
+      <div class="card feature-item">
+        <div class="feature-icon">➗</div>
+        <h4>تقسيم تلقائي للعلامات</h4>
+        <p>إذا أدخلت علامة أعلى من العلامة الكبرى لأي حقل (مثلاً من 20 بدل 10)، يقسمها الموقع تلقائيًا لتصبح ضمن المقياس الصحيح دون أي خطوة إضافية منك.</p>
+      </div>
+      <div class="card feature-item">
+        <div class="feature-icon">🎯</div>
+        <h4>تقريب ذكي للعلامات</h4>
+        <p>تُقرَّب العلامات والمجاميع تلقائيًا إلى أقرب نصف علامة (مثال: 9.8 ← 10، و9.6 ← 9.5) لتحصل دائمًا على نتيجة دقيقة ومنطقية.</p>
+      </div>
+      <div class="card feature-item">
+        <div class="feature-icon">☁️</div>
+        <h4>حفظ ومزامنة سحابية</h4>
+        <p>بياناتك تُحفظ تلقائيًا على متصفحك، وإذا أنشأت حسابًا تتم مزامنتها فورًا مع السحابة لتصل إليها من أي جهاز.</p>
+      </div>
+      <div class="card feature-item">
+        <div class="feature-icon">📊</div>
+        <h4>جداول متعددة ومرنة</h4>
+        <p>أنشئ أكثر من جدول، أضف أو احذف مواد، وعدّل الأسماء بحرية لتناسب صفك ونوع مدرستك (حكومية أو شرعية).</p>
+      </div>
+      <div class="card feature-item">
+        <div class="feature-icon">🏆</div>
+        <h4>تتبع الهدف بصريًا</h4>
+        <p>حدّد معدلك المستهدف وتابع نسبة اقترابك منه عبر حلقة تقدم حية، مع معرفة العلامات المتبقية بدقة.</p>
+      </div>
+      <div class="card feature-item">
+        <div class="feature-icon">🕌</div>
+        <h4>خصوصية المواد الشرعية</h4>
+        <p>دعم كامل لنظام العلامات المضاعف الخاص بالمواد الشرعية (الحفظ والشرعي) من 200 علامة بدل 100.</p>
       </div>
     </div>
   </div>
@@ -995,7 +1044,8 @@ function updateSubjectField(tableId, subjId, field, value){
       while(v > max && v > 0){
         v = v / 2;
       }
-      v = Math.round(v * 10) / 10;
+      // قرّب الناتج إلى أقرب نصف علامة (مثال: 9.8 → 10 / 9.6 → 9.5)
+      v = Math.round(v * 2) / 2;
       value = String(v);
     }
     s.vals[field] = value;
@@ -1011,6 +1061,8 @@ function subjectTotal(s){
     const v = parseFloat(s.vals[k]);
     if(!isNaN(v)) sum += Math.min(v, s.max[k]);
   });
+  // قرّب المجموع الكلي للمادة إلى أقرب نصف علامة
+  sum = Math.round(sum * 2) / 2;
   return { sum, maxSum, pct: maxSum ? (sum / maxSum * 100) : 0 };
 }
 
@@ -1027,22 +1079,6 @@ function gradeBadge(pct){
   if(pct >= 60) return { text:'متوسط', cls:'medium' };
   if(pct >= 50) return { text:'مقبول', cls:'acceptable' };
   return { text:'غير مرض', cls:'poor' };
-}
-
-function toggleConvert(btn){
-  const pop = btn.nextElementSibling;
-  document.querySelectorAll('.convert-popover.show').forEach(p=>{ if(p!==pop) p.classList.remove('show'); });
-  pop.classList.toggle('show');
-}
-function applyConvert(tableId, subjId, field, inputEl){
-  const v = parseFloat(inputEl.value);
-  if(isNaN(v)) return;
-  const t = state.tables.find(t=>t.id===tableId);
-  const s = t.subjects.find(s=>s.id===subjId);
-  const divisor = s.sharia ? 2 : 2; // /20 -> /10 (and /40 -> /20 for sharia daily) both halve
-  s.vals[field] = (v / divisor).toFixed(1);
-  saveState();
-  renderTables();
 }
 
 function renderTables(){
@@ -1167,16 +1203,7 @@ function renderTables(){
 
 function examCell(tableId, s, field){
   const val = s.vals[field];
-  const max = s.max[field];
-  return `<span class="convert-wrap">
-    <input class="mark-input" name="mark_${tableId}_${s.id}_${field}" type="number" min="0" value="${val}" onchange="updateSubjectField('${tableId}','${s.id}','${field}',this.value)">
-    <button type="button" class="convert-btn" title="تحويل من علامة أعلى" onclick="toggleConvert(this)">⇄</button>
-    <div class="convert-popover">
-      <label style="font-size:0.68rem; color:var(--ink-soft);">أدخل العلامة من ${max*2}:</label>
-      <input type="number" onkeydown="if(event.key==='Enter'){applyConvert('${tableId}','${s.id}','${field}',this)}">
-      <button class="btn btn-sm btn-outline" style="width:100%;" onclick="applyConvert('${tableId}','${s.id}','${field}',this.previousElementSibling)">تحويل</button>
-    </div>
-  </span>`;
+  return `<input class="mark-input" name="mark_${tableId}_${s.id}_${field}" type="number" min="0" value="${val}" onchange="updateSubjectField('${tableId}','${s.id}','${field}',this.value)">`;
 }
 
 function escapeHtml(str){
@@ -1184,12 +1211,6 @@ function escapeHtml(str){
   d.textContent = str;
   return d.innerHTML;
 }
-
-document.addEventListener('click', (e)=>{
-  if(!e.target.closest('.convert-wrap')){
-    document.querySelectorAll('.convert-popover.show').forEach(p=>p.classList.remove('show'));
-  }
-});
 
 /* ================= GOAL TRACKER ================= */
 function saveTarget(){
