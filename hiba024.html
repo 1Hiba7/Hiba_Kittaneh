@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260805-03-59e0745","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,0","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHO2EIdDP0,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YADy3sAhvXQ,0","Oleo Script":"YACgEQQ14jI,0","Playfair Display":"YAFdJhem5V8,1","Poppins":"YAE5fPSY9qM,0","Press Start 2P":"YAFyGr-8pmQ,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/7949ff62d67710d5.telemetry_sdk.js" integrity="sha512-KIvXA82Di44YY/RH9/63A9MuTuavYgDFG8PfErJn7Wli4K0LAOk+coo/aPXk3+ZNL96nHh9VYD4PE+fLes+laQ=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مختبر الزلازل وحركة الصفائح</title>
+  <link rel="icon" type="image/png" href="24.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="/_sdk/7c520c0d71d7a06d.element_sdk.js" integrity="sha512-ZRhMhUorW8pmwd91OvkYXfNJMO7l1l3Dt8LinTPHSEXBz3TUAFKfKOO3bQE/KGcQJm6I4Ho+kKNLS9QZB8wyew=="></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ::selection {
+            background-color: #fab210;
+            color: #ffffff;
+        }
+
+        ::-moz-selection {
+            background-color: #fab210;
+            color: #ffffff;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: auto;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(14, 165, 233, 0.3);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .section {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #0ea5e9;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, #0ea5e9 0%, #06b6d4 100%);
+            border-radius: 2px;
+        }
+
+        .plate-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .plate-btn {
+            background: rgba(14, 165, 233, 0.1);
+            border: 2px solid #0ea5e9;
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .plate-btn:hover {
+            background: rgba(14, 165, 233, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .plate-btn.active {
+            background: #fab210;
+            color: #ffffff;
+            border-color: #fab210;
+            box-shadow: 0 0 20px rgba(250, 178, 16, 0.5);
+        }
+
+        .plate-visualization {
+            position: relative;
+            height: 350px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .plate {
+            position: absolute;
+            transition: all 1s ease-in-out;
+        }
+
+        .plate-left {
+            left: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+        }
+
+        .plate-right {
+            right: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+        }
+
+        .convergent .plate-left {
+            transform: translateX(15%);
+        }
+
+        .convergent .plate-right {
+            transform: translateX(-15%);
+        }
+
+        .divergent .plate-left {
+            transform: translateX(-10%);
+        }
+
+        .divergent .plate-right {
+            transform: translateX(10%);
+        }
+
+        .transform .plate-left {
+            transform: translateY(-8%);
+        }
+
+        .transform .plate-right {
+            transform: translateY(8%);
+        }
+
+        .mountain {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+
+        .convergent .mountain {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .rift {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 0%, #ef4444 50%, transparent 100%);
+            transform: translateX(-50%) scaleY(0);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+
+        .divergent .rift {
+            transform: translateX(-50%) scaleY(1);
+            opacity: 1;
+        }
+
+        .fault-line {
+            position: absolute;
+            left: 48%;
+            top: 50%;
+            width: 100%;
+            height: 3px;
+            background: #ef4444;
+            transform: translateY(-50%) scaleX(0);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+
+        .transform .fault-line {
+            transform: translateY(-50%) scaleX(1);
+            opacity: 1;
+        }
+
+        .description {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 12px;
+            border-right: 4px solid #0ea5e9;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .earthquake-section {
+            margin-top: 2rem;
+        }
+
+        .slider-container {
+            margin: 2rem 0;
+        }
+
+        .magnitude-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .magnitude-value {
+            font-size: 2rem;
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+            outline: none;
+            -webkit-appearance: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+            border: 3px solid #0ea5e9;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+            border: 3px solid #0ea5e9;
+        }
+
+        .building-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 300px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid rgba(14, 165, 233, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, #44403c 0%, #292524 100%);
+            z-index: 1;
+        }
+
+        .crack {
+            position: absolute;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, transparent 0%, #1c1917 50%, #ef4444 100%);
+            transform-origin: bottom;
+            transition: all 0.5s ease;
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .crack.visible {
+            opacity: 1;
+        }
+
+        .warning-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, transparent 70%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes flash-warning {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .warning-active {
+            animation: flash-warning 0.5s ease-in-out 3;
+        }
+
+        .warning-banner {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
+            z-index: 11;
+            opacity: 0;
+            transition: all 0.5s ease;
+            border: 2px solid #fca5a5;
+        }
+
+        .warning-banner.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .warning-icon {
+            display: inline-block;
+            animation: pulse 1s infinite;
+            margin-left: 0.5rem;
+        }
+
+        .building {
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 3;
+        }
+
+        .building-crack {
+            position: absolute;
+            background: #1c1917;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 4;
+        }
+
+        .building-crack.visible {
+            opacity: 1;
+        }
+
+        .crack-1 {
+            width: 2px;
+            height: 80px;
+            left: 35%;
+            top: 15%;
+            transform: rotate(10deg);
+        }
+
+        .crack-2 {
+            width: 2px;
+            height: 100px;
+            left: 60%;
+            top: 20%;
+            transform: rotate(-8deg);
+        }
+
+        .crack-3 {
+            width: 3px;
+            height: 120px;
+            left: 48%;
+            top: 10%;
+            transform: rotate(5deg);
+        }
+
+        .debris {
+            position: absolute;
+            background: #64748b;
+            opacity: 0;
+            transition: all 0.6s ease;
+            z-index: 2;
+        }
+
+        .debris.falling {
+            opacity: 1;
+            transform: translateY(150px) rotate(45deg);
+        }
+
+        .collapse-effect {
+            animation: collapse 2s ease-out forwards;
+        }
+
+        @keyframes collapse {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(20px) rotate(-5deg); opacity: 0.8; }
+            100% { transform: translateY(150px) rotate(-15deg); opacity: 0.3; }
+        }
+
+        .simulate-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            border: 2px solid #fca5a5;
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.3);
+            margin-bottom: 1.5rem;
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .simulate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.5);
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+        }
+
+        .simulate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .simulate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @keyframes shake-light {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-2px) rotate(-0.5deg); }
+            75% { transform: translateX(2px) rotate(0.5deg); }
+        }
+
+        @keyframes shake-medium {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            10% { transform: translateX(-5px) rotate(-1deg); }
+            30% { transform: translateX(5px) rotate(1deg); }
+            50% { transform: translateX(-5px) rotate(-1deg); }
+            70% { transform: translateX(5px) rotate(1deg); }
+            90% { transform: translateX(-5px) rotate(-1deg); }
+        }
+
+        @keyframes shake-severe {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            10% { transform: translateX(-10px) rotate(-2deg); }
+            20% { transform: translateX(10px) rotate(2deg); }
+            30% { transform: translateX(-10px) rotate(-2deg); }
+            40% { transform: translateX(10px) rotate(2deg); }
+            50% { transform: translateX(-10px) rotate(-2deg); }
+            60% { transform: translateX(10px) rotate(2deg); }
+            70% { transform: translateX(-10px) rotate(-2deg); }
+            80% { transform: translateX(10px) rotate(2deg); }
+            90% { transform: translateX(-10px) rotate(-2deg); }
+        }
+
+        @keyframes shake-catastrophic {
+            0%, 100% { transform: translateX(0) rotate(0deg) translateY(0); }
+            5% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            10% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            15% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            20% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            25% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            30% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            35% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            40% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            45% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            50% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            55% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            60% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            65% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            70% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            75% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            80% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            85% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+            90% { transform: translateX(15px) rotate(3deg) translateY(5px); }
+            95% { transform: translateX(-15px) rotate(-3deg) translateY(-5px); }
+        }
+
+        .shake-light {
+            animation: shake-light 0.5s infinite;
+        }
+
+        .shake-medium {
+            animation: shake-medium 0.4s infinite;
+        }
+
+        .shake-severe {
+            animation: shake-severe 0.3s infinite;
+        }
+
+        .shake-catastrophic {
+            animation: shake-catastrophic 0.2s infinite;
+        }
+
+        .damage-indicator {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .damage-light {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 2px solid #10b981;
+        }
+
+        .damage-moderate {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 2px solid #f59e0b;
+        }
+
+        .damage-severe {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 2px solid #ef4444;
+        }
+
+        .damage-catastrophic {
+            background: rgba(220, 38, 38, 0.3);
+            color: #dc2626;
+            border: 2px solid #dc2626;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .concept-card {
+            background: rgba(14, 165, 233, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid rgba(14, 165, 233, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .concept-card:hover::before {
+            left: 100%;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+            border-color: #0ea5e9;
+        }
+
+        .concept-card.expanded {
+            background: rgba(14, 165, 233, 0.2);
+            border-color: #0ea5e9;
+        }
+
+        .concept-title {
+            font-size: 1.4rem;
+            color: #0ea5e9;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .concept-diagram {
+            width: 100%;
+            height: 180px;
+            margin: 1rem 0;
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.4s ease;
+        }
+
+        .concept-card.expanded .concept-diagram {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .toggle-hint {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .concept-card.expanded .toggle-hint {
+            color: #0ea5e9;
+        }
+
+        .seismograph {
+            background: rgba(15, 23, 42, 0.8);
+            height: 150px;
+            border-radius: 12px;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .seismograph-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(148, 163, 184, 0.3);
+        }
+
+        .seismograph canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 15px;
+            border-top: 2px solid rgba(14, 165, 233, 0.3);
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .safety-card {
+            background: rgba(14, 165, 233, 0.05);
+            border: 2px solid;
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .safety-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
+        }
+
+        .before-earthquake {
+            border-color: #10b981;
+        }
+
+        .before-earthquake:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .during-earthquake {
+            border-color: #f59e0b;
+        }
+
+        .during-earthquake:hover {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .after-earthquake {
+            border-color: #ef4444;
+        }
+
+        .after-earthquake:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .safety-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .safety-title {
+            font-size: 1.4rem;
+            color: #0ea5e9;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .safety-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .safety-list li {
+            padding: 0.8rem 0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .safety-list li:last-child {
+            border-bottom: none;
+        }
+
+        .drop-cover-hold {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
+            border-right: 4px solid #f59e0b;
+        }
+
+        .safety-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .safety-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content strong {
+            color: #f59e0b;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .step-content p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .zones-container {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .zone-card {
+            background: rgba(14, 165, 233, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .zone-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
+        }
+
+        .zone-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid;
+        }
+
+        .high-risk .zone-header {
+            background: rgba(239, 68, 68, 0.1);
+            border-bottom-color: #ef4444;
+        }
+
+        .medium-risk .zone-header {
+            background: rgba(245, 158, 11, 0.1);
+            border-bottom-color: #f59e0b;
+        }
+
+        .low-risk .zone-header {
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom-color: #10b981;
+        }
+
+        .zone-icon {
+            font-size: 2.5rem;
+        }
+
+        .zone-header h3 {
+            font-size: 1.5rem;
+            color: #0ea5e9;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .zone-description {
+            padding: 2rem;
+        }
+
+        .zone-description > p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #cbd5e1;
+        }
+
+        .examples-box {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .examples-box h4 {
+            color: #0ea5e9;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .examples-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .examples-box li {
+            padding: 0.8rem 0;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .examples-box li:last-child {
+            border-bottom: none;
+        }
+
+        .risk-indicator {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid;
+        }
+
+        .risk-indicator.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .risk-indicator.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border-color: #f59e0b;
+        }
+
+        .risk-indicator.low {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        .ring-of-fire {
+            margin-top: 3rem;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 2px solid #ef4444;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .ring-title {
+            font-size: 2rem;
+            color: #ef4444;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .ring-description {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .ring-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+
+        /* Return to Encyclopedia Button */
+        .return-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Tajawal', 'Cairo', 'Segoe UI', sans-serif;
+            transition: all 0.3s ease;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .return-btn:hover {
+            background: #1e90ff;
+            border-color: #1e90ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 144, 255, 0.4);
+        }
+
+        .home-icon {
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .return-btn:hover .home-icon {
+            transform: scale(1.1);
+        }
+
+        .return-text {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .return-btn {
+                padding: 10px 12px;
+                gap: 0;
+                border-radius: 50%;
+                width: 44px;
+                height: 44px;
+                justify-content: center;
+                top: 15px;
+                left: 15px;
+            }
+
+            .return-text {
+                display: none;
+            }
+
+            .home-icon {
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+            }
+
+            .plate-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .plate-visualization {
+                height: 250px;
+            }
+
+            .building-container {
+                height: 200px;
+            }
+
+            .safety-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ring-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .zone-header h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/0e8d3a91e1c6f495.data_sdk.js" type="text/javascript" integrity="sha512-c00oDoGjsMgluCLLEyVl3suwEkgjOGGplVFbsilUoBg4aMKNmsL3mwsc9r0dPn95qiSZyjBousQXgROkAW7p/w=="></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body class="h-full"><!-- Return to Encyclopedia Button --> <a href="https://safa2.my.canva.site/hiba000" class="return-btn" target="_blank" rel="noopener noreferrer">
+   <svg class="home-icon" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> <polyline points="9 22 9 12 15 12 15 22"></polyline>
+   </svg><span class="return-text">العودة للموسوعة الرئيسية</span> </a>
+  <div class="app-wrapper">
+   <div class="container">
+    <header>
+     <h1 id="main-title">مختبر الزلازل وحركة الصفائح</h1>
+     <p class="subtitle">استكشف القوى الجيولوجية التي تشكل كوكبنا</p>
+    </header>
+    <section class="section">
+     <h2 class="section-title">🌍 حركة الصفائح التكتونية</h2>
+     <div class="plate-controls"><button class="plate-btn active" data-mode="convergent"> <span id="convergent-label">⛰️ التقارب</span> </button> <button class="plate-btn" data-mode="divergent"> <span id="divergent-label">🌊 التباعد</span> </button> <button class="plate-btn" data-mode="transform"> <span id="transform-label">⚡ التحول</span> </button>
+     </div>
+     <div id="plate-visualization" class="plate-visualization convergent">
+      <svg class="plate plate-left" width="100%" height="100%" viewbox="0 0 400 350"><defs>
+        <lineargradient id="plate1Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+         <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+         <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+        </lineargradient>
+       </defs> <path d="M 0,0 L 400,0 L 400,350 L 0,350 Z" fill="url(#plate1Grad)" /> <path d="M 350,50 Q 380,100 350,150 Q 320,200 350,250 Q 380,300 350,350" stroke="#60a5fa" stroke-width="3" fill="none" opacity="0.5" /> <path d="M 300,30 Q 330,80 300,130 Q 270,180 300,230 Q 330,280 300,330" stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.3" /> <line x1="0" y1="80" x2="400" y2="85" stroke="#1e40af" stroke-width="2" opacity="0.4" /> <line x1="0" y1="150" x2="400" y2="155" stroke="#1e40af" stroke-width="2" opacity="0.4" /> <line x1="0" y1="220" x2="400" y2="225" stroke="#1e40af" stroke-width="2" opacity="0.4" /> <line x1="0" y1="290" x2="400" y2="295" stroke="#1e40af" stroke-width="2" opacity="0.4" />
+      </svg>
+      <svg class="plate plate-right" width="100%" height="100%" viewbox="0 0 400 350"><defs>
+        <lineargradient id="plate2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+         <stop offset="0%" style="stop-color:#065f46;stop-opacity:1" />
+         <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+        </lineargradient>
+       </defs> <path d="M 0,0 L 400,0 L 400,350 L 0,350 Z" fill="url(#plate2Grad)" /> <path d="M 50,50 Q 20,100 50,150 Q 80,200 50,250 Q 20,300 50,350" stroke="#34d399" stroke-width="3" fill="none" opacity="0.5" /> <path d="M 100,30 Q 70,80 100,130 Q 130,180 100,230 Q 70,280 100,330" stroke="#34d399" stroke-width="2" fill="none" opacity="0.3" /> <line x1="0" y1="80" x2="400" y2="85" stroke="#047857" stroke-width="2" opacity="0.4" /> <line x1="0" y1="150" x2="400" y2="155" stroke="#047857" stroke-width="2" opacity="0.4" /> <line x1="0" y1="220" x2="400" y2="225" stroke="#047857" stroke-width="2" opacity="0.4" /> <line x1="0" y1="290" x2="400" y2="295" stroke="#047857" stroke-width="2" opacity="0.4" />
+      </svg>
+      <svg class="mountain" width="140" height="140" viewbox="0 0 140 140"><polygon points="70,30 115,100 25,100" fill="#475569" /> <polygon points="50,45 95,100 5,100" fill="#64748b" /> <polygon points="90,50 135,100 45,100" fill="#94a3b8" /> <polygon points="70,30 75,40 65,40" fill="#f8fafc" /> <polygon points="50,45 55,53 45,53" fill="#f8fafc" /> <polygon points="90,50 95,58 85,58" fill="#f8fafc" />
+      </svg>
+      <div class="rift"></div>
+      <div class="fault-line"></div>
+     </div>
+     <div id="description" class="description"><strong>التقارب:</strong> عندما تصطدم الصفائح التكتونية ببعضها البعض، تتشكل سلاسل جبلية ضخمة مثل جبال الهيمالايا. هذه العملية تستغرق ملايين السنين وتؤدي إلى رفع القشرة الأرضية.
+     </div>
+    </section>
+    <section class="section earthquake-section">
+     <h2 class="section-title">📊 محاكي الزلازل - مقياس ريختر</h2>
+     <div class="slider-container">
+      <div class="magnitude-label"><span>القوة على مقياس ريختر:</span> <span class="magnitude-value" id="magnitude-display">5.0</span>
+      </div><input type="range" min="1" max="10" step="0.1" value="5" class="slider" id="magnitude-slider">
+     </div><button class="simulate-btn" id="simulate-btn"> 🚨 بدء المحاكاة - نظام الإنذار المبكر </button>
+     <div class="building-container">
+      <div class="warning-banner" id="warning-banner"><span class="warning-icon">⚠️</span> تحذير: زلزال قادم! <span class="warning-icon">⚠️</span>
+      </div>
+      <div class="warning-flash" id="warning-flash"></div>
+      <div class="ground"></div>
+      <div id="building-wrapper" style="position: relative; z-index: 3;">
+       <svg id="building" class="building" width="120" height="200" viewbox="0 0 120 200"><defs>
+         <lineargradient id="buildingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+         </lineargradient>
+        </defs> <rect x="10" y="20" width="100" height="180" fill="url(#buildingGrad)" stroke="#475569" stroke-width="2" /> <rect x="20" y="40" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="55" y="40" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="20" y="70" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="55" y="70" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="20" y="100" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="55" y="100" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="20" y="130" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="55" y="130" width="25" height="20" fill="#0ea5e9" opacity="0.7" /> <rect x="20" y="160" width="60" height="40" fill="#1e293b" />
+       </svg>
+       <div class="building-crack crack-1" id="crack-1"></div>
+       <div class="building-crack crack-2" id="crack-2"></div>
+       <div class="building-crack crack-3" id="crack-3"></div>
+       <div class="debris" id="debris-1" style="width: 20px; height: 20px; left: 30%; top: 25%;"></div>
+       <div class="debris" id="debris-2" style="width: 15px; height: 15px; left: 55%; top: 35%;"></div>
+       <div class="debris" id="debris-3" style="width: 18px; height: 18px; left: 45%; top: 20%;"></div>
+      </div>
+     </div>
+     <div id="damage-indicator" class="damage-indicator damage-moderate">
+      مستوى الضرر: متوسط - قد يسبب تشققات في المباني
+     </div>
+     <div class="seismograph">
+      <div class="seismograph-line"></div>
+      <canvas id="seismograph-canvas"></canvas>
+     </div>
+    </section>
+    <section class="section">
+     <h2 class="section-title">🛡️ نظام السلامة أثناء الزلازل</h2>
+     <div class="safety-grid">
+      <div class="safety-card before-earthquake">
+       <div class="safety-icon">
+        🏠
+       </div>
+       <h3 class="safety-title">قبل الزلزال - التحضير</h3>
+       <ul class="safety-list">
+        <li>✅ تثبيت الأثاث الثقيل على الجدران</li>
+        <li>✅ تحضير حقيبة طوارئ (ماء، طعام، إسعافات أولية)</li>
+        <li>✅ معرفة الأماكن الآمنة في المنزل</li>
+        <li>✅ تحديد نقاط التجمع مع العائلة</li>
+        <li>✅ إبعاد الأشياء الثقيلة عن الأسرّة</li>
+       </ul>
+      </div>
+      <div class="safety-card during-earthquake">
+       <div class="safety-icon">
+        ⚠️
+       </div>
+       <h3 class="safety-title">أثناء الزلزال - احمِ نفسك</h3>
+       <div class="drop-cover-hold">
+        <div class="safety-step">
+         <div class="step-number">
+          1
+         </div>
+         <div class="step-content"><strong>انخفض (Drop)</strong>
+          <p>انزل على يديك وركبتيك فوراً</p>
+         </div>
+        </div>
+        <div class="safety-step">
+         <div class="step-number">
+          2
+         </div>
+         <div class="step-content"><strong>احتمِ (Cover)</strong>
+          <p>احتمِ تحت طاولة متينة وأمسك بها</p>
+         </div>
+        </div>
+        <div class="safety-step">
+         <div class="step-number">
+          3
+         </div>
+         <div class="step-content"><strong>تمسك (Hold On)</strong>
+          <p>ابقَ متمسكاً حتى يتوقف الاهتزاز</p>
+         </div>
+        </div>
+       </div>
+       <ul class="safety-list">
+        <li>❌ لا تستخدم المصاعد أبداً</li>
+        <li>❌ لا تقف بجانب النوافذ أو المرايا</li>
+        <li>❌ لا تخرج من المبنى أثناء الاهتزاز</li>
+       </ul>
+      </div>
+      <div class="safety-card after-earthquake">
+       <div class="safety-icon">
+        🚪
+       </div>
+       <h3 class="safety-title">بعد الزلزال - الإخلاء الآمن</h3>
+       <ul class="safety-list">
+        <li>✅ افحص نفسك والآخرين بحثاً عن إصابات</li>
+        <li>✅ أخلي المبنى بحذر واستخدم السلالم</li>
+        <li>✅ ابتعد عن المباني المتضررة</li>
+        <li>✅ احذر من الهزات الارتدادية</li>
+        <li>✅ اتبع تعليمات السلطات المحلية</li>
+        <li>❌ لا تشعل أعواد الثقاب (خطر تسرب الغاز)</li>
+       </ul>
+      </div>
+     </div>
+    </section>
+    <section class="section">
+     <h2 class="section-title">🗺️ المناطق الزلزالية حول العالم</h2>
+     <div class="zones-container">
+      <div class="zone-card high-risk">
+       <div class="zone-header"><span class="zone-icon">🏔️</span>
+        <h3>مناطق الجبال - خطورة عالية</h3>
+       </div>
+       <div class="zone-description">
+        <p><strong>لماذا؟</strong> تقع على حدود الصفائح التكتونية النشطة</p>
+        <div class="examples-box">
+         <h4>أمثلة رئيسية:</h4>
+         <ul>
+          <li>🇯🇵 <strong>اليابان:</strong> حلقة النار - زلازل متكررة وقوية</li>
+          <li>🇹🇷 <strong>تركيا:</strong> صدع شمال الأناضول النشط</li>
+          <li>🇨🇱 <strong>تشيلي:</strong> منطقة الاندساس - زلازل ضخمة</li>
+          <li>🇳🇵 <strong>نيبال/الهيمالايا:</strong> تصادم الصفيحتين الهندية والآسيوية</li>
+          <li>🇮🇩 <strong>إندونيسيا:</strong> أرخبيل على حلقة النار</li>
+         </ul>
+        </div>
+        <div class="risk-indicator high">
+         ⚠️ خطر مرتفع - استعداد دائم مطلوب
+        </div>
+       </div>
+      </div>
+      <div class="zone-card medium-risk">
+       <div class="zone-header"><span class="zone-icon">🌊</span>
+        <h3>السواحل والجزر - خطورة متوسطة إلى عالية</h3>
+       </div>
+       <div class="zone-description">
+        <p><strong>لماذا؟</strong> قريبة من مناطق الاندساس البحرية وخطر التسونامي</p>
+        <div class="examples-box">
+         <h4>أمثلة رئيسية:</h4>
+         <ul>
+          <li>🇺🇸 <strong>كاليفورنيا:</strong> صدع سان أندرياس الشهير</li>
+          <li>🇵🇭 <strong>الفلبين:</strong> حلقة النار الباسيفيكية</li>
+          <li>🇬🇷 <strong>اليونان:</strong> منطقة البحر المتوسط النشطة</li>
+          <li>🇮🇹 <strong>إيطاليا:</strong> التقاء الصفيحتين الأفريقية والأوراسية</li>
+         </ul>
+        </div>
+        <div class="risk-indicator medium">
+         ⚡ خطر متوسط - يحتاج لخطط طوارئ
+        </div>
+       </div>
+      </div>
+      <div class="zone-card low-risk">
+       <div class="zone-header"><span class="zone-icon">🌾</span>
+        <h3>السهول الداخلية - خطورة منخفضة</h3>
+       </div>
+       <div class="zone-description">
+        <p><strong>لماذا؟</strong> بعيدة عن حدود الصفائح التكتونية النشطة</p>
+        <div class="examples-box">
+         <h4>أمثلة رئيسية:</h4>
+         <ul>
+          <li>🇸🇦 <strong>وسط الجزيرة العربية:</strong> داخل الصفيحة العربية المستقرة</li>
+          <li>🇦🇺 <strong>وسط أستراليا:</strong> صفيحة مستقرة جداً</li>
+          <li>🇧🇷 <strong>السهول البرازيلية:</strong> بعيدة عن حدود الصفائح</li>
+          <li>🇨🇦 <strong>السهول الكندية:</strong> منطقة مستقرة تكتونياً</li>
+         </ul>
+        </div>
+        <div class="risk-indicator low">
+         ✅ خطر منخفض - لكن الاستعداد مهم دائماً
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="ring-of-fire">
+      <h3 class="ring-title">🔥 حلقة النار الباسيفيكية</h3>
+      <p class="ring-description">منطقة على شكل حدوة حصان بطول 40,000 كم تحيط بالمحيط الهادئ، حيث تحدث <strong>90% من الزلازل العالمية</strong> و<strong>75% من البراكين النشطة</strong>. تشمل: اليابان، الفلبين، إندونيسيا، نيوزيلندا، تشيلي، والساحل الغربي لأمريكا.</p>
+      <div class="ring-stats">
+       <div class="stat">
+        <div class="stat-number">
+         450+
+        </div>
+        <div class="stat-label">
+         بركان نشط
+        </div>
+       </div>
+       <div class="stat">
+        <div class="stat-number">
+         90%
+        </div>
+        <div class="stat-label">
+         من الزلازل العالمية
+        </div>
+       </div>
+       <div class="stat">
+        <div class="stat-number">
+         40,000
+        </div>
+        <div class="stat-label">
+         كم طول الحلقة
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section class="section">
+     <h2 class="section-title">📚 المفاهيم العلمية</h2>
+     <div class="concepts-grid">
+      <div class="concept-card" data-concept="focus">
+       <h3 class="concept-title">🎯 بؤرة الزلزال (Focus)</h3>
+       <p>النقطة الداخلية في باطن الأرض حيث تبدأ الطاقة الزلزالية بالانطلاق. قد تكون على عمق عدة كيلومترات تحت سطح الأرض.</p>
+       <svg class="concept-diagram" viewbox="0 0 300 180"><defs>
+         <radialgradient id="focusGlow" cx="50%" cy="50%">
+          <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0" />
+         </radialgradient>
+        </defs> <rect x="0" y="80" width="300" height="100" fill="#44403c" /> <line x1="0" y1="80" x2="300" y2="80" stroke="#0ea5e9" stroke-width="3" /> <text x="250" y="75" fill="#0ea5e9" font-size="14" font-weight="bold">
+         السطح
+        </text> <circle cx="150" cy="140" r="15" fill="url(#focusGlow)" /> <circle cx="150" cy="140" r="8" fill="#ef4444" /> <circle cx="150" cy="140" r="20" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.5" /> <circle cx="150" cy="140" r="30" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.3" /> <text x="170" y="145" fill="#ffffff" font-size="14" font-weight="bold">
+         البؤرة
+        </text> <line x1="50" y1="80" x2="50" y2="140" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" /> <text x="10" y="110" fill="#94a3b8" font-size="12">
+         العمق
+        </text>
+       </svg>
+       <p class="toggle-hint">👆 اضغط لرؤية الرسم التوضيحي</p>
+      </div>
+      <div class="concept-card" data-concept="epicenter">
+       <h3 class="concept-title">📍 المركز السطحي (Epicenter)</h3>
+       <p>النقطة الموجودة على سطح الأرض مباشرة فوق بؤرة الزلزال. عادة ما يكون الضرر أكبر في هذه المنطقة.</p>
+       <svg class="concept-diagram" viewbox="0 0 300 180"><defs>
+         <radialgradient id="epicenterGlow" cx="50%" cy="50%">
+          <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0" />
+         </radialgradient>
+        </defs> <rect x="0" y="80" width="300" height="100" fill="#44403c" /> <line x1="0" y1="80" x2="300" y2="80" stroke="#0ea5e9" stroke-width="3" /> <text x="250" y="75" fill="#0ea5e9" font-size="14" font-weight="bold">
+         السطح
+        </text> <circle cx="150" cy="140" r="8" fill="#ef4444" /> <text x="165" y="145" fill="#ef4444" font-size="12">
+         البؤرة
+        </text> <circle cx="150" cy="80" r="12" fill="url(#epicenterGlow)" /> <circle cx="150" cy="80" r="6" fill="#0ea5e9" /> <circle cx="150" cy="80" r="18" fill="none" stroke="#0ea5e9" stroke-width="2" /> <circle cx="150" cy="80" r="28" fill="none" stroke="#06b6d4" stroke-width="1.5" opacity="0.5" /> <text x="100" y="65" fill="#0ea5e9" font-size="14" font-weight="bold">
+         المركز السطحي
+        </text> <line x1="150" y1="80" x2="150" y2="140" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3" /> <text x="155" y="110" fill="#f59e0b" font-size="11">
+         عمودي
+        </text>
+       </svg>
+       <p class="toggle-hint">👆 اضغط لرؤية الرسم التوضيحي</p>
+      </div>
+      <div class="concept-card" data-concept="seismograph">
+       <h3 class="concept-title">📡 جهاز رصد الزلازل (Seismograph)</h3>
+       <p>جهاز علمي يسجل الموجات الزلزالية ويحولها إلى رسم بياني. يساعد العلماء على قياس قوة الزلازل وتحديد موقعه.</p>
+       <svg class="concept-diagram" viewbox="0 0 300 180"><rect x="30" y="40" width="80" height="100" fill="#1e293b" stroke="#0ea5e9" stroke-width="2" rx="5" /> <circle cx="70" cy="70" r="15" fill="#334155" stroke="#0ea5e9" stroke-width="2" /> <line x1="70" y1="70" x2="70" y2="130" stroke="#ef4444" stroke-width="3" /> <polygon points="65,130 70,140 75,130" fill="#ef4444" /> <rect x="40" y="145" width="60" height="3" fill="#94a3b8" /> <rect x="130" y="50" width="150" height="80" fill="#0f172a" stroke="#0ea5e9" stroke-width="2" rx="3" /> <path d="M 140,90 L 160,90 Q 170,70 180,90 T 200,90 Q 210,110 220,90 T 240,90 L 270,90" stroke="#10b981" stroke-width="2" fill="none" /> <line x1="140" y1="90" x2="270" y2="90" stroke="#475569" stroke-width="1" stroke-dasharray="2,2" /> <text x="150" y="25" fill="#0ea5e9" font-size="14" font-weight="bold">
+         الجهاز
+        </text> <text x="170" y="145" fill="#10b981" font-size="12">
+         الموجات المسجلة
+        </text>
+       </svg>
+       <p class="toggle-hint">👆 اضغط لرؤية الرسم التوضيحي</p>
+      </div>
+     </div>
+    </section>
+    <footer id="footer-text">
+     جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين
+    </footer>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            main_title: 'مختبر الزلازل وحركة الصفائح',
+            convergent_label: '⛰️ التقارب',
+            divergent_label: '🌊 التباعد',
+            transform_label: '⚡ التحول',
+            footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين',
+            primary_color: '#0ea5e9',
+            background_color: '#1a1a2e',
+            surface_color: '#1e293b',
+            text_color: '#ffffff',
+            accent_color: '#ef4444'
+        };
+
+        const descriptions = {
+            convergent: '<strong>التقارب:</strong> عندما تصطدم الصفائح التكتونية ببعضها البعض، تتشكل سلاسل جبلية ضخمة مثل جبال الهيمالايا. هذه العملية تستغرق ملايين السنين وتؤدي إلى رفع القشرة الأرضية.',
+            divergent: '<strong>التباعد:</strong> عندما تتحرك الصفائح بعيداً عن بعضها، تنشأ شقوق في القشرة الأرضية تسمح للصهارة بالصعود، مما يؤدي إلى تكوين قيعان المحيطات والأخاديد العظيمة.',
+            transform: '<strong>التحول:</strong> عندما تنزلق الصفائح بجانب بعضها البعض، تتولد طاقة هائلة تسبب الزلازل. صدع سان أندرياس في كاليفورنيا هو مثال شهير على هذا النوع من الحركة.'
+        };
+
+        const plateBtns = document.querySelectorAll('.plate-btn');
+        const plateViz = document.getElementById('plate-visualization');
+        const descriptionEl = document.getElementById('description');
+        const magnitudeSlider = document.getElementById('magnitude-slider');
+        const magnitudeDisplay = document.getElementById('magnitude-display');
+        const building = document.getElementById('building');
+        const damageIndicator = document.getElementById('damage-indicator');
+        const canvas = document.getElementById('seismograph-canvas');
+        const ctx = canvas.getContext('2d');
+        const simulateBtn = document.getElementById('simulate-btn');
+        const warningBanner = document.getElementById('warning-banner');
+        const warningFlash = document.getElementById('warning-flash');
+        const buildingContainer = document.querySelector('.building-container');
+
+        let currentMode = 'convergent';
+        let animationFrame;
+        let isSimulating = false;
+        let cracks = [];
+        let buildingCracks = [];
+        let debrisElements = [];
+
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        function createCracks() {
+            const crackPositions = [20, 35, 50, 65, 80];
+            cracks = crackPositions.map(pos => {
+                const crack = document.createElement('div');
+                crack.className = 'crack';
+                crack.style.left = `${pos}%`;
+                crack.style.height = '0px';
+                buildingContainer.appendChild(crack);
+                return crack;
+            });
+        }
+
+        function initializeBuildingDamage() {
+            buildingCracks = [
+                document.getElementById('crack-1'),
+                document.getElementById('crack-2'),
+                document.getElementById('crack-3')
+            ];
+            
+            debrisElements = [
+                document.getElementById('debris-1'),
+                document.getElementById('debris-2'),
+                document.getElementById('debris-3')
+            ];
+        }
+
+        createCracks();
+        initializeBuildingDamage();
+
+        function updateCracks(magnitude) {
+            const maxHeight = 60;
+            const visibleThreshold = 4;
+            
+            cracks.forEach((crack, index) => {
+                if (magnitude >= visibleThreshold) {
+                    const crackHeight = Math.min(maxHeight, (magnitude - 3) * 8);
+                    const variance = (Math.random() - 0.5) * 15;
+                    crack.style.height = `${crackHeight + variance}px`;
+                    crack.classList.add('visible');
+                } else {
+                    crack.style.height = '0px';
+                    crack.classList.remove('visible');
+                }
+            });
+        }
+
+        function updateBuildingDamage(magnitude) {
+            buildingCracks.forEach(crack => {
+                crack.classList.remove('visible');
+            });
+            
+            debrisElements.forEach(debris => {
+                debris.classList.remove('falling');
+            });
+            
+            const buildingWrapper = document.getElementById('building-wrapper');
+            buildingWrapper.classList.remove('collapse-effect');
+            
+            if (magnitude >= 6) {
+                buildingCracks.forEach(crack => {
+                    crack.classList.add('visible');
+                });
+            }
+            
+            if (magnitude >= 7.5) {
+                setTimeout(() => {
+                    debrisElements.forEach(debris => {
+                        debris.classList.add('falling');
+                    });
+                }, 500);
+            }
+            
+            if (magnitude >= 9) {
+                setTimeout(() => {
+                    buildingWrapper.classList.add('collapse-effect');
+                }, 1000);
+            }
+        }
+
+        function resetBuildingDamage() {
+            buildingCracks.forEach(crack => crack.classList.remove('visible'));
+            debrisElements.forEach(debris => debris.classList.remove('falling'));
+            const buildingWrapper = document.getElementById('building-wrapper');
+            buildingWrapper.classList.remove('collapse-effect');
+        }
+
+        simulateBtn.addEventListener('click', async () => {
+            if (isSimulating) return;
+            
+            isSimulating = true;
+            simulateBtn.disabled = true;
+            
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+            building.classList.remove('shake-light', 'shake-medium', 'shake-severe', 'shake-catastrophic');
+            resetBuildingDamage();
+            updateCracks(0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            warningBanner.classList.add('active');
+            warningFlash.classList.add('warning-active');
+            
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            warningBanner.classList.remove('active');
+            warningFlash.classList.remove('warning-active');
+            
+            const magnitude = parseFloat(magnitudeSlider.value);
+            updateEarthquake();
+            updateBuildingDamage(magnitude);
+            
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+                animationFrame = null;
+            }
+            building.classList.remove('shake-light', 'shake-medium', 'shake-severe', 'shake-catastrophic');
+            
+            isSimulating = false;
+            simulateBtn.disabled = false;
+        });
+
+        const conceptCards = document.querySelectorAll('.concept-card');
+        conceptCards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('expanded');
+            });
+        });
+
+        plateBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                currentMode = mode;
+                
+                plateBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                plateViz.className = `plate-visualization ${mode}`;
+                descriptionEl.innerHTML = descriptions[mode];
+            });
+        });
+
+        function getDamageInfo(magnitude) {
+            if (magnitude < 3) {
+                return { text: 'مستوى الضرر: خفيف جداً - بالكاد يُشعر به', damageClass: 'damage-light', shakeClass: 'shake-light' };
+            } else if (magnitude < 5) {
+                return { text: 'مستوى الضرر: خفيف - اهتزاز محسوس، أضرار طفيفة', damageClass: 'damage-light', shakeClass: 'shake-light' };
+            } else if (magnitude < 7) {
+                return { text: 'مستوى الضرر: متوسط - قد يسبب تشققات في المباني', damageClass: 'damage-moderate', shakeClass: 'shake-medium' };
+            } else if (magnitude < 7.5) {
+                return { text: 'مستوى الضرر: مدمر - تشققات خطيرة في المبنى', damageClass: 'damage-severe', shakeClass: 'shake-severe' };
+            } else if (magnitude < 9) {
+                return { text: 'مستوى الضرر: كارثي - سقوط أجزاء من المبنى', damageClass: 'damage-catastrophic', shakeClass: 'shake-catastrophic' };
+            } else {
+                return { text: 'مستوى الضرر: دمار شامل - انهيار كامل للمبنى', damageClass: 'damage-catastrophic', shakeClass: 'shake-catastrophic' };
+            }
+        }
+
+        function updateEarthquake() {
+            const magnitude = parseFloat(magnitudeSlider.value);
+            magnitudeDisplay.textContent = magnitude.toFixed(1);
+            
+            building.classList.remove('shake-light', 'shake-medium', 'shake-severe', 'shake-catastrophic');
+            
+            const { text, damageClass, shakeClass } = getDamageInfo(magnitude);
+            building.classList.add(shakeClass);
+            
+            damageIndicator.textContent = text;
+            damageIndicator.className = `damage-indicator ${damageClass}`;
+            
+            updateCracks(magnitude);
+            drawSeismograph(magnitude);
+        }
+
+        function drawSeismograph(magnitude) {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerY = canvas.height / 2;
+            const amplitude = magnitude * 8;
+            const frequency = magnitude * 0.8;
+            let x = 0;
+            
+            function animate() {
+                if (x >= canvas.width) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    x = 0;
+                }
+                
+                ctx.strokeStyle = '#0ea5e9';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                const startX = Math.max(0, x - 100);
+                ctx.moveTo(startX, centerY);
+                
+                for (let i = startX; i <= x; i++) {
+                    const y = centerY + Math.sin((i * frequency) / 10) * amplitude * Math.sin((i / canvas.width) * Math.PI);
+                    ctx.lineTo(i, y);
+                }
+                
+                ctx.stroke();
+                
+                x += 2;
+                animationFrame = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        magnitudeSlider.addEventListener('input', () => {
+            const magnitude = parseFloat(magnitudeSlider.value);
+            magnitudeDisplay.textContent = magnitude.toFixed(1);
+            
+            const { text, damageClass } = getDamageInfo(magnitude);
+            damageIndicator.textContent = text;
+            damageIndicator.className = `damage-indicator ${damageClass}`;
+        });
+        
+        magnitudeDisplay.textContent = magnitudeSlider.value;
+
+        async function onConfigChange(config) {
+            document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+            document.getElementById('convergent-label').textContent = config.convergent_label || defaultConfig.convergent_label;
+            document.getElementById('divergent-label').textContent = config.divergent_label || defaultConfig.divergent_label;
+            document.getElementById('transform-label').textContent = config.transform_label || defaultConfig.transform_label;
+            document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+            
+            const primaryColor = config.primary_color || defaultConfig.primary_color;
+            const textColor = config.text_color || defaultConfig.text_color;
+            
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.body.style.color = textColor;
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        {
+                            get: () => config.primary_color || defaultConfig.primary_color,
+                            set: (value) => {
+                                config.primary_color = value;
+                                window.elementSdk.setConfig({ primary_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.text_color || defaultConfig.text_color,
+                            set: (value) => {
+                                config.text_color = value;
+                                window.elementSdk.setConfig({ text_color: value });
+                            }
+                        }
+                    ],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ['main_title', config.main_title || defaultConfig.main_title],
+                    ['convergent_label', config.convergent_label || defaultConfig.convergent_label],
+                    ['divergent_label', config.divergent_label || defaultConfig.divergent_label],
+                    ['transform_label', config.transform_label || defaultConfig.transform_label],
+                    ['footer_text', config.footer_text || defaultConfig.footer_text]
+                ])
+            });
+        }
+    </script>
+ </body>
+</html>
