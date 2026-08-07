@@ -1,0 +1,1750 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260807-05-4dc3575","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script><script src="/_sdk/7949ff62d67710d5.telemetry_sdk.js" integrity="sha512-KIvXA82Di44YY/RH9/63A9MuTuavYgDFG8PfErJn7Wli4K0LAOk+coo/aPXk3+ZNL96nHh9VYD4PE+fLes+laQ=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مختبر نظرية فيثاغوروس</title>
+  <link rel="icon" type="image/png" href="25.png">
+  <script src="/_sdk/7c520c0d71d7a06d.element_sdk.js" integrity="sha512-ZRhMhUorW8pmwd91OvkYXfNJMO7l1l3Dt8LinTPHSEXBz3TUAFKfKOO3bQE/KGcQJm6I4Ho+kKNLS9QZB8wyew=="></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+            color: #ffffff;
+            direction: rtl;
+        }
+
+        ::selection {
+            background-color: #a78bfa;
+            color: white;
+        }
+
+        .app-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+            overflow: auto;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            border-color: #a78bfa;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+        }
+
+        .canvas-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .canvas-container.hidden {
+            display: none;
+        }
+
+        #pythagoras-canvas {
+            max-width: 100%;
+            max-height: 100%;
+            cursor: grab;
+        }
+
+        #pythagoras-canvas:active {
+            cursor: grabbing;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .info-panel.hidden {
+            display: none;
+        }
+
+        .trig-ratios-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .trig-ratios-panel.hidden {
+            display: none;
+        }
+
+        .trig-ratios-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .trig-angles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .angle-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .angle-header {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid rgba(251, 191, 36, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .trig-ratio-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trig-ratio-item:last-child {
+            border-bottom: none;
+        }
+
+        .trig-ratio-name {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+
+        .trig-ratio-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .trig-ratio-formula {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .complementary-angles-panel {
+            background: rgba(167, 139, 250, 0.1);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .complementary-angles-panel.hidden {
+            display: none;
+        }
+
+        .complementary-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #c4b5fd;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .complementary-formula {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fbbf24;
+            text-align: center;
+        }
+
+        .trig-table-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .trig-table-panel.hidden {
+            display: none;
+        }
+
+        .trig-table-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .trig-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .trig-table th {
+            background: rgba(167, 139, 250, 0.2);
+            color: #ffffff;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .trig-table td {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            text-align: center;
+            font-size: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trig-table tr:hover td {
+            background: rgba(167, 139, 250, 0.1);
+        }
+
+        .angle-column {
+            background: rgba(251, 191, 36, 0.15);
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .trig-identities-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .trig-identities-panel.hidden {
+            display: none;
+        }
+
+        .identities-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .identity-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .identity-formula {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .identity-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        .formula-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fbbf24;
+        }
+
+        .measurements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .measurement-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .measurement-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .measurement-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .side-a { color: #a78bfa; }
+        .side-b { color: #10b981; }
+        .side-c { color: #fbbf24; }
+
+        .challenge-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .challenge-panel.active {
+            display: block;
+        }
+
+        .challenge-text {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        .input-container {
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .value-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .value-input-label {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .value-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .value-number-input {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .value-number-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .slider-container {
+            width: 100%;
+        }
+
+        .slider-label {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .input-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .input-panel.hidden {
+            display: none;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .input-group input {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #a78bfa;
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #fbbf24;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #fbbf24;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .check-btn {
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: none;
+            border-radius: 12px;
+            color: #1e1b4b;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4);
+        }
+
+        .show-solution-btn {
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .show-solution-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .show-solution-btn.hidden {
+            display: none;
+        }
+
+        .new-problem-btn {
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .new-problem-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(167, 139, 250, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .result-message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .result-message.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid #10b981;
+            color: #10b981;
+            display: block;
+        }
+
+        .result-message.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            display: block;
+        }
+
+        .result-message.solution {
+            background: rgba(167, 139, 250, 0.2);
+            border: 2px solid #a78bfa;
+            color: #ffffff;
+            display: block;
+        }
+
+        .article-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            line-height: 1.8;
+        }
+
+        .article-section h2 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .article-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #a78bfa;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .article-section p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 15px;
+        }
+
+        .article-section ul {
+            margin-right: 25px;
+            margin-bottom: 15px;
+        }
+
+        .article-section li {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .formula-box {
+            background: rgba(167, 139, 250, 0.1);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #fbbf24;
+            margin: 20px 0;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .return-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .return-button:hover {
+            background: #1e90ff;
+            border-color: #1e90ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 144, 255, 0.4);
+        }
+
+        .return-button svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .return-button-text {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .return-button {
+                padding: 10px;
+                top: 15px;
+                left: 15px;
+            }
+
+            .return-button-text {
+                display: none;
+            }
+
+            .return-button svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .formula-display {
+                font-size: 18px;
+            }
+
+            .measurements {
+                grid-template-columns: 1fr;
+            }
+
+            .mode-btn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+
+            .article-section {
+                padding: 20px;
+            }
+
+            .article-section h2 {
+                font-size: 22px;
+            }
+
+            .article-section h3 {
+                font-size: 18px;
+            }
+
+            .trig-table {
+                font-size: 13px;
+            }
+
+            .trig-table th,
+            .trig-table td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/0e8d3a91e1c6f495.data_sdk.js" type="text/javascript" integrity="sha512-c00oDoGjsMgluCLLEyVl3suwEkgjOGGplVFbsilUoBg4aMKNmsL3mwsc9r0dPn95qiSZyjBousQXgROkAW7p/w=="></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body class="h-full"><a href="https://1hiba7.github.io/Hiba_Kittaneh/" target="_blank" rel="noopener noreferrer" class="return-button">
+   <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+   </svg><span class="return-button-text">العودة للموسوعة الرئيسية</span> </a>
+  <div class="app-container">
+   <div class="header">
+    <h1 id="main-title">مختبر نظرية فيثاغوروس</h1>
+    <p id="subtitle">اكتشفي السر الذي يربط أضلاع المثلث القائم منذ آلاف السنين</p>
+   </div>
+   <div class="main-content">
+    <div class="mode-selector"><button class="mode-btn active" data-mode="explore">الاستكشاف الحر</button> <button class="mode-btn" data-mode="challenge">التحدي</button>
+    </div>
+    <div class="input-panel" id="input-panel">
+     <div class="input-group"><label for="input-a">الضلع أ</label> <input type="number" id="input-a" min="1" max="300" step="0.1" value="150">
+     </div>
+     <div class="input-group"><label for="input-b">الضلع ب</label> <input type="number" id="input-b" min="1" max="300" step="0.1" value="200">
+     </div>
+     <div class="input-group"><label for="input-c">الوتر ج (محسوب)</label> <input type="number" id="input-c" readonly style="background: rgba(251, 191, 36, 0.2); cursor: not-allowed;">
+     </div>
+    </div>
+    <div class="canvas-container" id="canvas-container">
+     <canvas id="pythagoras-canvas"></canvas>
+    </div>
+    <div class="info-panel" id="info-panel">
+     <div class="formula-display" id="formula">
+      أ² + ب² = ج²
+     </div>
+     <div class="measurements">
+      <div class="measurement-card">
+       <div class="measurement-label">
+        الضلع أ
+       </div>
+       <div class="measurement-value side-a" id="value-a">
+        3.0
+       </div>
+      </div>
+      <div class="measurement-card">
+       <div class="measurement-label">
+        المربع أ²
+       </div>
+       <div class="measurement-value side-a" id="value-a2">
+        9.0
+       </div>
+      </div>
+      <div class="measurement-card">
+       <div class="measurement-label">
+        الضلع ب
+       </div>
+       <div class="measurement-value side-b" id="value-b">
+        4.0
+       </div>
+      </div>
+      <div class="measurement-card">
+       <div class="measurement-label">
+        المربع ب²
+       </div>
+       <div class="measurement-value side-b" id="value-b2">
+        16.0
+       </div>
+      </div>
+      <div class="measurement-card">
+       <div class="measurement-label">
+        الوتر ج
+       </div>
+       <div class="measurement-value side-c" id="value-c">
+        5.0
+       </div>
+      </div>
+      <div class="measurement-card">
+       <div class="measurement-label">
+        المربع ج²
+       </div>
+       <div class="measurement-value side-c" id="value-c2">
+        25.0
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="trig-ratios-panel" id="trig-ratios-panel">
+     <div class="trig-ratios-title">
+      📐 النسب المثلثية للزوايا
+     </div>
+     <div class="trig-angles-container">
+      <div class="angle-card">
+       <div class="angle-header">
+        الزاوية أ
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          جا (أ) - الجيب
+         </div>
+         <div class="trig-ratio-formula">
+          المقابل ÷ الوتر
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="sin-a">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          جتا (أ) - جيب التمام
+         </div>
+         <div class="trig-ratio-formula">
+          المجاور ÷ الوتر
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="cos-a">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          ظا (أ) - الظل
+         </div>
+         <div class="trig-ratio-formula">
+          المقابل ÷ المجاور
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="tan-a">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          قتا (أ) - قاطع التمام
+         </div>
+         <div class="trig-ratio-formula">
+          الوتر ÷ المقابل
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="csc-a">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          قا (أ) - القاطع
+         </div>
+         <div class="trig-ratio-formula">
+          الوتر ÷ المجاور
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="sec-a">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          ظتا (أ) - ظل التمام
+         </div>
+         <div class="trig-ratio-formula">
+          المجاور ÷ المقابل
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="cot-a">
+         0.000
+        </div>
+       </div>
+      </div>
+      <div class="angle-card">
+       <div class="angle-header">
+        الزاوية ج
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          جا (ج) - الجيب
+         </div>
+         <div class="trig-ratio-formula">
+          المقابل ÷ الوتر
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="sin-c">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          جتا (ج) - جيب التمام
+         </div>
+         <div class="trig-ratio-formula">
+          المجاور ÷ الوتر
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="cos-c">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          ظا (ج) - الظل
+         </div>
+         <div class="trig-ratio-formula">
+          المقابل ÷ المجاور
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="tan-c">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          قتا (ج) - قاطع التمام
+         </div>
+         <div class="trig-ratio-formula">
+          الوتر ÷ المقابل
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="csc-c">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          قا (ج) - القاطع
+         </div>
+         <div class="trig-ratio-formula">
+          الوتر ÷ المجاور
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="sec-c">
+         0.000
+        </div>
+       </div>
+       <div class="trig-ratio-item">
+        <div>
+         <div class="trig-ratio-name">
+          ظتا (ج) - ظل التمام
+         </div>
+         <div class="trig-ratio-formula">
+          المجاور ÷ المقابل
+         </div>
+        </div>
+        <div class="trig-ratio-value" id="cot-c">
+         0.000
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="complementary-angles-panel" id="complementary-angles-panel">
+     <div class="complementary-title">
+      🔄 علاقات الزوايا المتممة
+     </div>
+     <div class="complementary-formula">
+      جا (أ) = جتا (ج)
+     </div>
+     <div class="complementary-formula">
+      جا (أ) = جتا (90° - أ)
+     </div>
+     <div class="complementary-formula">
+      جتا (أ) = جا (90° - أ)
+     </div>
+     <div style="text-align: center; margin-top: 15px; font-size: 14px; color: rgba(255, 255, 255, 0.7);">
+      💡 في المثلث القائم: الزاوية أ + الزاوية ج = 90°
+     </div>
+    </div>
+    <div class="trig-table-panel" id="trig-table-panel">
+     <div class="trig-table-title">
+      📊 جدول الزوايا الخاصة
+     </div>
+     <table class="trig-table">
+      <thead>
+       <tr>
+        <th class="angle-column">الزاوية</th>
+        <th>جا (Sin)</th>
+        <th>جتا (Cos)</th>
+        <th>ظا (Tan)</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td class="angle-column">0° / 360°</td>
+        <td>0</td>
+        <td>1</td>
+        <td>0</td>
+       </tr>
+       <tr>
+        <td class="angle-column">30°</td>
+        <td>1/2</td>
+        <td>√3/2</td>
+        <td>1/√3</td>
+       </tr>
+       <tr>
+        <td class="angle-column">45°</td>
+        <td>√2/2</td>
+        <td>√2/2</td>
+        <td>1</td>
+       </tr>
+       <tr>
+        <td class="angle-column">60°</td>
+        <td>√3/2</td>
+        <td>1/2</td>
+        <td>√3</td>
+       </tr>
+       <tr>
+        <td class="angle-column">90°</td>
+        <td>1</td>
+        <td>0</td>
+        <td>غير معرفة</td>
+       </tr>
+       <tr>
+        <td class="angle-column">180°</td>
+        <td>0</td>
+        <td>-1</td>
+        <td>0</td>
+       </tr>
+       <tr>
+        <td class="angle-column">270°</td>
+        <td>-1</td>
+        <td>0</td>
+        <td>غير معرفة</td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="trig-identities-panel" id="trig-identities-panel">
+     <div class="identities-title">
+      ✨ المتطابقات المثلثية الأساسية
+     </div>
+     <div class="identity-card">
+      <div class="identity-formula">
+       ظا (س) = جا (س) ÷ جتا (س)
+      </div>
+      <div class="identity-description">
+       الظل يساوي الجيب على جيب التمام
+      </div>
+     </div>
+     <div class="identity-card">
+      <div class="identity-formula">
+       جا² (س) + جتا² (س) = 1
+      </div>
+      <div class="identity-description">
+       المتطابقة الفيثاغورية الأساسية
+      </div>
+     </div>
+     <div class="identity-card">
+      <div class="identity-formula">
+       ظا² (س) + 1 = قا² (س)
+      </div>
+      <div class="identity-description">
+       مربع الظل زائد واحد يساوي مربع القاطع
+      </div>
+     </div>
+     <div class="identity-card">
+      <div class="identity-formula">
+       ظتا² (س) + 1 = قتا² (س)
+      </div>
+      <div class="identity-description">
+       مربع ظل التمام زائد واحد يساوي مربع قاطع التمام
+      </div>
+     </div>
+    </div>
+    <div class="challenge-panel" id="challenge-panel">
+     <div class="challenge-text" id="challenge-question">
+      إذا كان أ = 3 و ب = 4، احسبي قيمة ج
+     </div>
+     <div class="input-container">
+      <div class="value-input-group">
+       <div class="value-input-label">
+        القيمة المقترحة:
+       </div>
+       <div class="value-input-wrapper"><input type="number" id="value-input" class="value-number-input" min="0.1" step="0.1" value="5.0">
+       </div>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label">
+        أو استخدم المنزلقة للتقدير السريع
+       </div><input type="range" id="c-slider" min="1" max="20" step="0.1" value="5">
+      </div>
+     </div>
+     <div class="button-group"><button class="check-btn" id="check-btn">تحقق من الإجابة</button> <button class="show-solution-btn" id="show-solution-btn">إظهار الحل</button> <button class="new-problem-btn" id="new-problem-btn">مسألة أخرى</button>
+     </div>
+     <div class="result-message" id="result-message"></div>
+    </div>
+    <div class="article-section">
+     <h2>📐 نظرية فيثاغوروس: جوهرة الرياضيات الخالدة</h2>
+     <p>نظرية فيثاغوروس هي إحدى أشهر النظريات الرياضية في التاريخ وتُنسب إلى العالم اليوناني فيثاغوروس الذي عاش في القرن السادس قبل الميلاد. هذه النظرية البسيطة في شكلها، العميقة في مضمونها، تربط بين أضلاع المثلث القائم بطريقة رائعة.</p>
+     <div class="formula-box">
+      أ² + ب² = ج²
+     </div>
+     <h3>🔍 فهم النظرية</h3>
+     <p>تنص النظرية على أن مجموع مربعي طولي الضلعين القائمين في المثلث القائم الزاوية (أ و ب) يساوي مربع طول الوتر (ج)، وهو الضلع المقابل للزاوية القائمة والأطول في المثلث.</p>
+     <h3>📝 مثال عملي</h3>
+     <p>لنفترض أن لدينا مثلث قائم الزاوية:</p>
+     <ul>
+      <li>الضلع الأول (أ) = 3 وحدات</li>
+      <li>الضلع الثاني (ب) = 4 وحدات</li>
+      <li>نريد حساب الوتر (ج)</li>
+     </ul>
+     <p><strong>الحل:</strong><br>
+       أ² + ب² = ج²<br>
+       3² + 4² = ج²<br>
+       9 + 16 = ج²<br>
+       25 = ج²<br>
+       ج = √25 = 5 وحدات</p>
+     <h3>🌟 التطبيقات العملية</h3>
+     <ul>
+      <li><strong>الهندسة المعمارية:</strong> حساب المسافات والارتفاعات في تصميم المباني</li>
+      <li><strong>الملاحة:</strong> تحديد أقصر مسافة بين نقطتين</li>
+      <li><strong>علم الفلك:</strong> حساب المسافات بين الأجرام السماوية</li>
+      <li><strong>التكنولوجيا:</strong> في أنظمة تحديد المواقع GPS والرسومات الحاسوبية</li>
+      <li><strong>الحياة اليومية:</strong> قياس المسافات في الحدائق والملاعب</li>
+     </ul>
+     <h3>🎯 الأهمية التاريخية</h3>
+     <p>على الرغم من أن النظرية تُنسب لفيثاغوروس، إلا أن الحضارات القديمة مثل البابليين والمصريين كانوا يستخدمونها قبل ذلك بقرون. لكن فيثاغوروس كان أول من قدم برهاناً رياضياً صارماً للنظرية، مما جعلها حجر الأساس في الهندسة الإقليدية.</p>
+     <h3>✨ البرهان الهندسي</h3>
+     <p>يمكن برهان النظرية بطرق متعددة، أشهرها البرهان الهندسي الذي يعتمد على رسم مربعات على أضلاع المثلث الثلاثة. عند مقارنة مساحات هذه المربعات، نجد أن مساحة المربع المرسوم على الوتر تساوي مجموع مساحتي المربعين المرسومين على الضلعين الآخرين.</p>
+     <p style="margin-top: 20px; padding: 15px; background: rgba(167, 139, 250, 0.1); border-radius: 8px;">💡 <strong>استخدمي المختبر أعلاه</strong> لاستكشاف النظرية بنفسك! جربي تغيير قيم الأضلاع ولاحظي كيف تتغير المربعات والقيم.</p>
+    </div>
+   </div>
+   <div class="footer">
+    <p id="footer-text">جميع الحقوق محفوظة لـ هبة كتانة / مدرسة قلقيلية الشرعية / وزارة الأوقاف / فلسطين</p>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            main_title: "مختبر نظرية فيثاغوروس",
+            subtitle: "اكتشفي السر الذي يربط أضلاع المثلث القائم منذ آلاف السنين",
+            footer_text: "جميع الحقوق محفوظة لـ هبة كتانة / مدرسة قلقيلية الشرعية / وزارة الأوقاف / فلسطين",
+            background_color: "#1e1b4b",
+            text_color: "#ffffff",
+            accent_color: "#a78bfa",
+            font_family: "Cairo",
+            font_size: 16
+        };
+
+        const canvas = document.getElementById('pythagoras-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let currentMode = 'explore';
+        let isDragging = false;
+        let dragVertex = null;
+        
+        let triangleData = {
+            centerX: 0,
+            centerY: 0,
+            a: 150,
+            b: 200,
+            scale: 1
+        };
+
+        let challengeA = 3;
+        let challengeB = 4;
+        let correctC = 5;
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width - 40;
+            canvas.height = rect.height - 40;
+            
+            triangleData.centerX = canvas.width / 2;
+            triangleData.centerY = canvas.height / 2;
+            
+            const maxDim = Math.min(canvas.width, canvas.height);
+            triangleData.scale = maxDim / 600;
+            
+            drawScene();
+        }
+
+        function calculateTriangle() {
+            const a = triangleData.a * triangleData.scale;
+            const b = triangleData.b * triangleData.scale;
+            const c = Math.sqrt(a * a + b * b);
+            
+            return {
+                a: a,
+                b: b,
+                c: c,
+                aReal: triangleData.a,
+                bReal: triangleData.b,
+                cReal: Math.sqrt(triangleData.a * triangleData.a + triangleData.b * triangleData.b)
+            };
+        }
+
+        function drawSquare(x, y, size, color, alpha = 0.3) {
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.globalAlpha = alpha;
+            ctx.fillRect(x, y, size, size);
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, size, size);
+            ctx.restore();
+        }
+
+        function drawTriangle(vertices) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(vertices[0].x, vertices[0].y);
+            ctx.lineTo(vertices[1].x, vertices[1].y);
+            ctx.lineTo(vertices[2].x, vertices[2].y);
+            ctx.closePath();
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fill();
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawLabel(x, y, text, color) {
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.font = `bold ${16 * triangleData.scale}px Cairo`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+            ctx.restore();
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const tri = calculateTriangle();
+            const cx = triangleData.centerX;
+            const cy = triangleData.centerY;
+            
+            const rightAngle = {
+                x: cx,
+                y: cy
+            };
+            const topVertex = {
+                x: cx,
+                y: cy - tri.b
+            };
+            const rightVertex = {
+                x: cx + tri.a,
+                y: cy
+            };
+            
+            drawSquare(cx, cy, tri.a, '#a78bfa', 0.2);
+            drawLabel(cx + tri.a/2, cy + tri.a/2, 'أ²', '#a78bfa');
+            
+            drawSquare(cx - tri.b, cy - tri.b, tri.b, '#10b981', 0.2);
+            drawLabel(cx - tri.b/2, cy - tri.b/2, 'ب²', '#10b981');
+            
+            const angle = Math.atan2(topVertex.y - rightVertex.y, topVertex.x - rightVertex.x);
+            
+            const hypMidX = (rightVertex.x + topVertex.x) / 2;
+            const hypMidY = (rightVertex.y + topVertex.y) / 2;
+            
+            ctx.save();
+            ctx.translate(hypMidX, hypMidY);
+            ctx.rotate(angle);
+            
+            const squareOffset = tri.c / 2;
+            ctx.fillStyle = 'rgba(251, 191, 36, 0.2)';
+            ctx.fillRect(-squareOffset, 0, tri.c, tri.c);
+            
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-squareOffset, 0, tri.c, tri.c);
+            
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = `bold ${16 * triangleData.scale}px Cairo`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('ج²', 0, tri.c / 2);
+            
+            ctx.restore();
+            
+            drawTriangle([rightAngle, topVertex, rightVertex]);
+            
+            drawLabel(cx + tri.a/2, cy + 20, 'أ', '#a78bfa');
+            drawLabel(cx - 20, cy - tri.b/2, 'ب', '#10b981');
+            
+            const labelX = (rightVertex.x + topVertex.x) / 2;
+            const labelY = (rightVertex.y + topVertex.y) / 2;
+            drawLabel(labelX - 15, labelY - 15, 'ج', '#fbbf24');
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(rightVertex.x, rightVertex.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#a78bfa';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(topVertex.x, topVertex.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            updateMeasurements(tri.aReal, tri.bReal, tri.cReal);
+        }
+
+        function updateMeasurements(a, b, c) {
+            document.getElementById('value-a').textContent = a.toFixed(1);
+            document.getElementById('value-a2').textContent = (a * a).toFixed(1);
+            document.getElementById('value-b').textContent = b.toFixed(1);
+            document.getElementById('value-b2').textContent = (b * b).toFixed(1);
+            document.getElementById('value-c').textContent = c.toFixed(1);
+            document.getElementById('value-c2').textContent = (c * c).toFixed(1);
+            
+            const a2 = (a * a).toFixed(1);
+            const b2 = (b * b).toFixed(1);
+            const c2 = (c * c).toFixed(1);
+            
+            document.getElementById('formula').innerHTML = 
+                `<span class="side-a">${a2}</span> + <span class="side-b">${b2}</span> = <span class="side-c">${c2}</span>`;
+            
+            updateTrigRatios(a, b, c);
+        }
+
+        function updateTrigRatios(a, b, c) {
+            const sinA = b / c;
+            const cosA = a / c;
+            const tanA = b / a;
+            const cscA = c / b;
+            const secA = c / a;
+            const cotA = a / b;
+            
+            document.getElementById('sin-a').textContent = sinA.toFixed(3);
+            document.getElementById('cos-a').textContent = cosA.toFixed(3);
+            document.getElementById('tan-a').textContent = tanA.toFixed(3);
+            document.getElementById('csc-a').textContent = cscA.toFixed(3);
+            document.getElementById('sec-a').textContent = secA.toFixed(3);
+            document.getElementById('cot-a').textContent = cotA.toFixed(3);
+            
+            const sinC = a / c;
+            const cosC = b / c;
+            const tanC = a / b;
+            const cscC = c / a;
+            const secC = c / b;
+            const cotC = b / a;
+            
+            document.getElementById('sin-c').textContent = sinC.toFixed(3);
+            document.getElementById('cos-c').textContent = cosC.toFixed(3);
+            document.getElementById('tan-c').textContent = tanC.toFixed(3);
+            document.getElementById('csc-c').textContent = cscC.toFixed(3);
+            document.getElementById('sec-c').textContent = secC.toFixed(3);
+            document.getElementById('cot-c').textContent = cotC.toFixed(3);
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches ? e.touches[0] : e;
+            return {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+        }
+
+        function isNearRightVertex(mouseX, mouseY) {
+            const tri = calculateTriangle();
+            const rightVertex = {
+                x: triangleData.centerX + tri.a,
+                y: triangleData.centerY
+            };
+            const dist = Math.sqrt(Math.pow(mouseX - rightVertex.x, 2) + Math.pow(mouseY - rightVertex.y, 2));
+            return dist < 30;
+        }
+
+        function isNearTopVertex(mouseX, mouseY) {
+            const tri = calculateTriangle();
+            const topVertex = {
+                x: triangleData.centerX,
+                y: triangleData.centerY - tri.b
+            };
+            const dist = Math.sqrt(Math.pow(mouseX - topVertex.x, 2) + Math.pow(mouseY - topVertex.y, 2));
+            return dist < 30;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (currentMode !== 'explore') return;
+            const pos = getMousePos(e);
+            if (isNearRightVertex(pos.x, pos.y)) {
+                isDragging = true;
+                dragVertex = 'right';
+            } else if (isNearTopVertex(pos.x, pos.y)) {
+                isDragging = true;
+                dragVertex = 'top';
+            }
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (currentMode !== 'explore') return;
+            e.preventDefault();
+            const pos = getMousePos(e);
+            if (isNearRightVertex(pos.x, pos.y)) {
+                isDragging = true;
+                dragVertex = 'right';
+            } else if (isNearTopVertex(pos.x, pos.y)) {
+                isDragging = true;
+                dragVertex = 'top';
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging || currentMode !== 'explore') return;
+            const pos = getMousePos(e);
+            
+            if (dragVertex === 'right') {
+                triangleData.a = Math.max(50, Math.min(300, (pos.x - triangleData.centerX) / triangleData.scale));
+                document.getElementById('input-a').value = triangleData.a.toFixed(1);
+            } else if (dragVertex === 'top') {
+                triangleData.b = Math.max(50, Math.min(300, (triangleData.centerY - pos.y) / triangleData.scale));
+                document.getElementById('input-b').value = triangleData.b.toFixed(1);
+            }
+            
+            drawScene();
+            updateInputC();
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDragging || currentMode !== 'explore') return;
+            e.preventDefault();
+            const pos = getMousePos(e);
+            
+            if (dragVertex === 'right') {
+                triangleData.a = Math.max(50, Math.min(300, (pos.x - triangleData.centerX) / triangleData.scale));
+                document.getElementById('input-a').value = triangleData.a.toFixed(1);
+            } else if (dragVertex === 'top') {
+                triangleData.b = Math.max(50, Math.min(300, (triangleData.centerY - pos.y) / triangleData.scale));
+                document.getElementById('input-b').value = triangleData.b.toFixed(1);
+            }
+            
+            drawScene();
+            updateInputC();
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragVertex = null;
+        });
+
+        canvas.addEventListener('touchend', () => {
+            isDragging = false;
+            dragVertex = null;
+        });
+
+        function initModeButtons() {
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentMode = btn.dataset.mode;
+                    
+                    if (currentMode === 'challenge') {
+                        document.getElementById('canvas-container').classList.add('hidden');
+                        document.getElementById('info-panel').classList.add('hidden');
+                        document.getElementById('input-panel').classList.add('hidden');
+                        document.getElementById('trig-ratios-panel').classList.add('hidden');
+                        document.getElementById('complementary-angles-panel').classList.add('hidden');
+                        document.getElementById('trig-table-panel').classList.add('hidden');
+                        document.getElementById('trig-identities-panel').classList.add('hidden');
+                        document.getElementById('challenge-panel').classList.add('active');
+                        generateChallenge();
+                    } else {
+                        document.getElementById('canvas-container').classList.remove('hidden');
+                        document.getElementById('info-panel').classList.remove('hidden');
+                        document.getElementById('input-panel').classList.remove('hidden');
+                        document.getElementById('trig-ratios-panel').classList.remove('hidden');
+                        document.getElementById('complementary-angles-panel').classList.remove('hidden');
+                        document.getElementById('trig-table-panel').classList.remove('hidden');
+                        document.getElementById('trig-identities-panel').classList.remove('hidden');
+                        document.getElementById('challenge-panel').classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        function generateChallenge() {
+            challengeA = Math.floor(Math.random() * 8) + 3;
+            challengeB = Math.floor(Math.random() * 8) + 3;
+            correctC = Math.sqrt(challengeA * challengeA + challengeB * challengeB);
+            
+            document.getElementById('challenge-question').textContent = 
+                `إذا كان أ = ${challengeA} و ب = ${challengeB}، احسبي قيمة ج`;
+            
+            document.getElementById('c-slider').max = Math.ceil(correctC * 2);
+            document.getElementById('c-slider').value = Math.ceil(correctC);
+            document.getElementById('value-input').value = Math.ceil(correctC).toFixed(1);
+            document.getElementById('result-message').style.display = 'none';
+            document.getElementById('result-message').className = 'result-message';
+            document.getElementById('show-solution-btn').classList.remove('hidden');
+        }
+
+        document.getElementById('c-slider').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            document.getElementById('value-input').value = value.toFixed(1);
+        });
+
+        document.getElementById('value-input').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (!isNaN(value) && value > 0) {
+                document.getElementById('c-slider').value = value;
+            }
+        });
+
+        document.getElementById('check-btn').addEventListener('click', () => {
+            const userAnswer = parseFloat(document.getElementById('value-input').value);
+            const difference = Math.abs(userAnswer - correctC);
+            const resultMsg = document.getElementById('result-message');
+            
+            document.getElementById('check-btn').style.display = 'none';
+            
+            if (difference < 0.5) {
+                resultMsg.textContent = '✅ ممتاز! الإجابة صحيحة!';
+                resultMsg.className = 'result-message correct';
+                resultMsg.style.display = 'block';
+                document.getElementById('show-solution-btn').classList.add('hidden');
+            } else {
+                resultMsg.innerHTML = `
+                    <strong>❌ الإجابة غير صحيحة</strong><br><br>
+                    إجابتك: ${userAnswer.toFixed(2)}<br>
+                    الإجابة الصحيحة: ${correctC.toFixed(2)}<br>
+                    الفرق: ${difference.toFixed(2)}<br><br>
+                    💡 يمكنك الضغط على "إظهار الحل" لمعرفة الطريقة الصحيحة.
+                `;
+                resultMsg.className = 'result-message incorrect';
+                resultMsg.style.display = 'block';
+                resultMsg.style.textAlign = 'right';
+            }
+        });
+
+        document.getElementById('show-solution-btn').addEventListener('click', () => {
+            document.getElementById('check-btn').style.display = 'none';
+            
+            const resultMsg = document.getElementById('result-message');
+            const steps = `
+                <strong>الحل خطوة بخطوة:</strong><br><br>
+                <strong>النظرية:</strong> أ² + ب² = ج²<br><br>
+                <strong>التعويض:</strong><br>
+                ${challengeA}² + ${challengeB}² = ج²<br><br>
+                <strong>الحساب:</strong><br>
+                ${challengeA * challengeA} + ${challengeB * challengeB} = ج²<br><br>
+                ${challengeA * challengeA + challengeB * challengeB} = ج²<br><br>
+                <strong>استخراج الجذر:</strong><br>
+                ج = √${challengeA * challengeA + challengeB * challengeB}<br><br>
+                <strong>الإجابة النهائية:</strong><br>
+                ج = ${correctC.toFixed(2)}
+            `;
+            resultMsg.innerHTML = steps;
+            resultMsg.className = 'result-message solution';
+            resultMsg.style.display = 'block';
+            resultMsg.style.textAlign = 'right';
+            resultMsg.style.fontSize = '15px';
+            resultMsg.style.lineHeight = '1.6';
+            document.getElementById('show-solution-btn').classList.add('hidden');
+        });
+
+        document.getElementById('new-problem-btn').addEventListener('click', () => {
+            document.getElementById('check-btn').style.display = 'inline-block';
+            generateChallenge();
+        });
+
+        document.getElementById('input-a').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (value >= 1 && value <= 300) {
+                triangleData.a = value;
+                drawScene();
+                updateInputC();
+            }
+        });
+
+        document.getElementById('input-b').addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (value >= 1 && value <= 300) {
+                triangleData.b = value;
+                drawScene();
+                updateInputC();
+            }
+        });
+
+        function updateInputC() {
+            const c = Math.sqrt(triangleData.a * triangleData.a + triangleData.b * triangleData.b);
+            document.getElementById('input-c').value = c.toFixed(2);
+        }
+
+        async function onConfigChange(config) {
+            const mainTitle = config.main_title || defaultConfig.main_title;
+            const subtitle = config.subtitle || defaultConfig.subtitle;
+            const footerText = config.footer_text || defaultConfig.footer_text;
+            
+            document.getElementById('main-title').textContent = mainTitle;
+            document.getElementById('subtitle').textContent = subtitle;
+            document.getElementById('footer-text').textContent = footerText;
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig: defaultConfig,
+                onConfigChange: onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["main_title", config.main_title || defaultConfig.main_title],
+                    ["subtitle", config.subtitle || defaultConfig.subtitle],
+                    ["footer_text", config.footer_text || defaultConfig.footer_text]
+                ])
+            });
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        initModeButtons();
+        resizeCanvas();
+        updateInputC();
+    </script>
+ </body>
+</html>
