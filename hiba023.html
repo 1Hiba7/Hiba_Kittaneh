@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رحلة إلى قلب الأرض</title>
+  <link rel="icon" type="image/png" href="23.png">
+  <style>
+        /* === دمج خط Tajawal بجميع الأوزان (عربي + لاتيني) === */
+        /* arabic 400 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 400;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2) format('woff2');
+          unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+        }
+        /* latin 400 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 400;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzGBCw.woff2) format('woff2');
+          unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        /* arabic 500 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 500;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l8KiHrRpiYlJ.woff2) format('woff2');
+          unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+        }
+        /* latin 500 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 500;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l8KiHrFpiQ.woff2) format('woff2');
+          unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        /* arabic 700 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 700;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2) format('woff2');
+          unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+        }
+        /* latin 700 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 700;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrFpiQ.woff2) format('woff2');
+          unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        /* arabic 800 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 800;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrRpiYlJ.woff2) format('woff2');
+          unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;
+        }
+        /* latin 800 */
+        @font-face {
+          font-family: 'Tajawal';
+          font-style: normal;
+          font-weight: 800;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrFpiQ.woff2) format('woff2');
+          unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        /* ======================================= */
+
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ::selection {
+            background-color: #fab210;
+            color: #ffffff;
+        }
+
+        html, body {
+            height: auto;
+            min-height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(180deg, #020508 0%, #0a1628 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            position: relative;
+        }
+
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fab210, #ff8c00, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(250, 178, 16, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        .simulation-area {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+            justify-items: center;
+            padding: 1rem 0;
+        }
+
+        .depth-gauge {
+            background: rgba(20, 25, 35, 0.95);
+            border: 2px solid #fab210;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 10px 40px rgba(250, 178, 16, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-width: 200px;
+        }
+
+        .gauge-section {
+            text-align: center;
+        }
+
+        .gauge-title {
+            font-size: 0.9rem;
+            color: #fab210;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gauge-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fab210, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.3rem;
+        }
+
+        .gauge-unit {
+            font-size: 0.85rem;
+            color: #808080;
+            font-weight: 600;
+        }
+
+        .gauge-bar {
+            width: 100%;
+            height: 200px;
+            background: rgba(40, 45, 55, 0.8);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(250, 178, 16, 0.3);
+        }
+
+        .gauge-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #fab210, #ff8c00, #ff6b35);
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(250, 178, 16, 0.5);
+        }
+
+        .earth-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .earth-cross-section {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            cursor: pointer;
+        }
+
+        .earth-layer {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .earth-layer:hover {
+            transform: scale(1.06);
+            filter: brightness(1.4);
+        }
+
+        .earth-layer.active {
+            filter: brightness(1.6) drop-shadow(0 0 25px currentColor);
+            transform: scale(1.05);
+        }
+
+        .layer-icon {
+            font-size: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .earth-layer:hover .layer-icon,
+        .earth-layer.active .layer-icon {
+            opacity: 1;
+        }
+
+        .layer-crust {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6b4423, #8b5a3c, #a0724f);
+            border: 4px solid #d4a574;
+            box-shadow: 0 0 30px rgba(160, 114, 79, 0.4);
+        }
+
+        .layer-mantle {
+            width: 82%;
+            height: 82%;
+            top: 9%;
+            left: 9%;
+            background: linear-gradient(135deg, #ff6b35, #ff8547, #ffa066);
+            border: 4px solid #ff4500;
+            box-shadow: 0 0 40px rgba(255, 107, 53, 0.5);
+        }
+
+        .layer-outer-core {
+            width: 48%;
+            height: 48%;
+            top: 26%;
+            left: 26%;
+            background: linear-gradient(135deg, #fab210, #ffc04d, #ffd480);
+            border: 4px solid #ff8c00;
+            animation: pulse-outer 3s ease-in-out infinite, shake 0.5s ease-in-out;
+            box-shadow: 0 0 50px rgba(250, 178, 16, 0.7);
+        }
+
+        .layer-inner-core {
+            width: 23%;
+            height: 23%;
+            top: 38.5%;
+            left: 38.5%;
+            background: radial-gradient(circle, #fffacd, #ffec8b, #fab210);
+            border: 4px solid #ff6b35;
+            animation: pulse-inner 2s ease-in-out infinite;
+            box-shadow: 0 0 60px #fab210, 0 0 90px #ff8c00, inset 0 0 40px #fffacd;
+        }
+
+        @keyframes pulse-outer {
+            0%, 100% {
+                box-shadow: 0 0 50px rgba(250, 178, 16, 0.7), inset 0 0 30px rgba(255, 236, 139, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 80px rgba(250, 178, 16, 0.9), inset 0 0 50px rgba(255, 236, 139, 0.5);
+            }
+        }
+
+        @keyframes pulse-inner {
+            0%, 100% {
+                box-shadow: 0 0 60px #fab210, 0 0 90px #ff8c00, inset 0 0 40px #fffacd;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 90px #fab210, 0 0 120px #ff8c00, inset 0 0 60px #fffacd;
+                transform: scale(1.08);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+            20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+
+        .layer-outer-core.active {
+            animation: pulse-outer 3s ease-in-out infinite, shake 0.5s ease-in-out infinite;
+        }
+
+        .info-panel {
+            background: rgba(20, 25, 35, 0.95);
+            border: 2px solid #fab210;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 380px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 50px rgba(250, 178, 16, 0.3);
+        }
+
+        .info-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #fab210;
+            border-bottom: 3px solid rgba(250, 178, 16, 0.3);
+            padding-bottom: 0.7rem;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.3rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(250, 178, 16, 0.1), rgba(255, 107, 53, 0.05));
+            border-radius: 12px;
+            border: 1px solid rgba(250, 178, 16, 0.2);
+            transition: all 0.3s;
+        }
+
+        .info-item:hover {
+            background: linear-gradient(135deg, rgba(250, 178, 16, 0.15), rgba(255, 107, 53, 0.1));
+            transform: translateX(-5px);
+        }
+
+        .info-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #fab210;
+            margin-bottom: 0.4rem;
+            font-size: 1.05rem;
+        }
+
+        .info-value {
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #b0b0b0;
+            font-size: 1.15rem;
+            padding: 3rem 1rem;
+            line-height: 1.8;
+        }
+
+        .welcome-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .footer {
+            position: relative;
+            clear: both;
+            margin-top: 50px;
+            width: 100%;
+            background: rgba(20, 25, 35, 0.9);
+            border-top: 2px solid #fab210;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .return-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            margin-top: 1.5rem;
+        }
+
+        .return-button:hover {
+            background: #1e90ff;
+            border-color: #1e90ff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 48px rgba(30, 144, 255, 0.4);
+        }
+
+        .return-button-icon {
+            font-size: 1.3rem;
+            transition: transform 0.3s;
+        }
+
+        .return-button:hover .return-button-icon {
+            transform: translateX(3px);
+        }
+
+        .return-button-text {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1200px) {
+            .simulation-area {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .depth-gauge {
+                order: 1;
+                width: 100%;
+                max-width: 500px;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .gauge-bar {
+                height: 120px;
+                width: 60px;
+            }
+
+            .earth-container {
+                order: 2;
+            }
+
+            .info-panel {
+                order: 3;
+                width: 100%;
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .content-container {
+                padding: 1rem;
+            }
+
+            .earth-cross-section {
+                width: 320px;
+                height: 320px;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .info-panel {
+                padding: 1.5rem;
+            }
+
+            .info-panel h2 {
+                font-size: 1.5rem;
+            }
+
+            .depth-gauge {
+                flex-direction: column;
+            }
+
+            .gauge-bar {
+                height: 150px;
+                width: 100%;
+            }
+
+            .return-button-text {
+                display: none;
+            }
+
+            .return-button-icon {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="main-wrapper">
+   <div class="content-container">
+    <header class="header">
+     <h1 class="main-title" id="mainTitle">رحلة إلى قلب الأرض</h1>
+     <p class="subtitle" id="descriptionText">استكشف الطبقات التي تحت أقدامنا واكتشف أسرار الضغط والحرارة</p>
+    </header>
+    <div class="simulation-area">
+     <div class="depth-gauge">
+      <div class="gauge-section">
+       <div class="gauge-title">
+        العمق
+       </div>
+       <div class="gauge-value" id="depthValue">
+        0
+       </div>
+       <div class="gauge-unit">
+        كيلومتر
+       </div>
+       <div class="gauge-bar">
+        <div class="gauge-fill" id="depthFill"></div>
+       </div>
+      </div>
+      <div class="gauge-section">
+       <div class="gauge-title">
+        الضغط
+       </div>
+       <div class="gauge-value" id="pressureValue">
+        0.0
+       </div>
+       <div class="gauge-unit">
+        جيجا باسكال
+       </div>
+       <div class="gauge-bar">
+        <div class="gauge-fill" id="pressureFill"></div>
+       </div>
+      </div>
+     </div>
+     <div class="earth-container">
+      <div class="earth-cross-section">
+       <div class="earth-layer layer-crust" data-layer="crust"><span class="layer-icon">💎</span>
+       </div>
+       <div class="earth-layer layer-mantle" data-layer="mantle"><span class="layer-icon">🌋</span>
+       </div>
+       <div class="earth-layer layer-outer-core" data-layer="outer-core"><span class="layer-icon">🧲</span>
+       </div>
+       <div class="earth-layer layer-inner-core" data-layer="inner-core"><span class="layer-icon">⚡</span>
+       </div>
+      </div>
+     </div>
+     <div class="info-panel" id="infoPanel">
+      <div class="welcome-message"><span class="welcome-icon">🌍</span> اضغط على أي طبقة من طبقات الأرض لاستكشاف تفاصيلها العلمية والرحلة إلى أعماق كوكبنا
+      </div>
+     </div>
+    </div>
+   </div>
+   <footer class="footer">
+    <p class="footer-text" id="footerText">جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين</p><a href="https://1hiba7.github.io/Hiba_Kittaneh/" target="_blank" rel="noopener noreferrer" class="return-button"> <span class="return-button-icon">🏠</span> <span class="return-button-text">العودة للموسوعة الرئيسية</span> </a>
+   </footer>
+  </div>
+  <script>
+        const layersData = {
+            crust: {
+                name: 'القشرة الأرضية',
+                temperature: '0-400°C',
+                state: 'صلبة',
+                composition: 'صخور (سيليكات، بازلت، جرانيت) - توجد هنا المعادن كالفحم والألماس',
+                depth: '0-70 كم',
+                depthKm: 35,
+                pressure: '0-0.3',
+                icon: '💎'
+            },
+            mantle: {
+                name: 'الستار/الوشاح',
+                temperature: '1000-3700°C',
+                state: 'شبه صلبة (لزجة)',
+                composition: 'صخور منصهرة (سيليكات الحديد والماغنيسيوم) - مصدر الحمم البركانية',
+                depth: '70-2900 كم',
+                depthKm: 1485,
+                pressure: '24',
+                icon: '🌋'
+            },
+            'outer-core': {
+                name: 'اللب الخارجي',
+                temperature: '4000-5000°C',
+                state: 'سائلة',
+                composition: 'حديد ونيكل منصهر - يولد المجال المغناطيسي للأرض الذي يحمينا من الإشعاعات الشمسية',
+                depth: '2900-5150 كم',
+                depthKm: 4025,
+                pressure: '136-330',
+                icon: '🧲'
+            },
+            'inner-core': {
+                name: 'اللب الداخلي',
+                temperature: '5000-6000°C',
+                state: 'صلبة (بسبب الضغط الهائل)',
+                composition: 'حديد ونيكل صلب تحت ضغط 360 جيجا باسكال - أسخن من سطح الشمس!',
+                depth: '5150-6371 كم',
+                depthKm: 6371,
+                pressure: '360',
+                icon: '⚡'
+            }
+        };
+
+        const defaultConfig = {
+            main_title: 'رحلة إلى قلب الأرض',
+            description_text: 'استكشف الطبقات التي تحت أقدامنا واكتشف أسرار الضغط والحرارة',
+            footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة/قلقيلية الشرعية/وزارة الأوقاف/فلسطين'
+        };
+
+        function updateGauges(depthKm, pressure) {
+            const maxDepth = 6371;
+            const maxPressure = 360;
+            
+            animateValue('depthValue', 0, depthKm, 800, 0);
+            
+            const pressureNum = typeof pressure === 'string' && pressure.includes('-') 
+                ? parseFloat(pressure.split('-')[1]) 
+                : parseFloat(pressure);
+            animateValue('pressureValue', 0, pressureNum, 800, 1);
+            
+            const depthPercent = (depthKm / maxDepth) * 100;
+            const pressurePercent = (pressureNum / maxPressure) * 100;
+            
+            document.getElementById('depthFill').style.height = depthPercent + '%';
+            document.getElementById('pressureFill').style.height = pressurePercent + '%';
+        }
+
+        function animateValue(id, start, end, duration, decimals) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = current.toFixed(decimals);
+            }, 16);
+        }
+
+        function renderInfoPanel(layerKey) {
+            const layer = layersData[layerKey];
+            const infoPanel = document.getElementById('infoPanel');
+            
+            updateGauges(layer.depthKm, layer.pressure);
+            
+            infoPanel.innerHTML = `
+                <h2>${layer.icon} ${layer.name}</h2>
+                <div class="info-item">
+                    <div class="info-icon">🌡️</div>
+                    <div class="info-content">
+                        <div class="info-label">درجة الحرارة</div>
+                        <div class="info-value">${layer.temperature}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">⚗️</div>
+                    <div class="info-content">
+                        <div class="info-label">الحالة الفيزيائية</div>
+                        <div class="info-value">${layer.state}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">🔬</div>
+                    <div class="info-content">
+                        <div class="info-label">التكوين والمكونات</div>
+                        <div class="info-value">${layer.composition}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📏</div>
+                    <div class="info-content">
+                        <div class="info-label">نطاق العمق</div>
+                        <div class="info-value">${layer.depth}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupLayerInteractions() {
+            const layers = document.querySelectorAll('.earth-layer');
+            
+            layers.forEach(layer => {
+                layer.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const layerKey = layer.getAttribute('data-layer');
+                    
+                    layers.forEach(l => l.classList.remove('active'));
+                    layer.classList.add('active');
+                    
+                    renderInfoPanel(layerKey);
+                });
+            });
+        }
+
+        async function onConfigChange(config) {
+            const mainTitle = config.main_title || defaultConfig.main_title;
+            const descriptionText = config.description_text || defaultConfig.description_text;
+            const footerText = config.footer_text || defaultConfig.footer_text;
+            
+            document.getElementById('mainTitle').textContent = mainTitle;
+            document.getElementById('descriptionText').textContent = descriptionText;
+            document.getElementById('footerText').textContent = footerText;
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig: defaultConfig,
+                onConfigChange: onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ['main_title', config.main_title || defaultConfig.main_title],
+                    ['description_text', config.description_text || defaultConfig.description_text],
+                    ['footer_text', config.footer_text || defaultConfig.footer_text]
+                ])
+            });
+        }
+
+        setupLayerInteractions();
+        onConfigChange(window.elementSdk?.config || defaultConfig);
+    </script>
+ </body>
+</html>
