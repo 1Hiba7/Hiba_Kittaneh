@@ -166,6 +166,31 @@
       transform: scale(1.05);
       box-shadow: 0 6px 12px rgba(30, 144, 255, 0.3);
     }
+
+    button:focus-visible,
+    a:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 2px solid #22d3ee;
+      outline-offset: 2px;
+    }
+
+    input[disabled].slider-track {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .measured-period {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 3px;
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -181,11 +206,12 @@
    <div class="main-container">
     <div class="simulation-section">
      <div class="canvas-container">
-      <canvas id="pendulum-canvas" style="width: 100%; height: 100%;"></canvas>
+      <canvas id="pendulum-canvas" role="img" aria-label="رسم متحرك يوضح تأرجح البندول البسيط" style="width: 100%; height: 100%;">محاكاة بندول بسيط تفاعلية - يرجى تفعيل جافاسكربت لعرضها.</canvas>
       <div style="position: absolute; top: 20px; left: 20px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-radius: 12px; padding: 15px; border: 1px solid rgba(148, 163, 184, 0.3);">
-       <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 5px;">صيغة الدورة الزمنية</p>
+       <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 5px;">صيغة الدورة الزمنية (تقريب الزوايا الصغيرة)</p>
        <p style="font-family: monospace; font-size: 1.125rem; color: #22d3ee;">T = 2π√(L/g)</p>
-       <p id="period-value" style="font-family: monospace; font-size: 0.875rem; color: #a5b4fc; margin-top: 5px;">T = 2.01 s</p>
+       <p id="period-value" aria-live="polite" style="font-family: monospace; font-size: 0.875rem; color: #a5b4fc; margin-top: 5px;">T = 2.01 s</p>
+       <p id="measured-period-value" class="measured-period">T المقاس = --</p>
       </div>
      </div>
     </div>
@@ -195,22 +221,23 @@
        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
        </svg> لوحة التحكم</h2>
       <div style="margin-bottom: 20px;">
-       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">طول الخيط (L)</label> <span id="length-value" style="font-family: monospace; color: #22d3ee; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">1.00 م</span>
-       </div><input type="range" id="length-slider" min="0.5" max="2.5" step="0.1" value="1.0" class="slider-track" style="color: #22d3ee;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label for="length-slider" style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">طول الخيط (L)</label> <span id="length-value" style="font-family: monospace; color: #22d3ee; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">1.00 م</span>
+       </div><input type="range" id="length-slider" min="0.5" max="2.5" step="0.1" value="1.0" class="slider-track" style="color: #22d3ee;" aria-label="طول الخيط بالمتر">
       </div>
       <div style="margin-bottom: 20px;">
-       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">الكتلة (m)</label> <span id="mass-value" style="font-family: monospace; color: #818cf8; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">1.0 كجم</span>
-       </div><input type="range" id="mass-slider" min="0.5" max="3.0" step="0.1" value="1.0" class="slider-track" style="color: #818cf8;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label for="mass-slider" style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">الكتلة (m)</label> <span id="mass-value" style="font-family: monospace; color: #818cf8; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">1.0 كجم</span>
+       </div><input type="range" id="mass-slider" min="0.5" max="3.0" step="0.1" value="1.0" class="slider-track" style="color: #818cf8;" aria-label="كتلة الجسم بالكيلوغرام">
       </div>
       <div style="margin-bottom: 20px;">
-       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">زاوية الإطلاق</label> <span id="angle-value" style="font-family: monospace; color: #fbbf24; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">45°</span>
-       </div><input type="range" id="angle-slider" min="10" max="80" step="5" value="45" class="slider-track" style="color: #fbbf24;">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label for="angle-slider" style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500;">زاوية الإطلاق</label> <span id="angle-value" style="font-family: monospace; color: #fbbf24; font-size: 0.875rem; background: #334155; padding: 4px 8px; border-radius: 6px;">45°</span>
+       </div><input type="range" id="angle-slider" min="10" max="80" step="5" value="45" class="slider-track" style="color: #fbbf24;" aria-label="زاوية الإطلاق بالدرجات">
+       <p id="angle-warning" style="font-size: 0.7rem; color: #f59e0b; margin-top: 6px; display: none;">⚠ عند الزوايا الكبيرة تصبح صيغة T = 2π√(L/g) تقريبية فقط؛ قارن بالزمن المقاس فعليًا.</p>
       </div>
-      <div style="margin-bottom: 20px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500; display: block; margin-bottom: 10px;">قوة الجاذبية</label> <select id="gravity-selector" style="width: 100%; padding: 10px 12px; border-radius: 8px; background: #334155; color: white; border: 1px solid #475569; outline: none; transition: border-color 0.3s;"> <option value="9.81">🌍 الأرض (9.81 م/ث²)</option> <option value="1.62">🌕 القمر (1.62 م/ث²)</option> <option value="3.71">🔴 المريخ (3.71 م/ث²)</option> <option value="24.79">🟡 المشتري (24.79 م/ث²)</option> <option value="10.44">🪐 زحل (10.44 م/ث²)</option> </select>
+      <div style="margin-bottom: 20px;"><label for="gravity-selector" style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500; display: block; margin-bottom: 10px;">قوة الجاذبية</label> <select id="gravity-selector" style="width: 100%; padding: 10px 12px; border-radius: 8px; background: #334155; color: white; border: 1px solid #475569; outline: none; transition: border-color 0.3s;"> <option value="9.81">🌍 الأرض (9.81 م/ث²)</option> <option value="1.62">🌕 القمر (1.62 م/ث²)</option> <option value="3.71">🔴 المريخ (3.71 م/ث²)</option> <option value="24.79">🟡 المشتري (24.79 م/ث²)</option> <option value="10.44">🪐 زحل (10.44 م/ث²)</option> </select>
       </div><button id="release-btn" style="width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; color: white; background: linear-gradient(to left, #6366f1, #22d3ee); border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);"> 🚀 إطلاق البندول </button> <button id="reset-btn" style="width: 100%; margin-top: 10px; padding: 10px; border-radius: 12px; font-weight: 500; color: #cbd5e1; background: #334155; border: none; cursor: pointer; transition: all 0.3s;"> ↻ إعادة ضبط </button>
       <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between; background: rgba(51, 65, 85, 0.5); padding: 12px; border-radius: 12px;"><label style="color: #cbd5e1; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 8px;">
         <svg style="width: 16px; height: 16px; color: #22d3ee;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-        </svg> رسم المسار </label> <button id="trail-toggle" style="position: relative; display: inline-flex; height: 24px; width: 44px; align-items: center; border-radius: 9999px; transition: background-color 0.3s; background: #475569; border: none; cursor: pointer;"> <span id="trail-toggle-circle" style="display: inline-block; height: 16px; width: 16px; border-radius: 9999px; background: white; transition: transform 0.3s; transform: translateX(4px);"></span> </button>
+        </svg> رسم المسار </label> <button id="trail-toggle" role="switch" aria-checked="false" aria-label="تبديل رسم مسار حركة البندول" style="position: relative; display: inline-flex; height: 24px; width: 44px; align-items: center; border-radius: 9999px; transition: background-color 0.3s; background: #475569; border: none; cursor: pointer;"> <span id="trail-toggle-circle" style="display: inline-block; height: 16px; width: 16px; border-radius: 9999px; background: white; transition: transform 0.3s; transform: translateX(4px);"></span> </button>
       </div>
      </div>
      <div class="control-card" style="margin-bottom: 20px;">
@@ -242,10 +269,10 @@
       </div>
      </div>
      <div class="control-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label style="color: #cbd5e1; font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><label for="speed-slider" style="color: #cbd5e1; font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
         <svg style="width: 20px; height: 20px; color: #10b981;" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
         </svg> سرعة المحاكاة </label> <span id="speed-value" style="font-family: monospace; color: #10b981; font-size: 1rem; background: #334155; padding: 6px 12px; border-radius: 8px; font-weight: 500;">1.0x</span>
-      </div><input type="range" id="speed-slider" min="0.25" max="4" step="0.25" value="1" class="slider-track" style="color: #10b981;">
+      </div><input type="range" id="speed-slider" min="0.25" max="4" step="0.25" value="1" class="slider-track" style="color: #10b981;" aria-label="سرعة المحاكاة">
       <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; margin-top: 8px;"><span>بطيء</span> <span>عادي</span> <span>سريع</span>
       </div>
      </div>
@@ -363,6 +390,12 @@
     let trailPoints = [];
     const maxTrailPoints = 200;
 
+    // تتبع الزمن الدوري الفعلي (المقاس) عبر رصد لحظات عبور موضع الاتزان
+    let simTime = 0;
+    let prevAngleSign = 0;
+    let lastZeroCrossSimTime = null;
+    let measuredPeriod = null;
+
     const canvas = document.getElementById('pendulum-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -376,6 +409,8 @@
     const angleValue = document.getElementById('angle-value');
     const speedValue = document.getElementById('speed-value');
     const periodValue = document.getElementById('period-value');
+    const measuredPeriodValue = document.getElementById('measured-period-value');
+    const angleWarning = document.getElementById('angle-warning');
     const releaseBtn = document.getElementById('release-btn');
     const resetBtn = document.getElementById('reset-btn');
     const peBar = document.getElementById('pe-bar');
@@ -389,8 +424,14 @@
 
     function resizeCanvas() {
       const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width - 40;
-      canvas.height = rect.height - 40;
+      const dpr = window.devicePixelRatio || 1;
+      const cssWidth = rect.width - 40;
+      const cssHeight = rect.height - 40;
+      canvas.style.width = cssWidth + 'px';
+      canvas.style.height = cssHeight + 'px';
+      canvas.width = Math.round(cssWidth * dpr);
+      canvas.height = Math.round(cssHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       if (!isRunning) drawPendulum();
     }
 
@@ -430,8 +471,9 @@
     }
 
     function drawPendulum() {
-      const width = canvas.width;
-      const height = canvas.height;
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
       
       ctx.clearRect(0, 0, width, height);
       
@@ -509,11 +551,40 @@
     }
 
     function updatePhysics(deltaTime) {
-      const damping = 0.999;
+      // بدون تخميد: البندول هنا مثالي (بدون احتكاك) بحيث تُحفظ الطاقة الميكانيكية الكلية
+      // فعليًا، بما يتوافق مع الشرح النظري "PE + KE = ثابت" المعروض في الصفحة.
       const angularAcceleration = -(g / length) * Math.sin(angle);
       angularVelocity += angularAcceleration * deltaTime;
-      angularVelocity *= damping;
       angle += angularVelocity * deltaTime;
+
+      // قياس الزمن الدوري الفعلي: نرصد لحظات عبور البندول لموضع الاتزان (angle = 0)
+      // الفارق الزمني بين عبورين متتاليين يساوي نصف الزمن الدوري تقريبًا.
+      simTime += deltaTime;
+      const currentSign = Math.sign(angle);
+      if (prevAngleSign !== 0 && currentSign !== 0 && currentSign !== prevAngleSign) {
+        if (lastZeroCrossSimTime !== null) {
+          measuredPeriod = (simTime - lastZeroCrossSimTime) * 2;
+          updateMeasuredPeriodDisplay();
+        }
+        lastZeroCrossSimTime = simTime;
+      }
+      if (currentSign !== 0) prevAngleSign = currentSign;
+    }
+
+    function updateMeasuredPeriodDisplay() {
+      if (measuredPeriod !== null) {
+        measuredPeriodValue.textContent = 'T المقاس = ' + measuredPeriod.toFixed(2) + ' s';
+      } else {
+        measuredPeriodValue.textContent = 'T المقاس = --';
+      }
+    }
+
+    function resetPeriodMeasurement() {
+      simTime = 0;
+      prevAngleSign = 0;
+      lastZeroCrossSimTime = null;
+      measuredPeriod = null;
+      updateMeasuredPeriodDisplay();
     }
 
     function animate(currentTime) {
@@ -526,8 +597,9 @@
       updatePhysics(deltaTime);
       
       if (trailEnabled) {
-        const width = canvas.width;
-        const height = canvas.height;
+        const dpr = window.devicePixelRatio || 1;
+        const width = canvas.width / dpr;
+        const height = canvas.height / dpr;
         const pivotX = width / 2;
         const pivotY = height * 0.15;
         const scale = Math.min(width, height) * 0.25;
@@ -551,6 +623,9 @@
       if (isRunning) return;
       isRunning = true;
       lastTime = 0;
+      resetPeriodMeasurement();
+      lengthSlider.disabled = true;
+      gravitySelector.disabled = true;
       releaseBtn.textContent = '⏸ إيقاف مؤقت';
       animationId = requestAnimationFrame(animate);
     }
@@ -569,6 +644,9 @@
       angle = initialAngle;
       angularVelocity = 0;
       trailPoints = [];
+      resetPeriodMeasurement();
+      lengthSlider.disabled = false;
+      gravitySelector.disabled = false;
       drawPendulum();
       updateEnergyDisplay();
     }
@@ -593,8 +671,10 @@
       const degrees = parseInt(e.target.value);
       initialAngle = degrees * Math.PI / 180;
       angleValue.textContent = degrees + '°';
+      angleWarning.style.display = degrees > 20 ? 'block' : 'none';
       if (!isRunning) {
         angle = initialAngle;
+        resetPeriodMeasurement();
         drawPendulum();
         updateEnergyDisplay();
       }
@@ -623,6 +703,7 @@
     
     trailToggle.addEventListener('click', function() {
       trailEnabled = !trailEnabled;
+      trailToggle.setAttribute('aria-checked', trailEnabled ? 'true' : 'false');
       if (trailEnabled) {
         trailToggle.style.backgroundColor = '#22d3ee';
         trailToggleCircle.style.transform = 'translateX(24px)';
