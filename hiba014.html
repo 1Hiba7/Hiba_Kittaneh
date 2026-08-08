@@ -128,6 +128,14 @@
       opacity: 0.9;
     }
     
+    .custom-object {
+      background: linear-gradient(135deg, #81c784 0%, #4caf50 50%, #2e7d32 100%);
+      border: 2px solid #1b5e20;
+      box-shadow: inset 2px 2px 8px rgba(255,255,255,0.4),
+                  inset -2px -2px 8px rgba(0,0,0,0.2),
+                  3px 3px 12px rgba(0,0,0,0.3);
+    }
+
     .tank-stand {
       background: linear-gradient(180deg, #5d4e37 0%, #3d3229 100%);
       border-radius: 0 0 8px 8px;
@@ -300,6 +308,15 @@
          <div><span id="plastic-label" class="font-semibold text-gray-800 block">مكعب بلاستيكي</span> <span class="text-xs text-gray-500">كثافة: 1.0 غ/سم³</span>
          </div>
         </div>
+       </div><!-- Add custom object -->
+       <div class="mt-4 pt-4 border-t border-gray-200">
+        <h3 class="text-sm font-bold text-gray-700 mb-2">أضف جسمًا مخصصًا</h3>
+        <div class="flex gap-2">
+         <input id="custom-name" type="text" placeholder="اسم الجسم" class="w-1/2 text-xs border border-gray-300 rounded-lg px-2 py-1.5">
+         <input id="custom-density" type="number" step="0.01" min="0.01" placeholder="الكثافة" class="w-1/2 text-xs border border-gray-300 rounded-lg px-2 py-1.5">
+        </div>
+        <button id="add-custom-btn" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition-colors">+ إضافة الجسم</button>
+        <p id="custom-error" class="text-xs text-red-600 mt-1 hidden"></p>
        </div><button id="reset-btn" class="reset-btn w-full mt-4 text-white py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg> إعادة التجربة </button>
@@ -317,7 +334,12 @@
         </svg> معلومات علمية</h3>
        <p class="text-xs text-gray-600 leading-relaxed">• الأجسام تطفو على السائل إذا كانت كثافتها أقل من كثافة السائل<br>
          • الأجسام تغرق إذا كانت كثافتها أكبر من كثافة السائل<br>
-         • يمكن خلط السوائل لمشاهدة الطبقات</p>
+         • يمكن خلط السوائل لمشاهدة الطبقات<br>
+         • انقر على أي جسم داخل الخزان لإخراجه منه</p>
+       <div class="mt-3 pt-3 border-t border-gray-200">
+        <h4 class="font-bold text-gray-800 text-xs mb-1">مبدأ أرخميدس</h4>
+        <p class="text-xs text-gray-600 leading-relaxed">كل جسم مغمور في سائل يدفعه السائل إلى الأعلى بقوة تساوي وزن السائل الذي أزاحه الجسم. إذا كانت هذه القوة (قوة الطفو) أكبر من وزن الجسم، فإنه يطفو؛ وإذا كانت أصغر منه، فإنه يغرق.</p>
+       </div>
       </div>
      </aside><!-- Water Tank -->
      <section class="lg:col-span-5 flex flex-col items-center justify-center">
@@ -360,21 +382,21 @@
           </tr>
          </thead>
          <tbody id="data-table-body">
-          <tr>
+          <tr data-type="wood">
            <td class="font-semibold text-amber-700">مكعب خشبي</td>
            <td>48</td>
            <td>80</td>
            <td class="font-mono font-bold text-blue-600">0.60</td>
            <td><span class="status-badge status-float">يطفو ↑</span></td>
           </tr>
-          <tr>
+          <tr data-type="iron">
            <td class="font-semibold text-gray-700">كرة حديدية</td>
            <td>327</td>
            <td>42</td>
            <td class="font-mono font-bold text-blue-600">7.80</td>
            <td><span class="status-badge status-sink">يغرق ↓</span></td>
           </tr>
-          <tr>
+          <tr data-type="plastic">
            <td class="font-semibold text-pink-700">مكعب بلاستيكي</td>
            <td>64</td>
            <td>64</td>
@@ -452,14 +474,6 @@
     const objectsInTank = new Map();
     let draggedType = null;
 
-    function getPosition(density, liquidType = 'water') {
-      const liquidDensity = liquidsData[liquidType].density;
-      
-      if (density < liquidDensity) return 15; // يطفو
-      if (density > liquidDensity) return 85; // يغرق للقاع
-      return 45; // يعلق في المنتصف
-    }
-
     function updateLiquidsDisplay() {
       const tank = document.getElementById('water-tank');
       
@@ -498,6 +512,7 @@
       
       // Update all objects positions based on their density
       updateAllObjectsPositions();
+      updateDataTable();
     }
 
     function getLiquidLayerForObject(objectDensity) {
@@ -556,7 +571,7 @@
       }
       
       const heaviestLiquid = sortedLiquids[sortedLiquids.length - 1];
-      return { text: `��غرق ��ي ${liquidsData[heaviestLiquid].name} ↓`, class: 'status-sink' };
+      return { text: `يغرق في ${liquidsData[heaviestLiquid].name} ↓`, class: 'status-sink' };
     }
 
     function addObjectToTank(type) {
@@ -568,9 +583,13 @@
       
       const obj = document.createElement('div');
       obj.id = `tank-${type}`;
-      obj.className = `object-in-tank ${data.class} ${data.shape} ${data.size} flex items-center justify-center`;
+      obj.className = `object-in-tank ${data.class} ${data.shape} ${data.size} flex items-center justify-center cursor-pointer`;
       obj.style.cssText = `left: ${30 + Math.random() * 40}%; top: -20%;`;
-      
+      obj.title = 'اضغط لإخراج الجسم من الخزان';
+
+      // Allow removing a single object by clicking it
+      obj.addEventListener('click', () => removeObjectFromTank(type));
+
       tankObjects.appendChild(obj);
       objectsInTank.set(type, obj);
       
@@ -587,6 +606,28 @@
       });
       
       updateResults();
+      updateDataTable();
+    }
+
+    function removeObjectFromTank(type) {
+      const obj = objectsInTank.get(type);
+      if (!obj) return;
+
+      // Animate the object rising out of the tank before removing it
+      obj.style.top = '-20%';
+      setTimeout(() => {
+        obj.remove();
+      }, 800);
+
+      objectsInTank.delete(type);
+
+      // Re-enable source
+      const source = document.getElementById(`${type}-source`);
+      source.style.opacity = '1';
+      source.style.pointerEvents = 'auto';
+
+      updateResults();
+      updateDataTable();
     }
 
     function updateResults() {
@@ -614,32 +655,67 @@
       });
     }
 
+    function updateDataTable() {
+      document.querySelectorAll('#data-table-body tr[data-type]').forEach(row => {
+        const type = row.dataset.type;
+        const data = objectsData[type];
+        const statusCell = row.querySelector('td:last-child');
+        if (!data || !statusCell) return;
+
+        const status = getStatus(data.density);
+        statusCell.innerHTML = `<span class="status-badge ${status.class}">${status.text}</span>`;
+      });
+    }
+
     function resetExperiment() {
       const tankObjects = document.getElementById('tank-objects');
       tankObjects.innerHTML = '';
       objectsInTank.clear();
       
-      ['wood', 'iron', 'plastic'].forEach(type => {
+      Object.keys(objectsData).forEach(type => {
         const source = document.getElementById(`${type}-source`);
+        if (!source) return;
         source.style.opacity = '1';
         source.style.pointerEvents = 'auto';
       });
       
       document.getElementById('results-summary').classList.add('hidden');
+      updateDataTable();
     }
 
-    // Drag and Drop
-    document.querySelectorAll('.draggable-object').forEach(el => {
+    // Drag and Drop (works for both the built-in and custom objects)
+    let touchedElement = null;
+    let touchGhost = null;
+
+    function attachDragHandlers(el) {
       el.addEventListener('dragstart', (e) => {
         draggedType = e.target.closest('.draggable-object').dataset.type;
         e.target.closest('.draggable-object').classList.add('dragging');
       });
-      
+
       el.addEventListener('dragend', (e) => {
         e.target.closest('.draggable-object').classList.remove('dragging');
         document.getElementById('drop-indicator').style.opacity = '0';
       });
-    });
+
+      el.addEventListener('touchstart', (e) => {
+        if (el.style.pointerEvents === 'none') return;
+        touchedElement = el;
+        el.classList.add('dragging');
+
+        // Create a small floating preview that follows the finger
+        touchGhost = el.cloneNode(true);
+        touchGhost.style.position = 'fixed';
+        touchGhost.style.width = `${el.offsetWidth}px`;
+        touchGhost.style.opacity = '0.85';
+        touchGhost.style.pointerEvents = 'none';
+        touchGhost.style.zIndex = '2000';
+        touchGhost.style.transform = 'scale(0.9)';
+        document.body.appendChild(touchGhost);
+      }, { passive: true });
+    }
+
+    document.querySelectorAll('.draggable-object').forEach(attachDragHandlers);
 
     const tank = document.getElementById('water-tank');
     
@@ -661,34 +737,127 @@
       }
     });
 
-    // Touch support
-    let touchedElement = null;
-    
-    document.querySelectorAll('.draggable-object').forEach(el => {
-      el.addEventListener('touchstart', (e) => {
-        if (el.style.pointerEvents === 'none') return;
-        touchedElement = el;
-        el.classList.add('dragging');
-      });
-    });
+    // Touch support (floating preview follows the finger)
+    function isOverTank(x, y) {
+      const tankRect = tank.getBoundingClientRect();
+      return x >= tankRect.left && x <= tankRect.right &&
+             y >= tankRect.top && y <= tankRect.bottom;
+    }
+
+    document.addEventListener('touchmove', (e) => {
+      if (!touchedElement || !touchGhost) return;
+      e.preventDefault(); // avoid page scroll while dragging an object
+
+      const touch = e.touches[0];
+      touchGhost.style.left = `${touch.clientX - touchGhost.offsetWidth / 2}px`;
+      touchGhost.style.top = `${touch.clientY - touchGhost.offsetHeight / 2}px`;
+
+      const dropIndicator = document.getElementById('drop-indicator');
+      dropIndicator.style.opacity = isOverTank(touch.clientX, touch.clientY) ? '1' : '0';
+    }, { passive: false });
 
     document.addEventListener('touchend', (e) => {
       if (!touchedElement) return;
       
       const touch = e.changedTouches[0];
-      const tankRect = tank.getBoundingClientRect();
-      
-      if (touch.clientX >= tankRect.left && touch.clientX <= tankRect.right &&
-          touch.clientY >= tankRect.top && touch.clientY <= tankRect.bottom) {
+
+      if (isOverTank(touch.clientX, touch.clientY)) {
         const type = touchedElement.dataset.type;
         if (type) addObjectToTank(type);
       }
       
       touchedElement.classList.remove('dragging');
       touchedElement = null;
+
+      if (touchGhost) {
+        touchGhost.remove();
+        touchGhost = null;
+      }
+      document.getElementById('drop-indicator').style.opacity = '0';
     });
 
     document.getElementById('reset-btn').addEventListener('click', resetExperiment);
+
+    // Custom object creation
+    let customObjectCount = 0;
+
+    function showCustomError(message) {
+      const errorEl = document.getElementById('custom-error');
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+    }
+
+    function hideCustomError() {
+      document.getElementById('custom-error').classList.add('hidden');
+    }
+
+    document.getElementById('add-custom-btn').addEventListener('click', () => {
+      hideCustomError();
+
+      const nameInput = document.getElementById('custom-name');
+      const densityInput = document.getElementById('custom-density');
+      const name = nameInput.value.trim();
+      const density = parseFloat(densityInput.value);
+
+      if (!name) {
+        showCustomError('الرجاء إدخال اسم للجسم');
+        return;
+      }
+      if (isNaN(density) || density <= 0) {
+        showCustomError('الرجاء إدخال قيمة كثافة صحيحة أكبر من صفر');
+        return;
+      }
+
+      customObjectCount++;
+      const type = `custom-${customObjectCount}`;
+
+      // Register the new object's data (mass/volume are illustrative, based on a 50cm³ reference)
+      const volume = 50;
+      objectsData[type] = {
+        mass: Math.round(density * volume),
+        volume,
+        density,
+        label: name,
+        class: 'custom-object',
+        shape: 'rounded-md',
+        size: 'w-12 h-12'
+      };
+
+      // Build the draggable source card
+      const container = document.getElementById('objects-container');
+      const card = document.createElement('div');
+      card.id = `${type}-source`;
+      card.className = 'draggable-object bg-green-50 rounded-lg p-4 flex items-center gap-3';
+      card.draggable = true;
+      card.dataset.type = type;
+      card.innerHTML = `
+        <div class="w-12 h-12 custom-object rounded-md"></div>
+        <div>
+          <span class="font-semibold text-gray-800 block">${name}</span>
+          <span class="text-xs text-gray-500">كثافة: ${density.toFixed(2)} غ/سم³</span>
+        </div>
+      `;
+      container.appendChild(card);
+      attachDragHandlers(card);
+
+      // Add a matching row to the data table
+      const tbody = document.getElementById('data-table-body');
+      const row = document.createElement('tr');
+      row.dataset.type = type;
+      const status = getStatus(density);
+      row.innerHTML = `
+        <td class="font-semibold text-green-700">${name}</td>
+        <td>${objectsData[type].mass}</td>
+        <td>${volume}</td>
+        <td class="font-mono font-bold text-blue-600">${density.toFixed(2)}</td>
+        <td><span class="status-badge ${status.class}">${status.text}</span></td>
+      `;
+      tbody.appendChild(row);
+
+      // Clear the form
+      nameInput.value = '';
+      densityInput.value = '';
+    });
 
     // Liquid selection handlers
     document.querySelectorAll('.liquid-checkbox').forEach(checkbox => {
