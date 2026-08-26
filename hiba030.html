@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>معمل البرق التفاعلي | محاكاة علمية متطورة</title>
+    <link rel="icon" type="image/png" href="30.png">
+    <style>
+        :root { --env-top:#142b38; --env-bottom:#0e1a24; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b1a2a 0%, #07121c 100%);
+            font-family: 'Segoe UI', 'Tahoma', 'Poppins', 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 30px 20px;
+            color: #ffffff;
+        }
+
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(15, 25, 35, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,150,0.2);
+            overflow: hidden;
+            padding: 1.8rem;
+            transition: all 0.3s;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #FFE6B0, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            letter-spacing: -0.5px;
+        }
+        .hero p {
+            color: #e0f0ff;
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+        .badge {
+            display: inline-block;
+            background: #ffb34733;
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 6px 18px;
+            font-size: 0.85rem;
+            color: #ffdd99;
+            margin-top: 10px;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .simulation-area {
+            flex: 2;
+            min-width: 280px;
+        }
+        .control-panel {
+            flex: 1.2;
+            min-width: 250px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.2rem;
+            border: 1px solid rgba(255,200,100,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 0 2px #ffdd99;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        canvas:hover {
+            transform: scale(1.01);
+        }
+
+        /* === 3D Flat Buttons === */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .btn {
+            border: none;
+            background: #2c4a3e;
+            color: #fff3cf;
+            font-weight: bold;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 5px 0 #0f2a1f;
+            transform: translateY(-2px);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #0f2a1f;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #e07a2c, #b85c1a);
+            box-shadow: 0 5px 0 #6e3510;
+        }
+        .btn-home {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            background: linear-gradient(145deg, #3a5a7a, #1e3a5a);
+            box-shadow: 0 5px 0 #0f2a3f;
+            transition: box-shadow .28s ease, transform .28s ease;
+        }
+        /* عند المرور: الجزء الفاتح يتحرك إلى الأسفل ثم يعود لمكانه */
+        .btn-home::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0; height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.04));
+            transform: translateY(0);
+            transition: transform .22s ease;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #0f2a3f, 0 12px 22px rgba(0,0,0,.25);
+        }
+        .btn-home:hover::after {
+            animation: homeLightSweep .62s ease-in-out;
+        }
+        @keyframes homeLightSweep {
+            0% { transform: translateY(0); }
+            45% { transform: translateY(100%); }
+            100% { transform: translateY(0); }
+        }
+        .btn-home:active { transform: translateY(2px) scale(.98); box-shadow: 0 2px 0 #0f2a3f; }
+
+        .advanced-lab {
+            display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-top:22px;
+        }
+        .feature-card {
+            background:rgba(0,0,0,.42); border:1px solid rgba(255,200,100,.22); border-radius:1.7rem; padding:1.25rem;
+            box-shadow:0 10px 25px rgba(0,0,0,.18);
+        }
+        .feature-card h2 { color:#ffcf8a; margin-bottom:.8rem; }
+        .feature-card h3 { color:#ffd966; margin:1rem 0 .5rem; }
+        .mode-grid,.challenge-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+        .mode-option,.challenge-card { background:#1e2a2f; border:1px solid #ffcc8833; border-radius:14px; padding:12px; }
+        .mode-option { cursor:pointer; transition:.2s; color:#fff; text-align:center; }
+        .mode-option:hover,.mode-option.active { transform:translateY(-2px); border-color:#ffcc88; background:#263b40; }
+        .mode-option small,.challenge-card small { display:block; color:#cce0ff; margin-top:5px; line-height:1.5; }
+        .experiment-box,.quiz-box { background:#07131caa; border-radius:1.3rem; padding:15px; margin-top:12px; }
+        .experiment-input { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+        .experiment-input input { flex:1; min-width:120px; padding:10px 12px; border-radius:10px; border:1px solid #ffcc8866; background:#101d26; color:white; }
+        .result-message { margin-top:10px; padding:10px; border-radius:10px; background:#17322a; color:#e7ffe9; }
+        .quiz-option { width:100%; text-align:right; margin:6px 0; padding:10px; border:1px solid #ffcc8833; border-radius:10px; background:#16252d; color:#fff; cursor:pointer; }
+        .quiz-option:hover { background:#263b40; }
+        .quiz-option.correct { border-color:#74d68a; background:#19452c; }
+        .quiz-option.wrong { border-color:#e97878; background:#4a2222; }
+        .progress-bar { height:9px; background:#101b22; border-radius:20px; overflow:hidden; margin:8px 0; }
+        .progress-bar span { display:block; height:100%; width:0; background:linear-gradient(90deg,#ffd966,#ff9f43); transition:width .3s; }
+        .achievement { margin-top:12px; padding:12px; border-radius:12px; background:#2c2919; color:#ffe8a3; display:none; }
+        .environment-select { display:flex; gap:8px; flex-wrap:wrap; }
+        .environment-select button { flex:1; min-width:100px; }
+        .challenge-complete { border-color:#7cda8c; }
+        @media (max-width:750px) {
+            .advanced-lab { grid-template-columns:1fr; }
+            .mode-grid,.challenge-grid { grid-template-columns:1fr; }
+        }
+
+        .speed-card {
+            background: #0f1a1faa;
+            border-radius: 1.5rem;
+            padding: 12px;
+            margin: 15px 0;
+            color: white;
+        }
+        .speed-slider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 5px;
+            border-radius: 10px;
+            background: #ffcc88;
+        }
+
+        .stats-modern {
+            background: linear-gradient(120deg, #1e2a2f, #0f181f);
+            border-radius: 1.5rem;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+            border: 1px solid #ffcc8844;
+        }
+        .stat-card {
+            background: #00000066;
+            border-radius: 1.2rem;
+            padding: 8px 16px;
+            text-align: center;
+            flex: 1;
+            min-width: 90px;
+        }
+        .stat-card span:first-child {
+            font-size: 0.75rem;
+            color: #bbddff;
+            display: block;
+        }
+        .stat-card .stat-value {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #FFD966;
+            line-height: 1;
+        }
+        #stepIndicator {
+            background: #00000077;
+            border-radius: 60px;
+            text-align: center;
+            padding: 6px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #ffdd99;
+        }
+
+        /* المقالة التعليمية */
+        .learning-article {
+            background: rgba(0,0,0,0.5);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin-top: 20px;
+            border-right: 6px solid #ffaa44;
+            color: #f0f5ff;
+        }
+        .learning-article h2 {
+            color: #ffcf8a;
+            margin-bottom: 0.8rem;
+            font-size: 1.8rem;
+        }
+        .learning-article h3 {
+            color: #ffd966;
+            margin: 1rem 0 0.5rem;
+        }
+        .learning-article p {
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+        }
+        .steps-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .step-card {
+            background: #1e2a2fb3;
+            backdrop-filter: blur(4px);
+            flex: 1;
+            border-radius: 1.5rem;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px solid #ffaa44;
+        }
+        .step-icon {
+            font-size: 2.2rem;
+        }
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffcf8a;
+        }
+        .expandable {
+            background: #00000055;
+            border-radius: 1.2rem;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #cce0ff;
+            border-top: 1px dashed #ffcc8844;
+            padding-top: 1rem;
+        }
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 750px) {
+            .main-container { padding: 1rem; }
+            .hero h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="hero">
+        <h1>⚡ مختبر البرق التفاعلي ⚡</h1>
+        <p>اكتشف علم التفريغ الكهربائي العملاق | محاكاة دقيقة مع مؤثرات واقعية</p>
+        <div class="badge">🎓 تعلم الفيزياء باللعب | سرعة قابلة للتحكم حتى x10 (سرعة البرق الحقيقية)</div>
+    </div>
+
+    <div class="dashboard">
+        <div class="simulation-area">
+            <canvas id="lightningCanvas" width="800" height="450" style="width:100%; height:auto; max-width:800px; aspect-ratio:800/450"></canvas>
+            <p style="text-align:center; margin-top:12px; color:#ccddff;">💡 اضغط على الشاشة لبدء صاعقة جديدة | جرّب الأزرار والأوضاع</p>
+        </div>
+        <div class="control-panel">
+            <div class="button-group">
+                <button id="simulateBtn" class="btn btn-primary">🌩️ صاعقة جديدة</button>
+                <button id="resetBtn" class="btn">🔄 إعادة المشهد</button>
+                <button id="cloudBtn" class="btn">☁️ برق سحابي</button>
+                <button id="nightBtn" class="btn">🌙 ليلي</button>
+                <button id="muteBtn" class="btn">🔊 صوت</button>
+                <button id="groundBtn" class="btn">🌍 برق أرضي</button>
+            </div>
+            
+            <div class="speed-card">
+                <div class="speed-slider">
+                    <span>⚡ سرعة المحاكاة (x1 طبيعي، x10 ≈ واقعي سريع)</span>
+                    <input type="range" id="speedSlider" min="0.3" max="10" step="0.1" value="1">
+                    <span id="speedValue" style="background:#000000aa; padding:4px 12px; border-radius:40px;">1.0x</span>
+                </div>
+            </div>
+
+            <div class="stats-modern">
+                <div class="stat-card"><span>⚡ عدد الصواعق</span><div class="stat-value" id="strikeCount">0</div></div>
+                <div class="stat-card"><span>⏱️ زمن القائد</span><div class="stat-value" id="leaderTime">1.20</div><span style="font-size:0.7rem;">ثانية</span></div>
+                <div class="stat-card"><span>✨ زمن الصاعقة</span><div class="stat-value" id="returnTime">0.50</div><span style="font-size:0.7rem;">ثانية</span></div>
+            </div>
+            <div id="stepIndicator" style="background:#00000077; border-radius: 60px; text-align:center; padding:6px; margin-top:8px; font-size:0.8rem; color:#ffdd99;">🟢 في انتظار التفاعل</div>
+        </div>
+    </div>
+
+    <!-- المقالة التعليمية -->
+    <div class="learning-article">
+        <h2>📘 كيف يحدث البرق؟ رحلة علمية من السحابة إلى الأرض</h2>
+        <p>البرق هو أحد أروع الظواهر الطبيعية وأكثرها قوة، حيث يحدث نتيجة تفريغ كهربائي هائل بين السحب الممطرة والأرض، أو بين السحب نفسها. تصل درجة حرارة قناة البرق إلى <strong>30,000 كلفن</strong> (خمسة أضعاف حرارة سطح الشمس)، مما يؤدي إلى تمدد الهواء المفاجئ محدثاً صوت الرعد المدوي.</p>
+        
+        <h3>🔹 المرحلة الأولى: انفصال الشحنات داخل السحابة</h3>
+        <p>داخل السحابة الركامية (Cumulonimbus)، تصطدم جزيئات الجليد وقطرات الماء المتجمدة ببعضها البعض، مما يؤدي إلى انفصال الشحنات الكهربائية. تتراكم <strong>الشحنات السالبة</strong> في الجزء السفلي من السحابة، بينما تتراكم <strong>الشحنات الموجبة</strong> في الجزء العلوي. تؤدي هذه العملية إلى خلق مجال كهربائي هائل بين السحابة والأرض، حيث تحث الشحنات السالبة القريبة من الأرض شحنات موجبة على سطح الأرض.</p>
+        
+        <h3>🔹 المرحلة الثانية: القائد المتدرج (Stepped Leader)</h3>
+        <p>عندما يصبح المجال الكهربائي قوياً بما يكفي، تبدأ قناة من الهواء المتأين (البلازما) بالتكون والنزول من السحابة نحو الأرض بشكل متعرج وغير منتظم. تسمى هذه القناة بـ <strong>"القائد المتدرج"</strong>، وهي غير مرئية بالعين المجردة لأنها تحمل تياراً ضعيفاً نسبياً. تسير هذه القناة بسرعة تقارب 100 كيلومتر في الثانية، وتتخذ مساراً متعرجاً بسبب اختلاف كثافة الشحنات في الهواء. في محاكاتنا، نعرض القائد المتدرج باللون الأبيض ليتسنى للمستخدم رؤية المسار قبل حدوث الوميض الرئيسي.</p>
+        
+        <h3>🔹 المرحلة الثالثة: الصاعقة الراجعة (Return Stroke)</h3>
+        <p>عندما يقترب القائد المتدرج من الأرض (على ارتفاع حوالي 50 متراً)، تندفع شحنة موجبة قوية من الأرض نحو الأعلى عبر نفس القناة المتأينة. هذا التدفق الهائل للشحنات الموجبة هو الذي نراه على شكل <strong>وميض ساطع جداً</strong> – إنه البرق الحقيقي. تتحرك الصاعقة الراجعة بسرعة تقارب ثلث سرعة الضوء، وتطلق طاقة هائلة تعمل على تسخين الهواء إلى درجة حرارة تفوق سطح الشمس، محدثةً الرعد. في المحاكاة، نقوم بتصوير هذه المرحلة بتوهج أصفر-برتقالي وميضي.</p>
+        
+        <h3>🔹 حقائق مذهلة عن البرق</h3>
+        <p>• يمكن أن يصل طول شرارة البرق الواحدة إلى أكثر من 10 كيلومترات.<br>
+        • يصيب البرق الأرض حوالي 100 مرة في الثانية حول العالم.<br>
+        • يمكن أن يتكرر البرق في المسار نفسه عدة مرات خلال ومضة واحدة، مما يعطي تأثير الوميض المتقطع.<br>
+        • درجة حرارة البرق العالية تسبب تمدداً سريعاً للهواء ينتج عنه موجة صدمية نسمعها كالرعد.<br>
+        • يمكن استخدام المسافة الزمنية بين رؤية البرق وسماع الرعد لتقدير بعد العاصفة (كل 3 ثوان تعني 1 كيلومتر تقريباً).</p>
+        
+        <div class="steps-visual">
+            <div class="step-card">
+                <div class="step-icon">🌧️➡️⚡</div>
+                <div class="step-title">❶ انفصال الشحنات</div>
+                <p>تصادم الجليد يفصل الشحنات: سالبة في الأسفل، موجبة في الأعلى وعلى الأرض.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">⬇️✨</div>
+                <div class="step-title">❷ القائد المتدرج</div>
+                <p>قناة متأينة غير مرئية تتعرج نحو الأرض. المحاكاة تظهرها باللون الأبيض.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">💥🔥</div>
+                <div class="step-title">❸ الصاعقة الراجعة</div>
+                <p>وميض ساطع صاعد، حرارة هائلة، وصوت الرعد.</p>
+            </div>
+        </div>
+        <div class="expandable" id="dynamicHint">
+            💡 اضغط "صاعقة جديدة" لترى مساراً عشوائياً مختلفاً لكل برق. غيّر السرعة إلى 10x لتجربة زمن البرق الواقعي (أقل من 0.1 ثانية للصاعقة الرئيسية).
+        </div>
+    </div>
+
+    <section class="advanced-lab">
+        <div class="feature-card">
+            <h2>🔬 مختبر البرق المتقدم</h2>
+            <p>استكشف أنواع التفريغ الكهربائي والبيئات المختلفة، ثم جرّب المحاكاة مباشرة.</p>
+            <h3>⚡ نوع البرق</h3>
+            <div class="mode-grid">
+                <button class="mode-option active" data-advanced-mode="ground">🌩️ سحابة → أرض<small>الأكثر شيوعًا</small></button>
+                <button class="mode-option" data-advanced-mode="cloud">☁️ سحابة → سحابة<small>تفريغ أفقي بين الغيوم</small></button>
+                <button class="mode-option" data-advanced-mode="positive">➕ برق موجب<small>مسار أبعد وشحنة موجبة</small></button>
+                <button class="mode-option" data-advanced-mode="negative">➖ برق سالب<small>النمط الشائع في المحاكاة</small></button>
+            </div>
+            <h3>🌌 البيئة</h3>
+            <div class="environment-select">
+                <button class="btn" data-env="day">☀️ نهار</button>
+                <button class="btn" data-env="night">🌙 ليل</button>
+                <button class="btn" data-env="storm">🌧️ عاصفة</button>
+                <button class="btn" data-env="sunset">🌅 غروب</button>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <h2>🧪 تجربة تحديد بُعد العاصفة</h2>
+            <p>الفارق بين رؤية البرق وسماع الرعد يساعد على تقدير المسافة. استخدم القاعدة التقريبية: كل 3 ثوانٍ ≈ 1 كم.</p>
+            <div class="experiment-box">
+                <strong id="experimentQuestion">التجربة جاهزة: انقر «بدء تجربة»</strong>
+                <div class="experiment-input">
+                    <button class="btn btn-primary" id="startExperimentBtn">▶️ بدء تجربة</button>
+                    <input id="secondsInput" type="number" min="0" step="0.1" placeholder="الزمن بالثواني">
+                    <button class="btn" id="checkDistanceBtn">🧮 احسب</button>
+                </div>
+                <div class="result-message" id="experimentResult">ستظهر النتيجة هنا.</div>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <h2>🎯 اختبر معلوماتك</h2>
+            <div class="progress-bar"><span id="quizProgress"></span></div>
+            <div id="quizQuestion">اضغط «ابدأ الاختبار» لتبدأ.</div>
+            <div id="quizOptions"></div>
+            <button class="btn btn-primary" id="startQuizBtn">🚀 ابدأ الاختبار</button>
+            <div class="result-message" id="quizResult">النتيجة: 0 / 5</div>
+        </div>
+
+        <div class="feature-card">
+            <h2>🏆 تحديات البرق</h2>
+            <div class="challenge-grid">
+                <div class="challenge-card" id="challenge1"><b>🟢 التحدي الأول</b><small>شغّل 3 صواعق جديدة.</small><span id="challenge1Status">0 / 3</span></div>
+                <div class="challenge-card" id="challenge2"><b>🟡 التحدي الثاني</b><small>جرّب سرعة 10x مرة واحدة.</small><span id="challenge2Status">غير مكتمل</span></div>
+                <div class="challenge-card" id="challenge3"><b>🟠 التحدي الثالث</b><small>شغّل وضع سحابة → سحابة.</small><span id="challenge3Status">غير مكتمل</span></div>
+                <div class="challenge-card" id="challenge4"><b>🔴 التحدي الرابع</b><small>أجب عن 5 أسئلة في الاختبار.</small><span id="challenge4Status">0 / 5</span></div>
+            </div>
+            <div class="achievement" id="achievement">🏆 أحسنت! أكملت تحديات مختبر البرق.</div>
+        </div>
+
+        <div class="feature-card">
+            <h2>📊 إحصائيات المختبر</h2>
+            <div class="stats-modern">
+                <div class="stat-card"><span>⚡ الصواعق الكلية</span><div class="stat-value" id="totalLabStrikes">0</div></div>
+                <div class="stat-card"><span>🔥 أسرع سرعة مستخدمة</span><div class="stat-value" id="maxSpeedUsed">1.0x</div></div>
+                <div class="stat-card"><span>🎯 إجابات صحيحة</span><div class="stat-value" id="correctAnswers">0</div></div>
+                <div class="stat-card"><span>🏅 التحديات المكتملة</span><div class="stat-value" id="completedChallenges">0</div></div>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <h2>📚 مراحل تكوّن البرق</h2>
+            <div class="steps-visual">
+                <div class="step-card"><div class="step-icon">☁️➕➖</div><div class="step-title">1. انفصال الشحنات</div><p>تتوزع الشحنات داخل السحابة مكوّنة مجالًا كهربائيًا قويًا.</p></div>
+                <div class="step-card"><div class="step-icon">⬇️⚡</div><div class="step-title">2. القائد المتدرج</div><p>تتقدم قناة التفريغ في مسار متعرج نحو منطقة الاتصال.</p></div>
+                <div class="step-card"><div class="step-icon">💥</div><div class="step-title">3. الصاعقة الراجعة</div><p>يحدث الوميض الرئيسي الساطع على طول القناة المتأينة.</p></div>
+                <div class="step-card"><div class="step-icon">🔊</div><div class="step-title">4. الرعد</div><p>التمدد السريع للهواء يولد الموجة الصوتية التي نسمعها كرعد.</p></div>
+            </div>
+        </div>
+        <div class="feature-card">
+            <h2>🔊 البرق والرعد</h2>
+            <p>المحاكاة تولّد صوتًا إلكترونيًا للرعد. ولجعل التجربة أقرب للواقع، يتغير الإحساس بالحدث بحسب سرعة المحاكاة والبيئة المختارة.</p>
+            <div class="experiment-box"><b>قاعدة مهمة:</b> رؤية الوميض لا تعني أنك ستسمع الرعد في اللحظة نفسها؛ سرعة الضوء أكبر بكثير من سرعة الصوت.</div>
+        </div>
+        <div class="feature-card">
+            <h2>🌍 خريطة البرق العالمية — وضع تعليمي</h2>
+            <p>مقارنة بصرية مبسطة لمناطق النشاط البرقي حول العالم. هذه لوحة تعليمية وليست بثًا حيًا لبيانات الصواعق.</p>
+            <div class="mode-grid">
+                <div class="mode-option"><b>🌍 أمريكا الجنوبية الاستوائية</b><small>نشاط برقي مرتفع في مناطق العواصف الرعدية.</small></div>
+                <div class="mode-option"><b>🌍 أفريقيا الاستوائية</b><small>مناطق واسعة تشهد عواصف رعدية متكررة.</small></div>
+                <div class="mode-option"><b>🌏 جنوب وجنوب شرق آسيا</b><small>نشاط رعدي موسمي قوي في عدد من المناطق.</small></div>
+                <div class="mode-option"><b>🌎 أمريكا الوسطى والكاريبي</b><small>نشاط رعدي ملحوظ في المناطق الحارة والرطبة.</small></div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        <div>🌩️ محاكاة علمية تفاعلية - جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين</div>
+        <div class="footer-buttons">
+            <button id="homeBtn" class="btn btn-home">🏠 العودة إلى الصفحة الرئيسية</button>
+        </div>
+    </footer>
+</div>
+
+<script>
+    (function(){
+        const canvas = document.getElementById('lightningCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = 800, height = 450;
+        canvas.width = width; canvas.height = height;
+
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const strikeCountSpan = document.getElementById('strikeCount');
+        const leaderTimeSpan = document.getElementById('leaderTime');
+        const returnTimeSpan = document.getElementById('returnTime');
+        const stepIndicatorDiv = document.getElementById('stepIndicator');
+        const dynamicHint = document.getElementById('dynamicHint');
+
+        let strikeCounter = 0;
+        let currentMode = 'cloudToGround';
+        let isNightMode = false;
+        let isMuted = false;
+        let audioContext = null;
+
+        let speedFactor = 1.0;
+        let maxSpeedUsed = 1.0;
+        let advancedMode = 'ground';
+        let environmentMode = 'day';
+        let correctAnswers = 0;
+        let quizIndex = 0;
+        let quizScore = 0;
+        let quizActive = false;
+        let challenge3Done = false;
+        let experimentSeconds = null;
+        let leaderPoints = [];
+        let lastUsedPath = [];
+        let lastCloudPath = [];
+        let animFrame = null;
+        let animationActive = false;
+
+        const BASE_LEADER_DURATION = 1200;
+        const BASE_RETURN_DURATION = 500;
+
+        const cloud = { x: width/2, y: 65, w: 130, h: 55 };
+        const groundY = height - 45;
+        const startY = cloud.y + cloud.h/2 + 5;
+
+        function playThunder() {
+            if(isMuted) return;
+            try {
+                if(!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if(audioContext.state === 'suspended') audioContext.resume();
+                const now = audioContext.currentTime;
+                const gainNode = audioContext.createGain();
+                gainNode.gain.setValueAtTime(0.7, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+                const osc = audioContext.createOscillator();
+                osc.type = 'sawtooth';
+                osc.frequency.value = 85;
+                osc.frequency.exponentialRampToValueAtTime(35, now + 1.3);
+                osc.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                osc.start();
+                osc.stop(now + 2.0);
+            } catch(e) { /* silent fail */ }
+        }
+
+        function generateRandomLightningPath(isCloudToCloud = false) {
+            if(isCloudToCloud) {
+                const points = [];
+                let startX = cloud.x + (Math.random() - 0.5) * 70;
+                let startY = cloud.y + 15;
+                let endX = cloud.x - 90 + (Math.random() * 180);
+                let endY = cloud.y - 25 + Math.random() * 50;
+                endX = Math.min(width-40, Math.max(40, endX));
+                endY = Math.min(cloud.y+35, Math.max(cloud.y-35, endY));
+                points.push({x: startX, y: startY});
+                let segments = 8 + Math.floor(Math.random() * 8);
+                for(let i=1; i<=segments; i++) {
+                    let t = i/segments;
+                    let x = startX + (endX-startX)*t + (Math.random()-0.5)*45*(1-t);
+                    let y = startY + (endY-startY)*t + (Math.random()-0.5)*28;
+                    points.push({x: Math.min(width-20,Math.max(20,x)), y: Math.min(cloud.y+45,Math.max(cloud.y-45,y))});
+                }
+                points.push({x: endX, y: endY});
+                return points;
+            } else {
+                const points = [];
+                let startPtX = cloud.x + (Math.random()-0.5)*(cloud.w*0.6);
+                startPtX = Math.min(cloud.x+cloud.w/2+40, Math.max(cloud.x-cloud.w/2-20, startPtX));
+                let currentX = startPtX;
+                let currentY = startY + (Math.random()*8-4);
+                points.push({x: currentX, y: currentY});
+                let targetY = groundY - (Math.random()*12);
+                let spread = advancedMode === 'positive' ? 150 : advancedMode === 'negative' ? 90 : 110;
+                let targetX = cloud.x + (Math.random()-0.5)*spread;
+                targetX = Math.min(cloud.x+170, Math.max(cloud.x-170, targetX));
+                let segments = 12 + Math.floor(Math.random()*9);
+                let yStep = (targetY - currentY)/segments;
+                for(let i=1; i<=segments; i++) {
+                    let t = i/segments;
+                    let nextY = currentY + yStep;
+                    let xOffset = (Math.random()-0.5)*(45*(1-t*0.6));
+                    let nextX = currentX + xOffset;
+                    if(t>0.7) nextX = nextX*0.8 + targetX*0.2;
+                    nextX = Math.min(width-30, Math.max(30, nextX));
+                    nextY = Math.min(targetY+5, Math.max(currentY+2, nextY));
+                    points.push({x: nextX, y: nextY});
+                    currentX = nextX;
+                    currentY = nextY;
+                }
+                points.push({x: targetX, y: targetY});
+                return points;
+            }
+        }
+
+        function updateCurrentPath(newPath, isCloud=false) {
+            if(isCloud || currentMode === 'cloudToCloud') {
+                lastCloudPath = newPath.map(p=> ({x:p.x, y:p.y}));
+                leaderPoints = lastCloudPath;
+            } else {
+                lastUsedPath = newPath.map(p=> ({x:p.x, y:p.y}));
+                leaderPoints = lastUsedPath;
+            }
+        }
+
+        function drawStaticScene() {
+            ctx.clearRect(0,0,width,height);
+            let gradSky = ctx.createLinearGradient(0,0,0,height);
+            const envTop = getComputedStyle(document.documentElement).getPropertyValue('--env-top').trim() || (isNightMode ? '#0a1220' : '#142b38');
+            const envBottom = getComputedStyle(document.documentElement).getPropertyValue('--env-bottom').trim() || (isNightMode ? '#030b12' : '#0e1a24');
+            gradSky.addColorStop(0, envTop);
+            gradSky.addColorStop(1, envBottom);
+            ctx.fillStyle=gradSky;
+            ctx.fillRect(0,0,width,height);
+            if(isNightMode) {
+                ctx.fillStyle = '#ffffffcc';
+                for(let i=0; i<250; i++) {
+                    let starX = (i * 131) % width;
+                    let starY = (i * 73) % (height * 0.85);
+                    ctx.beginPath();
+                    ctx.arc(starX, starY, 1 + (i%3)*0.5, 0, Math.PI*2);
+                    ctx.fill();
+                }
+                for(let i=0;i<80;i++){
+                    ctx.beginPath();
+                    ctx.arc(Math.random()*width, Math.random()*height*0.7, 1.2, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+            if(environmentMode === 'storm') {
+                ctx.fillStyle = 'rgba(80,100,120,.18)';
+                for(let i=0;i<18;i++){ ctx.fillRect((i*61)%width, 120+(i%5)*35, 2, 80); }
+            } else if(environmentMode === 'sunset') {
+                const sunY=groundY-120; ctx.fillStyle='#ffd36a'; ctx.beginPath(); ctx.arc(width*0.78,sunY,34,0,Math.PI*2); ctx.fill();
+            }
+            ctx.fillStyle = isNightMode ? '#5a6e7e' : '#8c9eb2';
+            ctx.beginPath();
+            ctx.ellipse(cloud.x, cloud.y, cloud.w/1.6, cloud.h/1.3,0,0,Math.PI*2);
+            ctx.ellipse(cloud.x-45, cloud.y+5,50,40,0,0,Math.PI*2);
+            ctx.ellipse(cloud.x+40, cloud.y+2,55,45,0,0,Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = isNightMode ? '#4a5a68' : '#6c7e94';
+            ctx.beginPath();
+            ctx.ellipse(cloud.x+15, cloud.y-3,40,32,0,0,Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = isNightMode ? '#1a3a1a' : '#2a4d2a';
+            ctx.fillRect(0, groundY-5, width, 70);
+            ctx.fillStyle = isNightMode ? '#3a6a3a' : '#86bf6c';
+            for(let i=0;i<35;i++) {
+                let gx = (i*23)%width;
+                ctx.beginPath();
+                ctx.moveTo(gx, groundY-2);
+                ctx.lineTo(gx-4, groundY-14);
+                ctx.lineTo(gx+4, groundY-18);
+                ctx.fill();
+            }
+            ctx.fillStyle = isNightMode ? '#5a8a4a' : '#6cad4a';
+            for(let i=0;i<22;i++) {
+                let cx = 25 + (i*49) % (width-50);
+                let cy = groundY - 18 - (i%4)*5;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 7, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = isNightMode ? '#7aaa5a' : '#8ed45a';
+                ctx.beginPath();
+                ctx.arc(cx-2, cy-2, 3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = isNightMode ? '#5a8a4a' : '#6cad4a';
+            }
+            ctx.fillStyle = '#5b3c1a';
+            ctx.fillRect(60, groundY-32,14,35);
+            ctx.fillRect(710, groundY-40,12,43);
+            ctx.fillStyle = '#3f754a';
+            ctx.beginPath();
+            ctx.arc(67, groundY-45,15,0,Math.PI*2);
+            ctx.arc(715, groundY-52,16,0,Math.PI*2);
+            ctx.fill();
+        }
+
+        function drawSteppedLeader(points, progress) {
+            if(!points.length) return;
+            let total = Math.floor((points.length-1)*progress);
+            if(total<=0) return;
+            ctx.beginPath();
+            ctx.lineWidth=3;
+            ctx.strokeStyle='#eaf7ff';
+            ctx.shadowBlur=6;
+            ctx.moveTo(points[0].x, points[0].y);
+            for(let i=1;i<=total;i++) ctx.lineTo(points[i].x, points[i].y);
+            ctx.stroke();
+            for(let i=1;i<=total;i+=2){
+                ctx.beginPath();
+                ctx.fillStyle='#fffde7';
+                ctx.arc(points[i].x, points[i].y,2.5,0,Math.PI*2);
+                ctx.fill();
+            }
+            ctx.shadowBlur=0;
+        }
+
+        function drawReturnStroke(points, intensity) {
+            if(!points.length || intensity<=0) return;
+            let lw = 5 + intensity*8;
+            ctx.beginPath();
+            ctx.strokeStyle='#ffbb55';
+            ctx.lineWidth=lw;
+            ctx.shadowBlur=20*intensity;
+            ctx.shadowColor='#ffaa55';
+            ctx.moveTo(points[0].x, points[0].y);
+            for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
+            ctx.stroke();
+            ctx.lineWidth=lw*0.7;
+            ctx.strokeStyle=`rgba(255,230,130,${Math.min(0.9,intensity*1.2)})`;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
+            ctx.stroke();
+            if(intensity>0.2){
+                ctx.fillStyle=`rgba(255,210,90,${intensity*0.25})`;
+                ctx.fillRect(0,0,width,height);
+            }
+            ctx.shadowBlur=0;
+        }
+
+        function drawAmbientFlash(flash){
+            if(flash>0.02){
+                ctx.fillStyle=`rgba(255,245,180,${flash*0.45})`;
+                ctx.fillRect(0,0,width,height);
+            }
+        }
+
+        function updateSpeedDisplay(){
+            speedFactor = parseFloat(speedSlider.value);
+            maxSpeedUsed = Math.max(maxSpeedUsed, speedFactor);
+            document.getElementById('maxSpeedUsed').innerText = maxSpeedUsed.toFixed(1) + 'x';
+            if(speedFactor >= 10) document.getElementById('challenge2Status').innerText = 'مكتمل ✅';
+            speedValue.innerText = speedFactor.toFixed(1)+'x';
+            let leaderSec = (BASE_LEADER_DURATION/1000/speedFactor).toFixed(2);
+            let returnSec = (BASE_RETURN_DURATION/1000/speedFactor).toFixed(2);
+            leaderTimeSpan.innerText = leaderSec;
+            returnTimeSpan.innerText = returnSec;
+        }
+
+        function runFullSimulation(){
+            if(animFrame) cancelAnimationFrame(animFrame);
+            animationActive = true;
+            let step = 1;
+            let leaderStart = null, returnStart = null;
+            let leaderDur = BASE_LEADER_DURATION / speedFactor;
+            let returnDur = BASE_RETURN_DURATION / speedFactor;
+            function animate(now){
+                if(!animationActive) return;
+                if(step===1){
+                    if(!leaderStart) leaderStart = now;
+                    let prog = Math.min(1, (now-leaderStart)/leaderDur);
+                    drawStaticScene();
+                    drawSteppedLeader(leaderPoints, prog);
+                    stepIndicatorDiv.innerHTML = `⚡ القائد المتدرج (${Math.round(prog*100)}%)`;
+                    dynamicHint.innerText = "🔽 القائد يتجه نحو الأرض في مسار متعرج... (هذه المرحلة غير مرئية في الواقع لكننا نعرضها تعليمياً)";
+                    if(prog>=1){
+                        step=2;
+                        drawStaticScene();
+                        drawSteppedLeader(leaderPoints,1);
+                        playThunder();
+                        stepIndicatorDiv.innerHTML = `🔥 الصاعقة الراجعة (وميض البرق) 🔥`;
+                        dynamicHint.innerText = "✨ الآن الصاعقة الراجعة: وميض ساطع جداً وحرارة هائلة! ✨";
+                    }
+                }
+                if(step===2){
+                    if(!returnStart) returnStart = now;
+                    let progRet = Math.min(1, (now-returnStart)/returnDur);
+                    let flashInt = Math.max(0, 1-(progRet*0.9));
+                    drawStaticScene();
+                    drawSteppedLeader(leaderPoints,1);
+                    drawReturnStroke(leaderPoints, flashInt*1.2);
+                    drawAmbientFlash(flashInt*1.5);
+                    if(progRet>=1){
+                        animationActive=false;
+                        cancelAnimationFrame(animFrame);
+                        animFrame=null;
+                        drawStaticScene();
+                        drawReturnStroke(leaderPoints,0.2);
+                        drawSteppedLeader(leaderPoints,0.95);
+                        stepIndicatorDiv.innerHTML = `✅ اكتمل البرق | عدد الصواعق: ${strikeCounter}`;
+                        dynamicHint.innerText = "انقر 'صاعقة جديدة' لمسار آخر أو غيّر السرعة لتجربة البرق الواقعي.";
+                    }
+                }
+                if(animationActive) animFrame = requestAnimationFrame(animate);
+            }
+            animFrame = requestAnimationFrame(animate);
+        }
+
+        function startNewStrike(){
+            if(animFrame) cancelAnimationFrame(animFrame);
+            animationActive=false;
+            let newPath;
+            if(currentMode === 'cloudToCloud'){
+                newPath = generateRandomLightningPath(true);
+                updateCurrentPath(newPath, true);
+            } else {
+                newPath = generateRandomLightningPath(false);
+                updateCurrentPath(newPath, false);
+            }
+            strikeCounter++;
+            strikeCountSpan.innerText = strikeCounter;
+            document.getElementById('totalLabStrikes').innerText = strikeCounter;
+            document.getElementById('challenge1Status').innerText = Math.min(strikeCounter,3) + ' / 3';
+            if(strikeCounter >= 3) document.getElementById('challenge1').classList.add('challenge-complete');
+            runFullSimulation();
+            updateAchievements();
+        }
+
+        function replaySamePath(){
+            if(animFrame) cancelAnimationFrame(animFrame);
+            animationActive=false;
+            if(currentMode==='cloudToCloud' && lastCloudPath.length){
+                leaderPoints = lastCloudPath.map(p=>({x:p.x,y:p.y}));
+            } else if(lastUsedPath.length){
+                leaderPoints = lastUsedPath.map(p=>({x:p.x,y:p.y}));
+            } else { startNewStrike(); return; }
+            strikeCounter++;
+            strikeCountSpan.innerText = strikeCounter;
+            runFullSimulation();
+        }
+
+        function toggleNightMode(){
+            isNightMode = !isNightMode;
+            document.getElementById('nightBtn').innerHTML = isNightMode ? "☀️ نهاري" : "🌙 ليلي";
+            drawStaticScene();
+            if(leaderPoints.length){
+                drawReturnStroke(leaderPoints,0.2);
+                drawSteppedLeader(leaderPoints,0.95);
+            }
+        }
+        function toggleMute(){
+            isMuted = !isMuted;
+            document.getElementById('muteBtn').innerHTML = isMuted ? "🔇 صامت" : "🔊 صوت";
+        }
+        function setCloudToCloud(){
+            if(animFrame) cancelAnimationFrame(animFrame);
+            animationActive=false;
+            currentMode='cloudToCloud';
+            challenge3Done = true;
+            document.getElementById('challenge3Status').innerText = 'مكتمل ✅';
+            document.getElementById('challenge3').classList.add('challenge-complete');
+            let newPath = generateRandomLightningPath(true);
+            updateCurrentPath(newPath, true);
+            drawStaticScene();
+            drawReturnStroke(leaderPoints,0.2);
+            drawSteppedLeader(leaderPoints,0.95);
+            dynamicHint.innerText = "وضع البرق الداخلي (سحابة-سحابة) | مسارات أفقية بين الغيوم";
+        }
+        function setCloudToGround(){
+            if(animFrame) cancelAnimationFrame(animFrame);
+            animationActive=false;
+            currentMode='cloudToGround';
+            let newPath = generateRandomLightningPath(false);
+            updateCurrentPath(newPath, false);
+            drawStaticScene();
+            drawReturnStroke(leaderPoints,0.2);
+            drawSteppedLeader(leaderPoints,0.95);
+            dynamicHint.innerText = "وضع البرق الأرضي (الأكثر شيوعاً)";
+        }
+
+
+        function setEnvironment(env){
+            environmentMode = env;
+            const themes = {
+                day:['#142b38','#0e1a24'],
+                night:['#0a1220','#030b12'],
+                storm:['#202a38','#111820'],
+                sunset:['#3a2730','#111b27']
+            };
+            const [top,bottom] = themes[env] || themes.day;
+            document.documentElement.style.setProperty('--env-top',top);
+            document.documentElement.style.setProperty('--env-bottom',bottom);
+            isNightMode = env === 'night';
+            drawStaticScene();
+            if(leaderPoints.length){ drawReturnStroke(leaderPoints,.2); drawSteppedLeader(leaderPoints,.95); }
+        }
+
+        const quizQuestions = [
+            {q:'لماذا نرى البرق قبل سماع الرعد؟',a:['لأن الضوء أسرع من الصوت','لأن الرعد يتأخر في التكوّن','لأن السحب تمنع الضوء','لأن البرق أقوى'],c:0},
+            {q:'ما المرحلة التي تعرض قناة التفريغ المتقدمة؟',a:['الرعد','القائد المتدرج','التبخر','تكوّن المطر'],c:1},
+            {q:'كل 3 ثوانٍ تقريبًا بين البرق والرعد تعني مسافة قدرها:',a:['100 متر','10 كم','1 كم','30 كم'],c:2},
+            {q:'أين يحدث البرق في محاكاتنا الأساسية؟',a:['سحابة إلى أرض','أرض إلى قمر','شمس إلى سحابة','بحر إلى سحابة'],c:0},
+            {q:'ما الذي نسمعه نتيجة التمدد السريع للهواء؟',a:['الضباب','الرعد','المطر','الضوء'],c:1}
+        ];
+
+        function renderQuiz(){
+            const q=quizQuestions[quizIndex];
+            document.getElementById('quizQuestion').innerText=`السؤال ${quizIndex+1} من ${quizQuestions.length}: ${q.q}`;
+            const box=document.getElementById('quizOptions'); box.innerHTML='';
+            q.a.forEach((text,i)=>{ const b=document.createElement('button'); b.className='quiz-option'; b.innerText=text; b.onclick=()=>answerQuiz(i,b); box.appendChild(b); });
+            document.getElementById('quizProgress').style.width=(quizIndex/quizQuestions.length*100)+'%';
+        }
+        function answerQuiz(choice,btn){
+            if(!quizActive) return;
+            const q=quizQuestions[quizIndex];
+            [...document.querySelectorAll('.quiz-option')].forEach(b=>b.disabled=true);
+            if(choice===q.c){ btn.classList.add('correct'); quizScore++; correctAnswers++; document.getElementById('correctAnswers').innerText=correctAnswers; }
+            else { btn.classList.add('wrong'); document.querySelectorAll('.quiz-option')[q.c].classList.add('correct'); }
+            document.getElementById('quizResult').innerText=`النتيجة الحالية: ${quizScore} / ${quizIndex+1}`;
+            setTimeout(()=>{ quizIndex++; if(quizIndex<quizQuestions.length) renderQuiz(); else finishQuiz(); },650);
+        }
+        function startQuiz(){ quizIndex=0; quizScore=0; quizActive=true; document.getElementById('quizResult').innerText='النتيجة: 0 / 5'; renderQuiz(); }
+        function finishQuiz(){
+            quizActive=false; document.getElementById('quizProgress').style.width='100%';
+            document.getElementById('quizQuestion').innerText=`🎉 انتهى الاختبار! حصلت على ${quizScore} من ${quizQuestions.length}.`;
+            document.getElementById('quizOptions').innerHTML='';
+            document.getElementById('quizResult').innerText=`النتيجة النهائية: ${quizScore} / ${quizQuestions.length}`;
+            document.getElementById('challenge4Status').innerText='5 / 5';
+            document.getElementById('challenge4').classList.add('challenge-complete');
+            updateAchievements();
+        }
+        function startExperiment(){
+            experimentSeconds = +(3 + Math.random()*15).toFixed(1);
+            document.getElementById('experimentQuestion').innerText=`⚡ ظهر البرق! بعد ${experimentSeconds} ثانية سيصل صوت الرعد.`;
+            document.getElementById('secondsInput').value='';
+            document.getElementById('experimentResult').innerText='اكتب الزمن الذي قسته بالثواني ثم اضغط «احسب».';
+        }
+        function checkDistance(){
+            const sec=parseFloat(document.getElementById('secondsInput').value);
+            if(!Number.isFinite(sec)||sec<0){ document.getElementById('experimentResult').innerText='أدخل زمنًا صحيحًا بالثواني.'; return; }
+            const distance=sec/3; const expected=experimentSeconds/3;
+            const ok=Math.abs(sec-experimentSeconds)<=1.5;
+            document.getElementById('experimentResult').innerText=ok ? `✅ ممتاز! التقدير ≈ ${distance.toFixed(1)} كم (القيمة التجريبية ≈ ${expected.toFixed(1)} كم).` : `📏 التقدير ≈ ${distance.toFixed(1)} كم. جرّب قياس الفارق مرة أخرى؛ القيمة التجريبية كانت ${experimentSeconds} ثانية.`;
+        }
+        function updateAchievements(){
+            let done=0;
+            if(strikeCounter>=3) done++; if(maxSpeedUsed>=10) done++; if(challenge3Done) done++; if(!quizActive && quizIndex>=5) done++;
+            document.getElementById('completedChallenges').innerText=done;
+            if(done>=4) document.getElementById('achievement').style.display='block';
+        }
+
+        speedSlider.addEventListener('input', ()=>{
+            updateSpeedDisplay();
+            if(!animationActive && leaderPoints.length){
+                drawStaticScene();
+                drawReturnStroke(leaderPoints,0.2);
+                drawSteppedLeader(leaderPoints,0.95);
+            }
+        });
+        updateSpeedDisplay();
+        let initPath = generateRandomLightningPath(false);
+        updateCurrentPath(initPath, false);
+        drawStaticScene();
+        drawReturnStroke(leaderPoints,0.28);
+        drawSteppedLeader(leaderPoints,0.9);
+        strikeCounter=0;
+        strikeCountSpan.innerText='0';
+
+
+        document.querySelectorAll('[data-advanced-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+            document.querySelectorAll('[data-advanced-mode]').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+            advancedMode=btn.dataset.advancedMode;
+            if(advancedMode==='cloud') setCloudToCloud(); else setCloudToGround();
+            dynamicHint.innerText = advancedMode==='positive' ? '➕ وضع البرق الموجب: مسار تعليمي مختلف للشحنة الموجبة.' : advancedMode==='negative' ? '➖ وضع البرق السالب: النمط الشائع في هذه المحاكاة.' : dynamicHint.innerText;
+        }));
+        document.querySelectorAll('[data-env]').forEach(btn=>btn.addEventListener('click',()=>setEnvironment(btn.dataset.env)));
+        document.getElementById('startExperimentBtn').addEventListener('click',startExperiment);
+        document.getElementById('checkDistanceBtn').addEventListener('click',checkDistance);
+        document.getElementById('startQuizBtn').addEventListener('click',startQuiz);
+        document.getElementById('simulateBtn').addEventListener('click', startNewStrike);
+        document.getElementById('resetBtn').addEventListener('click', replaySamePath);
+        document.getElementById('nightBtn').addEventListener('click', toggleNightMode);
+        document.getElementById('muteBtn').addEventListener('click', toggleMute);
+        document.getElementById('cloudBtn').addEventListener('click', ()=>{
+            if(currentMode !== 'cloudToCloud') setCloudToCloud();
+            else startNewStrike();
+        });
+        document.getElementById('groundBtn').addEventListener('click', ()=>{
+            if(currentMode !== 'cloudToGround') setCloudToGround();
+            else startNewStrike();
+        });
+        document.getElementById('homeBtn').addEventListener('click', ()=> window.open('index.html', '_blank'));
+        canvas.addEventListener('click', startNewStrike);
+    })();
+</script>
+</body>
+</html>
