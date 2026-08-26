@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أثرك يجملها | هبة كتانة</title>
+<link rel="icon" type="image/png" href="31.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#0f2a3b;
+  --bg2:#1c4b52;
+  --bg3:#2f5d50;
+  --bg4:#164a4a;
+  --gold:#d9b64c;
+  --gold-soft:#f0d98c;
+  --glass-bg:rgba(255,255,255,0.10);
+  --glass-bg-strong:rgba(255,255,255,0.18);
+  --glass-border:rgba(255,255,255,0.25);
+  --text:#f5f3ec;
+  --text-dim:rgba(245,243,236,0.7);
+  --home-color:#7fd8be;
+  --friends-color:#8bb8ff;
+  --worship-color:#e0b158;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Cairo', sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  background:linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg4),var(--bg3));
+  background-size:400% 400%;
+  animation:gradientFlow 22s ease infinite;
+  position:relative;
+}
+@keyframes gradientFlow{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(217,182,76,0.10), transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(139,184,255,0.10), transparent 40%);
+  pointer-events:none;
+  z-index:0;
+}
+.screen{display:none; min-height:100vh; padding:90px 20px 90px; position:relative; z-index:1;}
+.screen.active{display:block; animation:fadeSlide .5s ease;}
+@keyframes fadeSlide{
+  from{opacity:0; transform:translateY(18px);}
+  to{opacity:1; transform:translateY(0);}
+}
+.glass{
+  background:var(--glass-bg);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border:1px solid var(--glass-border);
+  border-radius:22px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25);
+}
+h1,h2,h3{font-weight:900;}
+
+/* ===== Welcome Screen ===== */
+#welcome-screen.active{
+  display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px;
+}
+.welcome-card{
+  max-width:640px; width:100%; text-align:center; padding:50px 34px;
+}
+.welcome-emblem{font-size:52px; margin-bottom:14px; filter:drop-shadow(0 0 12px rgba(217,182,76,0.5));}
+.welcome-card h1{
+  font-size:clamp(32px,6vw,50px);
+  background:linear-gradient(90deg,var(--gold-soft),#fff,var(--gold-soft));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin-bottom:18px;
+  letter-spacing:1px;
+}
+.welcome-tagline{
+  font-family:'Amiri',serif; font-size:19px; line-height:2;
+  color:var(--text-dim); max-width:480px; margin:0 auto 34px;
+}
+.welcome-buttons{display:flex; gap:16px; flex-wrap:wrap; justify-content:center;}
+.btn{
+  font-family:'Cairo',sans-serif;
+  font-size:17px; font-weight:700;
+  padding:16px 30px;
+  border-radius:16px;
+  border:1px solid var(--glass-border);
+  background:var(--glass-bg-strong);
+  color:var(--text);
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+  transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn:hover{transform:translateY(-4px); box-shadow:0 10px 26px rgba(0,0,0,0.3); background:rgba(255,255,255,0.26);}
+.btn:active{transform:translateY(-1px);}
+.btn-primary{
+  background:linear-gradient(135deg, rgba(217,182,76,0.35), rgba(217,182,76,0.15));
+  border-color:rgba(217,182,76,0.5);
+}
+.btn-primary:hover{background:linear-gradient(135deg, rgba(217,182,76,0.5), rgba(217,182,76,0.25));}
+
+/* ===== Header / nav row inside inner screens ===== */
+.page-head{
+  max-width:1100px; margin:0 auto 30px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+}
+.page-head h2{font-size:clamp(24px,4vw,34px); color:var(--gold-soft);}
+.back-btn{
+  background:var(--glass-bg); border:1px solid var(--glass-border); color:var(--text);
+  padding:10px 20px; border-radius:12px; cursor:pointer; font-family:'Cairo',sans-serif; font-weight:600; font-size:14px;
+  transition:background .2s ease;
+}
+.back-btn:hover{background:var(--glass-bg-strong);}
+
+/* ===== Encyclopedia ===== */
+.encyclopedia-wrap{max-width:1100px; margin:0 auto;}
+.category-block{margin-bottom:44px;}
+.category-title{
+  display:flex; align-items:center; gap:10px; font-size:22px; margin-bottom:18px; padding-right:4px;
+}
+.category-dot{width:12px; height:12px; border-radius:50%;}
+.dot-home{background:var(--home-color); box-shadow:0 0 10px var(--home-color);}
+.dot-friends{background:var(--friends-color); box-shadow:0 0 10px var(--friends-color);}
+.dot-worship{background:var(--worship-color); box-shadow:0 0 10px var(--worship-color);}
+.virtue-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px;
+}
+.virtue-card{
+  padding:22px 16px; text-align:center; opacity:0.3; transition:opacity .5s ease, box-shadow .5s ease, transform .3s ease;
+}
+.virtue-card:hover{transform:translateY(-4px);}
+.virtue-card.discovered{opacity:1; box-shadow:0 0 22px rgba(217,182,76,0.45), 0 8px 32px rgba(0,0,0,0.25);}
+.virtue-card .v-emoji{font-size:36px; display:block; margin-bottom:10px;}
+.virtue-card .v-name{font-weight:700; font-size:16px; margin-bottom:6px;}
+.virtue-card .v-desc{font-size:12.5px; color:var(--text-dim); line-height:1.6;}
+
+/* ===== Levels ===== */
+.levels-wrap{max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px;}
+.level-card{
+  padding:28px 22px; text-align:center; cursor:pointer; transition:transform .25s ease, box-shadow .25s ease;
+  position:relative; overflow:hidden;
+}
+.level-card:hover{transform:translateY(-6px) scale(1.02); box-shadow:0 14px 34px rgba(0,0,0,0.3);}
+.level-card .level-num{font-size:15px; color:var(--text-dim); margin-bottom:6px;}
+.level-card h3{font-size:22px; margin-bottom:10px;}
+.level-card .level-diff{font-size:13px; color:var(--gold-soft); margin-bottom:10px;}
+.stars{font-size:18px; letter-spacing:2px; color:var(--gold);}
+.level-card .level-cards-count{margin-top:10px; font-size:12px; color:var(--text-dim);}
+.level-card.completed::after{
+  content:"✓"; position:absolute; top:10px; left:12px; font-size:16px; color:#7fe0a8;
+}
+
+/* ===== Game screen ===== */
+.game-top{
+  max-width:1000px; margin:0 auto 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.game-top .level-label{font-size:20px; color:var(--gold-soft); font-weight:700;}
+.game-controls{display:flex; gap:10px; align-items:center;}
+.icon-btn{
+  width:42px; height:42px; border-radius:12px; border:1px solid var(--glass-border); background:var(--glass-bg);
+  color:var(--text); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background .2s ease;
+}
+.icon-btn:hover{background:var(--glass-bg-strong);}
+
+.card-columns{
+  max-width:1000px; margin:0 auto 30px; display:flex; gap:26px; flex-wrap:wrap; justify-content:center;
+}
+.card-column{flex:1; min-width:230px;}
+.column-title{
+  text-align:center; font-weight:700; font-size:14px; margin-bottom:12px;
+  color:var(--gold-soft); letter-spacing:.5px;
+}
+.card-column:first-child .column-title{color:var(--worship-color);}
+.card-column:last-child .column-title{color:var(--home-color);}
+.card-grid{
+  display:grid; gap:12px;
+}
+.mem-card{
+  aspect-ratio:1/1; perspective:800px; cursor:pointer;
+}
+.mem-card-inner{
+  position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;
+}
+.mem-card.flipped .mem-card-inner, .mem-card.matched .mem-card-inner{transform:rotateY(180deg);}
+.mem-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:16px;
+  display:flex; align-items:center; justify-content:center; text-align:center; padding:8px;
+  border:1px solid var(--glass-border);
+}
+.mem-face-back{
+  background:linear-gradient(135deg, rgba(217,182,76,0.28), rgba(255,255,255,0.08));
+  backdrop-filter:blur(15px);
+  font-size:26px;
+}
+.mem-face-front{
+  background:rgba(255,255,255,0.16);
+  backdrop-filter:blur(15px);
+  transform:rotateY(180deg);
+  font-size:clamp(13px,2.4vw,17px);
+  font-weight:700;
+  line-height:1.3;
+}
+.mem-card.matched .mem-face-front{
+  box-shadow:0 0 20px rgba(127,224,168,0.6) inset;
+  background:rgba(127,224,168,0.18);
+}
+.mem-card.error .mem-face-back{animation:shake .4s ease;}
+@keyframes shake{
+  0%,100%{transform:rotateY(0) translateX(0);}
+  25%{transform:rotateY(0) translateX(-6px);}
+  75%{transform:rotateY(0) translateX(6px);}
+}
+
+.boxes-row{
+  max-width:900px; margin:0 auto; display:flex; gap:16px; flex-wrap:wrap; justify-content:center;
+}
+.impact-box{
+  flex:1; min-width:150px; padding:18px 12px; text-align:center; position:relative;
+}
+.impact-box .box-icon{font-size:30px; display:block; margin-bottom:6px;}
+.impact-box .box-label{font-size:13px; color:var(--text-dim); margin-bottom:4px;}
+.impact-box .box-count{font-size:20px; font-weight:900; color:var(--gold-soft);}
+.impact-box.box-home{border-color:rgba(127,216,190,0.4);}
+.impact-box.box-friends{border-color:rgba(139,184,255,0.4);}
+.impact-box.box-worship{border-color:rgba(224,177,88,0.4);}
+
+.flying-emoji{
+  position:fixed; font-size:30px; z-index:500; pointer-events:none; transition:all .8s cubic-bezier(.3,.8,.4,1);
+}
+
+/* Level complete modal */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(10,20,25,0.65); backdrop-filter:blur(6px);
+  display:none; align-items:center; justify-content:center; z-index:800; padding:20px;
+}
+.modal-overlay.active{display:flex;}
+.modal-box{max-width:420px; width:100%; text-align:center; padding:40px 28px;}
+.modal-box .modal-emoji{font-size:52px; margin-bottom:10px;}
+.modal-box h3{font-size:24px; margin-bottom:10px; color:var(--gold-soft);}
+.modal-box .stars{font-size:26px; margin:14px 0;}
+.modal-box p{color:var(--text-dim); margin-bottom:22px; font-size:14px;}
+.modal-buttons{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+
+/* ===== Floating portal button ===== */
+.floating-btn{
+  position:fixed; top:18px; left:18px; z-index:9999;
+  display:flex; align-items:center; gap:8px;
+  padding:12px 18px; border-radius:50px;
+  background:var(--glass-bg-strong); backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  color:var(--text); text-decoration:none; font-size:13px; font-weight:700;
+  box-shadow:0 6px 22px rgba(0,0,0,0.3);
+  transition:transform .25s ease, background .25s ease;
+}
+.floating-btn:hover{transform:translateY(-3px); background:rgba(255,255,255,0.28);}
+.floating-btn .btn-icon{font-size:17px; display:none;}
+.floating-btn .btn-text{white-space:nowrap; display:none;}
+
+/* ===== Footer ===== */
+.footer{
+  position:fixed; bottom:0; right:0; left:0; z-index:400;
+  text-align:center; font-size:11.5px; color:var(--text-dim);
+  padding:9px 14px; background:rgba(10,20,25,0.35); backdrop-filter:blur(10px);
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== Responsive ===== */
+@media (min-width:700px){
+  .floating-btn .btn-text{display:inline;}
+}
+@media (max-width:699px){
+  .floating-btn{padding:12px; border-radius:50%; width:46px; height:46px; justify-content:center;}
+  .floating-btn .btn-icon{display:inline;}
+  .card-grid{grid-template-columns:repeat(3,1fr); gap:10px;}
+}
+@media (max-width:420px){
+  .card-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<a class="floating-btn" href="index.html" target="_blank" rel="noopener">
+  <span class="btn-icon">🏠</span>
+  <span class="btn-text">الموسوعة الرئيسية</span>
+</a>
+
+<!-- ===== WELCOME SCREEN ===== -->
+<section id="welcome-screen" class="screen active">
+  <div class="welcome-card glass">
+    <span class="welcome-emblem">🌿</span>
+    <h1>أثرك يجملها</h1>
+    <p class="welcome-tagline">
+      كل خُلُقٍ جميل تزرعه اليوم، أثرٌ يبقى بعدك.
+      ابتسامةٌ في بيتك، وفاءٌ مع أصدقائك، وخشوعٌ في عبادتك؛
+      رحلة صغيرة تكتشف فيها أجمل ما فيك.
+    </p>
+    <div class="welcome-buttons">
+      <button class="btn btn-primary" onclick="showScreen('levels-screen'); renderLevels();">🎮 بدء اللعبة</button>
+      <button class="btn" onclick="showScreen('encyclopedia-screen'); renderEncyclopedia();">📖 موسوعة الأخلاق</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ENCYCLOPEDIA SCREEN ===== -->
+<section id="encyclopedia-screen" class="screen">
+  <div class="page-head">
+    <h2>📖 موسوعة الأخلاق</h2>
+    <button class="back-btn" onclick="showScreen('welcome-screen')">→ الرئيسية</button>
+  </div>
+  <div class="encyclopedia-wrap" id="encyclopedia-wrap"></div>
+</section>
+
+<!-- ===== LEVELS SCREEN ===== -->
+<section id="levels-screen" class="screen">
+  <div class="page-head">
+    <h2>🗺️ خريطة المستويات</h2>
+    <button class="back-btn" onclick="showScreen('welcome-screen')">→ الرئيسية</button>
+  </div>
+  <div class="levels-wrap" id="levels-wrap"></div>
+</section>
+
+<!-- ===== GAME SCREEN ===== -->
+<section id="game-screen" class="screen">
+  <div class="game-top">
+    <div class="level-label" id="game-level-label">المستوى 1</div>
+    <div class="game-controls">
+      <button class="icon-btn" id="sound-toggle-btn" onclick="toggleSound()" title="الصوت">🔊</button>
+      <button class="back-btn" onclick="showScreen('levels-screen')">→ المستويات</button>
+    </div>
+  </div>
+  <div class="card-columns">
+    <div class="card-column">
+      <div class="column-title">🔣 الرموز</div>
+      <div class="card-grid" id="icon-grid"></div>
+    </div>
+    <div class="card-column">
+      <div class="column-title">📝 الأخلاق</div>
+      <div class="card-grid" id="name-grid"></div>
+    </div>
+  </div>
+  <div class="boxes-row">
+    <div class="impact-box box-home glass">
+      <span class="box-icon">🏠</span>
+      <div class="box-label">بيتي</div>
+      <div class="box-count" id="box-count-home">0</div>
+    </div>
+    <div class="impact-box box-friends glass">
+      <span class="box-icon">👫</span>
+      <div class="box-label">أصدقائي</div>
+      <div class="box-count" id="box-count-friends">0</div>
+    </div>
+    <div class="impact-box box-worship glass">
+      <span class="box-icon">🕌</span>
+      <div class="box-label">عبادتي</div>
+      <div class="box-count" id="box-count-worship">0</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LEVEL COMPLETE MODAL ===== -->
+<div class="modal-overlay" id="complete-modal">
+  <div class="modal-box glass">
+    <div class="modal-emoji">🎉</div>
+    <h3>أحسنت! أتممت المستوى</h3>
+    <div class="stars" id="modal-stars">★★★</div>
+    <p id="modal-text">اكتشفت أخلاقاً جديدة أضيئت الآن في الموسوعة.</p>
+    <div class="modal-buttons">
+      <button class="btn btn-primary" id="next-level-btn" onclick="goToNextLevel()">المستوى التالي ←</button>
+      <button class="btn" onclick="closeModal(); showScreen('levels-screen'); renderLevels();">خريطة المستويات</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">الحقوق محفوظة لـ هبة كتانة / اللجنة التكنولوجية / المدرسة الشرعية / وزارة الأوقاف / فلسطين 🇵🇸</div>
+
+<script>
+/* =====================================================
+   DATA
+===================================================== */
+const VIRTUES = [
+  {id:'v1', name:'بر الوالدين', emoji:'🙏', desc:'طاعة الوالدين والإحسان إليهما', cat:'home'},
+  {id:'v2', name:'النظافة', emoji:'🧹', desc:'الحفاظ على نظافة البيت والنفس', cat:'home'},
+  {id:'v3', name:'التعاون الأسري', emoji:'🤝', desc:'المساعدة في أعمال المنزل', cat:'home'},
+  {id:'v4', name:'الرحمة بالإخوة', emoji:'❤️', desc:'معاملة الإخوة برفق ومحبة', cat:'home'},
+  {id:'v5', name:'الصدق مع الأهل', emoji:'💬', desc:'قول الحق دائماً داخل البيت', cat:'home'},
+  {id:'v6', name:'احترام الكبير', emoji:'👴', desc:'توقير كبار العائلة والإصغاء لهم', cat:'home'},
+
+  {id:'v7', name:'الأمانة', emoji:'🔒', desc:'حفظ أسرار الأصدقاء وممتلكاتهم', cat:'friends'},
+  {id:'v8', name:'الإيثار', emoji:'🎁', desc:'تفضيل الآخرين على النفس', cat:'friends'},
+  {id:'v9', name:'التسامح', emoji:'🕊️', desc:'الصفح عن أخطاء الأصدقاء', cat:'friends'},
+  {id:'v10', name:'حسن الظن', emoji:'😊', desc:'التماس الأعذار للآخرين', cat:'friends'},
+  {id:'v11', name:'الوفاء', emoji:'🤲', desc:'الثبات على الصداقة وقت الشدة', cat:'friends'},
+  {id:'v12', name:'مساعدة المحتاج', emoji:'🆘', desc:'مد يد العون لمن يحتاج', cat:'friends'},
+
+  {id:'v13', name:'الإخلاص', emoji:'🌟', desc:'إفراد الله بالعبادة والنية الصالحة', cat:'worship'},
+  {id:'v14', name:'الخشوع', emoji:'🕌', desc:'حضور القلب في الصلاة', cat:'worship'},
+  {id:'v15', name:'الصبر', emoji:'⏳', desc:'تحمل المشقة في سبيل الطاعة', cat:'worship'},
+  {id:'v16', name:'الشكر', emoji:'🌤️', desc:'حمد الله تعالى على نعمه', cat:'worship'},
+  {id:'v17', name:'التقوى', emoji:'✨', desc:'مراقبة الله في السر والعلن', cat:'worship'},
+  {id:'v18', name:'الاستغفار', emoji:'📿', desc:'طلب المغفرة من الله دوماً', cat:'worship'},
+];
+
+const CATS = {
+  home:{label:'أثري في بيتي', dot:'dot-home'},
+  friends:{label:'أثري مع أصدقائي', dot:'dot-friends'},
+  worship:{label:'أثري في عبادتي', dot:'dot-worship'},
+};
+
+const LEVELS = [
+  {level:1, pairs:2, diff:'سهل', stars:1},
+  {level:2, pairs:4, diff:'سهل', stars:2},
+  {level:3, pairs:6, diff:'متوسط', stars:3},
+  {level:4, pairs:8, diff:'متوسط', stars:4},
+  {level:5, pairs:10, diff:'صعب', stars:5},
+];
+
+/* =====================================================
+   STATE / STORAGE
+===================================================== */
+function getDiscovered(){
+  try{ return JSON.parse(localStorage.getItem('atharuk_discovered')||'[]'); }catch(e){ return []; }
+}
+function saveDiscovered(arr){ localStorage.setItem('atharuk_discovered', JSON.stringify(arr)); }
+function markDiscovered(id){
+  const d = getDiscovered();
+  if(!d.includes(id)){ d.push(id); saveDiscovered(d); }
+}
+function getProgress(){
+  try{ return JSON.parse(localStorage.getItem('atharuk_progress')||'{}'); }catch(e){ return {}; }
+}
+function saveProgress(p){ localStorage.setItem('atharuk_progress', JSON.stringify(p)); }
+function isLevelUnlocked(level){
+  if(level===1) return true;
+  const p = getProgress();
+  return !!p[level-1];
+}
+function isSoundMuted(){ return localStorage.getItem('atharuk_muted')==='1'; }
+function setSoundMuted(v){ localStorage.setItem('atharuk_muted', v?'1':'0'); }
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* =====================================================
+   ENCYCLOPEDIA
+===================================================== */
+function renderEncyclopedia(){
+  const discovered = getDiscovered();
+  const wrap = document.getElementById('encyclopedia-wrap');
+  wrap.innerHTML = '';
+  Object.keys(CATS).forEach(catKey=>{
+    const cat = CATS[catKey];
+    const block = document.createElement('div');
+    block.className = 'category-block';
+    const items = VIRTUES.filter(v=>v.cat===catKey);
+    let cardsHtml = '';
+    items.forEach(v=>{
+      const found = discovered.includes(v.id);
+      cardsHtml += `
+        <div class="virtue-card glass ${found?'discovered':''}">
+          <span class="v-emoji">${found? v.emoji : '❔'}</span>
+          <div class="v-name">${found? v.name : '؟ ؟ ؟'}</div>
+          <div class="v-desc">${found? v.desc : 'اكتشف هذا الخُلق داخل اللعبة'}</div>
+        </div>`;
+    });
+    block.innerHTML = `
+      <div class="category-title"><span class="category-dot ${cat.dot}"></span><h3>${cat.label}</h3></div>
+      <div class="virtue-grid">${cardsHtml}</div>`;
+    wrap.appendChild(block);
+  });
+}
+
+/* =====================================================
+   LEVELS MAP
+===================================================== */
+function renderLevels(){
+  const wrap = document.getElementById('levels-wrap');
+  wrap.innerHTML = '';
+  const progress = getProgress();
+  LEVELS.forEach(lv=>{
+    const unlocked = isLevelUnlocked(lv.level);
+    const completed = !!progress[lv.level];
+    const card = document.createElement('div');
+    card.className = 'level-card glass' + (completed?' completed':'');
+    card.style.opacity = unlocked? '1':'0.4';
+    card.style.cursor = unlocked? 'pointer':'not-allowed';
+    card.innerHTML = `
+      <div class="level-num">المستوى ${lv.level}</div>
+      <h3>${unlocked? '🎯' : '🔒'} تحدي رقم ${lv.level}</h3>
+      <div class="level-diff">${lv.diff}</div>
+      <div class="stars">${'★'.repeat(lv.stars)}${'☆'.repeat(5-lv.stars)}</div>
+      <div class="level-cards-count">${lv.pairs*2} بطاقة</div>`;
+    if(unlocked){
+      card.onclick = ()=> startLevel(lv.level);
+    }
+    wrap.appendChild(card);
+  });
+}
+
+/* =====================================================
+   SOUND (Web Audio API — simple synthesized tones)
+===================================================== */
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; }
+  }
+  return audioCtx;
+}
+function playTone(freq, duration, type, delay){
+  if(isSoundMuted()) return;
+  const ctx = getCtx();
+  if(!ctx) return;
+  const t0 = ctx.currentTime + (delay||0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type||'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.18, t0+0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+duration);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+duration+0.02);
+}
+function playSuccess(){ playTone(660,0.15,'sine',0); playTone(880,0.18,'sine',0.1); }
+function playError(){ playTone(180,0.22,'sawtooth',0); }
+function playFanfare(){
+  [523,659,784,1046].forEach((f,i)=> playTone(f,0.22,'triangle', i*0.14));
+}
+function toggleSound(){
+  const muted = !isSoundMuted();
+  setSoundMuted(muted);
+  document.getElementById('sound-toggle-btn').textContent = muted? '🔇':'🔊';
+}
+
+/* =====================================================
+   GAME LOGIC
+===================================================== */
+let currentLevel = 1;
+let gameCards = [];       // {uid, virtueId, type:'name'|'emoji', matched}
+let flippedCards = [];    // uids currently flipped, unmatched
+let lockBoard = false;
+let matchedPairs = 0;
+let totalPairs = 0;
+let boxCounts = {home:0, friends:0, worship:0};
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function pickVirtuesForLevel(pairs){
+  const pool = shuffle([...VIRTUES]);
+  return pool.slice(0, pairs);
+}
+
+function startLevel(level){
+  currentLevel = level;
+  const lvDef = LEVELS.find(l=>l.level===level);
+  const chosen = pickVirtuesForLevel(lvDef.pairs);
+  totalPairs = chosen.length;
+  matchedPairs = 0;
+  flippedCards = [];
+  lockBoard = false;
+  boxCounts = {home:0, friends:0, worship:0};
+  document.getElementById('box-count-home').textContent = '0';
+  document.getElementById('box-count-friends').textContent = '0';
+  document.getElementById('box-count-worship').textContent = '0';
+
+  let cards = [];
+  chosen.forEach(v=>{
+    cards.push({uid:v.id+'-name', virtueId:v.id, type:'name', matched:false});
+    cards.push({uid:v.id+'-emoji', virtueId:v.id, type:'emoji', matched:false});
+  });
+  cards = shuffle(cards);
+  gameCards = cards;
+
+  document.getElementById('game-level-label').textContent = 'المستوى ' + level;
+  renderGameGrid();
+  showScreen('game-screen');
+}
+
+function renderGameGrid(){
+  const iconCards = shuffle(gameCards.filter(c=>c.type==='emoji'));
+  const nameCards = shuffle(gameCards.filter(c=>c.type==='name'));
+  buildColumn('icon-grid', iconCards);
+  buildColumn('name-grid', nameCards);
+}
+
+function buildColumn(gridId, cards){
+  const grid = document.getElementById(gridId);
+  const count = cards.length;
+  const cols = count<=4 ? 2 : (count<=6 ? 3 : (count<=10 ? 4 : 5));
+  grid.style.gridTemplateColumns = `repeat(${Math.min(cols, count)},1fr)`;
+  grid.innerHTML = '';
+  cards.forEach(card=>{
+    const virtue = VIRTUES.find(v=>v.id===card.virtueId);
+    const el = document.createElement('div');
+    el.className = 'mem-card';
+    el.dataset.uid = card.uid;
+    const frontContent = card.type==='name' ? virtue.name : virtue.emoji;
+    el.innerHTML = `
+      <div class="mem-card-inner">
+        <div class="mem-face mem-face-back">✨</div>
+        <div class="mem-face mem-face-front">${frontContent}</div>
+      </div>`;
+    el.addEventListener('click', ()=> onCardClick(card.uid, el));
+    grid.appendChild(el);
+  });
+}
+
+function onCardClick(uid, el){
+  if(lockBoard) return;
+  const card = gameCards.find(c=>c.uid===uid);
+  if(!card || card.matched) return;
+  if(flippedCards.some(f=>f.uid===uid)) return;
+
+  if(flippedCards.length===1 && flippedCards[0].card.type === card.type){
+    // same type as the current selection (icon+icon or name+name): swap selection, no penalty
+    flippedCards[0].el.classList.remove('flipped');
+    flippedCards = [];
+  }
+
+  el.classList.add('flipped');
+  flippedCards.push({uid, el, card});
+
+  if(flippedCards.length===2){
+    lockBoard = true;
+    const [a,b] = flippedCards;
+    if(a.card.virtueId === b.card.virtueId && a.card.type !== b.card.type){
+      setTimeout(()=>{ handleMatch(a, b); }, 250);
+    }else{
+      a.el.classList.add('error'); b.el.classList.add('error');
+      playError();
+      setTimeout(()=>{
+        a.el.classList.remove('flipped','error');
+        b.el.classList.remove('flipped','error');
+        flippedCards = [];
+        lockBoard = false;
+      }, 750);
+    }
+  }
+}
+
+function handleMatch(a,b){
+  a.card.matched = true; b.card.matched = true;
+  a.el.classList.add('matched'); b.el.classList.add('matched');
+  playSuccess();
+
+  const virtue = VIRTUES.find(v=>v.id===a.card.virtueId);
+  markDiscovered(virtue.id);
+  flyToBox(a.el, virtue);
+
+  matchedPairs++;
+  flippedCards = [];
+  lockBoard = false;
+
+  if(matchedPairs >= totalPairs){
+    setTimeout(()=> completeLevel(), 700);
+  }
+}
+
+function flyToBox(sourceEl, virtue){
+  const boxMap = {home:'.box-home', friends:'.box-friends', worship:'.box-worship'};
+  const boxEl = document.querySelector(boxMap[virtue.cat]);
+  if(!boxEl) return;
+  const srcRect = sourceEl.getBoundingClientRect();
+  const dstRect = boxEl.getBoundingClientRect();
+
+  const flying = document.createElement('div');
+  flying.className = 'flying-emoji';
+  flying.textContent = virtue.emoji;
+  flying.style.left = (srcRect.left + srcRect.width/2 - 15) + 'px';
+  flying.style.top = (srcRect.top + srcRect.height/2 - 15) + 'px';
+  document.body.appendChild(flying);
+
+  requestAnimationFrame(()=>{
+    flying.style.left = (dstRect.left + dstRect.width/2 - 15) + 'px';
+    flying.style.top = (dstRect.top + 10) + 'px';
+    flying.style.transform = 'scale(0.4)';
+    flying.style.opacity = '0.2';
+  });
+
+  setTimeout(()=>{
+    flying.remove();
+    boxCounts[virtue.cat]++;
+    const countEl = document.getElementById('box-count-'+virtue.cat);
+    if(countEl) countEl.textContent = boxCounts[virtue.cat];
+  }, 820);
+}
+
+function completeLevel(){
+  playFanfare();
+  const progress = getProgress();
+  const lvDef = LEVELS.find(l=>l.level===currentLevel);
+  progress[currentLevel] = true;
+  saveProgress(progress);
+
+  document.getElementById('modal-stars').textContent = '★'.repeat(lvDef.stars) + '☆'.repeat(5-lvDef.stars);
+  const nextBtn = document.getElementById('next-level-btn');
+  const hasNext = LEVELS.some(l=>l.level===currentLevel+1);
+  nextBtn.style.display = hasNext ? 'inline-flex' : 'none';
+  document.getElementById('modal-text').textContent = hasNext
+    ? 'اكتشفت أخلاقاً جديدة أضيئت الآن في الموسوعة. هل أنت مستعد للمستوى التالي؟'
+    : 'أحسنت! أتممت جميع المستويات وأضأت أخلاقاً كثيرة في موسوعتك.';
+
+  document.getElementById('complete-modal').classList.add('active');
+}
+
+function closeModal(){
+  document.getElementById('complete-modal').classList.remove('active');
+}
+
+function goToNextLevel(){
+  closeModal();
+  const next = currentLevel + 1;
+  if(LEVELS.some(l=>l.level===next)){
+    startLevel(next);
+  }else{
+    showScreen('levels-screen');
+    renderLevels();
+  }
+}
+
+/* Init on load */
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('sound-toggle-btn').textContent = isSoundMuted()? '🔇':'🔊';
+  renderEncyclopedia();
+  renderLevels();
+});
+</script>
+</body>
+</html>
