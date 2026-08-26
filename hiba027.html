@@ -1,0 +1,1677 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260805-03-59e0745","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Broken Glyph":"YADZ-exUkv0,0","Canva Sans":"YAFdJjTk5UU,0","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Ghost Mono":"YAHO2EIdDP0,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YADy3sAhvXQ,0","Oleo Script":"YACgEQQ14jI,0","Playfair Display":"YAFdJhem5V8,1","Poppins":"YAE5fPSY9qM,0","Press Start 2P":"YAFyGr-8pmQ,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/7949ff62d67710d5.telemetry_sdk.js" integrity="sha512-KIvXA82Di44YY/RH9/63A9MuTuavYgDFG8PfErJn7Wli4K0LAOk+coo/aPXk3+ZNL96nHh9VYD4PE+fLes+laQ=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فيزياء الأعاصير | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="27.png">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/7c520c0d71d7a06d.element_sdk.js" integrity="sha512-ZRhMhUorW8pmwd91OvkYXfNJMO7l1l3Dt8LinTPHSEXBz3TUAFKfKOO3bQE/KGcQJm6I4Ho+kKNLS9QZB8wyew=="></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    ::selection { background: #85b2d2; color: white; }
+    
+    html, body { height: 100%; margin: 0; }
+    
+    .glass-card {
+      background: rgba(27, 38, 59, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(224, 225, 221, 0.1);
+    }
+    
+    .glass-button {
+      background: rgba(65, 90, 119, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(224, 225, 221, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .glass-button:hover {
+      background: rgba(133, 178, 210, 0.4);
+      border-color: rgba(133, 178, 210, 0.6);
+      transform: translateY(-2px);
+    }
+    
+    .hurricane-bg {
+      background: linear-gradient(135deg, #1b263b 0%, #415a77 50%, #1b263b 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .particle-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(224, 225, 221, 0.3);
+      border-radius: 50%;
+      animation: swirl 8s infinite linear;
+    }
+    
+    @keyframes swirl {
+      0% { transform: rotate(0deg) translateX(100px) rotate(0deg); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); opacity: 0; }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(252, 163, 17, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(252, 163, 17, 0.6); }
+    }
+    
+    .warning-pulse { animation: pulse-glow 2s infinite; }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .float-animation { animation: float 3s ease-in-out infinite; }
+    
+    @keyframes wind-blow {
+      0% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(5px) rotate(2deg); }
+      75% { transform: translateX(-5px) rotate(-2deg); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+    
+    .wind-icon { animation: wind-blow 1s ease-in-out infinite; }
+    
+    @keyframes rain-fall {
+      0% { transform: translateY(-10px); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(10px); opacity: 0; }
+    }
+    
+    .rain-icon { animation: rain-fall 0.8s ease-in-out infinite; }
+    
+    @keyframes lightning {
+      0%, 90%, 100% { opacity: 0.3; }
+      92%, 94% { opacity: 1; }
+    }
+    
+    .lightning-icon { animation: lightning 3s infinite; }
+    
+    .hurricane-eye {
+      background: radial-gradient(circle, #1b263b 0%, transparent 70%);
+    }
+    
+    .eye-wall {
+      border: 3px solid rgba(252, 163, 17, 0.6);
+      animation: rotate-wall 10s linear infinite;
+    }
+    
+    @keyframes rotate-wall {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .rain-band {
+      border: 2px dashed rgba(133, 178, 210, 0.4);
+      animation: rotate-band 15s linear infinite reverse;
+    }
+    
+    @keyframes rotate-band {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .intensity-bar {
+      height: 8px;
+      border-radius: 4px;
+      transition: all 0.5s ease;
+    }
+    
+    .nav-link {
+      position: relative;
+      padding: 0.5rem 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 0;
+      height: 2px;
+      background: #fca311;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:hover { color: #fca311; }
+    
+    .section-title {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      right: 0;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #fca311, transparent);
+    }
+    
+    .map-marker {
+      width: 20px;
+      height: 20px;
+      background: #fca311;
+      border-radius: 50%;
+      animation: marker-pulse 1.5s infinite;
+      cursor: pointer;
+    }
+    
+    @keyframes marker-pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(252, 163, 17, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(252, 163, 17, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(252, 163, 17, 0); }
+    }
+    
+    .category-card {
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+    
+    .category-card:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+    
+    .simulator-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #415a77, #fca311);
+      outline: none;
+    }
+    
+    .simulator-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fca311;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(252, 163, 17, 0.5);
+    }
+    
+    .vortex-3d {
+      perspective: 1000px;
+    }
+    
+    .vortex-inner {
+      transform-style: preserve-3d;
+      animation: vortex-rotate 20s linear infinite;
+    }
+    
+    @keyframes vortex-rotate {
+      from { transform: rotateY(0deg) rotateX(15deg); }
+      to { transform: rotateY(360deg) rotateX(15deg); }
+    }
+    
+    .info-popup {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    
+    .info-popup.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    
+    .scroll-indicator {
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .mobile-menu.open { transform: translateX(0); }
+
+    /* On square-ish screens (tablets in portrait, square kiosks/monitors) the
+       horizontal nav has no room for all links + toggles, so fall back to the
+       same hamburger menu used on phones — regardless of pixel width. */
+    @media (max-aspect-ratio: 4/3) {
+      #desktop-menu { display: none !important; }
+      #mobile-menu-btn { display: flex !important; }
+    }
+
+    /* Light mode: colors here are hardcoded per element (Tailwind arbitrary
+       values) rather than CSS variables, so a hand-built light palette would
+       mean re-touching hundreds of classes. Inverting + hue-rotating the
+       whole page is a pragmatic way to get a fully working, readable second
+       theme without a redesign. The map is re-inverted so its tiles stay
+       normal instead of looking inverted. */
+    html { transition: filter 0.3s ease; }
+    html.light-mode { filter: invert(1) hue-rotate(180deg); }
+    html.light-mode #leaflet-map { filter: invert(1) hue-rotate(180deg); }
+
+    html.reduce-motion *,
+    html.reduce-motion *::before,
+    html.reduce-motion *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    
+    .back-btn {
+      background: rgba(65, 90, 119, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(224, 225, 221, 0.2);
+      padding: 10px 16px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #e0e1dd;
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 12px;
+    }
+    
+    .back-btn:hover {
+      background: rgba(133, 178, 210, 0.4);
+      border-color: rgba(133, 178, 210, 0.6);
+      transform: translateY(-2px);
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/0e8d3a91e1c6f495.data_sdk.js" type="text/javascript" integrity="sha512-c00oDoGjsMgluCLLEyVl3suwEkgjOGGplVFbsilUoBg4aMKNmsL3mwsc9r0dPn95qiSZyjBousQXgROkAW7p/w=="></script>
+ </head>
+ <body class="hurricane-bg h-full overflow-auto"><!-- Particle Effect Background -->
+  <div class="particle-container" id="particles"></div><!-- Main Content -->
+  <div class="relative z-10 min-h-full"><!-- Navigation -->
+   <nav class="fixed top-0 right-0 left-0 z-50 glass-card px-4 md:px-8 py-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between"><!-- Logo -->
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#fca311] to-[#415a77] flex items-center justify-center">
+       <svg class="w-6 h-6 text-white wind-icon" fill="currentColor" viewbox="0 0 24 24"><path d="M12.5 2C9.64 2 7.14 3.5 6.14 5.86c-.15.36-.19.76-.07 1.14.12.38.38.7.72.9l.13.08c.45.27.99.27 1.44 0 .86-.52 1.84-.79 2.86-.79 2.48 0 4.59 1.61 5.34 3.83.12.35.36.64.68.82.32.18.69.24 1.05.15 2.13-.52 3.71-2.43 3.71-4.67C22 4.47 19.53 2 16.5 2h-4zM4.5 9C2.57 9 1 10.57 1 12.5S2.57 16 4.5 16c.47 0 .92-.1 1.34-.27.35-.14.64-.42.79-.78.15-.36.15-.76 0-1.12-.08-.19-.08-.4 0-.59.08-.19.23-.35.41-.44.36-.18.6-.54.6-.95 0-.58-.47-1.05-1.05-1.05-.13 0-.26.02-.38.07C5.67 9.32 5.1 9 4.5 9zm12 4c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c1.4 0 2.6-.82 3.16-2 .14-.3.14-.64 0-.94-.14-.3-.4-.52-.72-.6-.16-.04-.33-.04-.49 0-.16.04-.31.12-.43.24-.24.24-.57.38-.92.38-.72 0-1.3-.58-1.3-1.3 0-.35.14-.68.38-.92.24-.24.38-.57.38-.92 0-.72-.58-1.3-1.3-1.3-.35 0-.68.14-.92.38-.12.12-.27.2-.43.24-.16.04-.33.04-.49 0-.32-.08-.58-.3-.72-.6-.14-.3-.14-.64 0-.94.56-1.18 1.76-2 3.16-2 1.93 0 3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5z" />
+       </svg>
+      </div><span id="site-title" class="text-xl font-bold text-[#e0e1dd]">فيزياء الأعاصير</span>
+     </div><!-- Desktop Menu -->
+     <div id="desktop-menu" class="hidden md:flex items-center gap-6"><a href="#tracking" class="nav-link text-[#e0e1dd]">تتبع حي</a> <a href="#simulator" class="nav-link text-[#e0e1dd]">محاكي الإعصار</a> <a href="#physics" class="nav-link text-[#e0e1dd]">فيزياء الإعصار</a> <a href="#archive" class="nav-link text-[#e0e1dd]">أرشيف العواصف</a> <a href="#survival" class="nav-link text-[#e0e1dd]">سبل النجاة</a> <a href="#quiz" class="nav-link text-[#e0e1dd]">اختبار</a> <a href="#comparison" class="nav-link text-[#e0e1dd]">مقارنة الأعاصير</a>
+      <div class="flex items-center gap-2 border-r border-[#415a77] pr-4 mr-2"><button id="theme-toggle-btn" class="glass-button p-2 rounded-lg text-sm" title="تبديل المظهر">🌙</button> <button id="motion-toggle-btn" class="glass-button p-2 rounded-lg text-sm" title="تقليل الحركة">🎞️</button> <button id="lang-toggle-btn" class="glass-button px-3 py-2 rounded-lg text-sm font-bold" title="Language">EN</button></div>
+     </div><!-- Mobile Menu Button --> <button id="mobile-menu-btn" class="md:hidden text-[#e0e1dd] p-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg></button>
+    </div>
+   </nav><!-- Mobile Menu -->
+   <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 h-full w-64 glass-card z-50 p-6 md:hidden"><button id="close-menu" class="absolute top-4 left-4 text-[#e0e1dd]">
+     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+     </svg></button>
+    <div class="mt-12 flex flex-col gap-4"><a href="#tracking" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">تتبع حي</a> <a href="#simulator" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">محاكي الإعصار</a> <a href="#physics" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">فيزياء الإعصار</a> <a href="#archive" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">أرشيف العواصف</a> <a href="#survival" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">سبل النجاة</a> <a href="#quiz" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">اختبار</a> <a href="#comparison" class="text-[#e0e1dd] py-2 border-b border-[#415a77]">مقارنة الأعاصير</a>
+    </div>
+    <div class="flex items-center gap-2 mt-6 pt-6 border-t border-[#415a77]"><button id="theme-toggle-btn-mobile" class="glass-button p-2 rounded-lg text-sm" title="تبديل المظهر">🌙</button> <button id="motion-toggle-btn-mobile" class="glass-button p-2 rounded-lg text-sm" title="تقليل الحركة">🎞️</button> <button id="lang-toggle-btn-mobile" class="glass-button px-3 py-2 rounded-lg text-sm font-bold" title="Language">EN</button></div>
+   </div><!-- Hero Section -->
+   <section class="min-h-screen flex items-center justify-center px-4 pt-20">
+    <div class="text-center max-w-4xl">
+     <div class="float-animation mb-8">
+      <svg class="w-32 h-32 mx-auto text-[#fca311]" viewbox="0 0 100 100" fill="currentColor"><circle cx="50" cy="50" r="8" fill="#1b263b" /> <path d="M50 15 A35 35 0 0 1 85 50" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.9" /> <path d="M50 20 A30 30 0 0 1 80 50" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7" /> <path d="M50 25 A25 25 0 0 1 75 50" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5" /> <path d="M50 85 A35 35 0 0 1 15 50" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.9" /> <path d="M50 80 A30 30 0 0 1 20 50" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7" /> <path d="M50 75 A25 25 0 0 1 25 50" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5" />
+      </svg>
+     </div>
+     <h1 class="text-4xl md:text-6xl font-extrabold text-[#e0e1dd] mb-6">استكشف قوة <span class="text-[#fca311]">الأعاصير</span></h1>
+     <p id="hero-subtitle" class="text-lg md:text-xl text-[#e0e1dd] opacity-80 mb-8 max-w-2xl mx-auto">رحلة علمية غامرة في قلب أعتى الظواهر الجوية على كوكب الأرض</p>
+     <div class="flex flex-col sm:flex-row gap-4 justify-center"><a href="#tracking" class="glass-button warning-pulse px-8 py-3 rounded-xl text-[#e0e1dd] font-bold"> 🌀 تتبع الأعاصير النشطة </a> <a href="#simulator" class="glass-button px-8 py-3 rounded-xl text-[#e0e1dd] font-bold"> 🔬 جرب المحاكي </a>
+     </div>
+     <div class="mt-16 scroll-indicator">
+      <svg class="w-8 h-8 mx-auto text-[#e0e1dd] opacity-50" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+     </div>
+    </div>
+   </section><!-- Live Tracking Section -->
+   <section id="tracking" class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-4">🛰️ لوحة التتبع اللحظي</h2>
+     <p id="live-status" class="text-sm text-[#e0e1dd] opacity-70 mb-8">⏳ جاري محاولة جلب بيانات حية من مركز الأعاصير الوطني الأمريكي (NHC)...</p>
+     <div class="grid lg:grid-cols-3 gap-6"><!-- Map Area -->
+      <div class="lg:col-span-2 glass-card rounded-2xl p-6 min-h-[400px]">
+       <div id="leaflet-map" class="relative w-full h-full min-h-[350px] rounded-xl overflow-hidden z-0"></div>
+      </div><!-- Active Hurricanes List -->
+      <div class="glass-card rounded-2xl p-6">
+       <h3 class="text-xl font-bold text-[#fca311] mb-6 flex items-center gap-2"><span class="wind-icon">💨</span> الأعاصير النشطة</h3>
+       <div class="space-y-4" id="hurricane-list">
+        <div class="glass-card rounded-xl p-4 cursor-pointer hover:border-[#fca311] transition-all" onclick="showHurricaneInfo('tropical26s')">
+         <div class="flex justify-between items-start mb-2"><span class="font-bold text-[#e0e1dd]">إعصار مداري 26S</span> <span class="bg-green-500 text-white text-xs px-2 py-1 rounded">الفئة 1</span>
+         </div>
+         <div class="text-sm text-[#e0e1dd] opacity-70">
+          <p>🌊 جنوب المحيط الهندي</p>
+          <p>💨 65 كم/س</p>
+         </div>
+        </div>
+        <div class="glass-card rounded-xl p-4 cursor-pointer hover:border-[#fca311] transition-all" onclick="showHurricaneInfo('disturbance95w')">
+         <div class="flex justify-between items-start mb-2"><span class="font-bold text-[#e0e1dd]">منطقة اضطراب 95W</span> <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">مراقبة</span>
+         </div>
+         <div class="text-sm text-[#e0e1dd] opacity-70">
+          <p>🌊 غرب المحيط الهادئ</p>
+          <p>💨 40 كم/س</p>
+         </div>
+        </div>
+        <div class="glass-card rounded-xl p-4 cursor-pointer hover:border-[#fca311] transition-all" onclick="showHurricaneInfo('atlantic')">
+         <div class="flex justify-between items-start mb-2"><span class="font-bold text-[#e0e1dd]">المحيط الأطلسي</span> <span class="bg-gray-500 text-white text-xs px-2 py-1 rounded">ساكن</span>
+         </div>
+         <div class="text-sm text-[#e0e1dd] opacity-70">
+          <p>🌊 منطقة النشاط الرئيسية</p>
+          <p>💨 خارج الموسم</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Hurricane Info Popup -->
+     <div id="hurricane-popup" class="info-popup fixed inset-0 flex items-center justify-center z-50 bg-black/50 p-4">
+      <div class="glass-card rounded-2xl p-8 max-w-lg w-full">
+       <div class="flex justify-between items-start mb-6">
+        <h3 id="popup-title" class="text-2xl font-bold text-[#fca311]">إعصار ميلتون</h3><button onclick="closePopup()" class="text-[#e0e1dd] hover:text-[#fca311]">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+         </svg></button>
+       </div>
+       <div id="popup-content" class="space-y-4 text-[#e0e1dd]"><!-- Content filled by JS -->
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Hurricane Simulator -->
+   <section id="simulator" class="py-20 px-4 bg-gradient-to-b from-transparent via-[#1b263b]/50 to-transparent">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">🔬 محاكي الإعصار</h2>
+     <div class="grid lg:grid-cols-2 gap-8"><!-- Controls -->
+      <div class="glass-card rounded-2xl p-8">
+       <h3 class="text-xl font-bold text-[#fca311] mb-6">تحكم في العوامل</h3>
+       <div class="space-y-8"><!-- Ocean Temperature -->
+        <div><label class="flex justify-between text-[#e0e1dd] mb-3"> <span>🌡️ درجة حرارة المحيط</span> <span id="temp-value" class="text-[#fca311] font-bold">26°C</span> </label> <input type="range" id="ocean-temp" min="20" max="35" value="26" class="simulator-slider w-full" oninput="updateSimulator()">
+         <div class="flex justify-between text-xs text-[#e0e1dd] opacity-50 mt-1"><span>20°C</span> <span>35°C</span>
+         </div>
+        </div><!-- Wind Shear -->
+        <div><label class="flex justify-between text-[#e0e1dd] mb-3"> <span>💨 قص الرياح</span> <span id="shear-value" class="text-[#fca311] font-bold">منخفض</span> </label> <input type="range" id="wind-shear" min="0" max="100" value="20" class="simulator-slider w-full" oninput="updateSimulator()">
+         <div class="flex justify-between text-xs text-[#e0e1dd] opacity-50 mt-1"><span>منخفض</span> <span>مرتفع</span>
+         </div>
+        </div><!-- Humidity -->
+        <div><label class="flex justify-between text-[#e0e1dd] mb-3"> <span>💧 الرطوبة</span> <span id="humidity-value" class="text-[#fca311] font-bold">70%</span> </label> <input type="range" id="humidity" min="30" max="100" value="70" class="simulator-slider w-full" oninput="updateSimulator()">
+         <div class="flex justify-between text-xs text-[#e0e1dd] opacity-50 mt-1"><span>30%</span> <span>100%</span>
+         </div>
+        </div>
+       </div><!-- Result -->
+       <div class="mt-8 p-6 bg-[#1b263b] rounded-xl">
+        <div class="text-center">
+         <p class="text-[#e0e1dd] opacity-70 mb-2">الفئة المتوقعة</p>
+         <p id="category-result" class="text-5xl font-extrabold text-[#fca311]">2</p>
+         <p id="category-name" class="text-[#e0e1dd] mt-2">إعصار متوسط</p>
+        </div>
+        <div class="mt-4">
+         <div class="flex justify-between text-sm text-[#e0e1dd] mb-2"><span>سرعة الرياح المتوقعة</span> <span id="wind-speed-result" class="text-[#fca311]">154 كم/س</span>
+         </div>
+         <div class="w-full bg-[#415a77] rounded-full h-3">
+          <div id="wind-bar" class="bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 h-3 rounded-full transition-all duration-500" style="width: 40%"></div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Visual Simulation -->
+      <div class="glass-card rounded-2xl p-8 flex items-center justify-center">
+       <div id="hurricane-visual" class="relative w-64 h-64"><!-- Rain Bands -->
+        <div class="rain-band absolute inset-0 rounded-full" style="animation-duration: 20s;"></div>
+        <div class="rain-band absolute inset-4 rounded-full" style="animation-duration: 15s;"></div>
+        <div class="rain-band absolute inset-8 rounded-full" style="animation-duration: 12s;"></div><!-- Eye Wall -->
+        <div id="eye-wall" class="eye-wall absolute rounded-full" style="inset: 35%; animation-duration: 8s;"></div><!-- Eye -->
+        <div class="hurricane-eye absolute rounded-full" style="inset: 40%;"></div>
+        <div class="absolute rounded-full bg-[#1b263b]" style="inset: 42%;"></div><!-- Category Label -->
+        <div class="absolute inset-0 flex items-center justify-center"><span id="visual-category" class="text-4xl font-extrabold text-[#fca311]">2</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- 3D Vortex Section -->
+   <section id="physics" class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">🌀 تشريح عين الإعصار</h2>
+     <div class="grid lg:grid-cols-2 gap-8"><!-- 3D Model -->
+      <div class="glass-card rounded-2xl p-8">
+       <div class="vortex-3d h-80 flex items-center justify-center">
+        <div class="vortex-inner relative w-64 h-64"><!-- Outer Rain Bands -->
+         <div class="absolute inset-0 border-4 border-dashed border-[#85b2d2] rounded-full opacity-30 cursor-pointer" onclick="showPartInfo('rain')" title="أحزمة المطر"></div>
+         <div class="absolute inset-4 border-4 border-dashed border-[#85b2d2] rounded-full opacity-40 cursor-pointer" onclick="showPartInfo('rain')" title="أحزمة المطر"></div><!-- Eye Wall -->
+         <div class="absolute border-4 border-[#fca311] rounded-full cursor-pointer" style="inset: 25%;" onclick="showPartInfo('wall')" title="جدار العين"></div><!-- Eye -->
+         <div class="absolute bg-gradient-to-b from-[#1b263b] to-[#415a77] rounded-full cursor-pointer flex items-center justify-center" style="inset: 35%;" onclick="showPartInfo('eye')" title="العين"><span class="text-[#e0e1dd] text-xs">العين</span>
+         </div><!-- Labels -->
+         <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-[#85b2d2] text-sm">
+          أحزمة المطر
+         </div>
+         <div class="absolute top-1/4 -right-20 text-[#fca311] text-sm">
+          جدار العين
+         </div>
+        </div>
+       </div>
+       <p class="text-center text-[#e0e1dd] opacity-70 mt-4">انقر على أي جزء لمعرفة المزيد</p>
+      </div><!-- Info Panel -->
+      <div class="glass-card rounded-2xl p-8">
+       <div id="part-info">
+        <h3 class="text-2xl font-bold text-[#fca311] mb-4">اختر جزءاً من الإعصار</h3>
+        <p class="text-[#e0e1dd] opacity-80">انقر على أي جزء من نموذج الإعصار لمعرفة المزيد عن تركيبه وخصائصه الفيزيائية.</p>
+        <div class="mt-8 space-y-3 mb-6"><button onclick="showPartInfo('eye')" class="w-full glass-button p-3 rounded-xl text-right text-[#e0e1dd] hover:text-[#fca311] transition-all"> 👁️ العين </button> <button onclick="showPartInfo('wall')" class="w-full glass-button p-3 rounded-xl text-right text-[#e0e1dd] hover:text-[#fca311] transition-all"> 🔥 جدار العين </button> <button onclick="showPartInfo('rain')" class="w-full glass-button p-3 rounded-xl text-right text-[#e0e1dd] hover:text-[#fca311] transition-all"> 🌧️ أحزمة المطر </button>
+        </div>
+        <div class="border-t border-[#415a77] pt-6">
+         <p class="text-xs text-[#e0e1dd] opacity-60 mb-4">أقسام أخرى:</p>
+         <div class="grid grid-cols-2 gap-2"><a href="#tracking" class="glass-button p-2 rounded-lg text-xs text-[#e0e1dd] hover:text-[#fca311] text-center"> 🛰️ التتبع </a> <a href="#simulator" class="glass-button p-2 rounded-lg text-xs text-[#e0e1dd] hover:text-[#fca311] text-center"> 🔬 المحاكي </a> <a href="#archive" class="glass-button p-2 rounded-lg text-xs text-[#e0e1dd] hover:text-[#fca311] text-center"> 📊 المقياس </a> <a href="#survival" class="glass-button p-2 rounded-lg text-xs text-[#e0e1dd] hover:text-[#fca311] text-center"> 🛡️ النجاة </a> <a href="#quiz" class="glass-button p-2 rounded-lg text-xs text-[#e0e1dd] hover:text-[#fca311] text-center"> 🎓 اختبار </a> <a href="#map" class="glass-button p-2 rounded-lg text-xs text-[#e0e1dd] hover:text-[#fca311] text-center"> 📅 الخط الزمني </a>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Intensity Scale Section -->
+   <section id="archive" class="py-20 px-4 bg-gradient-to-b from-transparent via-[#1b263b]/50 to-transparent">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">📊 مقياس سفير-سمبسون للأعاصير</h2>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"><!-- Category 1 -->
+      <div class="category-card glass-card rounded-2xl p-6 border-t-4 border-green-500" onclick="showCategoryDetails(1)">
+       <div class="text-center"><span class="text-4xl font-extrabold text-green-500">1</span>
+        <p class="text-[#e0e1dd] font-bold mt-2">ضعيف</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70 mt-2">119-153 كم/س</p>
+        <div class="mt-4 text-3xl">
+         🌴
+        </div>
+        <p class="text-xs text-[#e0e1dd] opacity-60 mt-2">أضرار طفيفة في الأشجار</p>
+       </div>
+      </div><!-- Category 2 -->
+      <div class="category-card glass-card rounded-2xl p-6 border-t-4 border-yellow-500" onclick="showCategoryDetails(2)">
+       <div class="text-center"><span class="text-4xl font-extrabold text-yellow-500">2</span>
+        <p class="text-[#e0e1dd] font-bold mt-2">متوسط</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70 mt-2">154-177 كم/س</p>
+        <div class="mt-4 text-3xl">
+         🏠
+        </div>
+        <p class="text-xs text-[#e0e1dd] opacity-60 mt-2">أضرار في الأسقف والنوافذ</p>
+       </div>
+      </div><!-- Category 3 -->
+      <div class="category-card glass-card rounded-2xl p-6 border-t-4 border-orange-500" onclick="showCategoryDetails(3)">
+       <div class="text-center"><span class="text-4xl font-extrabold text-orange-500">3</span>
+        <p class="text-[#e0e1dd] font-bold mt-2">قوي</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70 mt-2">178-208 كم/س</p>
+        <div class="mt-4 text-3xl">
+         ⚡
+        </div>
+        <p class="text-xs text-[#e0e1dd] opacity-60 mt-2">دمار واسع في البنية التحتية</p>
+       </div>
+      </div><!-- Category 4 -->
+      <div class="category-card glass-card rounded-2xl p-6 border-t-4 border-red-500" onclick="showCategoryDetails(4)">
+       <div class="text-center"><span class="text-4xl font-extrabold text-red-500">4</span>
+        <p class="text-[#e0e1dd] font-bold mt-2">شديد</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70 mt-2">209-251 كم/س</p>
+        <div class="mt-4 text-3xl">
+         🏚️
+        </div>
+        <p class="text-xs text-[#e0e1dd] opacity-60 mt-2">تدمير المنازل بالكامل</p>
+       </div>
+      </div><!-- Category 5 -->
+      <div class="category-card glass-card rounded-2xl p-6 border-t-4 border-purple-500 warning-pulse" onclick="showCategoryDetails(5)">
+       <div class="text-center"><span class="text-4xl font-extrabold text-purple-500">5</span>
+        <p class="text-[#e0e1dd] font-bold mt-2">كارثي</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70 mt-2">أكثر من 252 كم/س</p>
+        <div class="mt-4 text-3xl">
+         💀
+        </div>
+        <p class="text-xs text-[#e0e1dd] opacity-60 mt-2">دمار شامل ومميت</p>
+       </div>
+      </div>
+     </div><!-- Category Details Modal -->
+     <div id="category-modal" class="info-popup fixed inset-0 flex items-center justify-center z-50 bg-black/50 p-4">
+      <div class="glass-card rounded-2xl p-8 max-w-2xl w-full max-h-[80%] overflow-y-auto">
+       <div class="flex justify-between items-start mb-6">
+        <h3 id="modal-category-title" class="text-2xl font-bold text-[#fca311]">الفئة 5</h3><button onclick="closeCategoryModal()" class="text-[#e0e1dd] hover:text-[#fca311]">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+         </svg></button>
+       </div>
+       <div id="modal-category-content" class="text-[#e0e1dd]"><!-- Content filled by JS -->
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Survival Guide -->
+   <section id="survival" class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">🛡️ سبل النجاة</h2>
+     <div class="grid md:grid-cols-3 gap-6"><!-- Before -->
+      <div class="glass-card rounded-2xl p-8">
+       <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center mb-6"><span class="text-3xl">📋</span>
+       </div>
+       <h3 class="text-xl font-bold text-[#fca311] mb-4">قبل الإعصار</h3>
+       <ul class="space-y-3 text-[#e0e1dd]">
+        <li class="flex items-start gap-2"><span class="text-green-500">✓</span> <span>جهز حقيبة طوارئ تكفي 3-7 أيام</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-500">✓</span> <span>تأكد من وجود مياه نظيفة (4 لتر/شخص/يوم)</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-500">✓</span> <span>احفظ نسخاً من الوثائق المهمة</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-500">✓</span> <span>اعرف أقرب ملجأ آمن</span></li>
+        <li class="flex items-start gap-2"><span class="text-green-500">✓</span> <span>ثبت النوافذ بألواح خشبية</span></li>
+       </ul>
+      </div><!-- During -->
+      <div class="glass-card rounded-2xl p-8">
+       <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6"><span class="text-3xl">⚠️</span>
+       </div>
+       <h3 class="text-xl font-bold text-[#fca311] mb-4">أثناء الإعصار</h3>
+       <ul class="space-y-3 text-[#e0e1dd]">
+        <li class="flex items-start gap-2"><span class="text-yellow-500">⚡</span> <span>ابق في غرفة داخلية بعيداً عن النوافذ</span></li>
+        <li class="flex items-start gap-2"><span class="text-yellow-500">⚡</span> <span>لا تخرج أثناء مرور "العين"</span></li>
+        <li class="flex items-start gap-2"><span class="text-yellow-500">⚡</span> <span>أغلق الكهرباء والغاز</span></li>
+        <li class="flex items-start gap-2"><span class="text-yellow-500">⚡</span> <span>استمع للراديو للتحديثات</span></li>
+        <li class="flex items-start gap-2"><span class="text-yellow-500">⚡</span> <span>احتمِ تحت طاولة قوية إذا لزم</span></li>
+       </ul>
+      </div><!-- After -->
+      <div class="glass-card rounded-2xl p-8">
+       <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl flex items-center justify-center mb-6"><span class="text-3xl">🏥</span>
+       </div>
+       <h3 class="text-xl font-bold text-[#fca311] mb-4">بعد الإعصار</h3>
+       <ul class="space-y-3 text-[#e0e1dd]">
+        <li class="flex items-start gap-2"><span class="text-blue-500">●</span> <span>انتظر الإعلان الرسمي بانتهاء الخطر</span></li>
+        <li class="flex items-start gap-2"><span class="text-blue-500">●</span> <span>تجنب الأسلاك الكهربائية الملقاة</span></li>
+        <li class="flex items-start gap-2"><span class="text-blue-500">●</span> <span>لا تشرب ماء الصنبور حتى التأكد</span></li>
+        <li class="flex items-start gap-2"><span class="text-blue-500">●</span> <span>وثق الأضرار بالصور للتأمين</span></li>
+        <li class="flex items-start gap-2"><span class="text-blue-500">●</span> <span>ساعد الجيران المحتاجين</span></li>
+       </ul>
+      </div>
+     </div><!-- Emergency Numbers -->
+     <div class="mt-12 glass-card rounded-2xl p-8 warning-pulse">
+      <h3 class="text-xl font-bold text-[#fca311] mb-4 text-center">📞 أرقام الطوارئ</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+       <div class="p-4">
+        <p class="text-3xl font-bold text-[#e0e1dd]">911</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70">طوارئ عامة</p>
+       </div>
+       <div class="p-4">
+        <p class="text-3xl font-bold text-[#e0e1dd]">101</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70">الدفاع المدني</p>
+       </div>
+       <div class="p-4">
+        <p class="text-3xl font-bold text-[#e0e1dd]">102</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70">الإسعاف</p>
+       </div>
+       <div class="p-4">
+        <p class="text-3xl font-bold text-[#e0e1dd]">103</p>
+        <p class="text-sm text-[#e0e1dd] opacity-70">الإطفاء</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Quiz Section -->
+   <section id="quiz" class="py-20 px-4 bg-gradient-to-b from-transparent via-[#1b263b]/50 to-transparent">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">🎓 اختبر معلوماتك</h2>
+     <div id="quiz-container" class="glass-card rounded-2xl p-8">
+      <div id="quiz-start" class="text-center">
+       <p class="text-[#e0e1dd] text-lg mb-6">اختبر معارفك عن فيزياء الأعاصير واحصل على نقاط!</p>
+       <div class="mb-6"><label class="block text-[#e0e1dd] text-right mb-3 font-bold">أدخل اسمك:</label> <input type="text" id="user-name" placeholder="أدخل اسمك هنا" class="w-full bg-[#1b263b] border border-[#415a77] rounded-lg p-3 text-[#e0e1dd] text-right" dir="rtl">
+       </div><button onclick="startQuiz()" class="glass-button px-8 py-4 rounded-xl text-[#e0e1dd] font-bold text-lg hover:text-[#fca311]">ابدأ الاختبار</button>
+      </div>
+      <div id="quiz-content" class="hidden">
+       <div class="mb-4">
+        <div class="flex justify-between items-center mb-2"><span class="text-[#fca311] font-bold">السؤال <span id="current-question">1</span> من <span id="total-questions">10</span></span> <span id="quiz-score" class="text-[#85b2d2] font-bold">النقاط: 0</span>
+        </div>
+        <div class="w-full bg-[#415a77] rounded-full h-2">
+         <div id="quiz-progress" class="bg-gradient-to-r from-[#fca311] to-[#85b2d2] h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+       </div>
+       <h3 id="question-text" class="text-xl font-bold text-[#e0e1dd] mb-6"></h3>
+       <div id="options-container" class="space-y-3 mb-8"></div>
+       <div id="feedback-message" class="hidden p-4 rounded-xl mb-4 text-center font-bold transition-all duration-300"></div><button id="next-btn" onclick="nextQuestion()" class="glass-button w-full py-3 rounded-xl text-[#e0e1dd] font-bold disabled opacity-50" disabled>التالي</button>
+      </div>
+      <div id="quiz-results" class="hidden text-center">
+       <div class="mb-8">
+        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-[#fca311] to-[#85b2d2] flex items-center justify-center mb-4"><span id="final-score" class="text-6xl font-extrabold text-white">0</span>
+        </div>
+        <p id="result-message" class="text-2xl font-bold text-[#e0e1dd] mb-4"></p>
+        <p id="result-details" class="text-[#e0e1dd] opacity-80 mb-6"></p>
+       </div>
+       <div id="leaderboard-display" class="bg-[#1b263b] rounded-xl p-6 mb-6 max-h-64 overflow-y-auto"></div><button onclick="location.reload()" class="glass-button px-8 py-3 rounded-xl text-[#e0e1dd] font-bold hover:text-[#fca311]">إعادة محاولة</button>
+      </div>
+     </div>
+    </div>
+   </section><!-- Timeline Section -->
+   <section id="map" class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">📅 خط زمني للأعاصير</h2>
+     <div class="glass-card rounded-2xl p-8">
+      <!-- Filters -->
+      <div class="flex gap-2 mb-8 flex-wrap">
+       <button onclick="filterByDecade('all')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm active-filter" data-decade="all">جميع العقود</button> <button onclick="filterByDecade('1800s')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm" data-decade="1800s">1800</button> <button onclick="filterByDecade('1900s')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm" data-decade="1900s">1900-1950</button> <button onclick="filterByDecade('1950s')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm" data-decade="1950s">1950-1970</button> <button onclick="filterByDecade('1970s')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm" data-decade="1970s">1970-1990</button> <button onclick="filterByDecade('1990s')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm" data-decade="1990s">1990-2010</button> <button onclick="filterByDecade('2010s')" class="glass-button px-4 py-2 rounded-lg text-[#e0e1dd] text-sm" data-decade="2010s">2010+</button>
+      </div><!-- Timeline Container -->
+      <div class="relative">
+       <div class="overflow-x-auto pb-4">
+        <div id="timeline-container" class="flex gap-4 min-w-max px-2">
+         <!-- Timeline items generated by JS -->
+        </div>
+       </div>
+       <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#fca311] to-transparent opacity-50"></div>
+      </div><!-- Info Card -->
+      <div id="timeline-info" class="mt-8 p-6 bg-gradient-to-r from-[#1b263b] to-[#415a77] rounded-xl hidden">
+       <div class="flex justify-between items-start mb-4">
+        <h3 id="info-name" class="text-2xl font-bold text-[#fca311]"></h3><span id="info-category" class="text-2xl font-bold text-[#e0e1dd]"></span>
+       </div>
+       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        <div class="glass-card p-3 rounded-lg">
+         <p class="text-xs opacity-70">السنة</p>
+         <p id="info-year" class="font-bold"></p>
+        </div>
+        <div class="glass-card p-3 rounded-lg">
+         <p class="text-xs opacity-70">سرعة الرياح</p>
+         <p id="info-wind" class="font-bold text-[#85b2d2]"></p>
+        </div>
+        <div class="glass-card p-3 rounded-lg">
+         <p class="text-xs opacity-70">عدد الضحايا</p>
+         <p id="info-deaths" class="font-bold text-red-400"></p>
+        </div>
+        <div class="glass-card p-3 rounded-lg">
+         <p class="text-xs opacity-70">الأضرار</p>
+         <p id="info-damage" class="font-bold text-[#fca311]"></p>
+        </div>
+       </div>
+       <p id="info-region" class="text-[#e0e1dd] opacity-80"></p>
+      </div>
+     </div>
+    </div>
+   </section><!-- Comparison Tool Section -->
+   <section id="comparison" class="py-20 px-4 bg-gradient-to-b from-transparent via-[#1b263b]/50 to-transparent">
+    <div class="max-w-7xl mx-auto">
+     <h2 class="section-title text-3xl md:text-4xl font-bold text-[#e0e1dd] mb-12">🔍 أداة المقارنة</h2>
+     <div class="glass-card rounded-2xl p-8">
+      <div class="grid md:grid-cols-2 gap-8 mb-8">
+       <div>
+        <label class="block text-[#fca311] font-bold mb-3">اختر الإعصار الأول</label> <select id="hurricane1" onchange="updateComparison()" class="w-full bg-[#1b263b] border border-[#415a77] rounded-lg p-3 text-[#e0e1dd]"> <option value="">اختر إعصار...</option> </select>
+       </div>
+       <div>
+        <label class="block text-[#fca311] font-bold mb-3">اختر الإعصار الثاني</label> <select id="hurricane2" onchange="updateComparison()" class="w-full bg-[#1b263b] border border-[#415a77] rounded-lg p-3 text-[#e0e1dd]"> <option value="">اختر إعصار...</option> </select>
+       </div>
+      </div><!-- Comparison Results -->
+      <div id="comparison-results" class="hidden">
+       <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div id="comp-card1" class="glass-card rounded-xl p-6"></div>
+        <div id="comp-card2" class="glass-card rounded-xl p-6"></div>
+       </div><!-- Comparison Chart -->
+       <div class="glass-card rounded-xl p-6">
+        <h3 class="text-lg font-bold text-[#fca311] mb-4">مقارنة الخصائص</h3>
+        <div class="space-y-4">
+         <div>
+          <div class="flex justify-between mb-2">
+           <span class="text-[#e0e1dd]">سرعة الرياح</span> <span class="text-[#85b2d2] font-bold"><span id="comp-wind1">0</span> كم/س</span>
+          </div>
+          <div class="w-full bg-[#415a77] rounded-full h-3 flex gap-1 overflow-hidden">
+           <div id="comp-bar1-wind" class="bg-gradient-to-r from-yellow-500 to-red-500 rounded-full"></div>
+           <div id="comp-bar2-wind" class="bg-gradient-to-r from-yellow-500 to-red-500 rounded-full opacity-50"></div>
+          </div>
+         </div>
+         <div>
+          <div class="flex justify-between mb-2">
+           <span class="text-[#e0e1dd]">عدد الضحايا</span> <span class="text-red-400 font-bold"><span id="comp-deaths1">0</span></span>
+          </div>
+          <div class="w-full bg-[#415a77] rounded-full h-3 flex gap-1 overflow-hidden">
+           <div id="comp-bar1-deaths" class="bg-red-500 rounded-full"></div>
+           <div id="comp-bar2-deaths" class="bg-red-500 rounded-full opacity-50"></div>
+          </div>
+         </div>
+         <div>
+          <div class="flex justify-between mb-2">
+           <span class="text-[#e0e1dd]">الأضرار (مليار دولار)</span> <span class="text-[#fca311] font-bold">$<span id="comp-damage1">0</span></span>
+          </div>
+          <div class="w-full bg-[#415a77] rounded-full h-3 flex gap-1 overflow-hidden">
+           <div id="comp-bar1-damage" class="bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full"></div>
+           <div id="comp-bar2-damage" class="bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full opacity-50"></div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="glass-card rounded-xl p-6 mt-6">
+       <h3 class="text-lg font-bold text-[#fca311] mb-4">📈 اتجاهات تاريخية عبر العقود</h3>
+       <p class="text-xs text-[#e0e1dd] opacity-60 mb-4">محسوبة من الأعاصير الأربعين المدرجة في قاعدة البيانات أعلاه فقط، وليست إحصاءً شاملاً لكل الأعاصير المسجلة تاريخياً.</p>
+       <canvas id="trend-chart" height="280"></canvas>
+      </div>
+     </div>
+    </div>
+   </section><!-- Sources Section -->
+   <section id="sources" class="py-16 px-4">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="section-title text-2xl md:text-3xl font-bold text-[#e0e1dd] mb-8">📚 المصادر</h2>
+     <div class="glass-card rounded-2xl p-6">
+      <ul class="space-y-3 text-sm text-[#e0e1dd] opacity-90">
+       <li>• مقياس سفير-سمبسون لشدة الأعاصير: <span class="opacity-70">المركز الوطني الأمريكي للأعاصير (NHC/NOAA)</span></li>
+       <li>• بيانات التتبع الحي (عند توفرها): <span class="opacity-70">nhc.noaa.gov/CurrentStorms.json</span></li>
+       <li>• الأساس الفيزيائي لمحاكي الشدة القصوى المحتملة: <span class="opacity-70">نظرية Maximum Potential Intensity، كيري إيمانويل (MIT)</span></li>
+       <li>• بيانات الأعاصير التاريخية (السنة، الرياح، الضحايا، الأضرار): <span class="opacity-70">تقديرات مجمّعة من تقارير NOAA وويكيبيديا لأغراض تعليمية — قد تختلف الأرقام بين المصادر خصوصاً للأحداث القديمة</span></li>
+      </ul>
+      <p class="text-xs text-[#e0e1dd] opacity-50 mt-6">هذا موقع تعليمي/مدرسي وليس مصدراً رسمياً للإنذار المبكر. لأي إعصار فعلي، يُرجى دائماً اتباع تحذيرات الجهات الرسمية المحلية.</p>
+     </div>
+    </div>
+   </section><!-- Footer -->
+   <footer class="glass-card py-8 px-4 mt-12">
+    <div class="max-w-7xl mx-auto text-center">
+     <div class="flex justify-center gap-6 mb-6"><span class="text-2xl wind-icon">💨</span> <span class="text-2xl rain-icon">🌧️</span> <span class="text-2xl lightning-icon">⚡</span>
+     </div>
+     <p class="text-[#e0e1dd] font-bold mb-2">جميع الحقوق محفوظة لـ هبة كتانة</p>
+     <p class="text-[#e0e1dd] opacity-70 text-sm mb-4">قلقيلية الشرعية / وزارة الأوقاف / فلسطين 🇵🇸</p><a href="index.html" target="_blank" rel="noopener noreferrer" class="back-btn"> <span>الموسوعة الرئيسية</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg></a>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // Default Config
+    const defaultConfig = {
+      site_title: 'فيزياء الأعاصير',
+      hero_subtitle: 'رحلة علمية غامرة في قلب أعتى الظواهر الجوية على كوكب الأرض'
+    };
+    
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          document.getElementById('site-title').textContent = config.site_title || defaultConfig.site_title;
+          document.getElementById('hero-subtitle').textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['site_title', config.site_title || defaultConfig.site_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle]
+        ])
+      });
+    }
+    
+    // Create Particles
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = Math.random() * 4 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        container.appendChild(particle);
+      }
+    }
+    createParticles();
+    
+    // Mobile Menu
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.add('open');
+    });
+    document.getElementById('close-menu').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.remove('open');
+    });
+    
+    // Hurricane Data
+    const hurricaneData = {
+      tropical26s: {
+        name: 'إعصار مداري 26S',
+        category: 1,
+        wind: '65 كم/س',
+        pressure: '990 ميلي بار',
+        location: 'جنوب المحيط الهندي',
+        status: 'نشط - تطور متوقع',
+        lat: -18, lon: 62,
+        description: 'نظام مداري نشط يتحرك جنوباً، قد يتطور إلى إعصار الفئة 2 خلال الأيام القادمة حسب درجة حرارة المحيط'
+      },
+      disturbance95w: {
+        name: 'منطقة اضطراب 95W',
+        category: 0,
+        wind: '40 كم/س',
+        pressure: '1005 ميلي بار',
+        location: 'غرب المحيط الهادئ',
+        status: 'قيد المراقبة',
+        lat: 14, lon: 138,
+        description: 'نظام ضعيف قيد المراقبة بواسطة الأرصاد الجوية. الظروف الجوية الحالية غير مواتية لتطوره الفوري، لكنه قد يقوى تدريجياً'
+      },
+      atlantic: {
+        name: 'المحيط الأطلسي',
+        category: 0,
+        wind: 'هادئ',
+        pressure: '1013 ميلي بار',
+        location: 'منطقة النشاط الرئيسية (6-30 درجة شمالاً)',
+        status: 'ساكن - خارج الموسم',
+        lat: 15, lon: -40,
+        description: 'المحيط الأطلسي في حالة استقرار نسبي حالياً. الموسم الرسمي للأعاصير الأطلسية ينتهي في 30 نوفمبر، والظروف الحالية غير مواتية للتطور'
+      }
+    };
+    
+    function showHurricaneInfo(id) {
+      const data = hurricaneData[id];
+      document.getElementById('popup-title').textContent = data.name;
+      document.getElementById('popup-content').innerHTML = `
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="glass-card p-3 rounded-lg">
+            <p class="text-xs opacity-70">الفئة</p>
+            <p class="text-xl font-bold text-[#fca311]">${data.category}</p>
+          </div>
+          <div class="glass-card p-3 rounded-lg">
+            <p class="text-xs opacity-70">سرعة الرياح</p>
+            <p class="text-xl font-bold text-[#fca311]">${data.wind}</p>
+          </div>
+          <div class="glass-card p-3 rounded-lg">
+            <p class="text-xs opacity-70">الضغط الجوي</p>
+            <p class="text-xl font-bold">${data.pressure}</p>
+          </div>
+          <div class="glass-card p-3 rounded-lg">
+            <p class="text-xs opacity-70">الحالة</p>
+            <p class="text-sm font-bold text-red-400">${data.status}</p>
+          </div>
+        </div>
+        <div class="glass-card p-4 rounded-lg">
+          <p class="text-xs opacity-70 mb-1">الموقع</p>
+          <p class="font-bold">${data.location}</p>
+        </div>
+        <p class="mt-4 opacity-80">${data.description}</p>
+      `;
+      document.getElementById('hurricane-popup').classList.add('active');
+    }
+    
+    function closePopup() {
+      document.getElementById('hurricane-popup').classList.remove('active');
+    }
+
+    // ---- Real interactive map (Leaflet) ----
+    let trackingMap = null;
+    let trackingMarkers = {};
+
+    function initTrackingMap() {
+      if (typeof L === 'undefined') {
+        document.getElementById('live-status').textContent = '⚠️ تعذر تحميل مكتبة الخرائط، تحقق من اتصال الإنترنت.';
+        return;
+      }
+      trackingMap = L.map('leaflet-map', { zoomControl: true }).setView([10, 20], 2);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 18
+      }).addTo(trackingMap);
+      plotHurricaneMarkers();
+      tryLiveFetch();
+    }
+
+    function plotHurricaneMarkers() {
+      Object.values(trackingMarkers).forEach(m => trackingMap.removeLayer(m));
+      trackingMarkers = {};
+      Object.entries(hurricaneData).forEach(([id, h]) => {
+        if (typeof h.lat !== 'number' || typeof h.lon !== 'number' || isNaN(h.lat) || isNaN(h.lon)) return;
+        const icon = L.divIcon({ className: '', html: '<div class="map-marker"></div>', iconSize: [20, 20] });
+        const marker = L.marker([h.lat, h.lon], { icon }).addTo(trackingMap);
+        marker.bindTooltip(h.name, { direction: 'top' });
+        marker.on('click', () => showHurricaneInfo(id));
+        trackingMarkers[id] = marker;
+      });
+    }
+
+    // Best-effort attempt at live data from NOAA's public NHC feed. Many
+    // browsers/hosts will block this via CORS since NHC doesn't grant
+    // cross-origin access to arbitrary sites — in that (expected, common)
+    // case we simply keep the labeled demo dataset instead of failing silently.
+    async function tryLiveFetch() {
+      const statusEl = document.getElementById('live-status');
+      try {
+        const res = await fetch('https://www.nhc.noaa.gov/CurrentStorms.json', { mode: 'cors' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        const storms = Array.isArray(json.activeStorms) ? json.activeStorms : [];
+        if (!storms.length) {
+          statusEl.textContent = '✅ تم الاتصال بمركز الأعاصير الوطني الأمريكي (NHC): لا توجد أعاصير نشطة حالياً في الأطلسي/شرق الهادئ. البيانات المعروضة أدناه توضيحية لأحواض أخرى.';
+          return;
+        }
+        storms.forEach((s, i) => {
+          const lat = parseFloat(s.latitudeNumeric ?? s.latitude);
+          const lon = parseFloat(s.longitudeNumeric ?? s.longitude);
+          hurricaneData['live' + i] = {
+            name: s.name || 'نظام مداري نشط',
+            category: s.intensity ? Math.max(0, Math.round(((s.intensity - 64) / 20))) : 0,
+            wind: s.intensity ? Math.round(s.intensity * 1.852) + ' كم/س' : 'غير معروف',
+            pressure: (s.pressure || '؟') + ' ميلي بار',
+            location: s.basin || '',
+            status: s.classification || 'نشط',
+            lat, lon,
+            description: 'بيانات حية من مركز الأعاصير الوطني الأمريكي (NHC).'
+          };
+        });
+        plotHurricaneMarkers();
+        statusEl.textContent = '✅ تم تحديث الخريطة ببيانات حية من NHC — آخر تحديث: ' + new Date().toLocaleTimeString('ar');
+      } catch (err) {
+        statusEl.textContent = '⚠️ تعذر جلب بيانات حية (سياسة CORS تمنع أغلب المواقع من الوصول المباشر لخوادم NOAA من المتصفح) — المعروض أدناه بيانات نموذجية توضيحية لأغراض تعليمية فقط.';
+      }
+    }
+    
+    // Simulator
+    function updateSimulator() {
+      const temp = parseInt(document.getElementById('ocean-temp').value);
+      const shear = parseInt(document.getElementById('wind-shear').value);
+      const humidity = parseInt(document.getElementById('humidity').value);
+      
+      document.getElementById('temp-value').textContent = temp + '°C';
+      document.getElementById('humidity-value').textContent = humidity + '%';
+      
+      let shearText = 'منخفض';
+      if (shear > 60) shearText = 'مرتفع';
+      else if (shear > 30) shearText = 'متوسط';
+      document.getElementById('shear-value').textContent = shearText;
+      
+      // Simplified, physically-motivated estimate. This is NOT a full
+      // Emanuel Maximum Potential Intensity calculation (that requires
+      // outflow-layer temperature and a full thermodynamic sounding, which
+      // this simulator doesn't have inputs for) — but it reflects the three
+      // real, well-documented drivers of tropical cyclone intensification:
+      //   1) SST must exceed ~26.5°C for sustained deep convection (the
+      //      classic Palmén threshold)
+      //   2) vertical wind shear tears the vortex apart — modeled as a
+      //      super-linear penalty, matching how shear damage accelerates
+      //      once it passes a moderate threshold
+      //   3) mid-level humidity determines how efficiently that heat gets
+      //      converted into convection
+      const thermalPotential = Math.max(0, temp - 26.5) * 20;
+      const shearPenalty = Math.pow(shear / 100, 1.4) * 110;
+      const humidityFactor = 0.5 + humidity / 200; // scales 0.65–1.0 over the slider's range
+
+      let windSpeed = Math.round(70 + thermalPotential * humidityFactor - shearPenalty);
+      windSpeed = Math.max(45, Math.min(300, windSpeed));
+
+      // Category from the real Saffir-Simpson wind thresholds (km/h)
+      let category, categoryName;
+      if (windSpeed >= 252) { category = 5; categoryName = 'كارثي'; }
+      else if (windSpeed >= 209) { category = 4; categoryName = 'شديد القوة'; }
+      else if (windSpeed >= 178) { category = 3; categoryName = 'قوي'; }
+      else if (windSpeed >= 154) { category = 2; categoryName = 'متوسط'; }
+      else if (windSpeed >= 119) { category = 1; categoryName = 'ضعيف'; }
+      else { category = 0; categoryName = 'عاصفة استوائية'; }
+      
+      document.getElementById('category-result').textContent = category;
+      document.getElementById('visual-category').textContent = category;
+      document.getElementById('category-name').textContent = categoryName;
+      document.getElementById('wind-speed-result').textContent = windSpeed + ' كم/س';
+      document.getElementById('wind-bar').style.width = (windSpeed / 300 * 100) + '%';
+      
+      // Update visual
+      const eyeWall = document.getElementById('eye-wall');
+      eyeWall.style.animationDuration = (12 - category * 2) + 's';
+      eyeWall.style.borderWidth = (2 + category) + 'px';
+    }
+    
+    // Part Info
+    const partInfo = {
+      eye: {
+        title: '👁️ العين - مركز الهدوء الخادع',
+        content: `
+          <p class="mb-4">منطقة هدوء نسبي في مركز الإعصار، قطرها يتراوح بين 30-65 كم.</p>
+          <ul class="space-y-2 mb-4">
+            <li>• <strong>الرياح:</strong> هادئة تقريباً (أقل من 25 كم/س)</li>
+            <li>• <strong>السماء:</strong> صافية غالباً مع رؤية النجوم ليلاً</li>
+            <li>• <strong>الضغط:</strong> أدنى نقطة في الإعصار</li>
+            <li>• <strong>الخطر:</strong> لا تخرج! الجدار الخلفي قادم</li>
+          </ul>
+          <p class="text-[#fca311]">⚠️ تحذير: الهدوء مؤقت فقط!</p>
+        `
+      },
+      wall: {
+        title: '🔥 جدار العين - منطقة الدمار الأقصى',
+        content: `
+          <p class="mb-4">الحلقة الأكثر تدميراً حول العين، سمكها 15-30 كم.</p>
+          <ul class="space-y-2 mb-4">
+            <li>• <strong>الرياح:</strong> الأشد قوة (حتى 300 كم/س)</li>
+            <li>• <strong>الأمطار:</strong> الأغزر والأعنف</li>
+            <li>• <strong>العواصف الرعدية:</strong> مستمرة</li>
+            <li>• <strong>التصاعد:</strong> هواء يرتفع بسرعة 5-10 م/ث</li>
+          </ul>
+          <p class="text-red-400">💀 المنطقة الأكثر فتكاً في الإعصار</p>
+        `
+      },
+      rain: {
+        title: '🌧️ أحزمة المطر - الامتداد الخارجي',
+        content: `
+          <p class="mb-4">أذرع حلزونية تمتد مئات الكيلومترات من المركز.</p>
+          <ul class="space-y-2 mb-4">
+            <li>• <strong>الامتداد:</strong> حتى 500 كم من المركز</li>
+            <li>• <strong>الأمطار:</strong> غزيرة ومتقطعة</li>
+            <li>• <strong>الأعاصير:</strong> قد تولد أعاصير قمعية صغيرة</li>
+            <li>• <strong>الفيضانات:</strong> السبب الرئيسي للوفيات</li>
+          </ul>
+          <p class="text-blue-400">🌊 90% من وفيات الأعاصير بسبب الفيضانات</p>
+        `
+      }
+    };
+    
+    function showPartInfo(part) {
+      const info = partInfo[part];
+      document.getElementById('part-info').innerHTML = `
+        <h3 class="text-2xl font-bold text-[#fca311] mb-4">${info.title}</h3>
+        <div class="text-[#e0e1dd]">${info.content}</div>
+      `;
+    }
+    
+    // Category Details
+    const categoryDetails = {
+      1: {
+        title: 'الفئة 1 - إعصار ضعيف',
+        wind: '119-153 كم/س',
+        surge: '1.2-1.5 متر',
+        damage: 'أضرار طفيفة',
+        description: 'أضرار في الأشجار والمنازل المتنقلة، انقطاع محدود للكهرباء',
+        examples: 'إعصار داني (1997)، إعصار غاستون (2004)'
+      },
+      2: {
+        title: 'الفئة 2 - إعصار متوسط',
+        wind: '154-177 كم/س',
+        surge: '1.8-2.4 متر',
+        damage: 'أضرار متوسطة',
+        description: 'تدمير الأسقف والنوافذ، اقتلاع الأشجار، انقطاع الكهرباء لأيام',
+        examples: 'إعصار آرثر (2014)، إعصار هيرمين (2016)'
+      },
+      3: {
+        title: 'الفئة 3 - إعصار قوي',
+        wind: '178-208 كم/س',
+        surge: '2.7-3.7 متر',
+        damage: 'أضرار جسيمة',
+        description: 'تدمير المباني الصغيرة، فيضانات ساحلية خطيرة، إخلاء إجباري',
+        examples: 'إعصار فيونا (2022)، إعصار أوتو (2016)'
+      },
+      4: {
+        title: 'الفئة 4 - إعصار شديد',
+        wind: '209-251 كم/س',
+        surge: '4-5.5 متر',
+        damage: 'أضرار كارثية',
+        description: 'تدمير معظم المنازل، المنطقة غير صالحة للسكن لأسابيع أو أشهر',
+        examples: 'إعصار هارفي (2017)، إعصار إيان (2022)'
+      },
+      5: {
+        title: 'الفئة 5 - إعصار كارثي',
+        wind: 'أكثر من 252 كم/س',
+        surge: 'أكثر من 5.5 متر',
+        damage: 'دمار شامل',
+        description: 'تدمير كامل للمباني، فيضانات كارثية، المنطقة غير صالحة للسكن لشهور',
+        examples: 'إعصار كاترينا (2005)، إعصار دوريان (2019)، إعصار ميلتون (2024)'
+      }
+    };
+    
+    function showCategoryDetails(cat) {
+      const data = categoryDetails[cat];
+      document.getElementById('modal-category-title').textContent = data.title;
+      document.getElementById('modal-category-content').innerHTML = `
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="glass-card p-4 rounded-lg">
+            <p class="text-xs opacity-70">سرعة الرياح</p>
+            <p class="text-lg font-bold text-[#fca311]">${data.wind}</p>
+          </div>
+          <div class="glass-card p-4 rounded-lg">
+            <p class="text-xs opacity-70">ارتفاع الموج</p>
+            <p class="text-lg font-bold text-[#85b2d2]">${data.surge}</p>
+          </div>
+        </div>
+        <div class="glass-card p-4 rounded-lg mb-4">
+          <p class="text-xs opacity-70 mb-2">مستوى الأضرار</p>
+          <p class="font-bold text-lg">${data.damage}</p>
+        </div>
+        <p class="mb-4 opacity-90">${data.description}</p>
+        <div class="glass-card p-4 rounded-lg">
+          <p class="text-xs opacity-70 mb-2">أمثلة تاريخية</p>
+          <p class="text-sm">${data.examples}</p>
+        </div>
+      `;
+      document.getElementById('category-modal').classList.add('active');
+    }
+    
+    function closeCategoryModal() {
+      document.getElementById('category-modal').classList.remove('active');
+    }
+    
+    // Close modals on outside click
+    document.getElementById('hurricane-popup').addEventListener('click', function(e) {
+      if (e.target === this) closePopup();
+    });
+    document.getElementById('category-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeCategoryModal();
+    });
+    
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('mobile-menu').classList.remove('open');
+        }
+      });
+    });
+    
+    // Initialize Data SDK
+    let quizData = [];
+    let currentUser = { score: 0, name: 'المستخدم' };
+    let leaderboard = [];
+    
+    const dataHandler = {
+      onDataChanged(data) {
+        quizData = data;
+        updateLeaderboard();
+      }
+    };
+    
+    if (window.dataSdk) {
+      window.dataSdk.init(dataHandler);
+    }
+    
+    // Quiz System with Correct Answers Verification
+    const quizQuestions = [
+      { q: 'ما أقل درجة حرارة محيط (بالسيليزيوس) لتشكل إعصار استوائي؟', o: ['20°C', '26.5°C', '30°C', '35°C'], a: 1 },
+      { q: 'كم يبلغ قطر عين الإعصار عادةً؟', o: ['10-20 كم', '30-65 كم', '100-150 كم', 'أكثر من 200 كم'], a: 1 },
+      { q: 'أي جزء من الإعصار يسبب أقسى الأضرار والرياح الأشد قوة؟', o: ['العين', 'جدار العين', 'أحزمة المطر', 'قاعدة الإعصار'], a: 1 },
+      { q: 'كم سرعة رياح إعصار الفئة 5 حسب مقياس سفير-سمبسون؟', o: ['أقل من 150 كم/س', '150-200 كم/س', '200-250 كم/س', 'أكثر من 252 كم/س'], a: 3 },
+      { q: 'ما السبب الأساسي لوفيات الأعاصير عالمياً؟', o: ['الرياح القوية', 'الفيضانات والعواصف المائية', 'الصواعق', 'العواصف الرعدية'], a: 1 },
+      { q: 'في أي فترة من السنة يكون موسم الأعاصير بالمحيط الأطلسي؟', o: ['يونيو-نوفمبر', 'ديسمبر-مايو', 'طوال السنة', 'أغسطس-سبتمبر فقط'], a: 0 },
+      { q: 'كم عدد مستويات (فئات) الأعاصير بمقياس سفير-سمبسون الأساسي؟', o: ['3 فئات', '4 فئات', '5 فئات', '6 فئات'], a: 2 },
+      { q: 'أي منطقة في الإعصار تعتبر الأكثر أماناً نسبياً خلال مروره؟', o: ['جدار العين', 'الجانب الغربي', 'العين (لفترة قصيرة)', 'أحزمة المطر الخارجية'], a: 2 },
+      { q: 'هل يجب الخروج من المنزل أثناء مرور عين الإعصار؟', o: ['نعم، فهو وقت آمن للخروج', 'لا، جدار العين الخلفي قادم', 'فقط للدقائق الأولى', 'يمكن الخروج لمدة 30 دقيقة'], a: 1 },
+      { q: 'كم قد يصل ارتفاع موج العاصفة في إعصار الفئة 5؟', o: ['1-2 متر', '2-4 متر', 'أكثر من 5.5 متر', 'أكثر من 10 متر'], a: 2 }
+    ];
+    
+    let currentQIndex = 0;
+    let userAnswers = [];
+    let currentScore = 0;
+    let answeredQuestion = false;
+    
+    function startQuiz() {
+      const userName = document.getElementById('user-name').value.trim();
+      if (!userName) {
+        alert('الرجاء إدخال اسمك أولاً!');
+        return;
+      }
+      
+      currentUser.name = userName;
+      currentQIndex = 0;
+      userAnswers = [];
+      currentScore = 0;
+      answeredQuestion = false;
+      
+      document.getElementById('quiz-start').classList.add('hidden');
+      document.getElementById('quiz-content').classList.remove('hidden');
+      document.getElementById('quiz-results').classList.add('hidden');
+      showQuestion();
+    }
+    
+    function showQuestion() {
+      answeredQuestion = false;
+      const q = quizQuestions[currentQIndex];
+      document.getElementById('question-text').textContent = q.q;
+      document.getElementById('current-question').textContent = currentQIndex + 1;
+      document.getElementById('total-questions').textContent = quizQuestions.length;
+      document.getElementById('quiz-score').textContent = 'النقاط: ' + currentScore;
+      
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      
+      const feedbackDiv = document.getElementById('feedback-message');
+      feedbackDiv.classList.add('hidden');
+      
+      q.o.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'glass-button w-full p-4 rounded-xl text-[#e0e1dd] text-right transition-all text-lg hover:border-[#85b2d2]';
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(idx, btn);
+        btn.id = `option-${idx}`;
+        container.appendChild(btn);
+      });
+      
+      document.getElementById('quiz-progress').style.width = ((currentQIndex + 1) / quizQuestions.length * 100) + '%';
+      document.getElementById('next-btn').disabled = true;
+      document.getElementById('next-btn').textContent = currentQIndex === quizQuestions.length - 1 ? 'انتهاء' : 'التالي';
+    }
+    
+    function selectAnswer(idx, btn) {
+      if (answeredQuestion) return; // منع تغيير الإجابة
+      
+      answeredQuestion = true;
+      userAnswers[currentQIndex] = idx;
+      
+      const q = quizQuestions[currentQIndex];
+      const isCorrect = idx === q.a;
+      
+      // تعديل لون الإجابة المختارة
+      const buttons = document.querySelectorAll('#options-container button');
+      buttons.forEach((button, i) => {
+        if (i === idx) {
+          if (isCorrect) {
+            button.classList.add('bg-green-500', 'bg-opacity-30', 'border-green-500', 'border-2');
+          } else {
+            button.classList.add('bg-red-500', 'bg-opacity-30', 'border-red-500', 'border-2');
+          }
+          button.disabled = true;
+        }
+      });
+      
+      // إظهار الإجابة الصحيحة إذا كانت خاطئة
+      if (!isCorrect) {
+        buttons[q.a].classList.add('bg-green-500', 'bg-opacity-30', 'border-green-500', 'border-2');
+        buttons[q.a].disabled = true;
+      }
+      
+      // إظهار الرسالة
+      const feedbackDiv = document.getElementById('feedback-message');
+      if (isCorrect) {
+        currentScore++;
+        feedbackDiv.textContent = '✅ إجابة صحيحة!';
+        feedbackDiv.classList.remove('hidden', 'bg-red-500', 'bg-opacity-20', 'text-red-300');
+        feedbackDiv.classList.add('bg-green-500', 'bg-opacity-20', 'text-green-300');
+      } else {
+        feedbackDiv.textContent = '❌ إجابة خاطئة!';
+        feedbackDiv.classList.remove('hidden', 'bg-green-500', 'bg-opacity-20', 'text-green-300');
+        feedbackDiv.classList.add('bg-red-500', 'bg-opacity-20', 'text-red-300');
+      }
+      
+      document.getElementById('quiz-score').textContent = 'النقاط: ' + currentScore;
+      document.getElementById('next-btn').disabled = false;
+    }
+    
+    function nextQuestion() {
+      if (currentQIndex < quizQuestions.length - 1) {
+        currentQIndex++;
+        showQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+    
+    async function finishQuiz() {
+      currentUser.score = currentScore;
+      
+      // Save to Canva Sheet
+      if (window.dataSdk) {
+        const result = await window.dataSdk.create({
+          id: Date.now().toString(),
+          question: currentUser.name,
+          options: currentScore.toString(),
+          correct_answer: quizQuestions.length.toString(),
+          category: 'quiz_result',
+          difficulty: new Date().toISOString()
+        });
+        
+        if (!result.isOk) {
+          console.error('خطأ في حفظ النتيجة:', result.error);
+        }
+      }
+      
+      document.getElementById('quiz-content').classList.add('hidden');
+      document.getElementById('quiz-results').classList.remove('hidden');
+      document.getElementById('final-score').textContent = currentScore;
+      
+      const percent = (currentScore / quizQuestions.length * 100).toFixed(0);
+      let msg = '';
+      let emoji = '';
+      
+      if (percent >= 90) { msg = 'ممتاز جداً! أنت خبير في فيزياء الأعاصير!'; emoji = '🏆'; }
+      else if (percent >= 80) { msg = 'جيد جداً! معارفك قوية جداً'; emoji = '⭐'; }
+      else if (percent >= 70) { msg = 'جيد جداً! معارفك قوية'; emoji = '🎯'; }
+      else if (percent >= 60) { msg = 'جيد! تحتاج لمزيد من التعلم'; emoji = '👍'; }
+      else if (percent >= 50) { msg = 'متوسط، حاول مرة أخرى'; emoji = '💪'; }
+      else { msg = 'حسناً، تابع التعلم والقراءة!'; emoji = '📚'; }
+      
+      document.getElementById('result-message').textContent = emoji + ' ' + msg;
+      document.getElementById('result-details').textContent = `اسمك: ${currentUser.name} | حصلت على ${currentScore} من ${quizQuestions.length} (${percent}%)`;
+      updateLeaderboard();
+    }
+    
+    function updateLeaderboard() {
+      const list = document.getElementById('leaderboard-display');
+      if (quizData.length === 0) {
+        list.innerHTML = '<p class="text-[#e0e1dd] opacity-70 text-center">🎪 لا توجد نتائج بعد - كن الأول!</p>';
+        return;
+      }
+      
+      const sorted = [...quizData]
+        .sort((a, b) => {
+          const scoreA = parseInt(a.options);
+          const scoreB = parseInt(b.options);
+          return scoreB - scoreA;
+        })
+        .slice(0, 10);
+      
+      list.innerHTML = '<p class="font-bold text-[#fca311] mb-4 text-center">🏆 لوحة المتصدرين</p>' + sorted.map((r, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '  ';
+        return `
+          <div class="flex justify-between p-3 border-b border-[#415a77] text-sm">
+            <span class="text-[#fca311]">${medal} #${i + 1}</span>
+            <span class="text-[#e0e1dd]">${r.question}</span>
+            <span class="text-[#85b2d2] font-bold">${r.options}/${r.correct_answer}</span>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Hurricane Database - 40 historical hurricanes
+    const hurricaneDatabase = [
+      { id: 1, name: 'الإعصار العظيم - غالفستون', year: 1900, wind: 240, deaths: 8000, damage: 0.2, category: 4, region: 'تكساس، الولايات المتحدة', decade: '1900s' },
+      { id: 2, name: 'ناينا', year: 1881, wind: 265, deaths: 1200, damage: 0.1, category: 4, region: 'بنغلاديش', decade: '1800s' },
+      { id: 3, name: 'بهولا', year: 1970, wind: 222, deaths: 500000, damage: 0.3, category: 4, region: 'بنغلاديش', decade: '1970s' },
+      { id: 4, name: 'نرجس', year: 2008, wind: 215, deaths: 138000, damage: 10, category: 4, region: 'بورما (ميانمار)', decade: '1990s' },
+      { id: 5, name: 'كاترينا', year: 2005, wind: 280, deaths: 1833, damage: 125, category: 5, region: 'لويزيانا، الولايات المتحدة', decade: '1990s' },
+      { id: 6, name: 'هايان', year: 2013, wind: 315, deaths: 6300, damage: 2.6, category: 5, region: 'الفلبين', decade: '2010s' },
+      { id: 7, name: 'إيرما', year: 2017, wind: 295, deaths: 134, damage: 50, category: 5, region: 'فلوريدا، الولايات المتحدة', decade: '2010s' },
+      { id: 8, name: 'ماريا', year: 2017, wind: 295, deaths: 603, damage: 90, category: 5, region: 'بورتوريكو، الولايات المتحدة', decade: '2010s' },
+      { id: 9, name: 'ميتش', year: 1998, wind: 290, deaths: 11000, damage: 6, category: 5, region: 'أمريكا الوسطى', decade: '1990s' },
+      { id: 10, name: 'تريسي', year: 1974, wind: 260, deaths: 71, damage: 0.8, category: 4, region: 'أستراليا', decade: '1970s' },
+      { id: 11, name: 'هارفي', year: 2017, wind: 215, deaths: 107, damage: 125, category: 4, region: 'تكساس، الولايات المتحدة', decade: '2010s' },
+      { id: 12, name: 'دوريان', year: 2019, wind: 295, deaths: 258, damage: 50, category: 5, region: 'الباهاما وكارولينا', decade: '2010s' },
+      { id: 13, name: 'ميلتون', year: 2024, wind: 270, deaths: 76, damage: 112, category: 5, region: 'فلوريدا والخليج', decade: '2010s' },
+      { id: 14, name: 'جورج', year: 1998, wind: 250, deaths: 16, damage: 5, category: 4, region: 'فلوريدا، الولايات المتحدة', decade: '1990s' },
+      { id: 15, name: 'أندرو', year: 1992, wind: 282, deaths: 23, damage: 27, category: 5, region: 'فلوريدا، الولايات المتحدة', decade: '1990s' },
+      { id: 16, name: 'إيلينا', year: 1985, wind: 270, deaths: 218, damage: 1, category: 5, region: 'جنوب أفريقيا', decade: '1970s' },
+      { id: 17, name: 'تيفون تيب', year: 1979, wind: 305, deaths: 99, damage: 0.5, category: 5, region: 'غرب المحيط الهادئ', decade: '1970s' },
+      { id: 18, name: 'غيلبرت', year: 1988, wind: 295, deaths: 318, damage: 2.7, category: 5, region: 'المكسيك والبحر الكاريبي', decade: '1970s' },
+      { id: 19, name: 'الإعصار العظيم - جزيرة جالفيستون الثانية', year: 1915, wind: 150, deaths: 275, damage: 0.05, category: 3, region: 'تكساس', decade: '1900s' },
+      { id: 20, name: 'موريا', year: 1935, wind: 305, deaths: 408, damage: 0.1, category: 5, region: 'فلوريدا كيز', decade: '1900s' },
+      { id: 21, name: 'سافاج', year: 1943, wind: 150, deaths: 8, damage: 0.02, category: 3, region: 'كاليفورنيا، الولايات المتحدة', decade: '1900s' },
+      { id: 22, name: 'بيرت', year: 1957, wind: 150, deaths: 1, damage: 0.4, category: 3, region: 'فلوريدا', decade: '1950s' },
+      { id: 23, name: 'أودري', year: 1957, wind: 150, deaths: 390, damage: 0.5, category: 3, region: 'لويزيانا والمكسيك', decade: '1950s' },
+      { id: 24, name: 'كاميل', year: 1969, wind: 305, deaths: 256, damage: 0.3, category: 5, region: 'المسيسيبي والمكسيك', decade: '1950s' },
+      { id: 25, name: 'بياتريس', year: 1984, wind: 260, deaths: 201, damage: 1.8, category: 4, region: 'بليز وقاتمالا', decade: '1970s' },
+      { id: 26, name: 'ريتا', year: 2005, wind: 280, deaths: 119, damage: 11.4, category: 5, region: 'لويزيانا وتكساس', decade: '1990s' },
+      { id: 27, name: 'ويلما', year: 2005, wind: 295, deaths: 23, damage: 29, category: 5, region: 'فلوريدا والمكسيك', decade: '1990s' },
+      { id: 28, name: 'ساندي', year: 2012, wind: 240, deaths: 233, damage: 75, category: 4, region: 'الكاريبي والساحل الشرقي الأمريكي', decade: '2010s' },
+      { id: 29, name: 'ماثيو', year: 2016, wind: 295, deaths: 603, damage: 15.1, category: 5, region: 'هايتي وجورجيا، الولايات المتحدة', decade: '2010s' },
+      { id: 30, name: 'ساليسيا', year: 2002, wind: 135, deaths: 0, damage: 0.2, category: 3, region: 'كاليفورنيا وميكسيكو', decade: '1990s' },
+      { id: 31, name: 'جين', year: 1999, wind: 240, deaths: 8, damage: 0.7, category: 4, region: 'فلوريدا وجنوب شرق آسيا', decade: '1990s' },
+      { id: 32, name: 'سيزار', year: 2003, wind: 150, deaths: 15, damage: 0.5, category: 3, region: 'المكسيك', decade: '1990s' },
+      { id: 33, name: 'ديان', year: 1996, wind: 145, deaths: 35, damage: 0.7, category: 3, region: 'كارولينا الشمالية', decade: '1990s' },
+      { id: 34, name: 'فرانسيس', year: 2004, wind: 230, deaths: 49, damage: 9.5, category: 4, region: 'فلوريدا وأوهايو', decade: '1990s' },
+      { id: 35, name: 'إيفان', year: 2004, wind: 260, deaths: 92, damage: 26.6, category: 4, region: 'الكاريبي والخليج الأمريكي', decade: '1990s' },
+      { id: 36, name: 'لورا', year: 2020, wind: 240, deaths: 77, damage: 19, category: 4, region: 'لويزيانا والمسيسيبي', decade: '2010s' },
+      { id: 37, name: 'إيتا', year: 2020, wind: 230, deaths: 151, damage: 28, category: 4, region: 'أمريكا الوسطى والولايات المتحدة', decade: '2010s' },
+      { id: 38, name: 'إيان', year: 2022, wind: 270, deaths: 156, damage: 112.9, category: 4, region: 'فلوريدا وجنوب شرق الولايات المتحدة', decade: '2010s' },
+      { id: 39, name: 'مايكل', year: 2018, wind: 260, deaths: 74, damage: 25, category: 4, region: 'فلوريدا وجورجيا', decade: '2010s' },
+      { id: 40, name: 'بيرتا', year: 2020, wind: 150, deaths: 2, damage: 2.7, category: 3, region: 'كارولينا الشمالية', decade: '2010s' }
+    ];
+    
+    let currentDecadeFilter = 'all';
+    
+    function renderTimeline() {
+      const container = document.getElementById('timeline-container');
+      container.innerHTML = '';
+      
+      const filtered = currentDecadeFilter === 'all' 
+        ? hurricaneDatabase 
+        : hurricaneDatabase.filter(h => h.decade === currentDecadeFilter);
+      
+      filtered.sort((a, b) => a.year - b.year).forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'cursor-pointer hover:scale-105 transition-transform';
+        item.onclick = () => showTimelineInfo(h);
+        
+        const color = h.category >= 5 ? '#ff4444' : h.category >= 4 ? '#ff8844' : h.category >= 3 ? '#ffaa44' : '#44ff44';
+        
+        item.innerHTML = `
+          <div class="glass-card rounded-lg p-4 text-center min-w-max" style="border-top: 3px solid ${color};">
+            <p class="font-bold text-[#fca311]">${h.name}</p>
+            <p class="text-sm text-[#e0e1dd] opacity-70">${h.year}</p>
+            <p class="text-xs text-[#85b2d2] mt-1">الفئة ${h.category}</p>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+    
+    function filterByDecade(decade) {
+      currentDecadeFilter = decade;
+      document.querySelectorAll('[data-decade]').forEach(btn => btn.classList.remove('active-filter'));
+      document.querySelector(`[data-decade="${decade}"]`).classList.add('active-filter');
+      renderTimeline();
+    }
+    
+    function showTimelineInfo(hurricane) {
+      document.getElementById('info-name').textContent = hurricane.name;
+      document.getElementById('info-category').textContent = `الفئة ${hurricane.category}`;
+      document.getElementById('info-year').textContent = hurricane.year;
+      document.getElementById('info-wind').textContent = `${hurricane.wind} كم/س`;
+      document.getElementById('info-deaths').textContent = hurricane.deaths.toLocaleString('ar-SA');
+      document.getElementById('info-damage').textContent = `$${hurricane.damage.toLocaleString('ar-SA')} مليار`;
+      document.getElementById('info-region').textContent = `🌍 المنطقة: ${hurricane.region}`;
+      document.getElementById('timeline-info').classList.remove('hidden');
+    }
+    
+    // Add CSS for active-filter button
+    const style = document.createElement('style');
+    style.textContent = `
+      .active-filter {
+        background: rgba(252, 163, 17, 0.4) !important;
+        border-color: #fca311 !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Comparison Tool - populate selects
+    function populateComparisonSelects() {
+      const select1 = document.getElementById('hurricane1');
+      const select2 = document.getElementById('hurricane2');
+      
+      hurricaneDatabase.forEach(h => {
+        const opt1 = document.createElement('option');
+        opt1.value = h.id;
+        opt1.textContent = `${h.name} (${h.year})`;
+        select1.appendChild(opt1);
+        
+        const opt2 = document.createElement('option');
+        opt2.value = h.id;
+        opt2.textContent = `${h.name} (${h.year})`;
+        select2.appendChild(opt2);
+      });
+    }
+    
+    function updateComparison() {
+      const id1 = parseInt(document.getElementById('hurricane1').value);
+      const id2 = parseInt(document.getElementById('hurricane2').value);
+      
+      if (!id1 || !id2) return;
+      
+      const h1 = hurricaneDatabase.find(h => h.id === id1);
+      const h2 = hurricaneDatabase.find(h => h.id === id2);
+      
+      // Show cards
+      document.getElementById('comparison-results').classList.remove('hidden');
+      
+      // Card 1
+      document.getElementById('comp-card1').innerHTML = `
+        <h4 class="text-[#fca311] font-bold mb-3 text-lg">${h1.name}</h4>
+        <div class="space-y-2 text-[#e0e1dd] text-sm">
+          <p>📅 السنة: <span class="font-bold">${h1.year}</span></p>
+          <p>⚙️ الفئة: <span class="font-bold text-red-400">${h1.category}</span></p>
+          <p>💨 الرياح: <span class="font-bold text-[#85b2d2]">${h1.wind} كم/س</span></p>
+          <p>☠️ الضحايا: <span class="font-bold">${h1.deaths.toLocaleString('ar-SA')}</span></p>
+          <p>💰 الأضرار: <span class="font-bold text-[#fca311]">$${h1.damage.toLocaleString('ar-SA')} مليار</span></p>
+          <p>🌍 المنطقة: <span class="text-xs opacity-80">${h1.region}</span></p>
+        </div>
+      `;
+      
+      // Card 2
+      document.getElementById('comp-card2').innerHTML = `
+        <h4 class="text-[#fca311] font-bold mb-3 text-lg">${h2.name}</h4>
+        <div class="space-y-2 text-[#e0e1dd] text-sm">
+          <p>📅 السنة: <span class="font-bold">${h2.year}</span></p>
+          <p>⚙️ الفئة: <span class="font-bold text-red-400">${h2.category}</span></p>
+          <p>💨 الرياح: <span class="font-bold text-[#85b2d2]">${h2.wind} كم/س</span></p>
+          <p>☠️ الضحايا: <span class="font-bold">${h2.deaths.toLocaleString('ar-SA')}</span></p>
+          <p>💰 الأضرار: <span class="font-bold text-[#fca311]">$${h2.damage.toLocaleString('ar-SA')} مليار</span></p>
+          <p>🌍 المنطقة: <span class="text-xs opacity-80">${h2.region}</span></p>
+        </div>
+      `;
+      
+      // Calculate bar widths
+      const maxWind = Math.max(h1.wind, h2.wind);
+      const maxDeaths = Math.max(h1.deaths, h2.deaths);
+      const maxDamage = Math.max(h1.damage, h2.damage);
+      
+      document.getElementById('comp-wind1').textContent = h1.wind;
+      document.getElementById('comp-bar1-wind').style.width = (h1.wind / maxWind * 100) + '%';
+      document.getElementById('comp-bar2-wind').style.width = (h2.wind / maxWind * 100) + '%';
+      
+      document.getElementById('comp-deaths1').textContent = h1.deaths.toLocaleString('ar-SA');
+      document.getElementById('comp-bar1-deaths').style.width = (h1.deaths / maxDeaths * 100) + '%';
+      document.getElementById('comp-bar2-deaths').style.width = (h2.deaths / maxDeaths * 100) + '%';
+      
+      document.getElementById('comp-damage1').textContent = h1.damage.toFixed(1);
+      document.getElementById('comp-bar1-damage').style.width = (h1.damage / maxDamage * 100) + '%';
+      document.getElementById('comp-bar2-damage').style.width = (h2.damage / maxDamage * 100) + '%';
+    }
+
+    // ---- Historical trend chart (Chart.js) ----
+    function renderTrendChart() {
+      const canvas = document.getElementById('trend-chart');
+      if (!canvas || typeof Chart === 'undefined') return;
+
+      const decadeOrder = ['1800s', '1900s', '1950s', '1970s', '1990s', '2010s'];
+      const decadeLabels = { '1800s': 'قبل 1900', '1900s': '1900-1950', '1950s': '1950-1970', '1970s': '1970-1990', '1990s': '1990-2010', '2010s': '2010 فأكثر' };
+      const buckets = {};
+      decadeOrder.forEach(d => buckets[d] = { count: 0, windSum: 0, deathsSum: 0 });
+      hurricaneDatabase.forEach(h => {
+        if (buckets[h.decade]) {
+          buckets[h.decade].count++;
+          buckets[h.decade].windSum += h.wind;
+          buckets[h.decade].deathsSum += h.deaths;
+        }
+      });
+      const avgWind = decadeOrder.map(d => buckets[d].count ? Math.round(buckets[d].windSum / buckets[d].count) : 0);
+      const totalDeaths = decadeOrder.map(d => buckets[d].deathsSum);
+
+      new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: decadeOrder.map(d => decadeLabels[d]),
+          datasets: [
+            { label: 'متوسط سرعة الرياح (كم/س)', data: avgWind, borderColor: '#fca311', backgroundColor: 'rgba(252,163,17,0.15)', yAxisID: 'y', tension: 0.3, fill: true },
+            { label: 'إجمالي الضحايا (من هذه القائمة)', data: totalDeaths, borderColor: '#e63946', backgroundColor: 'rgba(230,57,70,0.1)', yAxisID: 'y1', tension: 0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { labels: { color: '#e0e1dd' } } },
+          scales: {
+            x: { ticks: { color: '#e0e1dd' }, grid: { color: 'rgba(224,225,221,0.1)' } },
+            y: { type: 'linear', position: 'left', ticks: { color: '#fca311' }, grid: { color: 'rgba(224,225,221,0.1)' } },
+            y1: { type: 'linear', position: 'right', ticks: { color: '#e63946' }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // ---- Theme toggle (dark/light) ----
+    let currentTheme = 'dark';
+    function applyThemeButtons() {
+      document.querySelectorAll('#theme-toggle-btn, #theme-toggle-btn-mobile').forEach(b => b.textContent = currentTheme === 'dark' ? '🌙' : '☀️');
+    }
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('light-mode', currentTheme === 'light');
+      applyThemeButtons();
+      try { localStorage.setItem('hp-theme', currentTheme); } catch (e) {}
+    }
+
+    // ---- Reduced motion toggle ----
+    let motionReduced = false;
+    function applyMotionButtons() {
+      document.querySelectorAll('#motion-toggle-btn, #motion-toggle-btn-mobile').forEach(b => b.style.opacity = motionReduced ? '1' : '0.6');
+    }
+    function toggleMotion() {
+      motionReduced = !motionReduced;
+      document.documentElement.classList.toggle('reduce-motion', motionReduced);
+      applyMotionButtons();
+      try { localStorage.setItem('hp-motion', motionReduced ? '1' : '0'); } catch (e) {}
+    }
+
+    // ---- Language toggle (partial: covers navigation, headings and hero —
+    // not the full quiz bank, hurricane database, or popup bodies, which
+    // would need a much larger, dedicated translation pass) ----
+    let currentLang = 'ar';
+    function t(el, en) {
+      if (!el) return;
+      if (el.dataset.arOrig === undefined) el.dataset.arOrig = el.innerHTML;
+      el.innerHTML = currentLang === 'en' ? en : el.dataset.arOrig;
+    }
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+      t(document.getElementById('site-title'), 'Hurricane Physics');
+      t(document.getElementById('hero-subtitle'), 'An immersive scientific journey into the heart of Earth&rsquo;s most powerful weather phenomena');
+      t(document.querySelector('h1'), 'Explore the Power of <span class="text-[#fca311]">Hurricanes</span>');
+
+      const navLabels = { '#tracking': 'Live Tracking', '#simulator': 'Simulator', '#physics': 'Hurricane Physics', '#archive': 'Saffir-Simpson Scale', '#survival': 'Survival Guide', '#quiz': 'Quiz', '#comparison': 'Compare Storms' };
+      Object.entries(navLabels).forEach(([href, en]) => {
+        document.querySelectorAll(`a[href="${href}"]:not(.glass-button)`).forEach(el => t(el, en));
+      });
+      document.querySelectorAll('a[href="#tracking"].glass-button').forEach(el => t(el, '🌀 Track Active Storms'));
+      document.querySelectorAll('a[href="#simulator"].glass-button').forEach(el => t(el, '🔬 Try the Simulator'));
+
+      const sectionTitles = { '#tracking': '🛰️ Live Tracking Dashboard', '#simulator': '🔬 Hurricane Simulator', '#physics': '🌀 Anatomy of a Hurricane Eye', '#archive': '📊 Saffir-Simpson Hurricane Scale', '#survival': '🛡️ Survival Guide', '#quiz': '🎓 Test Your Knowledge', '#map': '📅 Hurricane Timeline', '#comparison': '🔍 Comparison Tool', '#sources': '📚 Sources' };
+      Object.entries(sectionTitles).forEach(([id, en]) => t(document.querySelector(`${id} .section-title`), en));
+
+      document.querySelectorAll('#lang-toggle-btn, #lang-toggle-btn-mobile').forEach(b => b.textContent = currentLang === 'ar' ? 'EN' : 'AR');
+      try { localStorage.setItem('hp-lang', currentLang); } catch (e) {}
+    }
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      applyLanguage();
+    }
+
+    function wireToggleButtons() {
+      document.querySelectorAll('#theme-toggle-btn, #theme-toggle-btn-mobile').forEach(b => b.addEventListener('click', toggleTheme));
+      document.querySelectorAll('#motion-toggle-btn, #motion-toggle-btn-mobile').forEach(b => b.addEventListener('click', toggleMotion));
+      document.querySelectorAll('#lang-toggle-btn, #lang-toggle-btn-mobile').forEach(b => b.addEventListener('click', toggleLanguage));
+    }
+
+    function restoreStoredPreferences() {
+      try {
+        const savedTheme = localStorage.getItem('hp-theme');
+        if (savedTheme === 'light') toggleTheme();
+        const savedMotion = localStorage.getItem('hp-motion');
+        if (savedMotion === '1') toggleMotion();
+        const savedLang = localStorage.getItem('hp-lang');
+        if (savedLang === 'en') toggleLanguage();
+      } catch (e) {}
+      applyThemeButtons();
+      applyMotionButtons();
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTimeline();
+      populateComparisonSelects();
+      initTrackingMap();
+      renderTrendChart();
+      wireToggleButtons();
+      restoreStoredPreferences();
+    });
+  </script>
+ </body>
+</html>
