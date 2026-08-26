@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head><script src="/codelet/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..Pe1KUzxx8ZBqJ6Xk.FKZhIcyB3vV5xL47NVBmo1zus9xfS8qs4-Ma8ub4O3qkNqb6Fy8McRH0TQWOQESj29TT53QUGGE92KNVETSVu3SnCE9YgPSS1L2Znzn4_qog5P4SFyElaaeGvI7f5p45j81Z6M-OCuHDfh6xVTXzPpaYJ3RTP-kGe-cGGAFlTw6nmmPi.wImK-3wMZ0NfSDuRW9Z06Q/telemetry_sdk.js?pin_id=2d1cdf4549e870e74ba3ad762c34c901"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مختبر المنطق الرقمي | هبة كتانة</title>
+  <link rel="icon" type="image/png" href="28.png">
+  <meta name="description" content="مختبر تفاعلي لتعلم البوابات المنطقية الرقمية (AND, OR, NOT, NAND, XOR) مع محاكاة مباشرة، جداول حقيقة، ووضع تحدٍ واختبار للذكاء المنطقي.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="مختبر المنطق الرقمي">
+  <meta property="og:description" content="مختبر تفاعلي لتعلم البوابات المنطقية الرقمية (AND, OR, NOT, NAND, XOR) مع محاكاة مباشرة، جداول حقيقة، ووضع تحدٍ واختبار للذكاء المنطقي.">
+  <meta property="og:locale" content="ar_AR">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="مختبر المنطق الرقمي">
+  <meta name="twitter:description" content="مختبر تفاعلي لتعلم البوابات المنطقية الرقمية مع محاكاة مباشرة وجداول حقيقة واختبار تفاعلي.">
+  <link rel="icon" type="image/png" href="28.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/codelet/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..Pe1KUzxx8ZBqJ6Xk.FKZhIcyB3vV5xL47NVBmo1zus9xfS8qs4-Ma8ub4O3qkNqb6Fy8McRH0TQWOQESj29TT53QUGGE92KNVETSVu3SnCE9YgPSS1L2Znzn4_qog5P4SFyElaaeGvI7f5p45j81Z6M-OCuHDfh6xVTXzPpaYJ3RTP-kGe-cGGAFlTw6nmmPi.wImK-3wMZ0NfSDuRW9Z06Q/element_sdk.js?pin_id=2d1cdf4549e870e74ba3ad762c34c901"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    ::selection { background-color: #85b2d2 !important; color: white !important; }
+    
+    * { font-family: 'Tajawal', sans-serif; }
+    .font-tech { font-family: 'Orbitron', monospace; }
+    
+    /* PCB Background Pattern */
+    .pcb-bg {
+      background-color: #0d1b2a;
+      background-image: 
+        linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(57, 255, 20, 0.05) 0%, transparent 40%);
+      background-size: 30px 30px, 30px 30px, 100% 100%, 100% 100%;
+      transition: all 0.5s ease;
+    }
+    
+    /* PCB Theme Toggle */
+    .pcb-bg.theme-green {
+      background-color: #0d2a1b;
+      background-image: 
+        linear-gradient(90deg, rgba(57, 255, 20, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(57, 255, 20, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 20% 30%, rgba(57, 255, 20, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+      background-size: 30px 30px, 30px 30px, 100% 100%, 100% 100%;
+    }
+    
+    /* PCB Traces */
+    .pcb-traces {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    
+    .trace {
+      position: absolute;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+      height: 2px;
+      animation: tracePulse 3s ease-in-out infinite;
+    }
+    
+    .trace-v {
+      width: 2px;
+      height: 100px;
+      background: linear-gradient(180deg, transparent, #d4af37, transparent);
+    }
+    
+    @keyframes tracePulse {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* Neon Glow Effects */
+    .neon-green {
+      color: #39ff14;
+      text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14;
+    }
+    
+    .neon-red {
+      color: #ff4444;
+      text-shadow: 0 0 10px #ff4444;
+    }
+    
+    /* LED Styles */
+    .led {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .led-off {
+      background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 5px rgba(0,0,0,0.3);
+    }
+    
+    .led-on {
+      background: radial-gradient(circle at 30% 30%, #7fff00, #39ff14);
+      box-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 60px rgba(57,255,20,0.5), inset 0 -5px 15px rgba(0,0,0,0.3);
+      animation: ledGlow 1.5s ease-in-out infinite alternate;
+    }
+    
+    @keyframes ledGlow {
+      from { box-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 60px rgba(57,255,20,0.5); }
+      to { box-shadow: 0 0 30px #39ff14, 0 0 50px #39ff14, 0 0 80px rgba(57,255,20,0.7); }
+    }
+    
+    /* Switch Styles */
+    .switch-container:focus-visible {
+      outline: 3px solid #d4af37;
+      outline-offset: 3px;
+    }
+
+    .switch-container {
+      width: 80px;
+      height: 140px;
+      background: linear-gradient(145deg, #1a2a3a, #0d1b2a);
+      border-radius: 15px;
+      padding: 8px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 4px 15px rgba(0,0,0,0.3);
+      position: relative;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    
+    .switch-track {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #0a1520 0%, #1a2a3a 50%, #0a1520 100%);
+      border-radius: 12px;
+      position: relative;
+      border: 2px solid #2a3a4a;
+    }
+    
+    .switch-handle {
+      width: 56px;
+      height: 50px;
+      background: linear-gradient(145deg, #3a4a5a, #2a3a4a);
+      border-radius: 10px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .switch-handle::after {
+      content: '';
+      width: 30px;
+      height: 4px;
+      background: linear-gradient(90deg, #4a5a6a, #6a7a8a, #4a5a6a);
+      border-radius: 2px;
+    }
+    
+    .switch-off .switch-handle {
+      top: 8px;
+      background: linear-gradient(145deg, #4a3a3a, #3a2a2a);
+    }
+    
+    .switch-on .switch-handle {
+      top: calc(100% - 58px);
+      background: linear-gradient(145deg, #2a4a3a, #1a3a2a);
+      box-shadow: 0 4px 15px rgba(57,255,20,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    
+    .switch-label {
+      position: absolute;
+      font-size: 12px;
+      font-weight: bold;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .switch-label-on {
+      top: 15px;
+      color: #39ff14;
+    }
+    
+    .switch-label-off {
+      bottom: 15px;
+      color: #ff4444;
+    }
+    
+    /* Gate Cards */
+    .gate-card {
+      background: linear-gradient(145deg, rgba(26, 42, 58, 0.9), rgba(13, 27, 42, 0.95));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .gate-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(212, 175, 55, 0.6);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212, 175, 55, 0.1);
+    }
+    
+    .gate-card.active {
+      border-color: #39ff14;
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+    }
+    
+    /* Truth Table */
+    .truth-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+    
+    .truth-table th {
+      background: linear-gradient(180deg, #1a3a5a, #0d2840);
+      color: #d4af37;
+      padding: 12px 16px;
+      font-weight: 700;
+      border-bottom: 2px solid #d4af37;
+    }
+    
+    .truth-table td {
+      padding: 12px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .truth-table tr.active-row {
+      background: rgba(57, 255, 20, 0.15);
+    }
+    
+    .truth-table tr.active-row td {
+      color: #39ff14;
+      font-weight: bold;
+    }
+    
+    /* Glassmorphism Button */
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .glass-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+    
+    /* Current Flow Animation */
+    .current-flow {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #39ff14;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #39ff14, 0 0 30px #39ff14;
+      opacity: 0;
+    }
+    
+    .current-flow.active {
+      animation: flowPulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes flowPulse {
+      0% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.5); }
+    }
+    
+    /* Wire Connections */
+    .wire {
+      position: absolute;
+      background: #4a5a6a;
+      transition: background 0.3s ease;
+    }
+    
+    .wire.active {
+      background: #39ff14;
+      box-shadow: 0 0 10px #39ff14;
+    }
+    
+    /* Navigation Pills */
+    .nav-pill {
+      padding: 10px 20px;
+      border-radius: 25px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: #d4af37;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .nav-pill:hover, .nav-pill.active {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: #d4af37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+    
+    /* Sections */
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .section.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Quiz Styles */
+    .quiz-option {
+      background: rgba(26, 42, 58, 0.8);
+      border: 2px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 16px 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .quiz-option:hover {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.1);
+    }
+    
+    .quiz-option.correct {
+      border-color: #39ff14;
+      background: rgba(57, 255, 20, 0.1);
+    }
+    
+    .quiz-option.wrong {
+      border-color: #ff4444;
+      background: rgba(255, 68, 68, 0.1);
+    }
+    
+    /* Circuit Container LTR Fix */
+    .circuit-ltr {
+      direction: ltr;
+      text-align: right;
+    }
+    
+    /* Challenge Mode */
+    .challenge-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #39ff14, #7fff00);
+      color: #0d1b2a;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .challenge-box {
+      background: linear-gradient(135deg, rgba(57, 255, 20, 0.1), rgba(212, 175, 55, 0.1));
+      border: 2px dashed #39ff14;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .challenge-status {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    
+    .challenge-success {
+      color: #39ff14;
+      text-shadow: 0 0 10px #39ff14;
+    }
+    
+    .challenge-pending {
+      color: #d4af37;
+    }
+    
+    .glow-wire {
+      stroke: #39ff14 !important;
+      stroke-width: 3px !important;
+      filter: drop-shadow(0 0 10px #39ff14);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .switch-container {
+        width: 60px;
+        height: 100px;
+      }
+      
+      .switch-handle {
+        width: 44px;
+        height: 40px;
+      }
+      
+      .switch-on .switch-handle {
+        top: calc(100% - 48px);
+      }
+      
+      .led {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #0d1b2a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #d4af37, #8b7355);
+      border-radius: 4px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/codelet/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..Pe1KUzxx8ZBqJ6Xk.FKZhIcyB3vV5xL47NVBmo1zus9xfS8qs4-Ma8ub4O3qkNqb6Fy8McRH0TQWOQESj29TT53QUGGE92KNVETSVu3SnCE9YgPSS1L2Znzn4_qog5P4SFyElaaeGvI7f5p45j81Z6M-OCuHDfh6xVTXzPpaYJ3RTP-kGe-cGGAFlTw6nmmPi.wImK-3wMZ0NfSDuRW9Z06Q/data_sdk.js?pin_id=2d1cdf4549e870e74ba3ad762c34c901" type="text/javascript"></script>
+ </head>
+ <body class="h-full pcb-bg text-white overflow-auto">
+  <!-- PCB Traces Background -->
+  <div class="pcb-traces">
+   <div class="trace" style="top: 10%; right: 0; width: 40%;"></div>
+   <div class="trace" style="top: 25%; right: 20%; width: 60%;"></div>
+   <div class="trace" style="top: 45%; right: 10%; width: 30%;"></div>
+   <div class="trace" style="top: 65%; right: 30%; width: 50%;"></div>
+   <div class="trace" style="top: 80%; right: 5%; width: 45%;"></div>
+  </div>
+  <div class="min-h-full flex flex-col relative z-10">
+   <!-- Header -->
+   <header class="py-4 px-4 md:px-8 border-b border-[#d4af37]/30">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+     <!-- Title -->
+     <h1 id="site-title" class="text-2xl md:text-3xl font-bold text-center flex-1"><span class="text-[#d4af37]">مختبر</span> <span class="neon-green font-tech">المنطق الرقمي</span></h1>
+     <div class="w-[140px] hidden md:block"></div>
+    </div><!-- Navigation -->
+    <nav class="max-w-7xl mx-auto mt-4 flex flex-wrap justify-center gap-3">
+     <button class="nav-pill active" data-section="lab"> <i data-lucide="cpu" class="w-4 h-4 inline-block ml-2"></i> المختبر التفاعلي </button> <button class="nav-pill" data-section="gates"> <i data-lucide="git-branch" class="w-4 h-4 inline-block ml-2"></i> شرح البوابات </button> <button class="nav-pill" data-section="quiz"> <i data-lucide="brain" class="w-4 h-4 inline-block ml-2"></i> اختبار الذكاء المنطقي </button>
+    </nav>
+   </header><!-- Main Content -->
+   <main class="flex-1 p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+     <!-- Lab Section -->
+     <section id="lab-section" class="section active">
+      <div class="grid lg:grid-cols-2 gap-8">
+       <!-- Interactive Lab -->
+       <div class="gate-card p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-[#d4af37] mb-6 text-center"><i data-lucide="zap" class="w-6 h-6 inline-block ml-2"></i> مختبر البوابات المنطقية</h2><!-- Gate Selector -->
+        <div class="flex justify-center gap-4 mb-8">
+         <button class="gate-selector px-6 py-3 rounded-xl bg-[#1a3a5a] border-2 border-[#d4af37] text-[#d4af37] font-bold transition-all hover:bg-[#d4af37] hover:text-[#0d1b2a] active" data-gate="AND"> AND </button> <button class="gate-selector px-6 py-3 rounded-xl bg-[#1a3a5a] border-2 border-[#d4af37] text-[#d4af37] font-bold transition-all hover:bg-[#d4af37] hover:text-[#0d1b2a]" data-gate="OR"> OR </button> <button class="gate-selector px-6 py-3 rounded-xl bg-[#1a3a5a] border-2 border-[#d4af37] text-[#d4af37] font-bold transition-all hover:bg-[#d4af37] hover:text-[#0d1b2a]" data-gate="NOT"> NOT </button> <button class="gate-selector px-6 py-3 rounded-xl bg-[#1a3a5a] border-2 border-[#d4af37] text-[#d4af37] font-bold transition-all hover:bg-[#d4af37] hover:text-[#0d1b2a]" data-gate="NAND"> NAND </button> <button class="gate-selector px-6 py-3 rounded-xl bg-[#1a3a5a] border-2 border-[#d4af37] text-[#d4af37] font-bold transition-all hover:bg-[#d4af37] hover:text-[#0d1b2a]" data-gate="XOR"> XOR </button>
+        </div><!-- Circuit Simulation -->
+        <div class="relative bg-[#0a1520] rounded-2xl p-8 min-h-[300px] circuit-ltr">
+         <!-- Gate Name Display -->
+         <div class="text-center mb-6">
+          <span id="gate-name" class="font-tech text-xl neon-green">AND GATE</span>
+          <p id="gate-desc" class="text-gray-400 mt-2 text-sm">بوابة التوافق - يضيء المصباح فقط إذا كان الجميع موافقاً</p>
+         </div><!-- Challenge Mode Section -->
+         <div id="challenge-section" class="hidden">
+          <div class="challenge-box">
+           <div class="challenge-badge">
+            🎮 وضع التحدي
+           </div>
+           <p id="challenge-text" class="text-white mt-3 text-lg"></p>
+           <div id="challenge-status" class="challenge-status challenge-pending"></div>
+          </div>
+         </div><!-- Circuit Layout -->
+         <div class="flex items-center justify-center gap-8 md:gap-12">
+          <!-- Input Switches -->
+          <div id="switches-container" class="flex flex-col gap-6">
+           <!-- Switch A -->
+           <div class="flex items-center gap-4">
+            <span class="text-[#d4af37] font-bold text-lg w-8" id="switch-a-label">A</span>
+            <div class="switch-container switch-off" data-switch="A" role="switch" tabindex="0" aria-checked="false" aria-labelledby="switch-a-label">
+             <div class="switch-track">
+              <span class="switch-label switch-label-on">1</span>
+              <div class="switch-handle"></div><span class="switch-label switch-label-off">0</span>
+             </div>
+            </div>
+           </div><!-- Switch B -->
+           <div id="switch-b-container" class="flex items-center gap-4">
+            <span class="text-[#d4af37] font-bold text-lg w-8" id="switch-b-label">B</span>
+            <div class="switch-container switch-off" data-switch="B" role="switch" tabindex="0" aria-checked="false" aria-labelledby="switch-b-label">
+             <div class="switch-track">
+              <span class="switch-label switch-label-on">1</span>
+              <div class="switch-handle"></div><span class="switch-label switch-label-off">0</span>
+             </div>
+            </div>
+           </div>
+          </div><!-- Gate Symbol -->
+          <div class="relative">
+           <svg id="gate-svg" width="100" height="80" viewbox="0 0 100 80">
+            <!-- AND Gate Symbol --> <g id="and-symbol">
+             <path d="M10 10 L50 10 Q90 10 90 40 Q90 70 50 70 L10 70 Z" fill="none" stroke="#d4af37" stroke-width="3" /> <!-- Input lines -->
+             <line x1="0" y1="25" x2="10" y2="25" stroke="#d4af37" stroke-width="2" />
+             <line x1="0" y1="55" x2="10" y2="55" stroke="#d4af37" stroke-width="2" /> <!-- Output line -->
+             <line x1="90" y1="40" x2="100" y2="40" stroke="#d4af37" stroke-width="2" />
+            </g>
+           </svg><!-- Current flow indicator -->
+           <div id="current-indicator" class="current-flow" style="right: -5px; top: 50%; transform: translateY(-50%);"></div>
+          </div><!-- Output LED -->
+          <div class="flex flex-col items-center gap-3">
+           <div id="output-led" class="led led-off"></div><span id="output-value" class="font-tech text-2xl neon-red">0</span> <span class="text-gray-400 text-sm">الخرج</span>
+          </div>
+         </div><!-- Input Values Display -->
+         <div class="flex justify-center gap-8 mt-8">
+          <div class="text-center">
+           <span class="text-gray-400 text-sm">المدخل A</span>
+           <div id="input-a-display" class="font-tech text-2xl neon-red mt-1">
+            0
+           </div>
+          </div>
+          <div id="input-b-display-container" class="text-center">
+           <span class="text-gray-400 text-sm">المدخل B</span>
+           <div id="input-b-display" class="font-tech text-2xl neon-red mt-1">
+            0
+           </div>
+          </div>
+         </div>
+        </div>
+       </div><!-- Truth Table -->
+       <div class="gate-card p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-[#d4af37] mb-6 text-center"><i data-lucide="table" class="w-6 h-6 inline-block ml-2"></i> جدول الحقيقة</h2>
+        <div id="truth-table-container" class="overflow-x-auto">
+         <!-- AND Truth Table -->
+         <table id="and-table" class="truth-table">
+          <thead>
+           <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>الخرج (A AND B)</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr data-a="0" data-b="0">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+           <tr data-a="0" data-b="1">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+           <tr data-a="1" data-b="0">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+           <tr data-a="1" data-b="1">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+          </tbody>
+         </table><!-- NAND Truth Table -->
+         <table id="nand-table" class="truth-table hidden">
+          <thead>
+           <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>الخرج (A NAND B)</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr data-a="0" data-b="0">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="0" data-b="1">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1" data-b="0">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1" data-b="1">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+          </tbody>
+         </table><!-- XOR Truth Table -->
+         <table id="xor-table" class="truth-table hidden">
+          <thead>
+           <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>الخرج (A XOR B)</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr data-a="0" data-b="0">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+           <tr data-a="0" data-b="1">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1" data-b="0">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1" data-b="1">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+          </tbody>
+         </table><!-- OR Truth Table -->
+         <table id="or-table" class="truth-table hidden">
+          <thead>
+           <tr>
+            <th>A</th>
+            <th>B</th>
+            <th>الخرج (A OR B)</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr data-a="0" data-b="0">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+           <tr data-a="0" data-b="1">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1" data-b="0">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1" data-b="1">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+          </tbody>
+         </table><!-- NOT Truth Table -->
+         <table id="not-table" class="truth-table hidden">
+          <thead>
+           <tr>
+            <th>A</th>
+            <th>الخرج (NOT A)</th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr data-a="0">
+            <td><span class="neon-red">0</span></td>
+            <td><span class="neon-green">1</span></td>
+           </tr>
+           <tr data-a="1">
+            <td><span class="neon-green">1</span></td>
+            <td><span class="neon-red">0</span></td>
+           </tr>
+          </tbody>
+         </table>
+        </div><!-- Formula -->
+        <div class="mt-8 p-4 bg-[#0a1520] rounded-xl text-center">
+         <p class="text-gray-400 mb-2">الصيغة المنطقية</p>
+         <p id="formula" class="font-tech text-xl text-[#d4af37]">Q = A · B</p>
+        </div>
+       </div>
+      </div>
+     </section><!-- Gates Section -->
+     <section id="gates-section" class="section">
+      <h2 class="text-3xl font-bold text-center mb-8"><span class="text-[#d4af37]">البوابات المنطقية</span> <span class="neon-green">الأساسية</span></h2>
+      <div class="grid md:grid-cols-3 gap-6">
+       <!-- AND Gate Card -->
+       <div class="gate-card p-6 text-center">
+        <div class="w-20 h-20 mx-auto mb-4 bg-[#0a1520] rounded-2xl flex items-center justify-center">
+         <svg width="60" height="40" viewbox="0 0 60 40">
+          <path d="M5 5 L30 5 Q55 5 55 20 Q55 35 30 35 L5 35 Z" fill="none" stroke="#39ff14" stroke-width="2" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-[#d4af37] mb-2">AND Gate</h3>
+        <p class="text-xl text-white mb-4">بوابة التوافق</p>
+        <div class="bg-[#0a1520] rounded-xl p-4 text-right">
+         <p class="text-gray-300 leading-relaxed"><i data-lucide="lightbulb" class="w-5 h-5 inline text-[#d4af37]"></i> لا يضيء المصباح إلا إذا كان <span class="neon-green">الجميع موافقاً</span></p>
+         <p class="text-gray-400 mt-3 text-sm">مثال: باب الخزنة لا يفتح إلا إذا أدخل كلا المفتاحين معاً</p>
+        </div>
+        <div class="mt-4 font-tech text-[#d4af37]">
+         Q = A · B
+        </div>
+       </div><!-- OR Gate Card -->
+       <div class="gate-card p-6 text-center">
+        <div class="w-20 h-20 mx-auto mb-4 bg-[#0a1520] rounded-2xl flex items-center justify-center">
+         <svg width="60" height="40" viewbox="0 0 60 40">
+          <path d="M5 5 Q15 20 5 35 Q30 35 55 20 Q30 5 5 5" fill="none" stroke="#39ff14" stroke-width="2" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-[#d4af37] mb-2">OR Gate</h3>
+        <p class="text-xl text-white mb-4">بوابة الاختيار</p>
+        <div class="bg-[#0a1520] rounded-xl p-4 text-right">
+         <p class="text-gray-300 leading-relaxed"><i data-lucide="lightbulb" class="w-5 h-5 inline text-[#d4af37]"></i> يكفي موافقة <span class="neon-green">واحد فقط</span> ليضيء المصباح</p>
+         <p class="text-gray-400 mt-3 text-sm">مثال: جرس الباب يرن إذا ضغط أي شخص على أي زر</p>
+        </div>
+        <div class="mt-4 font-tech text-[#d4af37]">
+         Q = A + B
+        </div>
+       </div><!-- NOT Gate Card -->
+       <div class="gate-card p-6 text-center">
+        <div class="w-20 h-20 mx-auto mb-4 bg-[#0a1520] rounded-2xl flex items-center justify-center">
+         <svg width="60" height="40" viewbox="0 0 60 40">
+          <path d="M5 5 L5 35 L45 20 Z" fill="none" stroke="#39ff14" stroke-width="2" /> <circle cx="50" cy="20" r="5" fill="none" stroke="#39ff14" stroke-width="2" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-[#d4af37] mb-2">NOT Gate</h3>
+        <p class="text-xl text-white mb-4">بوابة العاكس</p>
+        <div class="bg-[#0a1520] rounded-xl p-4 text-right">
+         <p class="text-gray-300 leading-relaxed"><i data-lucide="lightbulb" class="w-5 h-5 inline text-[#d4af37]"></i> تعكس الحالة <span class="neon-green">دائماً</span></p>
+         <p class="text-gray-400 mt-3 text-sm">مثال: مفتاح الإضاءة - إذا كان مفتوحاً يغلق، وإذا كان مغلقاً يفتح</p>
+        </div>
+        <div class="mt-4 font-tech text-[#d4af37]">
+         Q = Ā
+        </div>
+       </div>
+      </div><!-- Educational Info -->
+      <div class="gate-card mt-8 p-6 md:p-8">
+       <h3 class="text-xl font-bold text-[#d4af37] mb-4"><i data-lucide="info" class="w-6 h-6 inline-block ml-2"></i> لماذا نستخدم البوابات المنطقية؟</h3>
+       <div class="grid md:grid-cols-2 gap-6 text-gray-300">
+        <div class="flex gap-4">
+         <div class="w-12 h-12 bg-[#0a1520] rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="cpu" class="w-6 h-6 text-[#39ff14]"></i>
+         </div>
+         <div>
+          <h4 class="text-white font-bold mb-1">المعالجات</h4>
+          <p class="text-sm">كل معالج في جهازك يحتوي على ملايين البوابات المنطقية</p>
+         </div>
+        </div>
+        <div class="flex gap-4">
+         <div class="w-12 h-12 bg-[#0a1520] rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="calculator" class="w-6 h-6 text-[#39ff14]"></i>
+         </div>
+         <div>
+          <h4 class="text-white font-bold mb-1">الحسابات</h4>
+          <p class="text-sm">جميع العمليات الحسابية تتم باستخدام البوابات المنطقية</p>
+         </div>
+        </div>
+        <div class="flex gap-4">
+         <div class="w-12 h-12 bg-[#0a1520] rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="hard-drive" class="w-6 h-6 text-[#39ff14]"></i>
+         </div>
+         <div>
+          <h4 class="text-white font-bold mb-1">الذاكرة</h4>
+          <p class="text-sm">تخزين البيانات يعتمد على دوائر من البوابات المنطقية</p>
+         </div>
+        </div>
+        <div class="flex gap-4">
+         <div class="w-12 h-12 bg-[#0a1520] rounded-xl flex items-center justify-center flex-shrink-0">
+          <i data-lucide="smartphone" class="w-6 h-6 text-[#39ff14]"></i>
+         </div>
+         <div>
+          <h4 class="text-white font-bold mb-1">الأجهزة الذكية</h4>
+          <p class="text-sm">كل جهاز إلكتروني يعمل بالمنطق الرقمي</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section><!-- Quiz Section -->
+     <section id="quiz-section" class="section">
+      <div class="gate-card p-6 md:p-8 max-w-3xl mx-auto">
+       <h2 class="text-2xl font-bold text-[#d4af37] mb-6 text-center"><i data-lucide="brain" class="w-8 h-8 inline-block ml-2"></i> اختبار الذكاء المنطقي</h2>
+       <div id="quiz-container">
+        <!-- Quiz Progress -->
+        <div class="flex items-center justify-between mb-6">
+         <span id="quiz-progress" class="text-gray-400">السؤال 1 من 5</span> <span id="quiz-score" class="text-[#39ff14] font-bold">النقاط: 0</span>
+        </div><!-- Question -->
+        <div id="question-container" class="bg-[#0a1520] rounded-xl p-6 mb-6">
+         <p id="question-text" class="text-xl text-white leading-relaxed"></p>
+        </div><!-- Options -->
+        <div id="options-container" class="space-y-4">
+        </div><!-- Next Button --> <button id="next-btn" class="w-full mt-6 py-4 bg-[#d4af37] text-[#0d1b2a] font-bold rounded-xl hidden hover:bg-[#f0d77c] transition-all"> السؤال التالي <i data-lucide="arrow-left" class="w-5 h-5 inline-block mr-2"></i> </button>
+       </div><!-- Quiz Result -->
+       <div id="quiz-result" class="hidden text-center">
+        <div id="result-icon" class="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center">
+         <i data-lucide="trophy" class="w-12 h-12"></i>
+        </div>
+        <h3 id="result-title" class="text-2xl font-bold mb-4"></h3>
+        <p id="result-text" class="text-xl text-gray-300 mb-6"></p><button id="restart-quiz" class="px-8 py-3 bg-[#d4af37] text-[#0d1b2a] font-bold rounded-xl hover:bg-[#f0d77c] transition-all"> <i data-lucide="rotate-ccw" class="w-5 h-5 inline-block ml-2"></i> إعادة الاختبار </button>
+       </div>
+      </div>
+     </section>
+    </div>
+   </main><!-- Footer -->
+   <footer class="py-6 px-4 border-t border-[#d4af37]/30 text-center">
+    <p id="footer-text" class="text-gray-400">جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين</p>
+    <div class="flex justify-center gap-4 mt-4">
+     <div class="w-3 h-3 rounded-full bg-[#39ff14] animate-pulse"></div>
+     <div class="w-3 h-3 rounded-full bg-[#d4af37] animate-pulse" style="animation-delay: 0.5s;"></div>
+     <div class="w-3 h-3 rounded-full bg-[#39ff14] animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
+    <!-- Back Button --> <a href="index.html" target="_blank" rel="noopener noreferrer" class="glass-btn px-4 py-2 mt-6 inline-flex items-center gap-2 text-[#d4af37] hover:text-white"> <i data-lucide="arrow-right" class="w-5 h-5"></i> <span class="text-sm font-medium">الموسوعة الرئيسية</span> </a>
+   </footer>
+  </div>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Default config
+    const defaultConfig = {
+      site_title: 'مختبر المنطق الرقمي',
+      footer_text: 'جميع الحقوق محفوظة لـ هبة كتانة / قلقيلية الشرعية / وزارة الأوقاف / فلسطين',
+      enable_sound: 'تشغيل'
+    };
+    
+    // Audio context for sound effects
+    let audioContext;
+    let soundEnabled = true;
+    
+    // Play click sound
+    function playClickSound() {
+      if (!soundEnabled) return;
+      try {
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioContext.currentTime;
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc.frequency.setValueAtTime(1000, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        
+        osc.start(now);
+        osc.stop(now + 0.1);
+      } catch(e) {}
+    }
+    
+    // Play LED sound
+    function playLedSound() {
+      if (!soundEnabled) return;
+      try {
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioContext.currentTime;
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc.frequency.setValueAtTime(2000, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        
+        osc.start(now);
+        osc.stop(now + 0.15);
+      } catch(e) {}
+    }
+    
+    // State
+    let currentGate = 'AND';
+    let switchA = false;
+    let switchB = false;
+    let challengeMode = false;
+    let challengeGate = '';
+    let challengeA = false;
+    let challengeB = false;
+    let challengeExpectedOutput = 0;
+    let challengeScore = 0;
+    
+    // Quiz state
+    let currentQuestion = 0;
+    let score = 0;
+    const questions = [
+      {
+        question: 'ما هو ناتج بوابة AND إذا كان المدخل A=1 و B=0؟',
+        options: ['0', '1'],
+        correct: 0
+      },
+      {
+        question: 'أي بوابة تحتاج أن تكون جميع المدخلات 1 لينتج 1؟',
+        options: ['OR', 'AND', 'NOT'],
+        correct: 1
+      },
+      {
+        question: 'ما هو ناتج بوابة NOT إذا كان المدخل A=0؟',
+        options: ['0', '1'],
+        correct: 1
+      },
+      {
+        question: 'ما هو ناتج بوابة OR إذا كان المدخل A=0 و B=1؟',
+        options: ['0', '1'],
+        correct: 1
+      },
+      {
+        question: 'كم عدد المدخلات في بوابة NOT؟',
+        options: ['1', '2', '3'],
+        correct: 0
+      }
+    ];
+    
+    // Gate descriptions with symbols
+    const gateInfo = {
+      AND: {
+        name: 'AND GATE',
+        desc: 'بوابة التوافق - يضيء المصباح فقط إذا كان الجميع موافقاً',
+        formula: 'Q = A · B',
+        symbol: `<g><path d="M10 10 L50 10 Q90 10 90 40 Q90 70 50 70 L10 70 Z" fill="none" stroke="#d4af37" stroke-width="3"/><line x1="0" y1="25" x2="10" y2="25" stroke="#d4af37" stroke-width="2"/><line x1="0" y1="55" x2="10" y2="55" stroke="#d4af37" stroke-width="2"/><line x1="90" y1="40" x2="100" y2="40" stroke="#d4af37" stroke-width="2"/></g>`
+      },
+      OR: {
+        name: 'OR GATE',
+        desc: 'بوابة الاختيار - يكفي موافقة واحد فقط ليضيء المصباح',
+        formula: 'Q = A + B',
+        symbol: `<g><path d="M10 10 Q20 40 10 70 Q50 70 90 40 Q50 10 10 10" fill="none" stroke="#d4af37" stroke-width="3"/><line x1="0" y1="25" x2="15" y2="25" stroke="#d4af37" stroke-width="2"/><line x1="0" y1="55" x2="15" y2="55" stroke="#d4af37" stroke-width="2"/><line x1="90" y1="40" x2="100" y2="40" stroke="#d4af37" stroke-width="2"/></g>`
+      },
+      NOT: {
+        name: 'NOT GATE',
+        desc: 'بوابة العاكس - تعكس الحالة دائماً',
+        formula: 'Q = Ā',
+        symbol: `<g><path d="M10 10 L10 70 L70 40 Z" fill="none" stroke="#d4af37" stroke-width="3"/><circle cx="78" cy="40" r="8" fill="none" stroke="#d4af37" stroke-width="3"/><line x1="0" y1="40" x2="10" y2="40" stroke="#d4af37" stroke-width="2"/><line x1="86" y1="40" x2="100" y2="40" stroke="#d4af37" stroke-width="2"/></g>`
+      },
+      NAND: {
+        name: 'NAND GATE',
+        desc: 'بوابة NOT AND - معاكس AND',
+        formula: 'Q = Ā · B̄',
+        symbol: `<g><path d="M10 10 L50 10 Q90 10 90 40 Q90 70 50 70 L10 70 Z" fill="none" stroke="#39ff14" stroke-width="3"/><circle cx="98" cy="40" r="8" fill="none" stroke="#39ff14" stroke-width="3"/><line x1="0" y1="25" x2="10" y2="25" stroke="#39ff14" stroke-width="2"/><line x1="0" y1="55" x2="10" y2="55" stroke="#39ff14" stroke-width="2"/><line x1="106" y1="40" x2="116" y2="40" stroke="#39ff14" stroke-width="2"/></g>`
+      },
+      XOR: {
+        name: 'XOR GATE',
+        desc: 'بوابة الاختيار الحصري - يضيء إذا كانت المدخلات مختلفة',
+        formula: 'Q = A ⊕ B',
+        symbol: `<g><path d="M5 10 Q15 40 5 70 Q45 70 90 40 Q45 10 5 10" fill="none" stroke="#ff9500" stroke-width="2"/><path d="M8 10 Q18 40 8 70" fill="none" stroke="#ff9500" stroke-width="2"/><line x1="0" y1="25" x2="10" y2="25" stroke="#ff9500" stroke-width="2"/><line x1="0" y1="55" x2="10" y2="55" stroke="#ff9500" stroke-width="2"/><line x1="90" y1="40" x2="100" y2="40" stroke="#ff9500" stroke-width="2"/></g>`
+      }
+    };
+    
+    // Calculate output based on gate type
+    function calculateOutput(a = switchA, b = switchB) {
+      switch (currentGate) {
+        case 'AND':
+          return (a && b) ? 1 : 0;
+        case 'OR':
+          return (a || b) ? 1 : 0;
+        case 'NOT':
+          return a ? 0 : 1;
+        case 'NAND':
+          return (a && b) ? 0 : 1;
+        case 'XOR':
+          return (a !== b) ? 1 : 0;
+        default:
+          return 0;
+      }
+    }
+    
+    // Update the circuit display
+    function updateCircuit() {
+      const output = calculateOutput();
+      const led = document.getElementById('output-led');
+      const outputValue = document.getElementById('output-value');
+      const inputADisplay = document.getElementById('input-a-display');
+      const inputBDisplay = document.getElementById('input-b-display');
+      const currentIndicator = document.getElementById('current-indicator');
+      
+      // Update LED with sound
+      if (output && !led.classList.contains('led-on')) {
+        playLedSound();
+      }
+      
+      led.className = `led ${output ? 'led-on' : 'led-off'}`;
+      
+      // Update output value
+      outputValue.textContent = output;
+      outputValue.className = `font-tech text-2xl ${output ? 'neon-green' : 'neon-red'}`;
+      
+      // Update input displays
+      inputADisplay.textContent = switchA ? '1' : '0';
+      inputADisplay.className = `font-tech text-2xl mt-1 ${switchA ? 'neon-green' : 'neon-red'}`;
+      
+      inputBDisplay.textContent = switchB ? '1' : '0';
+      inputBDisplay.className = `font-tech text-2xl mt-1 ${switchB ? 'neon-green' : 'neon-red'}`;
+      
+      // Update current flow indicator
+      currentIndicator.className = `current-flow ${output ? 'active' : ''}`;
+      
+      // Update truth table highlighting
+      updateTruthTableHighlight();
+      
+      // Check challenge mode
+      if (challengeMode) {
+        checkChallenge();
+      }
+    }
+    
+    // Update truth table row highlighting
+    function updateTruthTableHighlight() {
+      const tables = ['and-table', 'or-table', 'not-table', 'nand-table', 'xor-table'];
+      tables.forEach(tableId => {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          row.classList.remove('active-row');
+          
+          const rowA = row.dataset.a === '1';
+          const rowB = row.dataset.b === '1';
+          
+          if (currentGate === 'NOT') {
+            if (rowA === switchA) {
+              row.classList.add('active-row');
+            }
+          } else {
+            if (rowA === switchA && rowB === switchB) {
+              row.classList.add('active-row');
+            }
+          }
+        });
+      });
+    }
+    
+    // Switch gate type
+    function switchGate(gate) {
+      currentGate = gate;
+      
+      // Update gate info display
+      document.getElementById('gate-name').textContent = gateInfo[gate].name;
+      document.getElementById('gate-desc').textContent = gateInfo[gate].desc;
+      document.getElementById('formula').textContent = gateInfo[gate].formula;
+      document.getElementById('gate-svg').innerHTML = gateInfo[gate].symbol;
+      
+      // Show/hide switch B for NOT gate
+      const switchBContainer = document.getElementById('switch-b-container');
+      const inputBDisplayContainer = document.getElementById('input-b-display-container');
+      
+      if (gate === 'NOT') {
+        switchBContainer.style.display = 'none';
+        inputBDisplayContainer.style.display = 'none';
+      } else {
+        switchBContainer.style.display = 'flex';
+        inputBDisplayContainer.style.display = 'block';
+      }
+      
+      // Show correct truth table
+      document.getElementById('and-table').classList.toggle('hidden', gate !== 'AND');
+      document.getElementById('or-table').classList.toggle('hidden', gate !== 'OR');
+      document.getElementById('not-table').classList.toggle('hidden', gate !== 'NOT');
+      document.getElementById('nand-table').classList.toggle('hidden', gate !== 'NAND');
+      document.getElementById('xor-table').classList.toggle('hidden', gate !== 'XOR');
+      
+      // Update gate selector buttons
+      document.querySelectorAll('.gate-selector').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.gate === gate);
+        if (btn.dataset.gate === gate) {
+          btn.classList.add('bg-[#d4af37]', 'text-[#0d1b2a]');
+          btn.classList.remove('bg-[#1a3a5a]', 'text-[#d4af37]');
+        } else {
+          btn.classList.remove('bg-[#d4af37]', 'text-[#0d1b2a]');
+          btn.classList.add('bg-[#1a3a5a]', 'text-[#d4af37]');
+        }
+      });
+      
+      updateCircuit();
+    }
+    
+    // Toggle switch
+    function toggleSwitch(switchEl) {
+      playClickSound();
+      const switchName = switchEl.dataset.switch;
+      
+      if (switchName === 'A') {
+        switchA = !switchA;
+      } else if (switchName === 'B') {
+        switchB = !switchB;
+      }
+      
+      // Update switch visual state
+      const isOn = switchName === 'A' ? switchA : switchB;
+      switchEl.setAttribute('aria-checked', isOn ? 'true' : 'false');
+      if (isOn) {
+        switchEl.classList.remove('switch-off');
+        switchEl.classList.add('switch-on');
+      } else {
+        switchEl.classList.remove('switch-on');
+        switchEl.classList.add('switch-off');
+      }
+      
+      updateCircuit();
+    }
+    
+    // Challenge Mode Functions
+    function generateChallenge() {
+      const gates = ['AND', 'OR', 'NAND', 'XOR'];
+      challengeGate = gates[Math.floor(Math.random() * gates.length)];
+      challengeA = Math.random() > 0.5;
+      challengeB = Math.random() > 0.5;
+      
+      // Calculate expected output
+      let tempGate = currentGate;
+      currentGate = challengeGate;
+      challengeExpectedOutput = calculateOutput(challengeA, challengeB);
+      currentGate = tempGate;
+      
+      // Update challenge display
+      const gateNameArabic = {
+        AND: 'AND',
+        OR: 'OR',
+        NAND: 'NAND',
+        XOR: 'XOR'
+      };
+      
+      const a_val = challengeA ? '1' : '0';
+      const b_val = challengeB ? '1' : '0';
+      
+      document.getElementById('challenge-text').innerHTML = `
+        <span class="neon-green text-2xl">استخدم بوابة ${gateNameArabic[challengeGate]}</span><br>
+        <span class="text-lg">ضع المدخلات: A = ${a_val}، B = ${b_val}</span>
+      `;
+      
+      document.getElementById('challenge-status').textContent = '⏳ في الانتظار...';
+      document.getElementById('challenge-status').className = 'challenge-status challenge-pending';
+      
+      // Hide challenge section initially
+      document.getElementById('challenge-section').classList.remove('hidden');
+      challengeMode = true;
+    }
+    
+    function checkChallenge() {
+      if (!challengeMode) return;
+      if (currentGate !== challengeGate || switchA !== challengeA || switchB !== challengeB) return;
+      
+      const output = calculateOutput();
+      if (output === challengeExpectedOutput) {
+        // Success!
+        playLedSound();
+        challengeScore++;
+        document.getElementById('challenge-status').textContent = '✅ نجحت! +1 نقطة';
+        document.getElementById('challenge-status').className = 'challenge-status challenge-success';
+        
+        // Disable switches temporarily
+        document.querySelectorAll('.switch-container').forEach(sw => {
+          sw.style.pointerEvents = 'none';
+          sw.setAttribute('tabindex', '-1');
+        });
+        
+        setTimeout(() => {
+          document.querySelectorAll('.switch-container').forEach(sw => {
+            sw.style.pointerEvents = 'auto';
+            sw.setAttribute('tabindex', '0');
+          });
+          generateChallenge();
+        }, 2000);
+      }
+    }
+    
+    // Navigation
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(`${sectionId}-section`).classList.add('active');
+      
+      document.querySelectorAll('.nav-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.dataset.section === sectionId);
+      });
+    }
+    
+    // Theme Toggle
+    function toggleTheme() {
+      const pcbBg = document.querySelector('.pcb-bg');
+      pcbBg.classList.toggle('theme-green');
+    }
+    
+    // Quiz functions
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question-text').textContent = q.question;
+      document.getElementById('quiz-progress').textContent = `السؤال ${currentQuestion + 1} من ${questions.length}`;
+      
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+      
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option w-full text-right text-white text-lg';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(btn);
+      });
+      
+      document.getElementById('next-btn').classList.add('hidden');
+    }
+    
+    function selectAnswer(index) {
+      const q = questions[currentQuestion];
+      const options = document.querySelectorAll('.quiz-option');
+      
+      options.forEach((opt, i) => {
+        opt.disabled = true;
+        if (i === q.correct) {
+          opt.classList.add('correct');
+        } else if (i === index && i !== q.correct) {
+          opt.classList.add('wrong');
+        }
+      });
+      
+      if (index === q.correct) {
+        score++;
+        document.getElementById('quiz-score').textContent = `النقاط: ${score}`;
+        playLedSound();
+      }
+      
+      document.getElementById('next-btn').classList.remove('hidden');
+    }
+    
+    function nextQuestion() {
+      currentQuestion++;
+      
+      if (currentQuestion >= questions.length) {
+        showQuizResult();
+      } else {
+        loadQuestion();
+      }
+    }
+    
+    function showQuizResult() {
+      document.getElementById('quiz-container').classList.add('hidden');
+      document.getElementById('quiz-result').classList.remove('hidden');
+      
+      const percentage = (score / questions.length) * 100;
+      const resultIcon = document.getElementById('result-icon');
+      const resultTitle = document.getElementById('result-title');
+      const resultText = document.getElementById('result-text');
+      
+      if (percentage >= 80) {
+        resultIcon.className = 'w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center bg-[#39ff14]/20';
+        resultIcon.innerHTML = '<i data-lucide="trophy" class="w-12 h-12 text-[#39ff14]"></i>';
+        resultTitle.className = 'text-2xl font-bold mb-4 neon-green';
+        resultTitle.textContent = 'ممتاز! 🎉';
+        resultText.textContent = `حصلت على ${score} من ${questions.length} - أنت عبقري المنطق الرقمي!`;
+      } else if (percentage >= 60) {
+        resultIcon.className = 'w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center bg-[#d4af37]/20';
+        resultIcon.innerHTML = '<i data-lucide="star" class="w-12 h-12 text-[#d4af37]"></i>';
+        resultTitle.className = 'text-2xl font-bold mb-4 text-[#d4af37]';
+        resultTitle.textContent = 'جيد جداً! 👏';
+        resultText.textContent = `حصلت على ${score} من ${questions.length} - استمر في التعلم!`;
+      } else {
+        resultIcon.className = 'w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center bg-[#ff4444]/20';
+        resultIcon.innerHTML = '<i data-lucide="book-open" class="w-12 h-12 text-[#ff4444]"></i>';
+        resultTitle.className = 'text-2xl font-bold mb-4 text-[#ff4444]';
+        resultTitle.textContent = 'حاول مرة أخرى! 📚';
+        resultText.textContent = `حصلت على ${score} من ${questions.length} - راجع الدروس وحاول مجدداً`;
+      }
+      
+      lucide.createIcons();
+    }
+    
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById('quiz-score').textContent = 'النقاط: 0';
+      document.getElementById('quiz-container').classList.remove('hidden');
+      document.getElementById('quiz-result').classList.add('hidden');
+      loadQuestion();
+    }
+    
+    // Event listeners
+    document.querySelectorAll('.switch-container').forEach(sw => {
+      sw.addEventListener('click', () => toggleSwitch(sw));
+      sw.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          toggleSwitch(sw);
+        }
+      });
+      sw.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        toggleSwitch(sw);
+      });
+    });
+    
+    document.querySelectorAll('.gate-selector').forEach(btn => {
+      btn.addEventListener('click', () => switchGate(btn.dataset.gate));
+    });
+    
+    document.querySelectorAll('.nav-pill').forEach(pill => {
+      pill.addEventListener('click', () => showSection(pill.dataset.section));
+    });
+    
+    document.getElementById('next-btn').addEventListener('click', nextQuestion);
+    document.getElementById('restart-quiz').addEventListener('click', restartQuiz);
+    
+    // Initialize
+    function init() {
+      switchGate('AND');
+      loadQuestion();
+    }
+    
+    // Element SDK integration
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const siteTitle = document.getElementById('site-title');
+          if (siteTitle && config.site_title) {
+            siteTitle.innerHTML = `<span class="text-[#d4af37]">مختبر</span> <span class="neon-green font-tech">${config.site_title.replace('مختبر ', '')}</span>`;
+          }
+          
+          const footerText = document.getElementById('footer-text');
+          if (footerText && config.footer_text) {
+            footerText.textContent = config.footer_text;
+          }
+          
+          soundEnabled = config.enable_sound !== 'إيقاف';
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['site_title', config.site_title || defaultConfig.site_title],
+          ['footer_text', config.footer_text || defaultConfig.footer_text],
+          ['enable_sound', config.enable_sound || defaultConfig.enable_sound]
+        ])
+      });
+    }
+    
+    init();
+  </script>
+ </body>
+</html>
